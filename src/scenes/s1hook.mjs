@@ -261,13 +261,6 @@ function macroLed(ctx, t) {
   const dw = measure(ctx, digits, dh, F.num, 0) * 0.62;
   const totalW = digits.split('').reduce((a, c) => a + (c === '.' ? dh * 0.34 : dh * 0.71), 0);
   const x0 = W / 2 - totalW / 2;
-  // glass reflection of the panel above
-  ctx.save();
-  ctx.globalAlpha = 0.06;
-  ctx.translate(0, 1100 + 2 * (1320 - 1150));
-  ctx.scale(1, -1);
-  ledNumber(ctx, digits, x0, 990, dh, C.amber, { glowBlur: 0, on: 0.7 });
-  ctx.restore();
   txt(ctx, '$', x0 - 86, 1300, { size: 132, font: F.num6, color: hexA(C.amber, 0.55) });
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
