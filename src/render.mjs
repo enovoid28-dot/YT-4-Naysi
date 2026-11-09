@@ -114,12 +114,20 @@ function drawFrame(ctx, frame) {
   ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = C.ink0;
   ctx.fillRect(0, 0, W, H);
+  // handheld breathing so static frames still feel alive
+  const bx = Math.sin(t * 0.37) * 1.7 + Math.sin(t * 1.13 + 1.2) * 0.6;
+  const by = Math.cos(t * 0.29) * 1.9 + Math.sin(t * 0.91) * 0.5;
+  ctx.save();
+  ctx.translate(W / 2, H / 2);
+  ctx.scale(1.004, 1.004);
+  ctx.translate(-W / 2 + bx, -H / 2 + by);
   if (mod) mark('scene', () => mod.draw(ctx, local, scene, { t, frame, index }));
   else {
     ctx.fillStyle = C.ink1;
     ctx.fillRect(0, 0, W, H);
     txt(ctx, scene.key.toUpperCase(), W / 2, 800, { size: 90, font: F.head, color: C.bone, align: 'center' });
   }
+  ctx.restore(); // camera breathing
   ctx.restore();
 
   // captions
@@ -129,7 +137,7 @@ function drawFrame(ctx, frame) {
     const first = group.words[0].start;
     const last = group.words[group.words.length - 1].end;
     const nextStart = scene.captions[gi + 1]?.words[0].start ?? Infinity;
-    const showFrom = first - 0.3;
+    const showFrom = first - 0.16;
     const showTo = Math.min(last + 0.16, nextStart - 0.03);
     const a = clamp((local - showFrom) / 0.14) * clamp((showTo - local) / 0.14);
     if (a <= 0.002) return;
@@ -196,6 +204,8 @@ async function main() {
     '-c:v', 'libx264', '-preset', arg('preset', 'medium'), '-crf', arg('crf', '18'),
     '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-level:v', '5.2',
     '-g', String(FPS * 2), '-bf', '2',
+    '-x264-params', arg('x264', 'aq-mode=3:aq-strength=1.05:deblock=1,1'),
+    ...(arg('maxrate') ? ['-maxrate', arg('maxrate'), '-bufsize', arg('bufsize', String(Number(arg('maxrate').replace(/M$/, '')) * 2) + 'M')] : []),
     '-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709',
     '-movflags', '+faststart',
     out,

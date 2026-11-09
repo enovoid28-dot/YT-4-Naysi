@@ -64,8 +64,10 @@ export function cityLayers(ctx, t, o = {}) {
   const {
     baseY = 1320, color = '#0A0913', seed = 11, count = 16, hMin = 120, hMax = 420,
     windowColor = '#FFC27A', windowAlpha = 0.55, parallax = 0, rim = 0.22, cool = '#9FD8FF',
+    neon = 0.3,
   } = o;
   const r = rng(seed);
+  const neonColors = ['#FF5C3A', '#4CE0B3', '#69B7FF', '#FFC94A', '#FF7BB0'];
   ctx.save();
   for (let i = 0; i < count; i++) {
     const bw = 74 + r() * 140;
@@ -74,29 +76,69 @@ export function cityLayers(ctx, t, o = {}) {
     const y = baseY - bh;
     ctx.fillStyle = color;
     fillRR(ctx, x, y, bw, bh + 240, 3, color);
-    // roof hardware
-    if (r() > 0.55) fillRR(ctx, x + bw * (0.2 + r() * 0.5), y - 26 - r() * 40, 5, 40, 2, color);
-    if (r() > 0.75) fillRR(ctx, x + bw * 0.62, y - 16, bw * 0.28, 16, 2, color);
+    // tone variation so silhouettes do not read as one flat slab
+    ctx.save();
+    ctx.globalAlpha = 0.02 + r() * 0.05;
+    ctx.fillStyle = r() > 0.45 ? '#FFC39A' : '#000000';
+    fillRR(ctx, x, y, bw, bh + 240, 3, ctx.fillStyle);
+    ctx.restore();
+    // rooftop hardware
+    if (r() > 0.5) fillRR(ctx, x + bw * (0.2 + r() * 0.5), y - 26 - r() * 46, 4, 46, 2, color);
+    if (r() > 0.68) fillRR(ctx, x + bw * 0.6, y - 16, bw * 0.3, 16, 2, color);
+    if (r() > 0.74) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x + bw * 0.2, y);
+      ctx.lineTo(x + bw * 0.2, y - 40);
+      ctx.moveTo(x + bw * 0.15, y - 30);
+      ctx.lineTo(x + bw * 0.25, y - 30);
+      ctx.stroke();
+    }
     // rim light from the horizon
     ctx.globalAlpha = rim * (0.5 + 0.5 * r());
     ctx.fillStyle = '#FFB069';
     ctx.fillRect(x + 2, y, bw - 4, 2.5);
     ctx.globalAlpha = 1;
     // windows
-    const cols = Math.max(2, Math.floor((bw - 16) / 24));
-    const rows = Math.max(3, Math.floor(bh / 30));
+    const cols = Math.max(2, Math.floor((bw - 14) / 19));
+    const rows = Math.max(3, Math.floor(bh / 24));
     for (let cx = 0; cx < cols; cx++) {
       for (let cy = 0; cy < rows; cy++) {
-        if (r() > 0.42) continue;
-        const wx = x + 12 + cx * ((bw - 20) / cols);
-        const wy = y + 14 + cy * 30;
+        if (r() > 0.44) continue;
+        const wx = x + 9 + cx * ((bw - 16) / cols);
+        const wy = y + 12 + cy * 24;
         const flick = 0.5 + 0.5 * Math.sin(t * (0.25 + r()) + cx * 1.7 + cy * 0.9);
-        ctx.globalAlpha = windowAlpha * (0.35 + 0.65 * flick) * (0.5 + 0.5 * r());
-        ctx.fillStyle = r() > 0.86 ? cool : windowColor;
-        ctx.fillRect(wx, wy, 7 + r() * 6, 10 + r() * 4);
+        const bright = r() > 0.9;
+        ctx.globalAlpha = windowAlpha * (0.3 + 0.7 * flick) * (0.45 + 0.55 * r()) * (bright ? 1.5 : 1);
+        ctx.fillStyle = r() > 0.88 ? cool : windowColor;
+        ctx.fillRect(wx, wy, 5 + r() * 4, 8 + r() * 3);
       }
     }
     ctx.globalAlpha = 1;
+    // neon sign on a few buildings
+    if (r() < neon) {
+      const nw = 10 + r() * Math.min(28, bw * 0.28);
+      const nh = 42 + r() * 90;
+      const nx = x + bw * (0.55 + r() * 0.25);
+      const ny = y + 40 + r() * Math.max(10, bh - 120);
+      const col = neonColors[Math.floor(r() * neonColors.length)];
+      ctx.save();
+      ctx.shadowColor = hexA(col, 0.9);
+      ctx.shadowBlur = 22;
+      ctx.fillStyle = hexA(col, 0.75);
+      fillRR(ctx, nx, ny, nw, nh, nw * 0.35, hexA(col, 0.75));
+      ctx.restore();
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      const gg = radGrad(ctx, nx + nw / 2, ny + nh / 2, 0, Math.max(nw, nh) * 1.6, [
+        [0, hexA(col, 0.16)],
+        [1, 'rgba(0,0,0,0)'],
+      ]);
+      ctx.fillStyle = gg;
+      ctx.fillRect(nx - 80, ny - 80, nw + 160, nh + 160);
+      ctx.restore();
+    }
   }
   ctx.restore();
 }
@@ -104,12 +146,12 @@ export function cityLayers(ctx, t, o = {}) {
 export function rain(ctx, t, o = {}) {
   const {
     count = 170, seed = 5, alpha = 0.5, speed = 1700, y0 = -60, y1 = 1760,
-    color = 'rgba(210,228,255,0.75)', windX = 0.22, thick = 2,
+    color = 'rgba(220,238,255,0.9)', windX = 0.22, thick = 1.2,
   } = o;
   const r = rng(seed);
   ctx.save();
   ctx.strokeStyle = color;
-  ctx.lineCap = 'round';
+  ctx.lineCap = 'butt';
   for (let i = 0; i < count; i++) {
     const px = r() * (W + 200) - 100;
     const base = r();

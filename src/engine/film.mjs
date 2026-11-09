@@ -8,27 +8,26 @@ let scanCanvas = null;
 let dust = null;
 let filmOverlay = null;
 
-function makeNoise(size, seed, createCanvas) {
-  const c = createCanvas(size, size);
+function makeNoise(w, h, createCanvas, seed) {
+  const c = createCanvas(w, h);
   const x = c.getContext('2d');
-  const img = x.createImageData(size, size);
+  const img = x.createImageData(w, h);
   const r = rng(seed);
-  for (let i = 0; i < img.data.length; i += 4) {
-    const v = 120 + (r() - 0.5) * 200;
-    img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
-    img.data[i + 3] = 255;
+  const d = img.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const v = 120 + (r() - 0.5) * 190;
+    d[i] = d[i + 1] = d[i + 2] = v;
+    d[i + 3] = 255;
   }
   x.putImageData(img, 0, 0);
   return c;
 }
 
 export function initFilm({ createCanvas }) {
-  const nz = makeNoise(420, 7, createCanvas);
   grainTile = createCanvas(W, H);
   const gx = grainTile.getContext('2d');
-  gx.imageSmoothingEnabled = true;
   gx.globalAlpha = 1;
-  gx.drawImage(nz, 0, 0, W, H);
+  gx.drawImage(makeNoise(W, H, createCanvas, 7), 0, 0);
 
   vignetteCanvas = createCanvas(W, H);
   const v = vignetteCanvas.getContext('2d');
@@ -50,13 +49,18 @@ export function initFilm({ createCanvas }) {
   for (let y = 0; y < H; y += 4) s.fillRect(0, y, W, 1);
 
   // combined film overlay: grain + vignette (one full-frame pass per frame)
-  filmOverlay = createCanvas(W, H);
-  const fo = filmOverlay.getContext('2d');
-  fo.globalAlpha = 0.06;
-  fo.drawImage(grainTile, 0, 0);
-  fo.globalAlpha = 1;
-  fo.drawImage(vignetteCanvas, 0, 0);
-  filmOverlay._ready = true;
+  // two baked overlays (grain + vignette) alternating per frame => animated
+  // grain with exactly one full-frame pass and no resampling
+  filmOverlay = [];
+  for (let i = 0; i < 2; i++) {
+    const c = createCanvas(W, H);
+    const fo = c.getContext('2d');
+    fo.globalAlpha = 0.055;
+    fo.drawImage(makeNoise(W, H, createCanvas, 7 + i * 977), 0, 0);
+    fo.globalAlpha = 1;
+    fo.drawImage(vignetteCanvas, 0, 0);
+    filmOverlay.push(c);
+  }
 
   const r = rng(99);
   dust = Array.from({ length: 90 }, () => ({
@@ -70,11 +74,9 @@ export function initFilm({ createCanvas }) {
 }
 
 export function drawFilm(ctx, frame) {
-  if (!filmOverlay) return;
-  const ox = ((frame * 13) % 5) - 2;
-  const oy = ((frame * 29) % 5) - 2;
+  if (!filmOverlay || !filmOverlay.length) return;
   ctx.save();
-  ctx.drawImage(filmOverlay, ox - 2, oy - 2, W + 4, H + 4);
+  ctx.drawImage(filmOverlay[frame % filmOverlay.length], 0, 0);
   ctx.restore();
 }
 

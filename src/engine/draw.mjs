@@ -274,7 +274,7 @@ export function seg7(ctx, ch, x, y, h, color, o = {}) {
   }
   const drawSeg = (k) => {
     const isOn = lit.includes(k);
-    ctx.globalAlpha = isOn ? on : 0.04;
+    ctx.globalAlpha = isOn ? on : 0.025;
     ctx.fillStyle = isOn ? color : offColor || color;
     if (k === 'a') hseg(x + t * 0.55, top, w - t * 1.1);
     else if (k === 'g') hseg(x + t * 0.55, mid, w - t * 1.1);

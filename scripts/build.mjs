@@ -9,6 +9,7 @@ const FINAL = path.join(OUT, process.env.OUT_NAME || 'CPI-NAYSI-1440x2560-90fps.
 const WORKERS = Number(process.env.WORKERS || 2);
 const CRF = String(process.env.CRF || 18);
 const PRESET = process.env.PRESET || 'superfast';
+const MAXRATE = process.env.MAXRATE || '';
 const tl = buildTimeline();
 const FRAMES = Math.round(tl.total * tl.fps);
 
@@ -42,7 +43,7 @@ async function main() {
   await Promise.all(
     chunks.map((c) =>
       node(
-        ['src/render.mjs', '--from', String(c.from), '--to', String(c.to), '--preset', PRESET, '--crf', CRF, '--out', c.file],
+        ['src/render.mjs', '--from', String(c.from), '--to', String(c.to), '--preset', PRESET, '--crf', CRF, ...(MAXRATE ? ['--maxrate', MAXRATE] : []), '--out', c.file],
         true,
       ),
     ),

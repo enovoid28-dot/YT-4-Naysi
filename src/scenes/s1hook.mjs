@@ -187,8 +187,152 @@ function basketCard(ctx, t, o) {
   });
 }
 
+
+/* ------------------------------ cold open ------------------------------ */
+const CUT = 0.95;
+
+function macroLed(ctx, t) {
+  const p = clamp(t / CUT);
+  // dark glass base
+  const bg = linGrad(ctx, 0, 0, W * 0.4, H, [
+    [0, '#08070C'],
+    [0.5, '#0B0A10'],
+    [1, '#05050A'],
+  ]);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // defocused city lights behind the glass
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+  const r = rng(41);
+  for (let i = 0; i < 16; i++) {
+    const x = r() * W;
+    const y = 200 + r() * 2200;
+    const rad = 90 + r() * 240;
+    const col = ['#FF9A3C', '#FF5A2A', '#FFC978', '#4A7FBF'][Math.floor(r() * 4)];
+    const g = radGrad(ctx, x, y, 0, rad, [
+      [0, hexA(col, 0.1 + r() * 0.1)],
+      [1, 'rgba(0,0,0,0)'],
+    ]);
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(x, y, rad, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+
+  // glass panel edges + red LED strip
+  const inset = 54;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+  ctx.lineWidth = 3;
+  rr(ctx, inset, inset * 2, W - inset * 2, H - inset * 4, 34);
+  ctx.stroke();
+  ctx.restore();
+
+  // scanlines
+  ctx.save();
+  ctx.globalAlpha = 0.05;
+  ctx.fillStyle = '#000';
+  for (let y = 0; y < H; y += 5) ctx.fillRect(0, y, W, 2);
+  ctx.restore();
+
+  // micro label
+  tracking(ctx, 'REGULAR · BENSIN', W / 2, 640, {
+    size: 34, font: F.num6, track: 12, align: 'center', color: hexA(C.amber, 0.75),
+  });
+  ctx.save();
+  ctx.fillStyle = hexA(C.amber, 0.85);
+  ctx.beginPath();
+  ctx.arc(W / 2 - measure(ctx, 'REGULAR · BENSIN', 34, F.num6, 12) / 2 - 64, 629, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // digits climbing to 4.09
+  const val = lerp(3.42, 4.09, EASE.outQuint(clamp((t - 0.05) / 0.8)));
+  const digits = val.toFixed(2);
+  const flick = 0.92 + 0.08 * noise1(t * 34, 7);
+  ctx.save();
+  ctx.translate(W / 2, 1150);
+  ctx.scale(1.02 + 0.05 * p, 1.02 + 0.05 * p);
+  ctx.translate(-W / 2, -1150);
+  const dh = 330;
+  const dw = measure(ctx, digits, dh, F.num, 0) * 0.62;
+  const totalW = digits.split('').reduce((a, c) => a + (c === '.' ? dh * 0.34 : dh * 0.71), 0);
+  const x0 = W / 2 - totalW / 2;
+  // glass reflection of the panel above
+  ctx.save();
+  ctx.globalAlpha = 0.06;
+  ctx.translate(0, 1100 + 2 * (1320 - 1150));
+  ctx.scale(1, -1);
+  ledNumber(ctx, digits, x0, 990, dh, C.amber, { glowBlur: 0, on: 0.7 });
+  ctx.restore();
+  txt(ctx, '$', x0 - 86, 1300, { size: 132, font: F.num6, color: hexA(C.amber, 0.55) });
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 0.12 * flick;
+  ledNumber(ctx, digits, x0, 990, dh, C.amber, { glowBlur: 0 });
+  ctx.restore();
+  ledNumber(ctx, digits, x0, 990, dh, C.amber, { glowBlur: 46, on: flick });
+  ctx.restore();
+
+  // under-label
+  tracking(ctx, 'HARGA PER GALON', W / 2, 1520, {
+    size: 28, font: F.num6, track: 10, align: 'center', color: hexA(C.bone, 0.35),
+  });
+
+  // condensation droplets
+  const rd = rng(88);
+  ctx.save();
+  for (let i = 0; i < 60; i++) {
+    const x = rd() * W;
+    const y = 1200 + rd() * 1200;
+    const rad = 2 + rd() * 9;
+    ctx.fillStyle = `rgba(210,230,255,${0.04 + rd() * 0.07})`;
+    ctx.beginPath();
+    ctx.arc(x, y, rad, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = `rgba(255,255,255,${0.08 + rd() * 0.1})`;
+    ctx.beginPath();
+    ctx.arc(x - rad * 0.3, y - rad * 0.3, rad * 0.35, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+
+  // rain in front of the panel
+  rain(ctx, t * 1.6, { count: 90, alpha: 0.35, speed: 2400, y1: H, thick: 1.6, seed: 3 });
+
+  // light sweep
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+  const sx = -400 + p * 2200;
+  const g = linGrad(ctx, sx - 260, 0, sx + 260, H, [
+    [0, 'rgba(255,210,150,0)'],
+    [0.5, 'rgba(255,210,150,0.07)'],
+    [1, 'rgba(255,210,150,0)'],
+  ]);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+  ctx.restore();
+
+  // cut flash
+  const f = clamp((t - (CUT - 0.09)) / 0.09);
+  if (f > 0) {
+    ctx.save();
+    ctx.globalAlpha = f * 0.5;
+    ctx.fillStyle = '#FFF4E2';
+    ctx.fillRect(0, 0, W, H);
+    ctx.restore();
+  }
+}
+
 export default {
   draw(ctx, t, scene) {
+    if (t < CUT) {
+      macroLed(ctx, t);
+      return;
+    }
     const beats = scene.captions.map((c) => c.words[0].start);
     const b = [beats[0] ?? 1, beats[1] ?? 3, beats[2] ?? 5, beats[3] ?? 7];
 
@@ -208,6 +352,14 @@ export default {
       baseY: 1330, seed: 21, count: 14, hMin: 130, hMax: 430, color: '#0B0912',
       windowColor: '#FFD6A0', windowAlpha: 0.5, parallax: -t * 4,
     });
+    // haze between parallax layers for depth
+    const haze = linGrad(ctx, 0, 1080, 0, 1520, [
+      [0, 'rgba(255,150,90,0)'],
+      [0.55, 'rgba(255,140,80,0.10)'],
+      [1, 'rgba(255,120,60,0.02)'],
+    ]);
+    ctx.fillStyle = haze;
+    ctx.fillRect(0, 1080, W, 440);
     stationSilhouette(ctx, t);
     cityLayers(ctx, t, {
       baseY: 1490, seed: 44, count: 10, hMin: 80, hMax: 230, color: '#050409',

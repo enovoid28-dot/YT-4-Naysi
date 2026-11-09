@@ -274,7 +274,10 @@ function renderSFX() {
 
   // s1
   const s1 = S(0);
-  [0, 1, 2].forEach((i) => SFX.swish(s1.start + w(s1, i) - 0.34, 0.3));
+  SFX.riser(s1.start + 0.05, 0.22, 0.85);
+  SFX.counter(s1.start + 0.08, 0.09);
+  SFX.impact(s1.start + 0.92, 0.42);
+  [0, 1, 2].forEach((i) => SFX.swish(s1.start + Math.max(0.95, w(s1, i) - 0.34), 0.3));
   const s1stamp = s1.start + w(s1, 3) + 0.42;
   SFX.stamp(s1stamp, 0.55);
   SFX.impact(s1stamp, 0.3);
