@@ -267,75 +267,64 @@ function renderSFX() {
   // transitions between scenes
   tl.scenes.forEach((sc, i) => {
     if (i === 0) return;
-    SFX.riser(sc.start - 0.95, 0.26, 0.95);
-    SFX.impact(sc.start, 0.5);
-    SFX.swish(sc.start - 0.1, 0.22);
+    SFX.riser(sc.start - 0.95, 0.24, 0.95);
+    SFX.impact(sc.start, 0.46);
+    SFX.swish(sc.start - 0.1, 0.2);
   });
 
-  // s1
+  // s1 — bedroom, clock, double vision
   const s1 = S(0);
-  SFX.riser(s1.start + 0.05, 0.22, 0.85);
-  SFX.counter(s1.start + 0.08, 0.09);
-  SFX.impact(s1.start + 0.92, 0.42);
-  [0, 1, 2].forEach((i) => SFX.swish(s1.start + Math.max(0.95, w(s1, i) - 0.34), 0.3));
-  const s1stamp = s1.start + w(s1, 3) + 0.42;
-  SFX.stamp(s1stamp, 0.55);
-  SFX.impact(s1stamp, 0.3);
+  SFX.riser(s1.start + 0.02, 0.18, 0.7);
+  SFX.riser(s1.start + 0.28, 0.16, 0.7);
+  // wall clock ticks under the first room beat
+  for (let i = 0; i < 7; i++) SFX.blip(s1.start + 0.95 + i * 0.92, 0.045, 1650);
+  SFX.swish(s1.start + 3.9, 0.22);
+  SFX.blip(s1.start + 7.45, 0.12, 720);
+  SFX.riser(s1.start + 10.1, 0.24, 0.7);
+  SFX.impact(s1.start + 10.72, 0.34);
 
-  // s2
+  // s2 — nightly deficit bars
   const s2 = S(1);
-  SFX.riser(s2.start + w(s2, 1) - 0.5, 0.24, 0.6);
-  SFX.impact(s2.start + w(s2, 1), 0.45);
-  SFX.chime(s2.start + w(s2, 2), 0.16);
-  SFX.swish(s2.start + w(s2, 3), 0.2);
+  for (let i = 0; i < 7; i++) SFX.blip(s2.start + 0.22 + i * 0.055, 0.06, 560 + i * 26);
+  SFX.stamp(s2.start + 6.9, 0.42);
+  SFX.counter(s2.start + 10.35, 0.12);
+  SFX.chime(s2.start + 11.5, 0.1);
 
-  // s3
+  // s3 — the ten day chart
   const s3 = S(2);
-  const conflict = w(s3, 2, /Konflik/i) ?? w(s3, 2);
-  const seratus = w(s3, 2, /seratus/i) ?? 5;
-  const explosion = s3.start + conflict + 0.5;
-  SFX.riser(explosion - 0.9, 0.3, 0.9);
-  SFX.explosion(explosion, 0.85);
-  SFX.counter(s3.start + (w(s3, 2, /seratus/i) ?? 5) - 0.35, 0.12);
-  const pumpG = w(s3, 3);
-  if (pumpG != null) {
-    SFX.blip(s3.start + pumpG + 0.8, 0.22, 740);
-  }
+  SFX.riser(s3.start + 0.2, 0.2, 0.7);
+  SFX.impact(s3.start + 0.9, 0.3);
+  SFX.stamp(s3.start + 4.25, 0.55);
+  SFX.thud(s3.start + 6.7, 0.22);
 
-  // s4
+  // s4 — brain network
   const s4 = S(3);
-  SFX.flyby(s4.start + 0.2, 0.3);
-  SFX.paper(s4.start + w(s4, 1) + 0.05, 0.34);
-  const twoWords = w(s4, 1, /dua/i);
-  if (twoWords != null) {
-    SFX.stamp(s4.start + twoWords + 0.3, 0.5);
-    SFX.blip(s4.start + twoWords + 0.3, 0.16, 1040);
-  }
+  SFX.swell(s4.start + 0.15, 0.2, 3.0);
+  SFX.blip(s4.start + 2.1, 0.11, 880);
+  SFX.blip(s4.start + 3.2, 0.11, 990);
+  SFX.blip(s4.start + 4.6, 0.11, 1100);
+  SFX.thud(s4.start + 8.1, 0.2);
+  SFX.thud(s4.start + 9.75, 0.24);
 
-  // s5
+  // s5 — the myth clock
   const s5 = S(4);
-  SFX.paper(s5.start + 0.2, 0.26);
-  SFX.swish(s5.start + w(s5, 1) + 0.1, 0.28);
-  SFX.paper(s5.start + w(s5, 1) + 0.45, 0.34);
-  SFX.chime(s5.start + w(s5, 1) + 0.9, 0.14);
-  SFX.blip(s5.start + w(s5, 2) + 0.3, 0.16, 620);
-  SFX.thud(s5.start + w(s5, 3) + 0.15, 0.24);
+  SFX.thud(s5.start + 4.85, 0.3);
+  SFX.swish(s5.start + 4.9, 0.2);
+  SFX.blip(s5.start + 6.0, 0.12, 620);
+  SFX.riser(s5.start + 7.0, 0.22, 0.55);
+  SFX.impact(s5.start + 7.35, 0.28);
 
-  // s6
+  // s6 — four fixes
   const s6 = S(5);
-  SFX.thud(s6.start + w(s6, 0) + 0.35, 0.3);
-  SFX.thud(s6.start + w(s6, 0) + 0.75, 0.26);
-  const empat = w(s6, 0, /empat/i);
-  if (empat != null) SFX.blip(s6.start + empat + 0.3, 0.2, 520);
+  [2.0, 4.55, 6.45, 9.1].forEach((at) => SFX.paper(s6.start + at, 0.26));
+  SFX.chime(s6.start + 9.55, 0.12);
 
-  // s7
+  // s7 — outro
   const s7 = S(6);
-  SFX.swell(s7.start + 0.1, 0.22, 3.2);
-  SFX.swish(s7.start + w(s7, 1), 0.34, 0.6);
-  SFX.thud(s7.start + w(s7, 1) + 0.1, 0.26);
-  SFX.chime(s7.start + w(s7, 2), 0.12);
-  SFX.swell(s7.start + w(s7, 3) - 0.2, 0.26, 3.4);
-  SFX.blip(s7.start + w(s7, 3) + 0.6, 0.12, 990);
+  [1.45, 2.6, 4.1].forEach((at) => SFX.thud(s7.start + at, 0.24));
+  SFX.swell(s7.start + 4.85, 0.24, 2.6);
+  SFX.chime(s7.start + 6.55, 0.14);
+  SFX.swell(s7.start + 9.7, 0.26, 3.2);
 }
 
 /* ------------------------------- VO load --------------------------------- */
