@@ -1,0 +1,34 @@
+{
+  "name": "cpi-naysi",
+  "version": "1.0.0",
+  "description": "CPI explainer — 2K 90fps motion graphics built entirely in code",
+  "scripts": {
+    "vo": "node scripts/prep-vo.mjs",
+    "audio": "node scripts/audio.mjs",
+    "stills": "node src/render.mjs --stills 3,12,26,38,47,60,75",
+    "render": "node src/render.mjs --from 0 --to 7067 --preset superfast --crf 18 --out out/video.mp4",
+    "build": "node scripts/build.mjs",
+    "mux": "node scripts/mux.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enovoid28-dot/YT-4-Naysi.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/enovoid28-dot/YT-4-Naysi/issues"
+  },
+  "homepage": "https://github.com/enovoid28-dot/YT-4-Naysi#readme",
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@fontsource/bricolage-grotesque": "^5.3.0",
+    "@fontsource/inter-tight": "^5.3.0",
+    "@fontsource/plus-jakarta-sans": "^5.3.0",
+    "@napi-rs/canvas": "^1.1.0",
+    "wawoff2": "^2.0.1"
+  },
+  "private": true,
+  "type": "module"
+}

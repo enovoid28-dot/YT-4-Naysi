@@ -1,0 +1,6 @@
+node_modules/
+out/
+.fonts/
+assets/audio/vo/
+assets/audio/mix.wav
+*.log
