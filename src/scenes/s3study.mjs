@@ -5,33 +5,42 @@ import {
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
 import { stamp } from '../art/parts.mjs';
+import { smoothPath } from '../art/kit.mjs';
 
-const XA = 210;
-const XB = 1310;
-const YA = 1430;
-const YB = 800;
+const XA = 208;
+const XB = 1292;
+const YA = 1444;
+const YB = 782;
 const py = (v) => lerp(YA, YB, (v - 50) / 50);
 const px = (u) => lerp(XA, XB, u);
 
-const vPerf = (u) => lerp(100, 60, Math.pow(u, 1.15));
-const vFeel = (u) => lerp(100, 82, Math.pow(u, 1.35));
+const vPerf = (u) => lerp(100, 60, Math.pow(u, 1.18));
+const vFeel = (u) => lerp(100, 82, Math.pow(u, 1.4));
+
+const series = (fn, reveal, n = 40) => {
+  const out = [];
+  for (let i = 0; i <= n; i++) {
+    const u = (i / n) * reveal;
+    out.push({ x: px(u), y: py(fn(u)) });
+  }
+  return out;
+};
 
 export default {
   draw(ctx, t, scene, meta) {
-    // stage wash
-    const g = linGrad(ctx, 0, 240, 0, 1500, [
-      [0, '#070910'],
-      [0.6, '#05070C'],
+    const g = linGrad(ctx, 0, 240, 0, 1560, [
+      [0, '#080A12'],
+      [0.55, '#06080E'],
       [1, '#080A12'],
     ]);
     ctx.fillStyle = g;
-    ctx.fillRect(0, 240, W, 1260);
+    ctx.fillRect(0, 240, W, 1320);
 
     tracking(ctx, 'PENELITIAN TIDUR', M, 330, {
       size: 25, font: F.num6, track: 6, color: hexA(C.bone, 0.5),
     });
 
-    // title
+    /* ------------------------------------------------------------- title -- */
     const tA = clamp((t - 0.15) / 0.45);
     if (tA > 0) {
       ctx.save();
@@ -47,149 +56,195 @@ export default {
       ctx.restore();
     }
 
-    // legend
+    /* ------------------------------------------------------------ legend -- */
     const lA = clamp((t - 0.9) / 0.4);
     if (lA > 0) {
       ctx.save();
       ctx.globalAlpha = lA;
-      labelChip(ctx, 'PERFORMA', M, 600, {
+      labelChip(ctx, 'PERFORMA', M, 606, {
         size: 23, font: F.num6, track: 4, padX: 16, padY: 11, align: 'left',
         dot: C.amber, dotColor: C.amber,
       });
-      labelChip(ctx, 'PERASAAN', M + 210, 600, {
+      labelChip(ctx, 'PERASAAN', M + 212, 606, {
         size: 23, font: F.num6, track: 4, padX: 16, padY: 11, align: 'left',
-        dot: C.bone, dotColor: hexA(C.bone, 0.75),
+        dot: C.bone, dotColor: hexA(C.bone, 0.8),
       });
       ctx.restore();
     }
 
-    // grid
-    const gA = clamp((t - 0.5) / 0.6);
+    /* -------------------------------------------------------------- axes -- */
+    const gA = clamp((t - 0.45) / 0.6);
     ctx.save();
     ctx.globalAlpha = gA;
-    for (const v of [75, 100]) {
-      ctx.setLineDash([6, 12]);
-      ctx.strokeStyle = hexA(C.bone, 0.10);
+    for (const v of [60, 75, 90, 100]) {
+      ctx.save();
+      ctx.setLineDash([5, 13]);
+      ctx.strokeStyle = hexA(C.bone, 0.085);
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(XA, py(v));
       ctx.lineTo(XB, py(v));
       ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.save();
-      ctx.globalAlpha = 0.5;
-      tracking(ctx, String(v), XA - 22, py(v) + 8, {
-        size: 22, font: F.num6, track: 3, align: 'right', color: hexA(C.bone, 0.7),
-      });
       ctx.restore();
+      tracking(ctx, String(v), XA - 20, py(v) + 8, {
+        size: 21, font: F.num6, track: 2, align: 'right', color: hexA(C.bone, 0.45),
+      });
     }
     // baseline
-    ctx.strokeStyle = hexA(C.bone, 0.34);
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(XA, YA);
-    ctx.lineTo(XB, YA);
-    ctx.stroke();
+    const blg = linGrad(ctx, XA, 0, XB, 0, [
+      [0, hexA(C.bone, 0.18)],
+      [0.5, hexA(C.bone, 0.4)],
+      [1, hexA(C.bone, 0.18)],
+    ]);
+    ctx.fillStyle = blg;
+    ctx.fillRect(XA, YA, XB - XA, 2.5);
     ctx.restore();
 
     // day ticks
-    for (const d of [1, 4, 7, 10]) {
+    for (let d = 1; d <= 10; d++) {
       const u = (d - 1) / 9;
-      const a = clamp((t - 0.7 - u * 0.5) / 0.3);
+      const a = clamp((t - 0.6 - u * 0.5) / 0.3);
       if (a <= 0) continue;
       ctx.save();
-      ctx.globalAlpha = a * 0.4;
-      tracking(ctx, `HARI ${d}`, px(u), YA + 40, {
-        size: 20, font: F.num6, track: 3, align: d === 1 ? 'left' : d === 10 ? 'right' : 'center',
-        color: hexA(C.bone, 0.8),
-      });
+      ctx.globalAlpha = a;
+      ctx.fillStyle = hexA(C.bone, 0.3);
+      ctx.fillRect(px(u) - 1, YA + 4, 2, 10);
+      if ([1, 4, 7, 10].includes(d)) {
+        tracking(ctx, `HARI ${d}`, px(u), YA + 46, {
+          size: 20, font: F.num6, track: 3,
+          align: d === 1 ? 'left' : d === 10 ? 'right' : 'center',
+          color: hexA(C.bone, 0.6),
+        });
+      }
       ctx.restore();
     }
 
-    // ramps
     const perfR = clamp((t - 0.85) / 5.0);
     const feelR = clamp((t - 1.0) / 3.6);
 
-    const curve = (fn, reveal, color, lw, dash = null) => {
-      if (reveal <= 0) return;
-      ctx.save();
-      if (dash) ctx.setLineDash(dash);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = lw;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.beginPath();
-      const steps = 120;
-      for (let i = 0; i <= steps; i++) {
-        const u = (i / steps) * reveal;
-        const x = px(u);
-        const yy = py(fn(u));
-        i === 0 ? ctx.moveTo(x, yy) : ctx.lineTo(x, yy);
-      }
-      ctx.stroke();
-      ctx.restore();
-    };
-
-    // gap shading between the two series
+    /* ------------------------------------------------------------ shading -- */
     if (feelR > 0) {
       ctx.save();
       ctx.globalAlpha = clamp(feelR * 0.9);
       ctx.beginPath();
-      const steps = 90;
-      for (let i = 0; i <= steps; i++) {
-        const u = (i / steps) * feelR;
-        const x = px(u);
-        i === 0 ? ctx.moveTo(x, py(vPerf(u))) : ctx.lineTo(x, py(vPerf(u)));
+      const n = 56;
+      for (let i = 0; i <= n; i++) {
+        const u = (i / n) * feelR;
+        i === 0 ? ctx.moveTo(px(u), py(vPerf(u))) : ctx.lineTo(px(u), py(vPerf(u)));
       }
-      for (let i = steps; i >= 0; i--) {
-        const u = (i / steps) * feelR;
+      for (let i = n; i >= 0; i--) {
+        const u = (i / n) * feelR;
         ctx.lineTo(px(u), py(vFeel(u)));
       }
       ctx.closePath();
-      const gg = linGrad(ctx, XA, 0, XB, 0, [
+      ctx.fillStyle = linGrad(ctx, XA, 0, XB, 0, [
         [0, 'rgba(255,176,58,0.02)'],
-        [1, 'rgba(255,176,58,0.10)'],
+        [1, 'rgba(255,176,58,0.12)'],
       ]);
-      ctx.fillStyle = gg;
       ctx.fill();
       ctx.restore();
     }
 
-    // feel (perceived) series
-    curve(vFeel, feelR, hexA(C.bone, 0.85), 6, [14, 10]);
-
-    // performance series
-    ctx.save();
-    ctx.shadowColor = hexA(C.amber, 0.55);
-    ctx.shadowBlur = 26;
-    curve(vPerf, perfR, C.amber, 8);
-    ctx.restore();
-
-    // day dots
-    for (let d = 0; d < 10; d++) {
-      const u = d / 9;
-      for (const [fn, reveal, col, r] of [
-        [vPerf, perfR, C.amber, 6],
-        [vFeel, feelR, hexA(C.bone, 0.85), 5],
-      ]) {
-        if (reveal < u) continue;
+    /* ------------------------------------------------------- feel series -- */
+    if (feelR > 0) {
+      const pts = series(vFeel, feelR);
+      ctx.save();
+      ctx.beginPath();
+      smoothPath(ctx, pts);
+      ctx.strokeStyle = hexA(C.bone, 0.9);
+      ctx.lineWidth = 5;
+      ctx.setLineDash([16, 12]);
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      ctx.restore();
+      // day dots
+      for (let d = 0; d < 10; d++) {
+        const u = d / 9;
+        if (feelR < u) continue;
         ctx.save();
-        ctx.globalAlpha = 0.9;
         ctx.beginPath();
-        ctx.arc(px(u), py(fn(u)), r, 0, TAU);
-        ctx.fillStyle = col;
+        ctx.arc(px(u), py(vFeel(u)), 5, 0, TAU);
+        ctx.fillStyle = hexA(C.bone, 0.95);
         ctx.fill();
         ctx.restore();
       }
     }
 
-    // end labels
+    /* -------------------------------------------------------- perf series -- */
+    if (perfR > 0) {
+      const pts = series(vPerf, perfR);
+
+      // area under the finished curve
+      const areaA = clamp((t - 5.85) / 0.7);
+      if (areaA > 0) {
+        const full = series(vPerf, 1);
+        ctx.save();
+        ctx.globalAlpha = areaA * 0.17;
+        ctx.beginPath();
+        ctx.moveTo(full[0].x, YA);
+        full.forEach((p) => ctx.lineTo(p.x, p.y));
+        ctx.lineTo(full[full.length - 1].x, YA);
+        ctx.closePath();
+        ctx.fillStyle = linGrad(ctx, 0, YB, 0, YA, [
+          [0, C.amber],
+          [0.55, hexA(C.amber, 0.45)],
+          [1, hexA(C.amber, 0.02)],
+        ]);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      ctx.save();
+      ctx.beginPath();
+      smoothPath(ctx, pts);
+      ctx.strokeStyle = C.amber;
+      ctx.lineWidth = 8;
+      ctx.lineCap = 'round';
+      ctx.shadowColor = hexA(C.amber, 0.6);
+      ctx.shadowBlur = 28;
+      ctx.stroke();
+      ctx.restore();
+
+      for (let d = 0; d < 10; d++) {
+        const u = d / 9;
+        if (perfR < u) continue;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(px(u), py(vPerf(u)), 6.5, 0, TAU);
+        ctx.fillStyle = C.amber;
+        ctx.shadowColor = hexA(C.amber, 0.8);
+        ctx.shadowBlur = 16;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // travelling head
+      if (perfR < 0.995) {
+        const u = perfR;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(px(u), py(vPerf(u)), 13, 0, TAU);
+        ctx.fillStyle = '#FFF2DA';
+        ctx.shadowColor = hexA(C.amber, 0.9);
+        ctx.shadowBlur = 34;
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    /* ------------------------------------------------------------ labels -- */
     const e1 = clamp((t - 4.4) / 0.4);
     if (e1 > 0) {
       ctx.save();
       ctx.globalAlpha = e1;
-      txt(ctx, '82', XB - 10, py(82) - 16, {
-        size: 38, font: F.num, color: hexA(C.bone, 0.8), align: 'right',
+      // feel end marker
+      ctx.beginPath();
+      ctx.arc(XB - 6, py(82), 7, 0, TAU);
+      ctx.strokeStyle = hexA(C.bone, 0.9);
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      txt(ctx, '82', XB - 26, py(82) - 18, {
+        size: 38, font: F.num, color: hexA(C.bone, 0.85), align: 'right',
       });
       ctx.restore();
     }
@@ -197,28 +252,49 @@ export default {
     if (e2 > 0) {
       ctx.save();
       ctx.globalAlpha = e2;
-      txt(ctx, '60', XB - 10, py(60) - 18, {
+      txt(ctx, '60', XB - 26, py(60) - 20, {
         size: 46, font: F.num, color: C.amber, align: 'right',
       });
       ctx.restore();
     }
 
-    // "they feel fine" note
-    const nA = clamp((t - 6.7) / 0.5);
-    if (nA > 0) {
+    // gap dimension between the two ends
+    const dimA = clamp((t - 6.6) / 0.5);
+    if (dimA > 0) {
       ctx.save();
-      ctx.globalAlpha = nA;
-      tracking(ctx, 'MEREKA TIDAK MERASA LEBIH BURUK', M, 1348, {
-        size: 24, font: F.num6, track: 4, color: hexA(C.bone, 0.6),
+      ctx.globalAlpha = dimA;
+      const x = XB - 4;
+      ctx.strokeStyle = hexA(C.red, 0.85);
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x, py(82));
+      ctx.lineTo(x, py(60));
+      ctx.stroke();
+      [py(82), py(60)].forEach((yy) => {
+        ctx.beginPath();
+        ctx.moveTo(x - 12, yy);
+        ctx.lineTo(x + 12, yy);
+        ctx.stroke();
       });
       ctx.restore();
     }
 
-    // stamp
+    /* -------------------------------------------------------------- note -- */
+    const nA = clamp((t - 6.75) / 0.5);
+    if (nA > 0) {
+      ctx.save();
+      ctx.globalAlpha = nA;
+      tracking(ctx, 'MEREKA TIDAK MERASA LEBIH BURUK', M, 1568, {
+        size: 24, font: F.num6, track: 4, color: hexA(C.bone, 0.62),
+      });
+      ctx.restore();
+    }
+
+    /* ------------------------------------------------------------- stamp -- */
     const sA = clamp((t - 4.25) / 0.35);
     if (sA > 0) {
-      stamp(ctx, 'SETARA BEGADANG 24 JAM', 690, 1240, {
-        size: 44, color: C.red, rot: -0.09, track: 2, padX: 24, padY: 14,
+      stamp(ctx, 'SETARA BEGADANG 24 JAM', 560, 1232, {
+        size: 44, color: C.red, rot: -0.085, track: 2, padX: 24, padY: 14,
         scale: lerp(1.6, 1, EASE.outBack(sA, 2.4)), alpha: clamp(sA * 2.5),
       });
     }

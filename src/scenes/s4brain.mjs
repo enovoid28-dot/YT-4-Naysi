@@ -11,25 +11,25 @@ const RN = 330;
 const r = rng(77);
 const OUTER = Array.from({ length: 17 }, (_, i) => {
   const a = (i / 17) * TAU + r() * 0.22;
-  const rad = RN * (0.82 + r() * 0.18);
-  return { x: CX + Math.cos(a) * rad, y: CY + Math.sin(a) * rad, s: 4 + r() * 5, ph: r() * TAU };
+  const rad = RN * (0.84 + r() * 0.16);
+  return { x: CX + Math.cos(a) * rad, y: CY + Math.sin(a) * rad, s: 4 + r() * 4, ph: r() * TAU, z: 0.55 + r() * 0.45 };
 });
 const INNER = Array.from({ length: 9 }, (_, i) => {
   const a = (i / 9) * TAU + 0.5 + r() * 0.3;
-  const rad = RN * (0.42 + r() * 0.16);
-  return { x: CX + Math.cos(a) * rad, y: CY + Math.sin(a) * rad, s: 5 + r() * 4, ph: r() * TAU };
+  const rad = RN * (0.44 + r() * 0.14);
+  return { x: CX + Math.cos(a) * rad, y: CY + Math.sin(a) * rad, s: 5 + r() * 4, ph: r() * TAU, z: 0.8 + r() * 0.2 };
 });
-const HUB = { x: CX, y: CY, s: 16 };
+const HUB = { x: CX, y: CY, s: 13, z: 1 };
 
 const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const NODES = [...OUTER, ...INNER];
 const LINKS = [];
 for (let i = 0; i < NODES.length; i++) {
   for (let j = i + 1; j < NODES.length; j++) {
-    if (dist(NODES[i], NODES[j]) < 210) LINKS.push([i, j, r()]);
+    if (dist(NODES[i], NODES[j]) < 205) LINKS.push({ i, j, seed: r() });
   }
 }
-INNER.forEach((n, i) => LINKS.push([17 + i, -1, r()]));
+INNER.forEach((n, i) => LINKS.push({ i: 17 + i, j: -1, seed: r() }));
 
 const meters = [
   { name: 'MEMORI', sub: 'MENGUNCI INGATAN', v: 0.74, at: 2.16 },
@@ -39,10 +39,9 @@ const meters = [
 
 export default {
   draw(ctx, t, scene, meta) {
-    // deep wash
-    const g = radGrad(ctx, CX, CY, 0, 900, [
-      [0, '#0B111C'],
-      [0.55, '#070A11'],
+    const g = radGrad(ctx, CX, CY - 40, 0, 1000, [
+      [0, '#0B111D'],
+      [0.45, '#070A11'],
       [1, '#05060A'],
     ]);
     ctx.fillStyle = g;
@@ -54,153 +53,202 @@ export default {
       size: 25, font: F.num6, track: 7, align: 'center', color: hexA(C.bone, 0.55),
     });
 
-    // halo
+    /* ------------------------------------------------------------- orbits -- */
     ctx.save();
     ctx.globalAlpha = inA;
-    ctx.beginPath();
-    ctx.arc(CX, CY, RN * 1.02, 0, TAU);
-    ctx.strokeStyle = hexA(C.bone, 0.08);
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(CX, CY, RN * 0.72, 0, TAU);
-    ctx.strokeStyle = hexA(C.bone, 0.05);
-    ctx.stroke();
+    [
+      [RN * 1.02, 0.075, 2],
+      [RN * 0.74, 0.05, 1.6],
+      [RN * 0.36, 0.04, 1.4],
+    ].forEach(([rad, al, lw]) => {
+      ctx.beginPath();
+      ctx.arc(CX, CY, rad, 0, TAU);
+      ctx.strokeStyle = hexA(C.bone, al);
+      ctx.lineWidth = lw;
+      ctx.stroke();
+    });
     ctx.restore();
 
-    // links
-    const lA = clamp((t - 0.25) / 0.9);
+    const dim = 1 - 0.45 * clamp((t - 6.1) / 0.9);
+
+    /* -------------------------------------------------------------- links -- */
+    const lA = clamp((t - 0.25) / 0.9) * dim;
     ctx.save();
-    ctx.globalAlpha = lA * 0.55;
-    for (const [i, j, seed] of LINKS) {
-      const a = j < 0 ? INNER[i - 17] : NODES[i];
-      const b = j < 0 ? HUB : NODES[j];
-      const grd = linGrad(ctx, a.x, a.y, b.x, b.y, [
-        [0, hexA(C.sky, 0.02 + 0.2 * seed)],
-        [1, hexA(C.sky, 0.3 * seed + 0.04)],
-      ]);
-      ctx.strokeStyle = grd;
-      ctx.lineWidth = 1.4 + seed;
+    for (const L of LINKS) {
+      const a = NODES[L.i];
+      const b = L.j < 0 ? HUB : NODES[L.j];
+      const mx = (a.x + b.x) / 2;
+      const my = (a.y + b.y) / 2;
+      const nx = -(b.y - a.y);
+      const ny = b.x - a.x;
+      const len = Math.hypot(nx, ny) || 1;
+      const bow = (L.seed - 0.5) * 34;
+      const cx2 = mx + (nx / len) * bow;
+      const cy2 = my + (ny / len) * bow;
+      const z = Math.min(a.z, b.z, L.j < 0 ? 1 : 1);
+      const alpha = lA * (0.16 + 0.34 * z) * (0.5 + 0.5 * L.seed);
       ctx.beginPath();
       ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
+      ctx.quadraticCurveTo(cx2, cy2, b.x, b.y);
+      ctx.strokeStyle = hexA(C.sky, alpha * 0.55);
+      ctx.lineWidth = 0.8 + z * 1.2;
       ctx.stroke();
     }
     ctx.restore();
 
-    // travelling pulses
+    /* ------------------------------------------------------------- pulses -- */
+    const pA = clamp((t - 1.1) / 0.8) * dim;
+    if (pA > 0) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      LINKS.forEach((L, k) => {
+        const a = NODES[L.i];
+        const b = L.j < 0 ? HUB : NODES[L.j];
+        const speed = 0.22 + L.seed * 0.42;
+        const p = (t * speed + L.seed * 3.1) % 1;
+        const x = lerp(a.x, b.x, p);
+        const y = lerp(a.y, b.y, p);
+        const al = Math.sin(Math.PI * p) * 0.85 * pA * (0.4 + 0.6 * L.seed);
+        const rg = radGrad(ctx, x, y, 0, 15, [
+          [0, hexA(C.amberHi, al)],
+          [0.4, hexA(C.amber, al * 0.5)],
+          [1, 'rgba(0,0,0,0)'],
+        ]);
+        ctx.fillStyle = rg;
+        ctx.fillRect(x - 15, y - 15, 30, 30);
+      });
+      ctx.restore();
+    }
+
+    /* -------------------------------------------------------------- nodes -- */
     ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-    LINKS.forEach(([i, j, seed], k) => {
-      const a = j < 0 ? INNER[i - 17] : NODES[i];
-      const b = j < 0 ? HUB : NODES[j];
-      const speed = 0.28 + seed * 0.5;
-      const p = ((t * speed + seed) % 1);
-      const x = lerp(a.x, b.x, p);
-      const y = lerp(a.y, b.y, p);
-      const al = Math.sin(Math.PI * p) * 0.9 * lA;
-      const rg = radGrad(ctx, x, y, 0, 16, [
-        [0, hexA(C.amberHi, al * 0.9)],
+    ctx.globalAlpha = lA;
+    NODES.forEach((n) => {
+      const breathe = 0.85 + 0.15 * Math.sin(t * 1.5 + n.ph);
+      const rad = n.s * (1 + n.z * 0.5);
+      // halo
+      const hg = radGrad(ctx, n.x, n.y, 0, rad * 5.5, [
+        [0, hexA(C.sky, 0.16 * n.z * breathe)],
         [1, 'rgba(0,0,0,0)'],
       ]);
-      ctx.fillStyle = rg;
-      ctx.fillRect(x - 16, y - 16, 32, 32);
+      ctx.fillStyle = hg;
+      ctx.fillRect(n.x - rad * 5.5, n.y - rad * 5.5, rad * 11, rad * 11);
+      // body
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, rad, 0, TAU);
+      ctx.fillStyle = radGrad(ctx, n.x - rad * 0.4, n.y - rad * 0.4, 0, rad * 1.4, [
+        [0, hexA('#FFFFFF', 0.95 * n.z)],
+        [0.6, hexA('#C9DDFF', 0.75 * n.z)],
+        [1, hexA(C.sky, 0.35 * n.z)],
+      ]);
+      ctx.fill();
     });
     ctx.restore();
 
-    // nodes
-    NODES.forEach((n, i) => {
-      const a = lA * 0.9;
-      const pulse = 0.75 + 0.25 * Math.sin(t * 1.6 + n.ph);
-      ctx.save();
-      ctx.globalAlpha = a;
-      const rg = radGrad(ctx, n.x, n.y, 0, n.s * 5, [
-        [0, hexA(C.sky, 0.22 * pulse)],
-        [1, 'rgba(0,0,0,0)'],
-      ]);
-      ctx.fillStyle = rg;
-      ctx.fillRect(n.x - n.s * 5, n.y - n.s * 5, n.s * 10, n.s * 10);
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.s * 0.5, 0, TAU);
-      ctx.fillStyle = hexA(C.bone, 0.85);
-      ctx.fill();
-      ctx.restore();
-    });
-
-    // hub
+    /* ---------------------------------------------------------------- hub -- */
     ctx.save();
-    const hubP = 0.9 + 0.1 * Math.sin(t * 2.2);
-    const hg = radGrad(ctx, HUB.x, HUB.y, 0, 84 * hubP, [
-      [0, 'rgba(255,214,140,0.9)'],
-      [0.25, 'rgba(255,176,58,0.55)'],
+    const pulse = 0.94 + 0.06 * Math.sin(t * 2.1);
+    const hg = radGrad(ctx, HUB.x, HUB.y, 0, 96 * pulse, [
+      [0, 'rgba(255,226,168,0.95)'],
+      [0.18, 'rgba(255,186,80,0.6)'],
+      [0.55, 'rgba(255,140,40,0.16)'],
       [1, 'rgba(255,120,20,0)'],
     ]);
     ctx.fillStyle = hg;
     ctx.beginPath();
-    ctx.arc(HUB.x, HUB.y, 84 * hubP, 0, TAU);
+    ctx.arc(HUB.x, HUB.y, 96 * pulse, 0, TAU);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(HUB.x, HUB.y, 13, 0, TAU);
-    ctx.fillStyle = '#FFF0D2';
+    ctx.arc(HUB.x, HUB.y, 34, 0, TAU);
+    ctx.strokeStyle = hexA(C.amber, 0.45);
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(HUB.x, HUB.y, 12, 0, TAU);
+    ctx.fillStyle = '#FFF4DC';
     ctx.fill();
     ctx.restore();
 
-    // meters
-    const rowY = [1236, 1342, 1448];
+    /* ------------------------------------------------------------- meters -- */
+    const rowY = [1240, 1346, 1452];
+    const TX = 424;
+    const TW = 640;
     meters.forEach((m, i) => {
-      const y = rowY[i];
+      const yy = rowY[i];
       const a = clamp((t - m.at + 0.35) / 0.45);
       if (a <= 0) return;
-      const fill = EASE.outCubic(clamp((t - m.at + 0.3) / 1.1)) * m.v;
+      const prog = EASE.outCubic(clamp((t - m.at + 0.3) / 1.1));
+      const fill = prog * m.v;
       ctx.save();
       ctx.globalAlpha = a;
 
-      txt(ctx, m.name, M, y, { size: 34, font: F.semi, color: C.bone });
-      tracking(ctx, m.sub, M, y + 30, {
-        size: 18, font: F.num6, track: 3, color: hexA(C.bone, 0.42),
+      txt(ctx, m.name, M, yy, { size: 33, font: F.semi, color: C.bone });
+      tracking(ctx, m.sub, M, yy + 28, {
+        size: 17, font: F.num6, track: 3, color: hexA(C.bone, 0.4),
       });
 
-      const bx = 420;
-      const bw = 700;
-      fillRR(ctx, bx, y - 16, bw, 22, 11, 'rgba(255,255,255,0.07)');
-      const g2 = linGrad(ctx, bx, 0, bx + bw, 0, [
-        [0, hexA(C.sky, 0.85)],
-        [1, hexA(C.mint, 0.95)],
-      ]);
+      // track with inner shadow
+      fillRR(ctx, TX, yy - 14, TW, 20, 10, '#0C1017');
       ctx.save();
-      ctx.shadowColor = hexA(C.sky, 0.5);
-      ctx.shadowBlur = 18;
-      if (fill > 0.01) fillRR(ctx, bx, y - 16, bw * fill, 22, 11, g2);
+      ctx.beginPath();
+      rr(ctx, TX, yy - 14, TW, 20, 10);
+      ctx.clip();
+      ctx.fillStyle = linGrad(ctx, 0, yy - 14, 0, yy + 6, [
+        [0, 'rgba(0,0,0,0.65)'],
+        [1, 'rgba(0,0,0,0)'],
+      ]);
+      ctx.fillRect(TX, yy - 14, TW, 20);
       ctx.restore();
+      strokeRR(ctx, TX + 1, yy - 13, TW - 2, 18, 9, 'rgba(255,255,255,0.09)', 1.5);
 
-      txt(ctx, `${Math.round(fill * 100)}%`, W - M, y + 2, {
+      // fill
+      if (fill > 0.01) {
+        const fg = linGrad(ctx, TX, 0, TX + TW, 0, [
+          [0, hexA(C.sky, 0.95)],
+          [1, hexA(C.mint, 0.95)],
+        ]);
+        ctx.save();
+        ctx.shadowColor = hexA(C.sky, 0.5);
+        ctx.shadowBlur = 20;
+        fillRR(ctx, TX, yy - 14, TW * fill, 20, 10, fg);
+        ctx.restore();
+        // leading edge
+        ctx.beginPath();
+        ctx.arc(TX + TW * fill, yy - 4, 7, 0, TAU);
+        ctx.fillStyle = '#EAF6FF';
+        ctx.shadowColor = hexA(C.mint, 0.9);
+        ctx.shadowBlur = 18;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      txt(ctx, `${Math.round(fill * 100)}%`, W - M, yy + 2, {
         size: 36, font: F.num, color: C.amber, align: 'right',
       });
       ctx.restore();
     });
 
-    // after-effect note
+    /* -------------------------------------------------------------- notes -- */
     const nA = clamp((t - 5.8) / 0.45);
     if (nA > 0) {
       ctx.save();
       ctx.globalAlpha = nA;
-      tracking(ctx, 'EFEK 1 MALAM KURANG TIDUR', M, 1560, {
-        size: 24, font: F.num6, track: 5, color: hexA(C.red, 0.9),
+      tracking(ctx, 'EFEK 1 MALAM KURANG TIDUR', M, 1556, {
+        size: 24, font: F.num6, track: 5, color: hexA(C.red, 0.92),
       });
       const w = measure(ctx, 'EFEK 1 MALAM KURANG TIDUR', 24, F.num6, 5);
-      ctx.beginPath();
-      ctx.moveTo(M + w + 62, 1551);
-      ctx.lineTo(M + w + 62 + 140, 1551);
-      ctx.strokeStyle = hexA(C.red, 0.4);
-      ctx.lineWidth = 2;
-      ctx.stroke();
+      const lg = linGrad(ctx, M + w + 40, 0, M + w + 250, 0, [
+        [0, hexA(C.red, 0.5)],
+        [1, 'rgba(255,75,59,0)'],
+      ]);
+      ctx.fillStyle = lg;
+      ctx.fillRect(M + w + 40, 1549, 210, 2);
       ctx.restore();
     }
 
-    // appetite up / focus down
     const pairs = [
       { at: 8.1, label: 'RASA LAPAR', value: 'NAIK', color: C.amber, x: M },
-      { at: 9.75, label: 'FOKUS', value: 'TURUN', color: C.red, x: 760 },
+      { at: 9.75, label: 'FOKUS', value: 'TURUN', color: C.red, x: 772 },
     ];
     pairs.forEach((p2) => {
       const a = clamp((t - p2.at) / 0.45);
@@ -208,10 +256,10 @@ export default {
       ctx.save();
       ctx.globalAlpha = a;
       const dy = (1 - EASE.outCubic(a)) * 18;
-      tracking(ctx, p2.label, p2.x, 1642 + dy, {
-        size: 22, font: F.num6, track: 5, color: hexA(C.bone, 0.55),
+      tracking(ctx, p2.label, p2.x, 1662 + dy, {
+        size: 21, font: F.num6, track: 5, color: hexA(C.bone, 0.5),
       });
-      txt(ctx, p2.value, p2.x, 1694 + dy, {
+      txt(ctx, p2.value, p2.x, 1714 + dy, {
         size: 46, font: F.num, color: p2.color, track: -1,
       });
       ctx.restore();
