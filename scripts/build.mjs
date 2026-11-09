@@ -4,9 +4,11 @@ import { spawn } from 'node:child_process';
 import { buildTimeline } from '../src/timeline.mjs';
 import { ffmpegPath } from '../src/engine/ffmpeg.mjs';
 
-const OUT = path.join(process.cwd(), 'out');
-const FINAL = path.join(OUT, 'CPI-NAYSI-1440x2560-90fps.mp4');
+const OUT = path.join(process.cwd(), process.env.OUT_DIR || 'out');
+const FINAL = path.join(OUT, process.env.OUT_NAME || 'CPI-NAYSI-1440x2560-90fps.mp4');
 const WORKERS = Number(process.env.WORKERS || 2);
+const CRF = String(process.env.CRF || 18);
+const PRESET = process.env.PRESET || 'superfast';
 const tl = buildTimeline();
 const FRAMES = Math.round(tl.total * tl.fps);
 
@@ -40,7 +42,7 @@ async function main() {
   await Promise.all(
     chunks.map((c) =>
       node(
-        ['src/render.mjs', '--from', String(c.from), '--to', String(c.to), '--preset', 'superfast', '--crf', '18', '--out', c.file],
+        ['src/render.mjs', '--from', String(c.from), '--to', String(c.to), '--preset', PRESET, '--crf', CRF, '--out', c.file],
         true,
       ),
     ),
@@ -49,7 +51,7 @@ async function main() {
   const list = path.join(OUT, 'parts.txt');
   fs.writeFileSync(list, chunks.map((c) => `file '${c.file}'`).join('\n'));
   const silent = path.join(OUT, 'silent.mp4');
-  await run(ffmpegPath(), ['-y', '-hide_banner', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', silent]);
+  await run(ffmpegPath(), ['-y', '-hide_banner', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', path.join(OUT, 'silent.mp4')]);
 
   console.log('· muxing audio');
   await run(
