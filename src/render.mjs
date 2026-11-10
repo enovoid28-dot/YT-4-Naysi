@@ -8,7 +8,7 @@ import { W, H, FPS, C, M, txt, tracking, linGrad, hexA, fillRR } from './engine/
 import {
   initFilm, drawGrain, drawVignette, drawScrim, drawLeak, drawFlash, drawDust, drawFilm,
 } from './engine/film.mjs';
-import { buildCaption, drawCaption } from './engine/caption.mjs';
+import { buildCaption, drawCaption, drawCard } from './engine/caption.mjs';
 import { buildTimeline, sceneAt } from './timeline.mjs';
 import { SCENES, BRAND, SERIES } from './script.mjs';
 import { clamp, lerp, EASE } from './engine/anim.mjs';
@@ -26,14 +26,14 @@ const timeline = buildTimeline();
 const captionLayouts = new Map();
 // fixed anchor for the caption block: the first line never moves, whatever the
 // number of lines in the sentence.
-const CAPTION_TOP = 1832;
+const CAPTION_TOP = 1806;
 
 function buildLayouts(ctx) {
   for (const s of timeline.scenes) {
     captionLayouts.set(
       s.id,
       s.captions.map((g) =>
-        buildCaption(ctx, g, { maxWidth: W - 2 * 118, size: 90, font: F.semi }),
+        buildCaption(ctx, g, { maxWidth: W - 2 * 88, size: 94, font: F.semi, maxLines: 2 }),
       ),
     );
   }
@@ -126,20 +126,27 @@ function drawFrame(ctx, frame) {
   ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = C.ink0;
   ctx.fillRect(0, 0, W, H);
-  // handheld breathing so static frames still feel alive
-  const bx = Math.sin(t * 0.37) * 1.7 + Math.sin(t * 1.13 + 1.2) * 0.6;
-  const by = Math.cos(t * 0.29) * 1.9 + Math.sin(t * 0.91) * 0.5;
+  // camera: every scene gets a slow move (push in or pull out, alternating),
+  // so even a still composition breathes like a shot instead of a slide.
+  const bx = Math.sin(t * 0.37) * 1.4 + Math.sin(t * 1.13 + 1.2) * 0.5;
+  const by = Math.cos(t * 0.29) * 1.6 + Math.sin(t * 0.91) * 0.45;
+  const dir = index % 2 === 0 ? 1 : -1;
+  const zp = EASE.smooth(clamp(local / Math.max(0.2, scene.dur)));
+  const zoom = dir * (0.058 * zp - 0.014);
+  const camDx = Math.sin(local * 0.28 + index * 1.7) * 9 + bx;
+  const camDy = Math.cos(local * 0.21 + index) * 7 + by;
+  const cam = { p: zp, dx: camDx * 0.55, dy: camDy * 0.55, zoom: zoom * 0.32 };
   ctx.save();
-  ctx.translate(W / 2, H / 2);
-  ctx.scale(1.004, 1.004);
-  ctx.translate(-W / 2 + bx, -H / 2 + by);
-  if (mod) mark('scene', () => mod.draw(ctx, local, scene, { t, frame, index }));
+  ctx.translate(W / 2 + camDx, H / 2 + camDy);
+  ctx.scale(1 + zoom, 1 + zoom);
+  ctx.translate(-W / 2, -H / 2);
+  if (mod) mark('scene', () => mod.draw(ctx, local, scene, { t, frame, index, cam }));
   else {
     ctx.fillStyle = C.ink1;
     ctx.fillRect(0, 0, W, H);
     txt(ctx, scene.key.toUpperCase(), W / 2, 800, { size: 90, font: F.head, color: C.bone, align: 'center' });
   }
-  ctx.restore(); // camera breathing
+  ctx.restore();
   ctx.restore();
 
   // captions
@@ -158,19 +165,15 @@ function drawFrame(ctx, frame) {
     }
   });
   const layouts = captionLayouts.get(scene.id);
-  mark('captions', () => scene.captions.forEach((group, gi) => {
-    const first = group.words[0].start;
-    const last = group.words[group.words.length - 1].end;
-    const nextGroup = scene.captions[gi + 1];
-    const nextStart = nextGroup?.words[0].start ?? Infinity;
-    const nextFrom = nextGroup ? nextStart - 0.16 : Infinity;
-    const showFrom = first - 0.16;
-    // never overlap two sentences: the outgoing caption is finished before the
-    // incoming one starts fading in, so no line can appear to double or shift.
-    const showTo = Math.min(last + 0.16, nextStart - 0.03, nextFrom + 0.02);
-    const a = clamp((local - showFrom) / 0.12) * clamp((showTo - local) / 0.12);
+  mark('captions', () => scene.captions.forEach((card, gi) => {
+    // card windows come from the measured alignment: a card opens on its
+    // sentence and closes inside the pause that follows it.
+    const from = card.from ?? card.words[0].start - 0.14;
+    const to = card.to ?? card.words[card.words.length - 1].end + 0.18;
+    if (local < from - 0.02 || local > to + 0.02) return;
+    const a = clamp((local - from) / 0.15) * clamp((to - local) / 0.13);
     if (a <= 0.002) return;
-    drawCaption(ctx, layouts[gi], local, {
+    drawCard(ctx, layouts[gi], local - from, {
       top: CAPTION_TOP,
       alphaMul: a,
       ...(scene.theme === 'light'
@@ -181,10 +184,17 @@ function drawFrame(ctx, frame) {
 
   mark('chrome', () => drawChrome(ctx, scene, local, t, index));
 
-  // transitions
+  // cuts: the incoming scene opens under a short veil of its own paper/ink,
+  // which reads as a clean editorial cut rather than a flash
   if (index > 0) {
-    const f = Math.max(0, 1 - local / 0.16);
-    drawFlash(ctx, 0.32 * f * f, scene.key === 'oil' ? '#FFE2B8' : '#FFFFFF');
+    const f = Math.max(0, 1 - local / 0.24);
+    if (f > 0) {
+      ctx.save();
+      ctx.globalAlpha = f * f * 0.92;
+      ctx.fillStyle = scene.theme === 'light' ? '#F4ECDC' : '#06090C';
+      ctx.fillRect(0, 0, W, H);
+      ctx.restore();
+    }
   }
   drawLeak(ctx, t, index > 0 ? Math.max(0, 0.55 - local * 0.9) : 0, C.amber);
 

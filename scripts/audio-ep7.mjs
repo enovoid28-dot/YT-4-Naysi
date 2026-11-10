@@ -1,8 +1,10 @@
 /**
  * Episode 7 soundtrack — "Jakarta Tidak Tenggelam, Tapi Ambles".
- * Same procedural engine, rebuilt around water and concrete: a slow minor bed,
- * drips, a pump that will not stop, waves against a wall, and a low rumble for
- * the ground going down. Writes assets/audio/mix-ep7.wav.
+ *
+ * Rebuilt for clarity: the voice sits on top and nothing else lives in its
+ * band. No sub-rumble under the narration (that is what made the last mix read
+ * as a snore), no bus soft-clip, and the bed is written around the measured
+ * card boundaries so the music breathes with the sentences.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -10,7 +12,7 @@ import { buildTimeline, readWav } from '../src/timeline.mjs';
 
 const SR = 48000;
 const tl = buildTimeline();
-const N = Math.ceil((tl.total + 0.5) * SR);
+const N = Math.ceil((tl.total + 0.4) * SR);
 
 const music = [new Float32Array(N), new Float32Array(N)];
 const sfx = [new Float32Array(N), new Float32Array(N)];
@@ -19,9 +21,7 @@ const vo = [new Float32Array(N), new Float32Array(N)];
 const TAU = Math.PI * 2;
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
-/* ------------------------------- synthesis ------------------------------- */
-
-let seed = 12345;
+let seed = 20251109;
 const rand = () => {
   seed = (seed * 1664525 + 1013904223) >>> 0;
   return seed / 4294967296;
@@ -44,18 +44,15 @@ const addTone = (buf, t0, dur, make, o = {}) => {
   }
 };
 
-const sine = (f, ph = 0) => (t) => Math.sin(TAU * f * t + ph);
 const tri = (f) => (t) => {
   const p = (t * f) % 1;
   return 4 * Math.abs(p - 0.5) - 1;
 };
-const saw = (f) => (t) => 2 * ((t * f) % 1) - 1;
 
-/** one-pole filters applied offline to a mono generator */
 const lp = (cut) => {
   let y = 0;
   return (x) => {
-    const a = clamp(TAU * cut / SR, 0, 1);
+    const a = clamp((TAU * cut) / SR, 0, 1);
     y += a * (x - y);
     return y;
   };
@@ -73,88 +70,67 @@ const noiseGen = () => {
 
 /* --------------------------------- score --------------------------------- */
 
-const BPM = 72;
+const BPM = 70;
 const BEAT = 60 / BPM;
 const BAR = BEAT * 4;
 const CHORDS = [
-  [110.0, 130.81, 164.81, 220.0], // Am
-  [87.31, 110.0, 130.81, 174.61], // F
+  [110.0, 138.59, 164.81, 220.0], // Am
+  [87.31, 130.81, 174.61, 220.0], // F
   [98.0, 123.47, 146.83, 196.0], // G
-  [73.42, 110.0, 146.83, 220.0], // Dm/A
+  [73.42, 110.0, 146.83, 220.0], // Dm
 ];
 
 const totalBars = Math.ceil(tl.total / BAR);
-const padBuf = [new Float32Array(N), new Float32Array(N)];
-const musicTarget = [new Float32Array(N), new Float32Array(N)];
 
 function renderMusic() {
+  const pad = [new Float32Array(N), new Float32Array(N)];
   for (let bar = 0; bar < totalBars; bar++) {
     const t0 = bar * BAR;
     if (t0 > tl.total + 1) break;
     const chord = CHORDS[bar % CHORDS.length];
-    const full = bar >= 3;
-    // pad
-    addTone(padBuf, t0, BAR * 1.08, (t) => {
-      const att = clamp(t / 0.9);
-      const rel = clamp((BAR * 1.08 - t) / 1.1);
+    const full = bar >= 2;
+    addTone(pad, t0, BAR * 1.06, (t) => {
+      const att = clamp(t / 1.1);
+      const rel = clamp((BAR * 1.06 - t) / 1.3);
       let v = 0;
       chord.forEach((f, i) => {
-        const amp = i === 0 ? 0.5 : 0.28;
-        v += amp * Math.sin(TAU * f * t + Math.sin(t * 0.7 + i) * 0.4);
-        v += amp * 0.35 * Math.sin(TAU * f * 2.002 * t);
+        v += (i === 0 ? 0.5 : 0.26) * Math.sin(TAU * f * t + Math.sin(t * 0.5 + i) * 0.3);
       });
-      return (v / 4) * att * rel * 0.5;
-    }, { gain: 0.34 });
+      return (v / 4) * att * rel * 0.55;
+    }, { gain: 0.30 });
 
-    // sub pulses on 8ths
-    for (let b = 0; b < 8; b++) {
-      const bt = t0 + b * (BEAT / 2);
-      if (bt > tl.total) break;
-      const f = chord[0] / 2;
-      addTone(musicTarget, bt, 0.5, (t) => {
-        const e = Math.exp(-t * 7) * clamp(t / 0.01);
-        return Math.sin(TAU * f * t) * e * 0.5;
-      }, { gain: 0.2 });
-    }
+    // a heartbeat under the argument, not a rumble
+    [0, 2].forEach((b) => {
+      addTone(music, t0 + b * BEAT, 0.42, (t) => {
+        const f = 96 * Math.exp(-t * 18) + 62;
+        return Math.sin(TAU * f * t) * Math.exp(-t * 9);
+      }, { gain: full ? 0.16 : 0.09 });
+    });
 
     if (full) {
-      // kick on 1 and 3
-      [0, 2].forEach((b) => {
-        addTone(musicTarget, t0 + b * BEAT, 0.34, (t) => {
-          const f = 110 * Math.exp(-t * 26) + 42;
-          return Math.sin(TAU * f * t) * Math.exp(-t * 11) * 0.9;
-        }, { gain: 0.3 });
-      });
-      // hats on the off-beats
-      [1, 3, 5, 7].forEach((b) => {
+      // soft pluck on the off-beats, high enough to stay clear of the voice
+      for (let b = 0; b < 8; b += 2) {
+        const f = chord[(b / 2) % chord.length] * 4;
+        addTone(music, t0 + b * (BEAT / 2), 0.5, (t) => {
+          const e = Math.exp(-t * 10);
+          return (tri(f)(t) * 0.4 + Math.sin(TAU * f * t) * 0.6) * e;
+        }, { gain: 0.05, pan: b % 4 ? 0.25 : -0.25 });
+      }
+      // brushed noise, very quiet
+      for (let b = 1; b < 8; b += 2) {
         let n = noiseGen();
-        addTone(musicTarget, t0 + b * (BEAT / 2), 0.12, (t) => {
-          const v = n() * Math.exp(-t * 55);
-          return v * 0.5;
-        }, { gain: 0.12, pan: b % 4 === 0 ? -0.2 : 0.2 });
-      });
-      // arp pluck
-      for (let b = 0; b < 8; b++) {
-        const f = chord[b % chord.length] * 2;
-        addTone(musicTarget, t0 + b * (BEAT / 2), 0.6, (t) => {
-          const e = Math.exp(-t * 9);
-          return (tri(f)(t) * 0.5 + Math.sin(TAU * f * t) * 0.5) * e;
-        }, { gain: 0.055, pan: b % 2 ? 0.28 : -0.28 });
+        addTone(music, t0 + b * (BEAT / 2), 0.09, (t) => n() * Math.exp(-t * 60) * 0.4, {
+          gain: 0.05, pan: b % 4 === 1 ? -0.2 : 0.2,
+        });
       }
     }
   }
-
-  // gentle filtering + stereo width on pad
   for (let ch = 0; ch < 2; ch++) {
-    let f = lp(2600);
-    for (let i = 0; i < N; i++) {
-      const v = padBuf[ch][i];
-      music[ch][i] += f(v) + musicTarget[ch][i] * 0.9;
-    }
+    const f = lp(2400);
+    for (let i = 0; i < N; i++) music[ch][i] += f(pad[ch][i]);
   }
-  // fade in / out
-  const fadeIn = 2.2 * SR;
-  const fadeOut = 3.2 * SR;
+  const fadeIn = 2.0 * SR;
+  const fadeOut = 2.6 * SR;
   for (let i = 0; i < N; i++) {
     const g = Math.min(clamp(i / fadeIn), clamp((N - i) / fadeOut));
     music[0][i] *= g;
@@ -162,308 +138,181 @@ function renderMusic() {
   }
 }
 
-/* --------------------------------- sfx ---------------------------------- */
+/* ---------------------------------- sfx ---------------------------------- */
 
 const SFX = {
-  impact(t, g = 0.7) {
+  impact(t, g = 0.5) {
     let n = noiseGen();
-    addTone(sfx, t, 2.2, (x) => {
-      const f = 160 * Math.exp(-x * 8) + 32;
-      return Math.sin(TAU * f * x) * Math.exp(-x * 2.4) * 0.9 + n() * Math.exp(-x * 16) * 0.35;
+    addTone(sfx, t, 1.6, (x) => {
+      const f = 120 * Math.exp(-x * 9) + 48;
+      return Math.sin(TAU * f * x) * Math.exp(-x * 3.2) * 0.8 + n() * Math.exp(-x * 20) * 0.25;
     }, { gain: g });
   },
-  riser(t, g = 0.4, dur = 1.2) {
+  riser(t, g = 0.3, dur = 1.1) {
     let n = noiseGen();
     addTone(sfx, t, dur, (x) => {
       const p = x / dur;
-      const v = n() * p * p;
-      const f = 300 + 1400 * p * p;
-      return v * 0.6 + Math.sin(TAU * f * x) * 0.25 * p;
-    }, { gain: g, pan: 0 });
+      return (n() * 0.5 + Math.sin(TAU * (420 + 1600 * p * p) * x) * 0.2) * p * p;
+    }, { gain: g });
   },
-  /** fridge compressor + door seal: a low hum that breathes. */
-  hum(t, g = 0.3, dur = 4.0) {
+  /** one drop landing in water */
+  drip(t, g = 0.16, f = 1150) {
+    addTone(sfx, t, 0.26, (x) => {
+      const ff = f * (1 + 0.8 * Math.exp(-x * 80));
+      return Math.sin(TAU * ff * x) * Math.exp(-x * 30);
+    }, { gain: g, pan: -0.15 });
+  },
+  /** water arriving over sand — kept above 300 Hz so it never muddies the VO */
+  tide(t, g = 0.2, dur = 3.2) {
+    let n = noiseGen();
+    const f = lp(2400);
+    const hp = (x) => x;
     addTone(sfx, t, dur, (x) => {
       const p = clamp(x / dur);
-      const env = Math.min(1, x / 0.5) * Math.min(1, (dur - x) / 0.8);
-      const wob = 1 + Math.sin(TAU * 0.23 * x) * 0.006;
-      const v = Math.sin(TAU * 55 * x * wob) * 0.6
-        + Math.sin(TAU * 110 * x * wob) * 0.25
-        + Math.sin(TAU * 165.5 * x) * 0.08;
-      return v * env * (0.9 + 0.1 * Math.sin(TAU * 3.1 * x)) * (0.6 + 0.4 * p);
-    }, { gain: g, pan: 0 });
+      const env = Math.sin(Math.PI * p);
+      const wash = 0.55 + 0.45 * Math.sin(TAU * 0.5 * x + 1.1);
+      return hp(f(n())) * env * wash * 1.7;
+    }, { gain: g, pan: -0.28 });
   },
-  /** thermal printer chatter for the receipt beat. */
-  printer(t, n = 18, g = 0.12) {
-    for (let i = 0; i < n; i++) {
-      const at = t + i * 0.058 + (i % 3) * 0.006;
-      addTone(sfx, at, 0.05, (x) => Math.sin(TAU * (2100 + (i % 5) * 260) * x) * Math.exp(-x * 90), {
-        gain: g * (0.7 + ((i * 7) % 5) * 0.06), pan: (i % 2 ? 0.18 : -0.18),
-      });
-    }
-  },
-  /** single dry tick (a printed line landing). */
-  tick(t, g = 0.1, f = 1600) {
-    addTone(sfx, t, 0.05, (x) => Math.sin(TAU * f * x) * Math.exp(-x * 80), { gain: g, pan: 0.1 });
-  },
-  swish(t, g = 0.35, dur = 0.45) {
+  /** the borehole pump, heard through a wall: a mid whirr, no low hum */
+  pump(t, g = 0.16, dur = 5.0) {
+    addTone(sfx, t, dur, (x) => {
+      const env = Math.min(1, x / 0.7) * Math.min(1, (dur - x) / 0.9);
+      const wob = 1 + Math.sin(TAU * 0.6 * x) * 0.008;
+      const v = Math.sin(TAU * 148 * x * wob) * 0.5 + Math.sin(TAU * 296 * x) * 0.22
+        + Math.sin(TAU * 444 * x) * 0.10;
+      const chug = 0.8 + 0.2 * Math.sin(TAU * 5.2 * x);
+      return v * env * chug;
+    }, { gain: g, pan: 0.15 });
     let n = noiseGen();
     addTone(sfx, t, dur, (x) => {
-      const p = x / dur;
-      return n() * Math.sin(Math.PI * p) * 0.8;
-    }, { gain: g, pan: 0.3 });
+      const env = Math.min(1, x / 0.8) * Math.min(1, (dur - x) / 1.0);
+      return n() * 0.10 * env;
+    }, { gain: g, pan: 0.15 });
   },
-  blip(t, g = 0.3, f = 880) {
-    addTone(sfx, t, 0.22, (x) => Math.sin(TAU * f * x) * Math.exp(-x * 22), { gain: g, pan: -0.1 });
-    addTone(sfx, t, 0.22, (x) => Math.sin(TAU * f * 2 * x) * Math.exp(-x * 30) * 0.4, { gain: g, pan: 0.1 });
-  },
-  stamp(t, g = 0.65) {
+  /** ground giving way: filtered noise 90 Hz+, no sub */
+  rumble(t, g = 0.22, dur = 2.6) {
     let n = noiseGen();
-    addTone(sfx, t, 0.9, (x) => {
-      const f = 120 * Math.exp(-x * 22) + 48;
-      return Math.sin(TAU * f * x) * Math.exp(-x * 8) * 0.7 + n() * Math.exp(-x * 30) * 0.5;
+    const f = lp(180);
+    addTone(sfx, t, dur, (x) => {
+      const p = clamp(x / dur);
+      const env = Math.min(1, x / 0.5) * Math.min(1, (dur - x) / 0.9);
+      return f(n()) * env * 2.4;
     }, { gain: g });
   },
-  explosion(t, g = 0.9) {
-    let n = noiseGen();
-    addTone(sfx, t, 4.0, (x) => {
-      const f = 90 * Math.exp(-x * 4) + 28;
-      const sub = Math.sin(TAU * f * x) * Math.exp(-x * 1.6);
-      const crack = n() * Math.exp(-x * 2.2) * 0.9;
-      const tail = n() * Math.exp(-x * 0.8) * 0.22;
-      return sub * 0.8 + crack + tail;
+  slab(t, g = 0.34) {
+    addTone(sfx, t, 1.0, (x) => {
+      const f = 96 * Math.exp(-x * 12) + 52;
+      return Math.sin(TAU * f * x) * Math.exp(-x * 6);
     }, { gain: g });
-    let n2 = noiseGen();
-    addTone(sfx, t, 0.4, (x) => n2() * Math.exp(-x * 18) * 0.9, { gain: g * 0.6, pan: 0.4 });
-  },
-  paper(t, g = 0.3) {
     let n = noiseGen();
-    addTone(sfx, t, 0.5, (x) => n() * Math.exp(-x * 12) * Math.sin(Math.PI * clamp(x / 0.5)), { gain: g, pan: -0.2 });
+    addTone(sfx, t, 0.6, (x) => n() * Math.exp(-x * 16) * 0.4, { gain: g, pan: -0.2 });
   },
-  /** liquid pouring into glass. */
-  pour(t, g = 0.2, dur = 1.6) {
+  tick(t, g = 0.08, f = 1700) {
+    addTone(sfx, t, 0.05, (x) => Math.sin(TAU * f * x) * Math.exp(-x * 80), { gain: g, pan: 0.12 });
+  },
+  blip(t, g = 0.12, f = 760) {
+    addTone(sfx, t, 0.2, (x) => Math.sin(TAU * f * x) * Math.exp(-x * 24), { gain: g, pan: -0.1 });
+  },
+  chime(t, g = 0.16) {
+    [1318.5, 1975.5, 2637].forEach((f, i) =>
+      addTone(sfx, t + i * 0.02, 1.2, (x) => Math.sin(TAU * f * x) * Math.exp(-x * (3 + i)), {
+        gain: g * (1 - i * 0.25), pan: 0.2 - i * 0.2,
+      }));
+  },
+  pour(t, g = 0.16, dur = 2.2) {
     let n = noiseGen();
     const f = lp(4200);
     addTone(sfx, t, dur, (x) => {
       const p = clamp(x / dur);
-      const env = Math.min(1, x / 0.18) * Math.min(1, (dur - x) / 0.3);
-      const bub = 1 + 0.5 * Math.sin(TAU * (7 + 4 * Math.sin(x * 3.1)) * x);
+      const env = Math.min(1, x / 0.2) * Math.min(1, (dur - x) / 0.3);
+      const bub = 1 + 0.4 * Math.sin(TAU * (8 + 3 * Math.sin(x * 3)) * x);
       return f(n()) * env * bub * (0.6 + 0.4 * p);
-    }, { gain: g, pan: -0.15 });
+    }, { gain: g, pan: -0.2 });
   },
-  /** liquid draining out of the same glass. */
-  drain(t, g = 0.2, dur = 1.4) {
-    let n = noiseGen();
-    const f = lp(2600);
-    addTone(sfx, t, dur, (x) => {
-      const p = clamp(x / dur);
-      const env = Math.min(1, x / 0.12) * Math.min(1, (dur - x) / 0.35);
-      return f(n()) * env * (1 - 0.7 * p) * (0.7 + 0.3 * Math.sin(TAU * 9 * x));
-    }, { gain: g, pan: 0.2 });
-  },
-  /** hands sweeping backwards across a dial. */
-  sweep(t, g = 0.24, dur = 0.8) {
-    let n = noiseGen();
-    addTone(sfx, t, dur, (x) => {
-      const p = clamp(x / dur);
-      const f = 900 - 620 * p;
-      const env = Math.sin(Math.PI * p);
-      return (n() * 0.35 + Math.sin(TAU * f * x) * 0.3) * env;
-    }, { gain: g, pan: 0.25 });
-  },
-  chime(t, g = 0.28) {
-    [1318.5, 1975.5, 2637].forEach((f, i) =>
-      addTone(sfx, t + i * 0.02, 1.4, (x) => Math.sin(TAU * f * x) * Math.exp(-x * (3 + i)), { gain: g * (1 - i * 0.25), pan: 0.2 - i * 0.2 }),
-    );
-  },
-  alarm(t, g = 0.5) {
-    [0, 0.17, 0.34].forEach((d, i) => {
-      addTone(sfx, t + d, 0.14, (x) => {
-        const e = Math.min(1, x / 0.004) * Math.exp(-x * 24);
-        return (Math.sin(TAU * 1180 * x) * 0.6 + Math.sin(TAU * 1770 * x) * 0.38) * e;
-      }, { gain: g * (i === 0 ? 1 : 0.78) });
-    });
-  },
-  thud(t, g = 0.4) {
-    addTone(sfx, t, 0.6, (x) => {
-      const f = 90 * Math.exp(-x * 14) + 40;
-      return Math.sin(TAU * f * x) * Math.exp(-x * 9);
-    }, { gain: g });
-    let n = noiseGen();
-    addTone(sfx, t, 0.18, (x) => n() * Math.exp(-x * 40) * 0.4, { gain: g });
-  },
-  flyby(t, g = 0.35) {
-    let n = noiseGen();
-    addTone(sfx, t, 3.4, (x) => {
-      const p = x / 3.4;
-      const amt = Math.sin(Math.PI * p);
-      const f = 220 + 380 * Math.sin(Math.PI * p);
-      return (n() * 0.5 + Math.sin(TAU * f * x) * 0.3) * amt * amt;
-    }, { gain: g, pan: -0.5 });
-  },
-  swell(t, g = 0.3, dur = 2.6) {
+  swell(t, g = 0.12, dur = 2.8) {
     addTone(sfx, t, dur, (x) => {
       const p = clamp(x / dur);
       const env = Math.sin(Math.PI * p);
       let v = 0;
       [110, 164.81, 220, 329.63].forEach((f, i) => {
-        v += Math.sin(TAU * f * x + i) * (i === 0 ? 1 : 0.6);
+        v += Math.sin(TAU * f * x + i) * (i === 0 ? 1 : 0.55);
       });
       return (v / 4) * env;
     }, { gain: g });
   },
-  /** one drop into standing water. */
-  drip(t, g = 0.2, f = 1180) {
-    addTone(sfx, t, 0.3, (x) => {
-      const ff = f * (1 + 0.9 * Math.exp(-x * 90));
-      return Math.sin(TAU * ff * x) * Math.exp(-x * 26);
-    }, { gain: g, pan: -0.12 });
-  },
-  /** deep borehole pump: a motor you can feel through the floor. */
-  pump(t, g = 0.22, dur = 5.0) {
-    addTone(sfx, t, dur, (x) => {
-      const env = Math.min(1, x / 0.7) * Math.min(1, (dur - x) / 1.0);
-      const wob = 1 + Math.sin(TAU * 0.7 * x) * 0.01;
-      const v = Math.sin(TAU * 48 * x * wob) * 0.55
-        + Math.sin(TAU * 96 * x * wob) * 0.3
-        + Math.sin(TAU * 193 * x) * 0.10;
-      const chug = 0.75 + 0.25 * Math.sin(TAU * 4.5 * x);
-      return v * env * chug;
-    }, { gain: g, pan: 0.1 });
-    let n = noiseGen();
-    addTone(sfx, t, dur, (x) => {
-      const env = Math.min(1, x / 0.9) * Math.min(1, (dur - x) / 1.2);
-      return n() * 0.22 * env;
-    }, { gain: g, pan: 0.1 });
-  },
-  /** water arriving and leaving, over sand. */
-  tide(t, g = 0.24, dur = 3.4) {
-    let n = noiseGen();
-    const f = lp(1500);
-    addTone(sfx, t, dur, (x) => {
-      const p = clamp(x / dur);
-      const env = Math.sin(Math.PI * p);
-      const wash = 0.55 + 0.45 * Math.sin(TAU * 0.55 * x + 1.2);
-      return f(n()) * env * wash * 1.6;
-    }, { gain: g, pan: -0.25 });
-  },
-  /** the ground itself, giving way. */
-  rumble(t, g = 0.35, dur = 3.0) {
-    let n = noiseGen();
-    const f = lp(120);
-    addTone(sfx, t, dur, (x) => {
-      const p = clamp(x / dur);
-      const env = Math.min(1, x / 0.5) * Math.min(1, (dur - x) / 1.0);
-      return f(n()) * env * 3.2 + Math.sin(TAU * 31 * x) * env * 0.18;
-    }, { gain: g, pan: 0.0 });
-  },
-  /** concrete: a heavy slab landing. */
-  slab(t, g = 0.4) {
-    addTone(sfx, t, 1.2, (x) => {
-      const f = 74 * Math.exp(-x * 10) + 40;
-      return Math.sin(TAU * f * x) * Math.exp(-x * 5);
-    }, { gain: g });
-    let n = noiseGen();
-    addTone(sfx, t, 0.7, (x) => n() * Math.exp(-x * 12) * 0.5, { gain: g, pan: -0.2 });
-  },
-  counter(t, g = 0.16) {
-    for (let i = 0; i < 7; i++) {
-      addTone(sfx, t + i * 0.09, 0.06, (x) => Math.sin(TAU * 1400 * x) * Math.exp(-x * 60), { gain: g, pan: 0.2 });
-    }
-  },
-};
-
-/* ------------------------------- timeline -------------------------------- */
-
-const w = (scene, i, re) => {
-  const group = scene.captions[i];
-  if (!group) return null;
-  if (!re) return group.words[0].start;
-  return group.words.find((x) => re.test(x.text))?.start ?? null;
 };
 
 function renderSFX() {
   const S = (i) => tl.scenes[i];
-
-  // cuts: a wash into each scene, a felt thud on the landing
   tl.scenes.forEach((sc, i) => {
     if (i === 0) return;
-    SFX.riser(sc.start - 0.8, 0.15, 0.8);
-    SFX.impact(sc.start, 0.26);
-    SFX.tide(sc.start - 0.2, 0.10, 1.2);
+    SFX.riser(sc.start - 0.75, 0.12, 0.75);
+    SFX.impact(sc.start, 0.22);
   });
 
-  // 01 JAKARTA UTARA — the bay at dusk, then the stamp that says it out loud
+  // 01 the bay, then the claim
   const s1 = S(0);
-  SFX.tide(s1.start + 0.1, 0.18, 4.2);
-  const d1 = [0.9, 2.3, 3.9, 5.4];
-  d1.forEach((d, i) => SFX.drip(s1.start + d, 0.10, 980 + i * 90));
-  SFX.swell(s1.start + 2.0, 0.09, 3.0);
-  SFX.stamp(s1.start + 6.2, 0.34);
+  SFX.tide(s1.start + 0.1, 0.16, 4.0);
+  [1.0, 2.4, 3.8].forEach((d, i) => SFX.drip(s1.start + d, 0.07, 950 + i * 90));
+  SFX.swell(s1.start + 1.4, 0.09, 2.8);
+  SFX.slab(s1.start + 5.0, 0.20);
 
-  // 02 DUA PULUH LIMA — the tape runs out, then the slice comes off the bottom
+  // 02 the tape, the ticks, the slice
   const s2 = S(1);
-  SFX.sweep(s2.start + 0.5, 0.18, 0.9);
-  for (let k = 0; k < 5; k++) SFX.tick(s2.start + 1.3 + k * 0.42, 0.07, 1500 - k * 50);
-  SFX.paper(s2.start + 0.2, 0.16);
-  SFX.slab(s2.start + 3.1, 0.26);
-  SFX.blip(s2.start + 8.4, 0.10, 420);
+  for (let k = 0; k < 5; k++) SFX.tick(s2.start + 1.2 + k * 0.4, 0.06, 1500 - k * 40);
+  SFX.slab(s2.start + 3.1, 0.22);
+  SFX.blip(s2.start + 4.6, 0.09, 430);
+  SFX.chime(s2.start + 6.4, 0.07);
 
-  // 03 SUMBERNYA — a pump starts up behind the house and does not stop
+  // 03 the pump starts and does not stop
   const s3 = S(2);
-  SFX.rumble(s3.start + 0.2, 0.16, 2.0);
-  SFX.pump(s3.start + 2.8, 0.20, 7.6);
-  const d3 = [3.6, 5.1, 6.4, 7.8, 9.2, 10.4];
-  d3.forEach((d, i) => SFX.drip(s3.start + d, 0.07, 760 + (i % 3) * 120));
-  SFX.blip(s3.start + 4.4, 0.11, 520);
+  SFX.rumble(s3.start + 0.3, 0.12, 1.8);
+  SFX.pump(s3.start + 5.4, 0.15, 6.6);
+  [6.2, 7.4, 8.6, 9.8, 10.8].forEach((d, i) => SFX.drip(s3.start + d, 0.05, 800 + (i % 3) * 110));
+  SFX.blip(s3.start + 8.8, 0.09, 520);
 
-  // 04 BANDINGKAN — one small tick, one long fall, then the ratio
+  // 04 the sea is a hairline, the ground is a cliff
   const s4 = S(3);
-  SFX.blip(s4.start + 1.4, 0.10, 1320);
-  SFX.rumble(s4.start + 3.4, 0.24, 2.6);
-  SFX.thud(s4.start + 4.4, 0.20);
-  SFX.riser(s4.start + 5.2, 0.16, 0.8);
-  SFX.stamp(s4.start + 6.0, 0.30);
-  SFX.tide(s4.start + 8.6, 0.10, 2.4);
+  SFX.blip(s4.start + 1.4, 0.08, 1320);
+  SFX.rumble(s4.start + 2.8, 0.16, 2.2);
+  SFX.slab(s4.start + 4.0, 0.18);
+  SFX.riser(s4.start + 5.0, 0.12, 0.7);
+  SFX.slab(s4.start + 5.6, 0.24);
 
-  // 05 MANGKUK — water finds the middle
+  // 05 the bowl fills
   const s5 = S(4);
-  SFX.tide(s5.start + 0.4, 0.20, 3.6);
-  SFX.blip(s5.start + 3.3, 0.12, 380);
-  SFX.rumble(s5.start + 2.6, 0.18, 2.4);
-  const d5 = [6.4, 7.2, 8.1, 9.0];
-  d5.forEach((d, i) => SFX.drip(s5.start + d, 0.07, 700 + i * 110));
+  SFX.tide(s5.start + 0.4, 0.17, 3.4);
+  SFX.blip(s5.start + 1.1, 0.09, 380);
+  SFX.rumble(s5.start + 2.2, 0.12, 1.8);
+  [3.4, 4.2, 5.0].forEach((d, i) => SFX.drip(s5.start + d, 0.05, 700 + i * 120));
 
-  // 06 TEMBOK — a slab of concrete, the sea against it, and the wall going up
+  // 06 the wall, the sea against it, the ground going down
   const s6 = S(5);
-  SFX.slab(s6.start + 0.3, 0.36);
-  SFX.tide(s6.start + 0.8, 0.18, 4.4);
-  for (let k = 0; k < 3; k++) SFX.tick(s6.start + 3.7 + k * 0.5, 0.08, 1600 + k * 120);
-  SFX.blip(s6.start + 6.4, 0.11, 300);
-  SFX.rumble(s6.start + 8.4, 0.26, 2.6);
+  SFX.slab(s6.start + 0.3, 0.3);
+  SFX.tide(s6.start + 0.9, 0.15, 4.0);
+  [3.5, 4.0, 4.5].forEach((d, i) => SFX.tick(s6.start + d, 0.07, 1500 + i * 130));
+  SFX.rumble(s6.start + 6.2, 0.18, 2.2);
 
-  // 07 2050 — the water arrives over the rooftops
+  // 07 the water arrives
   const s7 = S(6);
-  SFX.tide(s7.start + 0.9, 0.22, 4.0);
-  SFX.rumble(s7.start + 0.2, 0.20, 2.2);
-  SFX.riser(s7.start + 2.8, 0.16, 0.9);
-  SFX.stamp(s7.start + 3.6, 0.28);
-  SFX.paper(s7.start + 6.4, 0.14);
-  SFX.swell(s7.start + 7.4, 0.10, 2.4);
+  SFX.tide(s7.start + 0.6, 0.18, 4.2);
+  SFX.rumble(s7.start + 0.2, 0.12, 2.0);
+  SFX.riser(s7.start + 3.6, 0.10, 0.8);
+  SFX.slab(s7.start + 4.2, 0.22);
+  SFX.swell(s7.start + 7.2, 0.09, 2.2);
 
-  // 08 KELUAR — the tap, the valve closing, then the line
+  // 08 the tap, the valve, the line
   const s8 = S(7);
-  SFX.pour(s8.start + 0.4, 0.15, 2.4);
-  [1.4, 2.6, 3.8, 5.0].forEach((d, i) => SFX.drip(s8.start + d, 0.08, 1100 + i * 70));
-  SFX.thud(s8.start + 1.6, 0.18);
-  SFX.slab(s8.start + 2.2, 0.20);
-  SFX.riser(s8.start + 6.6, 0.12, 0.8);
-  SFX.swell(s8.start + 7.4, 0.14, 3.4);
-  SFX.chime(s8.start + 9.0, 0.08);
-  SFX.tide(s8.start + 10.0, 0.08, 3.0);
+  SFX.pour(s8.start + 0.4, 0.13, 2.6);
+  [1.4, 2.4, 3.4, 4.4].forEach((d, i) => SFX.drip(s8.start + d, 0.06, 1100 + i * 70));
+  SFX.slab(s8.start + 2.0, 0.16);
+  SFX.riser(s8.start + 6.8, 0.10, 0.8);
+  SFX.swell(s8.start + 7.6, 0.13, 3.2);
+  SFX.chime(s8.start + 9.2, 0.07);
 }
 
-/* ------------------------------- VO load --------------------------------- */
+/* ---------------------------------- vo ----------------------------------- */
 
 function loadVO() {
   tl.scenes.forEach((sc) => {
@@ -481,8 +330,31 @@ function loadVO() {
 
 /* --------------------------------- mix ----------------------------------- */
 
+function write(buf, file) {
+  const b = Buffer.alloc(44 + N * 4);
+  b.write('RIFF', 0);
+  b.writeUInt32LE(36 + N * 4, 4);
+  b.write('WAVE', 8);
+  b.write('fmt ', 12);
+  b.writeUInt32LE(16, 16);
+  b.writeUInt16LE(1, 20);
+  b.writeUInt16LE(2, 22);
+  b.writeUInt32LE(SR, 24);
+  b.writeUInt32LE(SR * 4, 28);
+  b.writeUInt16LE(4, 32);
+  b.writeUInt16LE(16, 34);
+  b.write('data', 36);
+  b.writeUInt32LE(N * 4, 40);
+  for (let i = 0; i < N; i++) {
+    b.writeInt16LE(Math.round(clamp(buf[0][i], -1, 1) * 32767), 44 + i * 4);
+    b.writeInt16LE(Math.round(clamp(buf[1][i], -1, 1) * 32767), 46 + i * 4);
+  }
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, b);
+}
+
 function mix() {
-  // ducking envelope from VO
+  // duck the bed under the voice, with a slow release so it never pumps
   const block = Math.floor(SR * 0.01);
   const env = new Float32Array(Math.ceil(N / block) + 2);
   for (let b = 0; b < env.length; b++) {
@@ -492,54 +364,66 @@ function mix() {
     }
     env[b] = peak;
   }
-  // attack / release smoothing
   const smooth = new Float32Array(env.length);
   let v = 0;
   for (let b = 0; b < env.length; b++) {
-    const target = clamp(env[b] * 4);
-    v += (target - v) * (target > v ? 0.5 : 0.06);
+    const target = clamp(env[b] * 5);
+    v += (target - v) * (target > v ? 0.35 : 0.04);
     smooth[b] = v;
   }
 
-  const outL = new Float32Array(N);
-  const outR = new Float32Array(N);
+  const out = [new Float32Array(N), new Float32Array(N)];
   for (let i = 0; i < N; i++) {
-    const duck = 1 - 0.62 * smooth[Math.floor(i / block)];
-    outL[i] = vo[0][i] * 1.0 + music[0][i] * 0.5 * duck + sfx[0][i] * 0.85;
-    outR[i] = vo[1][i] * 1.0 + music[1][i] * 0.5 * duck + sfx[1][i] * 0.85;
+    const duck = 1 - 0.66 * smooth[Math.floor(i / block)];
+    for (let ch = 0; ch < 2; ch++) {
+      out[ch][i] = vo[ch][i] * 1.0 + music[ch][i] * 0.42 * duck + sfx[ch][i] * 0.62;
+    }
   }
 
-  // gentle bus compression + soft clip + normalise
+  // 28 Hz highpass: removes DC and sub-rumble without touching the voice
+  const hp = (cut) => {
+    const rc = 1 / (TAU * cut);
+    const dt = 1 / SR;
+    const a = rc / (rc + dt);
+    let px = 0;
+    let py = 0;
+    return (x) => {
+      const y = a * (py + x - px);
+      px = x;
+      py = y;
+      return y;
+    };
+  };
+  for (let ch = 0; ch < 2; ch++) {
+    const f = hp(28);
+    for (let i = 0; i < N; i++) out[ch][i] = f(out[ch][i]);
+  }
+
+  // peak normalise, then a gentle soft-knee limiter on the last 3 dB
   let peak = 0;
-  for (let i = 0; i < N; i++) {
-    outL[i] = Math.tanh(outL[i] * 1.15);
-    outR[i] = Math.tanh(outR[i] * 1.15);
-    peak = Math.max(peak, Math.abs(outL[i]), Math.abs(outR[i]));
+  for (let ch = 0; ch < 2; ch++) for (let i = 0; i < N; i++) peak = Math.max(peak, Math.abs(out[ch][i]));
+  const pre = peak > 0 ? 0.76 / peak : 1;
+  const knee = 0.62;
+  for (let ch = 0; ch < 2; ch++) {
+    for (let i = 0; i < N; i++) {
+      let x = out[ch][i] * pre;
+      const a = Math.abs(x);
+      if (a > knee) {
+        const over = a - knee;
+        const lim = knee + over / (1 + over / (0.90 - knee));
+        x = Math.sign(x) * lim;
+      }
+      out[ch][i] = x;
+    }
   }
-  const norm = peak > 0 ? 0.89 / peak : 1;
+  let pk = 0;
+  for (let ch = 0; ch < 2; ch++) for (let i = 0; i < N; i++) pk = Math.max(pk, Math.abs(out[ch][i]));
+  const norm = pk > 0 ? 0.89 / pk : 1;
+  for (let ch = 0; ch < 2; ch++) for (let i = 0; i < N; i++) out[ch][i] *= norm;
 
-  const buf = Buffer.alloc(44 + N * 4);
-  buf.write('RIFF', 0);
-  buf.writeUInt32LE(36 + N * 4, 4);
-  buf.write('WAVE', 8);
-  buf.write('fmt ', 12);
-  buf.writeUInt32LE(16, 16);
-  buf.writeUInt16LE(1, 20);
-  buf.writeUInt16LE(2, 22);
-  buf.writeUInt32LE(SR, 24);
-  buf.writeUInt32LE(SR * 4, 28);
-  buf.writeUInt16LE(4, 32);
-  buf.writeUInt16LE(16, 34);
-  buf.write('data', 36);
-  buf.writeUInt32LE(N * 4, 40);
-  for (let i = 0; i < N; i++) {
-    buf.writeInt16LE(Math.round(clamp(outL[i] * norm, -1, 1) * 32767), 44 + i * 4);
-    buf.writeInt16LE(Math.round(clamp(outR[i] * norm, -1, 1) * 32767), 46 + i * 4);
-  }
   const file = path.join(process.cwd(), 'assets', 'audio', 'mix-ep7.wav');
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, buf);
-  console.log(`mix-ep7.wav  ${(N / SR).toFixed(2)}s  peak ${(peak * norm).toFixed(3)}`);
+  write(out, file);
+  console.log(`mix-ep7.wav  ${(N / SR).toFixed(2)}s  peak ${(pk * norm).toFixed(3)}`);
 }
 
 loadVO();

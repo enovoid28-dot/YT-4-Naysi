@@ -46,7 +46,7 @@ function readAlign() {
 
 const splitSentences = (cap) =>
   cap
-    .split(/(?<=[.!?:])\s+/)
+    .split(/(?<=[.!?])\s+/)
     .map((s) => s.trim())
     .filter(Boolean);
 
@@ -90,7 +90,6 @@ export function buildTimeline() {
     const dur = voOffset + audioDur + sc.pad;
 
     const sentences = splitSentences(sc.cap);
-    const aligned = align?.[sc.id];
     const gap = 0.26;
     const tail = 0.12;
     const speak = audioDur - gap * (sentences.length - 1) - tail;
@@ -99,12 +98,43 @@ export function buildTimeline() {
     );
     const totalW = sentWeights.reduce((a, b) => a + b, 0);
     const captions = [];
+    const aligned = align?.[sc.id];
+    // v2: the aligner measured every card against the audio, so the times below
+    // are what the voice actually did (see scripts/align-cards.mjs).
+    if (aligned && Array.isArray(aligned.cards) && aligned.cards.length === sentences.length) {
+      const num = (v) => Math.max(0, Math.min(audioDur - 0.02, v));
+      aligned.cards.forEach((card, ci) => {
+        const ws = card.map((w) => ({
+          text: w.text,
+          accent: w.accent,
+          start: +(voOffset + num(w.start)).toFixed(3),
+          end: +(voOffset + num(w.end)).toFixed(3),
+        }));
+        const last = ci === aligned.cards.length - 1;
+        const speechEnd = voOffset + num(aligned.end);
+        captions.push({
+          words: ws,
+          from: ci === 0 ? voOffset + Math.max(0, aligned.onset) - 0.12 : ws[0].start - 0.1,
+          to: last
+            ? Math.min(dur - 0.02, speechEnd + 0.55)
+            : ws[ws.length - 1].end + 0.28,
+        });
+      });
+      scenes.push({
+        ...sc,
+        start: cursor,
+        dur,
+        audioDur,
+        voOffset,
+        audioStart: cursor + voOffset,
+        captions,
+        timed: 'cards',
+      });
+      cursor += dur;
+      continue;
+    }
     if (Array.isArray(aligned) && aligned.length === sentences.length) {
-      // word times come with a small lead-in, so two cards can overlap by a few
-      // hundredths. Clamp every card inside its own VO and never let a card
-      // start before the previous one has finished: overlapping cards are what
-      // makes the outgoing line fade while the incoming one is still moving.
-      // word times are relative to the audio file, the offset is added below
+      // legacy word-level alignment (episodes 5-6)
       const num = (v) => Math.max(0, Math.min(audioDur - 0.03, v));
       aligned.forEach((words) => {
         chunkWords(words).forEach((chunk) => {

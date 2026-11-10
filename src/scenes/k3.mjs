@@ -1,134 +1,144 @@
-import { W, H, C, M, txt, hexA, fillRR, strokeRR, linGrad, radGrad, measure } from '../engine/draw.mjs';
+import { W, H, txt, hexA, fillRR, strokeRR, linGrad, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { pump, strata, paperKicker, applyGrain, P, Q } from './_ep7.mjs';
+import { clamp, lerp, EASE, TAU, rng } from '../engine/anim.mjs';
+import { K, E, at, layer, soil, concrete, kicker, chip, grain, bracket, pump, borehole } from './_kota.mjs';
 
-// 03 — SUMBERNYA. The yard, the pump, and the hole it drinks from: two hundred
-// metres straight down into the aquifer.
-const GROUND = 560;
-const PIPE_X = 966;
-const AQUIFER = 1430;
-const BOTTOM = 1596;
+// 03 — SUMBERNYA. A half-cut house on the yard, and the 200 m straw that goes
+// through it into the aquifer. The water that comes up is the ground leaving.
+const GROUND = 700;
+const AQUIFER = 1440;
+const BOTTOM = 1620;
+const PIPE_X = 700;
 
 export default {
-  draw(ctx, t) {
-    // sky over the yard
-    ctx.fillStyle = linGrad(ctx, 0, 0, 0, GROUND, [[0, '#E9DFC8'], [0.6, '#DCD0B6'], [1, '#C9BC9E']]);
-    ctx.fillRect(0, 0, W, GROUND);
-    // a house, cut in half
+  draw(ctx, t, scene, o = {}) {
+    const cam = o.cam;
+
+    // sky / air above the yard
+    ctx.fillStyle = linGrad(ctx, 0, 0, 0, GROUND, [
+      [0, '#C9D4CF'],
+      [0.55, '#E4DCC6'],
+      [1, '#F1E5CD'],
+    ]);
+    ctx.fillRect(-200, -200, W + 400, GROUND + 204);
+
+    // the cut: soil from the surface down, with the aquifer at the bottom
+    soil(ctx, GROUND, { h: H - GROUND, seed: 21 });
+    layer(ctx, cam, 0.15, () => {
+      // aquifer band
+      const aq = at(t, 1.0, 1.4);
+      ctx.fillStyle = linGrad(ctx, 0, AQUIFER, 0, BOTTOM, [
+        [0, hexA(K.teal, 0.55 * aq)],
+        [1, hexA(K.waterDeep, 0.95 * aq)],
+      ]);
+      ctx.fillRect(0, AQUIFER, W, BOTTOM - AQUIFER);
+      if (aq > 0.05) {
+        ctx.save();
+        ctx.globalAlpha = aq * 0.85;
+        ctx.strokeStyle = 'rgba(200,240,245,0.55)';
+        ctx.lineWidth = 3;
+        for (let r2 = 0; r2 < 3; r2++) {
+          ctx.beginPath();
+          for (let x = 0; x <= W; x += 12) {
+            const y = AQUIFER + 26 + r2 * 46 + Math.sin(x * 0.017 + t * 1.1 + r2) * 5;
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        }
+        ctx.restore();
+        txt(ctx, 'AIR TANAH DALAM', 96, AQUIFER + 54, {
+          size: 26, font: F.mono6, color: hexA('#DCF2F5', 0.9 * aq), track: 5,
+        });
+      }
+    });
+
+    // the house, half cut: wall section + roof
+    const hA = at(t, 0.15, 0.9);
     ctx.save();
-    ctx.fillStyle = '#9C8A6E';
-    ctx.fillRect(1180, 250, 300, GROUND - 250);
-    ctx.fillStyle = '#7C6C54';
+    ctx.globalAlpha = hA;
+    const hx = 880;
+    const hw = 470;
+    const roofY = 258;
+    // wall block
+    concrete(ctx, hx, roofY, hw, GROUND - roofY, { tone: '#BDB29A', seed: 8 });
+    // roof
+    ctx.fillStyle = linGrad(ctx, hx - 40, 0, hx + hw + 40, 0, [[0, '#7E5340'], [1, '#4E3126']]);
     ctx.beginPath();
-    ctx.moveTo(1150, 258);
-    ctx.lineTo(1330, 150);
-    ctx.lineTo(1500, 258);
+    ctx.moveTo(hx - 46, roofY + 8);
+    ctx.lineTo(hx + hw / 2, roofY - 130);
+    ctx.lineTo(hx + hw + 46, roofY + 8);
     ctx.closePath();
     ctx.fill();
-    ctx.fillStyle = 'rgba(30,24,18,0.55)';
-    ctx.fillRect(1230, 330, 110, 110);
-    ctx.fillRect(1380, 360, 80, 200);
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.fillRect(hx - 46, roofY + 4, hw + 92, 8);
+    // interior slice: we see through the wall
+    ctx.fillStyle = 'rgba(34,29,24,0.82)';
+    ctx.fillRect(hx + 60, roofY + 120, hw - 120, GROUND - roofY - 130);
+    // a lit window with a person's absence: warm light
+    ctx.fillStyle = hexA('#FFC97A', 0.9);
+    ctx.fillRect(hx + 120, roofY + 210, 130, 150);
+    ctx.fillStyle = 'rgba(255,201,122,0.18)';
+    ctx.fillRect(hx + 100, roofY + 190, 170, 190);
+    // door
+    ctx.fillStyle = 'rgba(20,17,14,0.9)';
+    ctx.fillRect(hx + 300, GROUND - 330, 120, 330);
     ctx.restore();
-
-    paperKicker(ctx, 'SUMBERNYA', { y: 236 });
-
-    // soil
-    strata(ctx, GROUND, H, { a: 1 });
-    ctx.fillStyle = 'rgba(20,17,16,0.25)';
-    ctx.fillRect(0, GROUND - 6, W, 8);
-
-    // the aquifer
-    const aqA = EASE.outCubic(clamp((t - 1.0) / 0.9));
-    ctx.save();
-    ctx.globalAlpha = aqA;
-    ctx.fillStyle = 'rgba(47,110,124,0.55)';
-    ctx.fillRect(0, AQUIFER, W, BOTTOM - AQUIFER);
-    ctx.fillStyle = 'rgba(190,225,231,0.35)';
-    ctx.fillRect(0, AQUIFER, W, 3);
-    for (let i = 0; i < 90; i++) {
-      const x = (i * 157) % W;
-      const y = AQUIFER + 22 + ((i * 61) % (BOTTOM - AQUIFER - 40));
-      ctx.fillStyle = 'rgba(220,240,244,0.35)';
-      ctx.fillRect(x, y, 4, 3);
-    }
-    txt(ctx, 'AIR TANAH DALAM', 60, AQUIFER + 54, {
-      size: 22, font: F.mono6, color: 'rgba(240,250,252,0.85)', track: 4,
-    });
-    ctx.restore();
-
-    // the borehole
-    const pA = EASE.outCubic(clamp((t - 0.35) / 1.1));
-    if (pA > 0.01) {
-      const bottom = GROUND + (BOTTOM - GROUND) * pA;
-      ctx.save();
-      ctx.fillStyle = linGrad(ctx, PIPE_X - 16, 0, PIPE_X + 16, 0, [[0, '#D3CCBC'], [0.5, '#F2ECDE'], [1, '#9E978A']]);
-      ctx.fillRect(PIPE_X - 16, GROUND, 32, bottom - GROUND);
-      ctx.fillStyle = hexA(Q.water, 0.85);
-      ctx.fillRect(PIPE_X - 8, GROUND, 16, bottom - GROUND);
-      // the screen at the bottom
-      if (pA > 0.9) {
-        ctx.fillStyle = '#CFC8B8';
-        fillRR(ctx, PIPE_X - 30, bottom - 60, 60, 76, 8, ctx.fillStyle);
-        ctx.fillStyle = 'rgba(47,110,124,0.9)';
-        for (let i = 0; i < 6; i++) ctx.fillRect(PIPE_X - 24, bottom - 52 + i * 11, 48, 5);
-      }
-      ctx.restore();
-    }
 
     // the pump on the yard
-    const puA = EASE.outCubic(clamp((t - 0.2) / 0.8));
-    if (puA > 0.01) pump(ctx, PIPE_X + 6, GROUND - 190, 0.88, { a: puA, on: t });
-
-    // depth measurement
-    const dA = clamp((t - 2.4) / 0.7);
-    if (dA > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = dA;
-      const x = PIPE_X - 130;
-      ctx.strokeStyle = 'rgba(240,232,214,0.55)';
-      ctx.lineWidth = 2.5;
-      ctx.setLineDash([10, 10]);
-      ctx.beginPath();
-      ctx.moveTo(x, GROUND);
-      ctx.lineTo(x, BOTTOM);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      [GROUND, BOTTOM].forEach((y) => {
-        ctx.beginPath();
-        ctx.moveTo(x - 12, y);
-        ctx.lineTo(x + 12, y);
-        ctx.stroke();
-      });
-      txt(ctx, '200 M', x - 20, (GROUND + BOTTOM) / 2, {
-        size: 40, font: F.num, color: '#F6EDD9', align: 'right', track: -1,
-      });
-      ctx.restore();
+    const pA = at(t, 5.2, 0.8);
+    if (pA > 0.01) {
+      pump(ctx, PIPE_X + 40, GROUND - 196, 0.92, { a: pA, on: t > 8.4 ? 1 : 0, t });
     }
 
-    // the number that matters
-    const nA = EASE.outCubic(clamp((t - 3.8) / 0.7));
+    // the borehole: 200 m of casing, drawn as it is drilled
+    const dA = at(t, 6.2, 2.2);
+    if (dA > 0.01) {
+      const y1 = GROUND + (BOTTOM - 20 - GROUND) * E.inOut(dA);
+      borehole(ctx, PIPE_X, GROUND, y1, { a: 1, level: at(t, 8.6, 1.4), t });
+      // drilling dust
+      if (dA < 0.98) {
+        ctx.save();
+        ctx.globalAlpha = 0.5 * (1 - dA);
+        ctx.fillStyle = 'rgba(210,190,150,0.7)';
+        for (let i = 0; i < 8; i++) {
+          ctx.beginPath();
+          ctx.arc(PIPE_X + Math.sin(t * 9 + i) * 26, y1 - i * 8, 5 - i * 0.4, 0, TAU);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+      // depth bracket
+      const bA = at(t, 8.8, 0.8);
+      if (bA > 0.01) {
+        bracket(ctx, PIPE_X - 120, GROUND + 8, BOTTOM - 30, {
+          label: '200 M', color: hexA('#F6EFE0', 0.9), a: bA, side: -1,
+        });
+      }
+    }
+
+    kicker(ctx, 'PENYEBABNYA', { y: 250, a: at(t, 0.2, 0.8), ink: '#2A2320' });
+
+    // the share of the cause
+    const nA = at(t, 0.6, 0.9);
     if (nA > 0.01) {
       ctx.save();
       ctx.globalAlpha = nA;
-      txt(ctx, '80', 96, 442, {
-        size: 168, font: F.num, color: Q.rust, track: -6,
+      txt(ctx, '80–90', 92, 520 + (1 - nA) * 26, {
+        size: 168, font: F.num, color: K.rust, track: -7,
       });
-      txt(ctx, '–90', 96 + measure(ctx, '80', 168, F.num, -6) + 10, 442, {
-        size: 168, font: F.num, color: Q.rust, track: -6,
+      txt(ctx, '%', 92 + measure(ctx, '80–90', 168, F.num, -7) + 10, 520, {
+        size: 84, font: F.num6, color: K.rust,
       });
-      const wEnd = 96 + measure(ctx, '80', 168, F.num, -6) + 10 + measure(ctx, '–90', 168, F.num, -6);
-      txt(ctx, '%', wEnd + 6, 442, { size: 92, font: F.num6, color: Q.rust, track: -2 });
-      txt(ctx, 'PENYEBABNYA SATU:', 100, 500, {
-        size: 24, font: F.mono6, color: 'rgba(20,17,16,0.62)', track: 4,
+      txt(ctx, 'PENYEBABNYA SATU:', 96, 576, {
+        size: 24, font: F.mono6, color: 'rgba(28,22,18,0.66)', track: 4,
       });
-      txt(ctx, 'AIR TANAH DISEDOT', 100, 536, {
-        size: 24, font: F.mono6, color: 'rgba(20,17,16,0.62)', track: 4,
+      txt(ctx, 'AIR TANAH DISEDOT', 96, 612, {
+        size: 24, font: F.mono6, color: 'rgba(28,22,18,0.66)', track: 4,
       });
       ctx.restore();
     }
 
-    void strokeRR; void radGrad; void lerp; void TAU; void C; void M; void P;
-    applyGrain(ctx, 0.05);
+    grain(ctx, 0.04);
   },
 };

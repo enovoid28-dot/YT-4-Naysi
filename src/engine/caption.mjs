@@ -2,7 +2,7 @@ import { F } from './fonts.mjs';
 import { C, W, hexA, measure } from './draw.mjs';
 import { clamp, spring, lerp, EASE } from './anim.mjs';
 
-const SCALES = [1, 0.95, 0.9, 0.86, 0.82, 0.78, 0.74, 0.7, 0.66, 0.62];
+const SCALES = [1, 0.96, 0.92, 0.88, 0.84, 0.8, 0.76, 0.72, 0.68, 0.64, 0.6, 0.56, 0.52, 0.48];
 const MAX_LINES = 4;
 
 /** Wrap words into lines that fit maxWidth; every line carries a real width. */
@@ -46,7 +46,7 @@ export function buildCaption(ctx, group, { maxWidth, size = 78, font = F.semi, m
     const cand = { size: s, font, lines, space };
     smallest = cand;
     const widow = lines.length > 1 && lines[lines.length - 1].words.length === 1;
-    if (!three && lines.length <= 3 && !widow) three = cand;
+    if (maxLines > 2 && !three && lines.length <= 3 && !widow) three = cand;
     if (!four && lines.length <= maxLines && !widow) four = cand;
     if (three) break;
   }
@@ -204,4 +204,59 @@ export function drawHeadline(ctx, o) {
     }
   });
   return { size: s, lines: lines.length };
+}
+
+/**
+ * Card caption: the whole sentence arrives as one typographic block and stays
+ * still. Word-by-word karaoke needs a word timeline that is only ever an
+ * estimate; a card that appears exactly when its sentence starts cannot drift.
+ * Accent words carry the colour, the rest stay neutral.
+ */
+export function drawCard(ctx, layout, local, o = {}) {
+  const {
+    top = 1800,
+    color = C.bone,
+    accent = C.amber,
+    alphaMul = 1,
+    x = W / 2,
+    lineHeight = 1.1,
+    shadow = 14,
+    stagger = 0.028,
+  } = o;
+  const { size, font, lines, space } = layout;
+  const lh = size * lineHeight;
+  const base = ctx.globalAlpha * alphaMul;
+  let idx = 0;
+  ctx.save();
+  ctx.textBaseline = 'alphabetic';
+  ctx.textAlign = 'left';
+  lines.forEach((line, li) => {
+    const y = top + li * lh + size * 0.78;
+    const fit = Math.min(1, (W - 2 * 86) / Math.max(1, line.width));
+    const lsize = size * fit;
+    let cx = x - (line.width * fit) / 2;
+    for (const w of line.words) {
+      const st = idx * stagger;
+      idx++;
+      const p = clamp((local - st) / 0.26);
+      if (p <= 0) {
+        cx += (w.width + space) * fit;
+        continue;
+      }
+      const e = EASE.outCubic(p);
+      const rise = (1 - e) * 26;
+      ctx.save();
+      ctx.globalAlpha = base * e;
+      ctx.font = `${lsize}px ${font}`;
+      ctx.translate(cx + (w.width * fit) / 2, y + rise);
+      ctx.shadowColor = shadow ? 'rgba(0,0,0,0.55)' : 'transparent';
+      ctx.shadowBlur = shadow;
+      ctx.shadowOffsetY = shadow ? 7 : 0;
+      ctx.fillStyle = w.accent ? accent : color;
+      ctx.fillText(w.text, (-w.width * fit) / 2, 0);
+      ctx.restore();
+      cx += (w.width + space) * fit;
+    }
+  });
+  ctx.restore();
 }
