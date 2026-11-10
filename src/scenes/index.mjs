@@ -7,10 +7,11 @@ import k6 from './k6.mjs';
 import k7 from './k7.mjs';
 import k8 from './k8.mjs';
 
-// Episode 6 ("Tidur Akhir Pekan Cuma Bayar 9%") key map:
-// k1 SABTU · k2 UTANG · k3 LAB · k4 9% · k5 HARGA · k6 JAM TUBUH · k7 KELUAR · k8 SENIN
+// Episode 7 ("Jakarta Tidak Tenggelam, Tapi Ambles") key map:
+// k1 JAKARTA UTARA · k2 DUA PULUH LIMA · k3 SUMBERNYA · k4 BANDINGKAN
+// k5 MANGKUK · k6 TEMBOK · k7 2050 · k8 KELUAR
 export default {
-  saturday: k1, ledger: k2, lab: k3, nine: k4,
-  price: k5, clocks: k6, fix: k7, monday: k8,
+  bay: k1, tape: k2, source: k3, ratio: k4,
+  bowl: k5, wall: k6, future: k7, exit: k8,
   k1, k2, k3, k4, k5, k6, k7, k8,
 };

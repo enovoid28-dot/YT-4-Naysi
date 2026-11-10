@@ -1,55 +1,55 @@
-import { W, H, C, M, txt, hexA, fillRR, linGrad, radGrad, measure } from '../engine/draw.mjs';
+import { W, H, C, M, txt, hexA, fillRR, strokeRR, linGrad, radGrad, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { bedroom, alarmClock, darkKicker, stamp, applyGrain, glowSpot, P } from './_ep6.mjs';
+import { concreteWall, tideMark, skyline, waves, stamp, darkKicker, glowSpot, applyGrain, P, Q } from './_ep7.mjs';
 
-// 01 — SABTU. The clock on the nightstand says 09.12. The bed is still warm.
+// 01 — JAKARTA UTARA. The city at the water's edge, with a tape measure next to
+// it: whatever is happening here can be counted in centimetres.
+const WATER = 1436;
+
 export default {
   draw(ctx, t) {
-    bedroom(ctx, t, { light: 1 });
-    darkKicker(ctx, 'SABTU · 09.12', { y: 292 });
+    // dusk sky over the bay
+    ctx.fillStyle = linGrad(ctx, 0, 0, 0, WATER, [
+      [0, '#101A20'], [0.45, '#1B2A30'], [0.82, '#3A4742'], [1, '#6B6247'],
+    ]);
+    ctx.fillRect(0, 0, W, H);
+    glowSpot(ctx, W * 0.62, WATER - 60, 620, '#E8B43C', 0.20);
 
-    // the clock
-    const a0 = EASE.outCubic(clamp((t - 0.2) / 0.7));
+    // haze bands
+    ctx.fillStyle = 'rgba(232,180,60,0.05)';
+    for (let i = 0; i < 4; i++) ctx.fillRect(0, 1040 + i * 70, W, 26);
+
+    const rise = EASE.outCubic(clamp((t - 0.2) / 1.1));
     ctx.save();
-    ctx.globalAlpha = a0;
-    ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,0.55)';
-    ctx.shadowBlur = 42;
-    ctx.shadowOffsetY = 26;
-    ctx.fillStyle = '#000';
-    ctx.beginPath();
-    ctx.ellipse(1046, 1352, 168, 44, 0, 0, TAU);
-    ctx.fill();
-    ctx.restore();
-    alarmClock(ctx, 1046, 1330, 196, { hh: 9, mm: 12, a: 1, lit: 0.06 });
+    ctx.globalAlpha = rise;
+    skyline(ctx, 20, WATER + 8, 1200, { color: '#0E1518', seed: 11, hMin: 220, hMax: 780, gap: 8 });
     ctx.restore();
 
-    // discarded phone, face down
-    ctx.save();
-    ctx.globalAlpha = a0 * 0.95;
-    ctx.translate(844, 690);
-    ctx.rotate(0.46);
-    fillRR(ctx, 0, 0, 186, 306, 22, '#0E0C0B');
-    ctx.fillStyle = linGrad(ctx, 0, 0, 186, 306, [[0, '#2A2724'], [1, '#0A0908']]);
-    fillRR(ctx, 0, 0, 186, 306, 22, ctx.fillStyle);
-    ctx.fillStyle = 'rgba(255,255,255,0.10)';
-    fillRR(ctx, 14, 14, 158, 278, 16, ctx.fillStyle);
-    ctx.restore();
+    // water
+    waves(ctx, WATER, { t, a: 1 });
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fillRect(0, WATER, W, 6);
 
-    // the verdict, stamped late in the beat
-    const stA = clamp((t - 10.6) / 0.4);
-    if (stA > 0.01) {
+    // the rust line: the water has been higher than this
+    const tA = clamp((t - 2.4) / 0.7);
+    if (tA > 0.01) tideMark(ctx, 1178, { a: tA });
+
+    darkKicker(ctx, 'JAKARTA UTARA · 2025', { y: 292 });
+
+    // and the word that matters, stamped on the water
+    const sA = clamp((t - 4.6) / 0.35);
+    if (sA > 0.01) {
       ctx.save();
-      ctx.translate(150, 1642);
-      ctx.rotate(-0.09);
-      stamp(ctx, 0, 0, 'BARU 9% LUNAS', {
-        size: 46, color: P.red, rot: 0, a: stA * 0.95, padX: 26, padY: 14, font: F.mono6,
+      ctx.translate(120, 1600);
+      ctx.rotate(-0.05);
+      stamp(ctx, 0, 0, 'TANAH TURUN', {
+        size: 42, color: Q.tape, rot: 0, a: sA * 0.95, padX: 24, padY: 13, font: F.mono6, track: 5,
       });
       ctx.restore();
     }
 
-    void C; void H; void linGrad; void radGrad; void measure; void lerp; void glowSpot; void W;
-    applyGrain(ctx, 0.055);
+    void concreteWall; void P; void C; void M; void measure; void lerp; void TAU; void radGrad; void fillRR; void strokeRR;
+    applyGrain(ctx, 0.06);
   },
 };

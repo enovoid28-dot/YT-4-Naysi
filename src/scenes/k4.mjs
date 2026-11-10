@@ -1,122 +1,114 @@
 import { W, H, C, M, txt, hexA, fillRR, strokeRR, linGrad, radGrad, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { nightRoom, darkKicker, cylinder, stamp, tag, applyGrain, P } from './_ep6.mjs';
+import { glowSpot, darkKicker, applyGrain, P, Q } from './_ep7.mjs';
 
-// 04 — SEMBILAN PERSEN. The catch-up sleep, measured in a glass: a film of water
-// at the bottom of a big cylinder that should have been full.
-const CX = 420;
-const TOP = 660;
-const CW = 340;
-const CH = 840;
-const DEBT_H = 12;   // >12 h
-const PAID_H = 1.1;  // 1,1 h
+// 04 — BANDINGKAN. Two rates on one baseline: what the sea does in a year, and
+// what the ground does in the same year. 3,3 mm against 250 mm.
+const BASE = 620;
+const PXMM = 1.8;          // 250 mm -> 450 px
+const SEA = 3.3 * PXMM;    // 5,9 px
+const LAND = 250 * PXMM;   // 450 px
+const SX = 350;
+const LX = 940;
 
 export default {
   draw(ctx, t) {
-    nightRoom(ctx, { tableY: 1500, warm: 0.20 });
+    ctx.fillStyle = linGrad(ctx, 0, 0, W * 0.6, H, [[0, '#0C1316'], [0.5, '#121B1F'], [1, '#070B0D']]);
+    ctx.fillRect(0, 0, W, H);
+    glowSpot(ctx, W * 0.3, BASE - 200, 780, Q.waterHi, 0.10);
 
-    darkKicker(ctx, 'YANG DIBAYARKAN', { y: 292 });
+    darkKicker(ctx, 'SATU TAHUN, DUA ARAH', { y: 292 });
 
-    const drain = EASE.inOutQuad(clamp((t - 9.1) / 1.3));
-    const grow = EASE.outCubic(clamp((t - 1.0) / 1.8));
-    const level = 0.09 * grow * (1 - drain);
-
-    cylinder(ctx, CX, TOP, CW, CH, {
-      level, color: '#C0392B', a: clamp((t - 0.4) / 0.6), label: 'UTANG: LEBIH 12 JAM', hourTicks: 12,
+    // the baseline they are both measured from
+    const bA = EASE.outCubic(clamp((t - 0.2) / 0.7));
+    ctx.save();
+    ctx.globalAlpha = bA;
+    ctx.fillStyle = 'rgba(242,231,211,0.35)';
+    ctx.fillRect(72, BASE, W - 144, 2);
+    txt(ctx, 'GARIS NOL', W - 72, BASE - 16, {
+      size: 20, font: F.mono6, color: 'rgba(242,231,211,0.45)', align: 'right', track: 4,
     });
+    ctx.restore();
 
-    // the film of water we paid back
-    const lA = clamp((t - 2.4) / 0.5);
-    if (lA > 0.01) {
-      const surf = TOP + CH - CH * level - 4;
-      ctx.save();
-      ctx.globalAlpha = lA * (1 - drain * 0.9);
-      ctx.strokeStyle = hexA(P.amber, 0.75);
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(CX + CW / 2 + 8, surf);
-      ctx.lineTo(700, surf - 96);
-      ctx.lineTo(860, surf - 96);
-      ctx.stroke();
-      txt(ctx, '1,1 JAM', 872, surf - 84, {
-        size: 34, font: F.display, color: P.amber, track: -0.5,
-      });
-      txt(ctx, 'DARI 12+ JAM', 872, surf - 46, {
-        size: 21, font: F.mono6, color: hexA('#F2E7D3', 0.55), track: 3,
-      });
-      ctx.restore();
-    }
-
-    // the verdict, big
-    const vA = EASE.outCubic(clamp((t - 3.4) / 0.6));
-    if (vA > 0.01) {
-      const pct = 9;
-      ctx.save();
-      ctx.globalAlpha = vA;
-      txt(ctx, String(pct), 862, 800, {
-        size: 300, font: F.num, color: P.red, track: -6, glowBlur: 44, glowColor: 'rgba(194,57,43,0.45)',
-      });
-      const wNum = measure(ctx, String(pct), 300, F.num, -6);
-      txt(ctx, '%', 862 + wNum + 6, 800, {
-        size: 130, font: F.num6, color: P.red, track: -2,
-      });
-      ctx.fillStyle = 'rgba(242,231,211,0.22)';
-      ctx.fillRect(862, 852, 470, 2);
-      if (drain > 0.35) {
-        ctx.save();
-        ctx.globalAlpha = vA * clamp((drain - 0.35) / 0.5);
-        const sl = clamp((drain - 0.35) / 0.5);
-        ctx.strokeStyle = hexA(P.red, 0.95);
-        ctx.lineWidth = 11;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(838, 762 - 22 * (1 - sl));
-        ctx.lineTo(838 + 380 * sl, 700 - 22 * (1 - sl));
-        ctx.stroke();
-        ctx.restore();
-      }
-      txt(ctx, 'DARI UTANG SEMINGGU', 862, 902, {
-        size: 24, font: F.mono6, color: hexA('#F2E7D3', 0.62), track: 4,
-      });
-      ctx.restore();
-    }
-
-    // the week, as a bracket under the number
-    const bA = clamp((t - 5.2) / 0.6);
-    if (bA > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = bA * (1 - drain * 0.55);
-      txt(ctx, '5 MALAM × 5 JAM', 862, 1000, {
-        size: 26, font: F.mono6, color: hexA('#F2E7D3', 0.40), track: 3,
-      });
-      txt(ctx, 'BUTUH 8 JAM SEMALAM', 862, 1040, {
-        size: 26, font: F.mono6, color: hexA('#F2E7D3', 0.40), track: 3,
-      });
-      ctx.restore();
-    }
-
-    // and it evaporates on Monday
-    if (drain > 0.02) {
-      ctx.save();
-      ctx.globalAlpha = drain;
-      txt(ctx, 'SENIN: NOL', 862, 1102, {
-        size: 24, font: F.mono6, color: hexA(P.red, 0.75), track: 6,
-      });
-      ctx.restore();
-    }
-    const sA = clamp((t - 9.9) / 0.35);
+    // the sea: up, barely
+    const sA = EASE.outCubic(clamp((t - 1.2) / 0.8));
     if (sA > 0.01) {
       ctx.save();
-      ctx.translate(196, 1706);
-      ctx.rotate(-0.07);
-      stamp(ctx, 0, 0, 'HILANG SENIN', {
-        size: 40, color: P.red, rot: 0, a: sA, padX: 24, padY: 12, font: F.mono6, track: 4,
+      ctx.globalAlpha = sA;
+      ctx.fillStyle = Q.waterHi;
+      fillRR(ctx, SX - 70, BASE - SEA * sA, 140, SEA * sA + 2, 3, ctx.fillStyle);
+      // a halo so six pixels can be seen
+      ctx.strokeStyle = hexA(Q.waterHi, 0.45);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(SX, BASE, 34, 0, TAU);
+      ctx.stroke();
+      txt(ctx, 'LAUT', SX, BASE + 96, {
+        size: 30, font: F.mono6, color: hexA(Q.waterHi, 0.9), align: 'center', track: 5,
+      });
+      txt(ctx, '+3,3 MM', SX, BASE + 150, {
+        size: 44, font: F.num6, color: '#F2E7D3', align: 'center', track: 0,
+      });
+      txt(ctx, 'NAIK', SX, BASE + 190, {
+        size: 20, font: F.mono6, color: hexA(Q.waterHi, 0.7), align: 'center', track: 5,
       });
       ctx.restore();
     }
 
-    void DEBT_H; void PAID_H; void tag;
-    applyGrain(ctx, 0.055);
+    // the ground: down, and fast
+    const lA = EASE.outCubic(clamp((t - 3.4) / 1.0));
+    if (lA > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = lA;
+      ctx.fillStyle = linGrad(ctx, 0, BASE, 0, BASE + LAND, [[0, Q.rust], [1, Q.rust2]]);
+      fillRR(ctx, LX - 90, BASE, 180, LAND * lA, 4, ctx.fillStyle);
+      // sediment lines so the column reads as ground, not a bar
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(LX - 90, BASE, 180, LAND * lA);
+      ctx.clip();
+      ctx.fillStyle = 'rgba(0,0,0,0.16)';
+      for (let i = 1; i < 14; i++) ctx.fillRect(LX - 90, BASE + (LAND / 14) * i, 180, 3);
+      ctx.restore();
+      // arrow head
+      if (lA > 0.75) {
+        ctx.fillStyle = Q.rust;
+        ctx.beginPath();
+        ctx.moveTo(LX - 34, BASE + LAND - 8);
+        ctx.lineTo(LX + 34, BASE + LAND - 8);
+        ctx.lineTo(LX, BASE + LAND + 40);
+        ctx.closePath();
+        ctx.fill();
+      }
+      txt(ctx, 'TANAH', LX, BASE - 40, {
+        size: 30, font: F.mono6, color: hexA(Q.rust, 0.95), align: 'center', track: 5,
+      });
+      txt(ctx, '−250 MM', LX, BASE + LAND + 76, {
+        size: 44, font: F.num6, color: '#F2E7D3', align: 'center', track: 0,
+      });
+      txt(ctx, 'TURUN', LX, BASE + LAND + 116, {
+        size: 20, font: F.mono6, color: hexA(Q.rust, 0.8), align: 'center', track: 5,
+      });
+      ctx.restore();
+    }
+
+    // the ratio
+    const rA = EASE.outCubic(clamp((t - 5.6) / 0.7));
+    if (rA > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = rA;
+      txt(ctx, '×', 96, 1466, { size: 120, font: F.num, color: 'rgba(242,231,211,0.30)', track: 0 });
+      txt(ctx, '75', 178, 1478, {
+        size: 250, font: F.num, color: Q.tape, track: -8, glowBlur: 46, glowColor: 'rgba(232,180,60,0.32)',
+      });
+      txt(ctx, 'LEBIH CEPAT DARI LAUT', 186, 1532, {
+        size: 26, font: F.mono6, color: 'rgba(242,231,211,0.55)', track: 5,
+      });
+      ctx.restore();
+    }
+
+    void C; void M; void measure; void lerp; void strokeRR; void radGrad;
+    applyGrain(ctx, 0.06);
   },
 };

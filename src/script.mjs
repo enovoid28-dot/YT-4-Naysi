@@ -1,81 +1,82 @@
-// Episode 6 — "Tidur Akhir Pekan Cuma Bayar 9%" — narration + captions + scene metadata.
-// Thesis: weekend catch-up sleep repays almost none of a workweek of short sleep,
-// and the sleep-in shifts the body clock, which is what makes Monday feel like jet lag.
+// Episode 7 — "Jakarta Tidak Tenggelam, Tapi Ambles" — narration + captions.
+// Thesis: the sea is not what is drowning Jakarta. The ground under it is
+// falling 75 times faster than the sea is rising, and the pump in the yard
+// is the reason.
 
 export const SCENES = [
   {
     id: 's1',
     key: 'k1',
-    label: 'SABTU',
+    label: 'JAKARTA UTARA',
     index: '01',
-    vo: 'Hari Sabtu. Jam sembilan pagi. Kamu baru bangun setelah tidur sembilan jam, dan kamu merasa utang tidur seminggu ini sudah lunas. Kabar buruknya: kamu baru membayar sembilan persen.',
-    cap: 'Hari Sabtu. Jam *sembilan pagi*. Kamu baru bangun setelah tidur *sembilan jam*, dan kamu merasa utang tidur seminggu ini sudah *lunas*. Kabar buruknya: kamu baru membayar *sembilan persen*.',
+    vo: 'Jakarta tidak tenggelam. Jakarta turun. Dan yang menurunkannya bukan laut, tapi keran di rumah kita sendiri.',
+    cap: 'Jakarta *tidak tenggelam*. Jakarta *turun*. Yang menurunkannya bukan laut — tapi *keran* di rumah kita sendiri.',
     pad: 0.9,
   },
   {
     id: 's2',
     key: 'k2',
-    label: 'UTANG',
+    label: 'DUA PULUH LIMA',
     index: '02',
-    vo: 'Utangnya dihitung sederhana. Butuh delapan jam, kamu tidur lima jam, lima malam. Itu lebih dari dua belas jam kurang dalam satu minggu. Tidur sampai jam sembilan pagi di hari Sabtu menambal sekitar satu jamnya saja.',
-    cap: 'Butuh *delapan jam*, kamu tidur *lima jam*, *lima malam*. Lebih dari *dua belas jam* kurang dalam seminggu. Tidur sampai jam sembilan pagi menambal sekitar *satu jamnya* saja.',
+    vo: 'Di Jakarta Utara, tanah turun dua puluh lima sentimeter setiap tahun. Dalam sepuluh tahun, dua setengah meter. Setinggi pintu rumah, hilang ke bawah.',
+    cap: 'Di Jakarta Utara, tanah turun *25 sentimeter* setiap tahun. Sepuluh tahun: *2,5 meter*. Setinggi pintu rumah, *hilang ke bawah*.',
     pad: 0.7,
   },
   {
     id: 's3',
     key: 'k3',
-    label: 'LAB',
+    label: 'SUMBERNYA',
     index: '03',
-    vo: 'Tahun dua ribu sembilan belas, tiga puluh enam orang dewasa masuk lab tidur hampir dua minggu. Satu kelompok tidur sembilan jam. Satu kelompok lima jam, sembilan malam, tanpa penebusan. Satu kelompok lagi: lima jam di hari kerja, bebas tidur di akhir pekan, lalu kembali lima jam.',
-    cap: '*2019*: *36 orang dewasa*, hampir *dua minggu* di lab. Kelompok *9 jam*. Kelompok *5 jam* sembilan malam. Kelompok *5 jam* lalu *bebas di akhir pekan*, lalu *5 jam* lagi.',
+    vo: 'Delapan puluh sampai sembilan puluh persen penyebabnya cuma satu: penyedotan air tanah dalam. Sumur bor sedalam dua ratus meter, di halaman belakang, menyala setiap hari.',
+    cap: '*80–90 persen* penyebabnya satu: penyedotan *air tanah dalam*. Sumur bor *200 meter* di halaman belakang, menyala tiap hari.',
     pad: 0.7,
   },
   {
     id: 's4',
     key: 'k4',
-    label: 'Sembilan persen',
+    label: 'BANDINGKAN',
     index: '04',
-    vo: 'Kelompok yang menebus tidur di akhir pekan berhasil menambah satu koma satu jam. Dari utang lebih dari dua belas jam. Sembilan persen. Dan itu pun hilang begitu hari Senin datang.',
-    cap: 'Kelompok penebus hanya menambah *1,1 jam*. Dari utang *lebih dari 12 jam*. *Sembilan persen*. Dan itu pun *hilang* begitu Senin datang.',
+    vo: 'Bandingkan dengan laut. Permukaan laut dunia naik tiga koma tiga milimeter setahun. Tanah Jakarta turun dua ratus lima puluh milimeter. Tujuh puluh lima kali lebih cepat.',
+    cap: 'Laut naik *3,3 milimeter* setahun. Tanah Jakarta turun *250 milimeter*. *75 kali* lebih cepat.',
     pad: 0.7,
   },
   {
     id: 's5',
     key: 'k5',
-    label: 'HARGA',
+    label: 'MANGKUK',
     index: '05',
-    vo: 'Yang lebih tidak nyaman: sensitivitas insulin kelompok penebus turun dua puluh tujuh persen dari garis awalnya sendiri. Kelompok yang tidak menebus cuma turun tiga belas persen. Yang berusaha membayar justru berakhir lebih buruk.',
-    cap: 'Sensitivitas insulin kelompok penebus turun *27 persen* dari garis awalnya. Kelompok yang *tidak menebus* cuma turun *13 persen*. Yang berusaha membayar *berakhir lebih buruk*.',
+    vo: 'Empat puluh persen kota ini sudah di bawah permukaan laut. Jakarta Utara sekarang seperti mangkuk. Air hujan, air sungai, air laut, semuanya berkumpul di tengah.',
+    cap: '*40 persen* kota ini sudah di bawah permukaan laut. Jakarta Utara seperti *mangkuk* — semua air berkumpul di tengah.',
     pad: 0.7,
   },
   {
     id: 's6',
     key: 'k6',
-    label: 'JAM TUBUH',
+    label: 'TEMBOK',
     index: '06',
-    vo: 'Kenapa? Karena tidur sampai jam sembilan menggeser jam tubuh, bukan cuma jam dinding. Di penelitian itu, jam biologis mereka bergeser satu koma tujuh jam. Artinya Senin pagi, tubuhmu masih di tengah malam.',
-    cap: 'Tidur sampai jam sembilan menggeser *jam tubuh*, bukan cuma *jam dinding*. Jam biologis bergeser *1,7 jam*. Senin pagi, tubuhmu masih *tengah malam*.',
+    vo: 'Jawaban selama ini tembok. Tanggul laut raksasa tiga puluh dua kilometer di teluk. Tapi tembok tidak menghentikan tanah yang turun. Setiap tahun, temboknya ditinggikan.',
+    cap: 'Jawabannya selama ini *tembok*: tanggul *32 kilometer* di teluk. Tapi tembok tidak menghentikan tanah yang turun.',
     pad: 0.7,
   },
   {
     id: 's7',
     key: 'k7',
-    label: 'JALAN KELUAR',
+    label: '2050',
     index: '07',
-    vo: 'Ini yang disebut social jetlag. Enam puluh sembilan persen orang mengalaminya, dan sepertiga lebih dari dua jam. Yang bekerja bukan tidur panjang di akhir pekan, tapi jarak yang kecil: bangun paling banyak satu jam lebih lambat, lalu keluar ke cahaya pagi.',
-    cap: '*Social jetlag*: *69 persen* orang, sepertiga *lebih dari dua jam*. Yang bekerja: bangun paling banyak *satu jam* lebih lambat, lalu keluar ke *cahaya pagi*.',
+    vo: 'Kalau tidak ada yang berubah, tahun dua ribu lima puluh, sembilan puluh lima persen Jakarta Utara ada di bawah laut. Sepuluh koma enam juta orang tinggal di atasnya.',
+    cap: '2050: *95 persen* Jakarta Utara di bawah laut. *10,6 juta* orang tinggal di atasnya.',
     pad: 0.7,
   },
   {
     id: 's8',
     key: 'k8',
-    label: 'SENIN',
+    label: 'KELUAR',
     index: '08',
-    vo: 'Jadi akhir pekan tetap boleh tidur. Cuma jangan berharap itu melunasi apa pun. Jam berapa kamu bangun Sabtu ini, dan jam berapa kamu bangun Senin?',
-    cap: 'Akhir pekan *tetap boleh tidur*. Cuma jangan berharap itu *melunasi* apa pun. Jam berapa kamu bangun *Sabtu ini* — dan jam berapa *Senin*?',
+    vo: 'Yang bisa menyelamatkan Jakarta bukan tembok yang lebih tinggi, tapi air pipa yang cukup, dan sumur bor yang berhenti. Jakarta tidak butuh ditahan. Jakarta butuh berhenti minum tanahnya sendiri.',
+    cap: 'Bukan tembok yang lebih tinggi. *Air pipa* yang cukup, dan *sumur bor* yang berhenti. Jakarta butuh berhenti *minum tanahnya sendiri*.',
     pad: 2.0,
   },
 ];
 
 export const BRAND = 'NAYSI';
-export const SERIES = 'TIDUR · OTAK';
+export const SERIES = 'KOTA · AIR';

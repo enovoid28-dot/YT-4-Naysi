@@ -1,162 +1,134 @@
 import { W, H, C, M, txt, hexA, fillRR, strokeRR, linGrad, radGrad, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { paperRoom, paperKicker, sheet, sheetContent, dashRR, stamp, tag, applyGrain, P } from './_ep6.mjs';
+import { pump, strata, paperKicker, applyGrain, P, Q } from './_ep7.mjs';
 
-// 03 — LAB. The protocol, on the clipboard: 36 adults, three groups, twelve nights.
-const SX = 88;
-const SY = 296;
-const SW = W - 176;
-const SH = 1262;
-const ROT = -0.012;
-
-const DAYS = ['S', 'S', 'R', 'K', 'J', 'S', 'M', 'S', 'S', 'R', 'K', 'J'];
-const GROUPS = [
-  { id: 'A', h: '9 JAM', sub: 'TIDUR CUKUP', color: P.teal, cells: Array(12).fill(9) },
-  { id: 'B', h: '5 JAM', sub: 'TANPA PENEBUSAN', color: P.red2, cells: Array(12).fill(5) },
-  { id: 'C', h: '5 JAM', sub: 'BEBAS AKHIR PEKAN', color: '#A9641A', cells: [5, 5, 5, 5, 5, 'f', 'f', 5, 5, 5, 5, 5] },
-];
-
-const X0 = 424;
-const CW = 52;
-const GAP = 12;
-const CELL_H = 160;
-const ROW_Y = [350, 682, 1014];
-
-function sunGlyph(ctx, cx, cy, r, a) {
-  ctx.save();
-  ctx.globalAlpha *= a;
-  ctx.strokeStyle = 'rgba(169,100,26,0.9)';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.arc(cx, cy, r * 0.45, 0, TAU);
-  ctx.stroke();
-  for (let i = 0; i < 8; i++) {
-    const an = (i / 8) * TAU;
-    ctx.beginPath();
-    ctx.moveTo(cx + Math.cos(an) * r * 0.66, cy + Math.sin(an) * r * 0.66);
-    ctx.lineTo(cx + Math.cos(an) * r * 0.92, cy + Math.sin(an) * r * 0.92);
-    ctx.stroke();
-  }
-  ctx.restore();
-}
+// 03 — SUMBERNYA. The yard, the pump, and the hole it drinks from: two hundred
+// metres straight down into the aquifer.
+const GROUND = 560;
+const PIPE_X = 966;
+const AQUIFER = 1430;
+const BOTTOM = 1596;
 
 export default {
   draw(ctx, t) {
-    paperRoom(ctx);
-    paperKicker(ctx, 'PROTOKOL · 2019', { y: 232 });
+    // sky over the yard
+    ctx.fillStyle = linGrad(ctx, 0, 0, 0, GROUND, [[0, '#E9DFC8'], [0.6, '#DCD0B6'], [1, '#C9BC9E']]);
+    ctx.fillRect(0, 0, W, GROUND);
+    // a house, cut in half
+    ctx.save();
+    ctx.fillStyle = '#9C8A6E';
+    ctx.fillRect(1180, 250, 300, GROUND - 250);
+    ctx.fillStyle = '#7C6C54';
+    ctx.beginPath();
+    ctx.moveTo(1150, 258);
+    ctx.lineTo(1330, 150);
+    ctx.lineTo(1500, 258);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = 'rgba(30,24,18,0.55)';
+    ctx.fillRect(1230, 330, 110, 110);
+    ctx.fillRect(1380, 360, 80, 200);
+    ctx.restore();
 
-    const a0 = EASE.outCubic(clamp((t - 0.1) / 0.7));
-    sheet(ctx, SX, SY, SW, SH, { a: a0, rot: ROT, lift: 1.1, fill: '#F5EBD6' });
-    if (a0 < 0.35) {
-      applyGrain(ctx, 0.05);
-      return;
+    paperKicker(ctx, 'SUMBERNYA', { y: 236 });
+
+    // soil
+    strata(ctx, GROUND, H, { a: 1 });
+    ctx.fillStyle = 'rgba(20,17,16,0.25)';
+    ctx.fillRect(0, GROUND - 6, W, 8);
+
+    // the aquifer
+    const aqA = EASE.outCubic(clamp((t - 1.0) / 0.9));
+    ctx.save();
+    ctx.globalAlpha = aqA;
+    ctx.fillStyle = 'rgba(47,110,124,0.55)';
+    ctx.fillRect(0, AQUIFER, W, BOTTOM - AQUIFER);
+    ctx.fillStyle = 'rgba(190,225,231,0.35)';
+    ctx.fillRect(0, AQUIFER, W, 3);
+    for (let i = 0; i < 90; i++) {
+      const x = (i * 157) % W;
+      const y = AQUIFER + 22 + ((i * 61) % (BOTTOM - AQUIFER - 40));
+      ctx.fillStyle = 'rgba(220,240,244,0.35)';
+      ctx.fillRect(x, y, 4, 3);
+    }
+    txt(ctx, 'AIR TANAH DALAM', 60, AQUIFER + 54, {
+      size: 22, font: F.mono6, color: 'rgba(240,250,252,0.85)', track: 4,
+    });
+    ctx.restore();
+
+    // the borehole
+    const pA = EASE.outCubic(clamp((t - 0.35) / 1.1));
+    if (pA > 0.01) {
+      const bottom = GROUND + (BOTTOM - GROUND) * pA;
+      ctx.save();
+      ctx.fillStyle = linGrad(ctx, PIPE_X - 16, 0, PIPE_X + 16, 0, [[0, '#D3CCBC'], [0.5, '#F2ECDE'], [1, '#9E978A']]);
+      ctx.fillRect(PIPE_X - 16, GROUND, 32, bottom - GROUND);
+      ctx.fillStyle = hexA(Q.water, 0.85);
+      ctx.fillRect(PIPE_X - 8, GROUND, 16, bottom - GROUND);
+      // the screen at the bottom
+      if (pA > 0.9) {
+        ctx.fillStyle = '#CFC8B8';
+        fillRR(ctx, PIPE_X - 30, bottom - 60, 60, 76, 8, ctx.fillStyle);
+        ctx.fillStyle = 'rgba(47,110,124,0.9)';
+        for (let i = 0; i < 6; i++) ctx.fillRect(PIPE_X - 24, bottom - 52 + i * 11, 48, 5);
+      }
+      ctx.restore();
     }
 
-    sheetContent(ctx, SX, SY, SW, SH, ROT, () => {
-      ctx.globalAlpha = a0;
+    // the pump on the yard
+    const puA = EASE.outCubic(clamp((t - 0.2) / 0.8));
+    if (puA > 0.01) pump(ctx, PIPE_X + 6, GROUND - 190, 0.88, { a: puA, on: t });
 
-      // header
-      txt(ctx, 'CATATAN LABORATORIUM', 56, 96, {
-        size: 33, font: F.mono6, color: 'rgba(23,19,16,0.80)', track: 5,
-      });
-      txt(ctx, 'tidur di lab, 12 malam berturut-turut', 56, 140, {
-        size: 23, font: F.mono, color: 'rgba(23,19,16,0.45)', track: 0,
-      });
-      // right block: n
-      txt(ctx, '36', SW - 56, 100, {
-        size: 58, font: F.num, color: P.red2, align: 'right', track: -1,
-      });
-      txt(ctx, 'ORANG DEWASA', SW - 56, 138, {
-        size: 19, font: F.mono6, color: 'rgba(23,19,16,0.45)', align: 'right', track: 3,
-      });
-      txt(ctx, 'DEPNER 2019 · CURRENT BIOLOGY', SW - 56, 170, {
-        size: 17, font: F.mono, color: 'rgba(23,19,16,0.34)', align: 'right', track: 2,
-      });
-
-      ctx.fillStyle = 'rgba(23,19,16,0.20)';
-      ctx.fillRect(56, 196, SW - 112, 2);
-
-      // column headers over the night strip
-      txt(ctx, 'TIAP MALAM →', X0, 250, {
-        size: 17, font: F.mono6, color: 'rgba(23,19,16,0.40)', track: 4,
-      });
-      txt(ctx, '12 MALAM', SW - 56, 250, {
-        size: 17, font: F.mono6, color: 'rgba(23,19,16,0.40)', align: 'right', track: 4,
-      });
-
-      GROUPS.forEach((g, gi) => {
-        const y = ROW_Y[gi];
-        const a = EASE.outCubic(clamp((t - (2.6 + gi * 3.4)) / 0.55));
-        if (a < 0.01) return;
-        ctx.save();
-        ctx.globalAlpha = a0 * a;
-        ctx.translate(0, (1 - a) * 34);
-
-        // group badge
-        ctx.fillStyle = g.color;
+    // depth measurement
+    const dA = clamp((t - 2.4) / 0.7);
+    if (dA > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = dA;
+      const x = PIPE_X - 130;
+      ctx.strokeStyle = 'rgba(240,232,214,0.55)';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([10, 10]);
+      ctx.beginPath();
+      ctx.moveTo(x, GROUND);
+      ctx.lineTo(x, BOTTOM);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      [GROUND, BOTTOM].forEach((y) => {
         ctx.beginPath();
-        ctx.arc(84, y + 44, 27, 0, TAU);
-        ctx.fill();
-        txt(ctx, g.id, 84, y + 56, {
-          size: 30, font: F.mono6, color: '#F7EDD9', align: 'center', track: 0,
-        });
-        txt(ctx, g.h, 130, y + 46, {
-          size: 46, font: F.display, color: P.ink, track: -1,
-        });
-        txt(ctx, g.sub, 131, y + 82, {
-          size: 15, font: F.mono6, color: 'rgba(23,19,16,0.50)', track: 2,
-        });
-
-        // night cells
-        g.cells.forEach((c, i) => {
-          const cx = X0 + i * (CW + GAP);
-          const cy = y + 8;
-          const free = c === 'f';
-          const cellA = EASE.outCubic(clamp((t - (3.0 + gi * 3.4) - i * 0.055) / 0.4));
-          if (cellA < 0.02) return;
-          ctx.save();
-          ctx.globalAlpha = a0 * a * cellA;
-
-          if (free) {
-            ctx.fillStyle = 'rgba(169,100,26,0.10)';
-            fillRR(ctx, cx, cy, CW, CELL_H, 7, ctx.fillStyle);
-            dashRR(ctx, cx, cy, CW, CELL_H, 7, 'rgba(169,100,26,0.85)', 2.5, [7, 6]);
-            sunGlyph(ctx, cx + CW / 2, cy + CELL_H / 2, 22, 0.95);
-          } else {
-            ctx.fillStyle = 'rgba(23,19,16,0.07)';
-            fillRR(ctx, cx, cy, CW, CELL_H, 7, ctx.fillStyle);
-            dashRR(ctx, cx, cy, CW, CELL_H, 7, 'rgba(23,19,16,0.22)', 2, []);
-            const bh = (c / 9) * (CELL_H - 8) * cellA;
-            ctx.fillStyle = g.color;
-            fillRR(ctx, cx + 3, cy + CELL_H - 4 - bh, CW - 6, bh, 5, ctx.fillStyle);
-          }
-          ctx.restore();
-        });
-
-        // day strip under the first group only
-        if (gi === 0) {
-          DAYS.forEach((d, i) => {
-            txt(ctx, d, X0 + i * (CW + GAP) + CW / 2, y + CELL_H + 40, {
-              size: 19, font: F.mono6, color: 'rgba(23,19,16,0.42)', align: 'center', track: 1,
-            });
-          });
-        }
-
-        // the note for group C
-        if (gi === 2) {
-          ctx.save();
-          ctx.globalAlpha = a0 * clamp((t - 13.6) / 0.5);
-          txt(ctx, 'AKHIR PEKAN: TIDUR SEBANYAK MAU, LALU KEMBALI 5 JAM', 131, y + CELL_H + 56, {
-            size: 19, font: F.mono6, color: '#A9641A', track: 2,
-          });
-          ctx.restore();
-        }
-        ctx.restore();
+        ctx.moveTo(x - 12, y);
+        ctx.lineTo(x + 12, y);
+        ctx.stroke();
       });
+      txt(ctx, '200 M', x - 20, (GROUND + BOTTOM) / 2, {
+        size: 40, font: F.num, color: '#F6EDD9', align: 'right', track: -1,
+      });
+      ctx.restore();
+    }
 
-    });
+    // the number that matters
+    const nA = EASE.outCubic(clamp((t - 3.8) / 0.7));
+    if (nA > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = nA;
+      txt(ctx, '80', 96, 442, {
+        size: 168, font: F.num, color: Q.rust, track: -6,
+      });
+      txt(ctx, '–90', 96 + measure(ctx, '80', 168, F.num, -6) + 10, 442, {
+        size: 168, font: F.num, color: Q.rust, track: -6,
+      });
+      const wEnd = 96 + measure(ctx, '80', 168, F.num, -6) + 10 + measure(ctx, '–90', 168, F.num, -6);
+      txt(ctx, '%', wEnd + 6, 442, { size: 92, font: F.num6, color: Q.rust, track: -2 });
+      txt(ctx, 'PENYEBABNYA SATU:', 100, 500, {
+        size: 24, font: F.mono6, color: 'rgba(20,17,16,0.62)', track: 4,
+      });
+      txt(ctx, 'AIR TANAH DISEDOT', 100, 536, {
+        size: 24, font: F.mono6, color: 'rgba(20,17,16,0.62)', track: 4,
+      });
+      ctx.restore();
+    }
 
+    void strokeRR; void radGrad; void lerp; void TAU; void C; void M; void P;
     applyGrain(ctx, 0.05);
   },
 };

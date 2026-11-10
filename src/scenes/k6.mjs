@@ -1,131 +1,154 @@
 import { W, H, C, M, txt, hexA, fillRR, strokeRR, linGrad, radGrad, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { glowSpot, wallClock, tag, applyGrain, P } from './_ep6.mjs';
+import { skyline, waves, glowSpot, darkKicker, applyGrain, P, Q } from './_ep7.mjs';
 
-// 06 — JAM TUBUH. Two clocks on the same wall: the one you can read, and the
-// one your cells keep. Same morning, 1,7 hours apart.
-const LY = 846;
-const R = 256;
-const LX = 424;
-const RX = 1016;
-const SHIFT = 1.7;
-
-const SAT = [9 * 60 + 12, 9 * 60 + 12 + SHIFT * 60];
-const MON = [6 * 60 + 30, 6 * 60 + 30 - SHIFT * 60];
-
-const hhOf = (m) => Math.floor((((m % 1440) + 1440) % 1440) / 60);
-const mmOf = (m) => Math.round((((m % 1440) + 1440) % 1440) % 60);
-function hm(min) {
-  return `${String(hhOf(min)).padStart(2, '0')}.${String(mmOf(min)).padStart(2, '0')}`;
-}
+// 06 — TEMBOK. The wall holds the sea back. It cannot hold the ground up.
+const SEA = 900;
+const GROUND = 1210;
 
 export default {
   draw(ctx, t) {
-    // the wall
-    ctx.fillStyle = linGrad(ctx, 0, 0, W * 0.4, H, [
-      [0, '#15100D'], [0.45, '#1C1512'], [1, '#0A0706'],
-    ]);
+    ctx.fillStyle = linGrad(ctx, 0, 0, W * 0.4, H, [[0, '#0E1418'], [0.45, '#151D21'], [1, '#080C0E']]);
     ctx.fillRect(0, 0, W, H);
-    glowSpot(ctx, W * 0.18, 600, 900, P.amber, 0.13);
+    glowSpot(ctx, W * 0.16, 720, 760, Q.waterHi, 0.12);
 
-    const inA = EASE.outCubic(clamp((t - 0.1) / 0.6));
+    // city behind the wall, standing below sea level
+    skyline(ctx, 700, GROUND + 6, 800, { color: '#0B1114', seed: 23, hMin: 180, hMax: 520, gap: 14 });
+    // its ground
+    ctx.fillStyle = linGrad(ctx, 0, GROUND, 0, H, [[0, '#6D6047'], [1, '#3A3227']]);
+    ctx.fillRect(620, GROUND, W - 620, H - GROUND);
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.fillRect(620, GROUND, W - 620, 5);
 
-    // day label
-    const toMon = EASE.outCubic(clamp((t - 10.9) / 0.8));
-    const dayA = clamp(inA);
-    txt(ctx, 'SABTU', W / 2, 316, {
-      size: 30, font: F.mono6, color: hexA('#F2E7D3', 0.5 * dayA * (1 - toMon)),
-      align: 'center', track: 10,
-    });
-    txt(ctx, 'SENIN', W / 2, 316, {
-      size: 30, font: F.mono6, color: hexA(P.red, 0.85 * toMon),
-      align: 'center', track: 10,
-    });
+    // the sea
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, 640, H);
+    ctx.clip();
+    waves(ctx, SEA, { t, a: 1, h: 900 });
+    ctx.restore();
 
-    // hands travel from Saturday to Monday
-    const p = toMon;
-    const wallMin = lerp(SAT[0], MON[0], p);
-    const bodyMin = lerp(SAT[1], MON[1], p);
-    const wallH = hhOf(wallMin) + mmOf(wallMin) / 60;
-    const wallM = mmOf(wallMin);
-    const bodyH = hhOf(bodyMin) + mmOf(bodyMin) / 60;
-    const bodyM = mmOf(bodyMin);
-
-    const cA = inA * clamp((t - 0.35) / 0.5);
-    if (cA > 0.01) {
-      wallClock(ctx, LX, LY, R, { hh: wallH, mm: wallM, a: cA, glow: 0.25 });
-      wallClock(ctx, RX, LY, R, {
-        hh: bodyH, mm: bodyM, a: cA, face: '#E9DFC7', accent: P.teal, rim: ['#3F6A66', '#1E5F5B', '#123634'], glow: 0.55,
-      });
+    // the wall
+    const wA = EASE.outCubic(clamp((t - 0.2) / 0.9));
+    ctx.save();
+    ctx.globalAlpha = wA;
+    ctx.beginPath();
+    ctx.moveTo(592, SEA - 40);
+    ctx.lineTo(786, SEA - 40);
+    ctx.lineTo(900, H - 120);
+    ctx.lineTo(520, H - 120);
+    ctx.closePath();
+    ctx.fillStyle = linGrad(ctx, 520, 0, 900, 0, [[0, '#B6B0A1'], [0.35, '#8E887A'], [1, '#5C574C']]);
+    ctx.fill();
+    // coping
+    ctx.fillStyle = '#D8D2C2';
+    fillRR(ctx, 574, SEA - 62, 230, 26, 6, ctx.fillStyle);
+    // block joints
+    ctx.strokeStyle = 'rgba(20,17,16,0.28)';
+    ctx.lineWidth = 3;
+    for (let i = 1; i < 7; i++) {
+      const y = SEA + i * 110;
+      const k = (y - (SEA - 40)) / (H - 120 - (SEA - 40));
+      const x0 = 592 - k * 72;
+      const x1 = 786 + k * 114;
+      ctx.beginPath();
+      ctx.moveTo(x0, y);
+      ctx.lineTo(x1, y);
+      ctx.stroke();
     }
+    ctx.restore();
 
-    // the two readings
-    const tA = clamp((t - 1.1) / 0.5);
-    if (tA > 0.01) {
-      const lw = hm(wallMin);
-      const lb = hm(bodyMin);
+    // sea level, drawn over the city: it is above their roofs' base
+    const lA = clamp((t - 1.6) / 0.6);
+    if (lA > 0.01) {
       ctx.save();
-      ctx.globalAlpha = tA;
-      txt(ctx, lw, LX, 1218, {
-        size: 58, font: F.num6, color: hexA('#F2E7D3', 0.94), align: 'center', track: 1,
-      });
-      txt(ctx, 'JAM DINDING', LX, 1262, {
-        size: 22, font: F.mono6, color: hexA('#F2E7D3', 0.42), align: 'center', track: 5,
-      });
-      txt(ctx, lb, RX, 1218, {
-        size: 58, font: F.num6, color: hexA(P.tealHi, 0.96), align: 'center', track: 1,
-      });
-      txt(ctx, 'JAM TUBUH', RX, 1262, {
-        size: 22, font: F.mono6, color: hexA(P.tealHi, 0.55), align: 'center', track: 5,
+      ctx.globalAlpha = lA;
+      ctx.setLineDash([18, 14]);
+      ctx.strokeStyle = hexA(Q.waterHi, 0.95);
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(700, SEA);
+      ctx.lineTo(W, SEA);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      txt(ctx, 'MUKA LAUT', 92, SEA - 22, {
+        size: 20, font: F.mono6, color: hexA(Q.waterHi, 0.95), track: 4,
       });
       ctx.restore();
     }
 
-    // the gap between them, measured above the dials
-    const gA = clamp((t - 2.0) / 0.5);
+    darkKicker(ctx, 'TANGGUL LAUT', { y: 292 });
+
+    // the wall grows every year
+    const gA = clamp((t - 3.6) / 0.7);
     if (gA > 0.01) {
       ctx.save();
       ctx.globalAlpha = gA;
-      const y = 548;
-      ctx.strokeStyle = hexA('#F2E7D3', 0.26);
-      ctx.lineWidth = 2;
+      const xs = 700;
+      ctx.strokeStyle = hexA(Q.tape, 0.9);
+      ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.moveTo(LX, y);
-      ctx.lineTo(RX, y);
+      ctx.moveTo(xs, 832);
+      ctx.lineTo(xs, 560);
       ctx.stroke();
-      [[LX, 1], [RX, -1]].forEach(([x, d]) => {
+      [832, 700, 560].forEach((y) => {
         ctx.beginPath();
-        ctx.moveTo(x, y - 10);
-        ctx.lineTo(x + d * 14, y);
-        ctx.lineTo(x, y + 10);
+        ctx.moveTo(xs - 16, y);
+        ctx.lineTo(xs + 16, y);
         ctx.stroke();
       });
-      txt(ctx, '+1,7 JAM', W / 2, y - 30, {
-        size: 32, font: F.mono6, color: P.amber, align: 'center', track: 4,
+      [['2020', 832], ['2025', 700], ['2050', 560]].forEach(([yr, y]) => {
+        txt(ctx, yr, xs + 28, y + 8, {
+          size: 20, font: F.mono6, color: hexA(Q.tape, 0.9), track: 2,
+        });
       });
       ctx.restore();
     }
 
-    // Monday: the alarm went off, the body did not
-    const mA = toMon;
-    if (mA > 0.01) {
+    // 32 km
+    const kA = clamp((t - 6.4) / 0.7);
+    if (kA > 0.01) {
       ctx.save();
-      ctx.globalAlpha = mA;
-      ctx.translate(0, (1 - mA) * 20);
-      txt(ctx, 'ALARM 06.30', W / 2, 1372, {
-        size: 24, font: F.mono6, color: hexA('#F2E7D3', 0.45), align: 'center', track: 5,
+      ctx.globalAlpha = kA;
+      txt(ctx, '32 KM', 96, 520, {
+        size: 92, font: F.num, color: '#F2E7D3', track: -3,
       });
-      const tw = measure(ctx, 'TUBUH BARU 04.48', 36, F.mono6, 4);
-      fillRR(ctx, W / 2 - (tw + 64) / 2, 1406, tw + 64, 80, 40, hexA(P.red, 0.14));
-      strokeRR(ctx, W / 2 - (tw + 64) / 2, 1406, tw + 64, 80, 40, hexA(P.red, 0.55), 2);
-      txt(ctx, 'TUBUH BARU 04.48', W / 2, 1458, {
-        size: 36, font: F.mono6, color: hexA(P.red, 0.95), align: 'center', track: 4,
+      txt(ctx, 'PANJANGNYA', 100, 566, {
+        size: 22, font: F.mono6, color: 'rgba(242,231,211,0.5)', track: 5,
       });
       ctx.restore();
     }
 
-    void tag; void H; void C; void M;
+    // and it still cannot stop this
+    const aA = clamp((t - 8.4) / 0.7);
+    if (aA > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = aA;
+      const x = 1010;
+      ctx.strokeStyle = hexA(Q.rust, 0.9);
+      ctx.lineWidth = 7;
+      ctx.beginPath();
+      ctx.moveTo(x, 1252);
+      ctx.lineTo(x, 1500);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x - 26, 1458);
+      ctx.lineTo(x + 26, 1458);
+      ctx.lineTo(x, 1514);
+      ctx.closePath();
+      ctx.fillStyle = hexA(Q.rust, 0.9);
+      ctx.fill();
+      txt(ctx, '25 CM', x, 1582, {
+        size: 40, font: F.num, color: Q.rust, align: 'center', track: -1,
+      });
+      txt(ctx, 'TIAP TAHUN', x, 1620, {
+        size: 18, font: F.mono6, color: hexA(Q.rust, 0.8), align: 'center', track: 4,
+      });
+      ctx.restore();
+    }
+
+    void C; void M; void measure; void lerp; void TAU; void strokeRR; void radGrad; void P;
     applyGrain(ctx, 0.06);
   },
 };
