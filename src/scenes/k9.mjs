@@ -1,83 +1,76 @@
-import { W, H, C, M, txt, tracking, hexA, fillRR, linGrad, radGrad } from '../engine/draw.mjs';
+import { W, H, C, M, txt, hexA, fillRR, linGrad } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { bg, glowSpot, card, hairline, mug, dot } from './_ep3.mjs';
+import { dawn, kicker, chip, card, hairline, glowSpot, bigStat } from './_ep4.mjs';
 
+// 09 — JAMNYA. Recap, the bill for the morning, and the question that goes in
+// the comments. The question itself lives in the caption track, not twice here.
 export default {
-  draw(ctx, t, scene, meta) {
-    bg(ctx, { top: '#0C0C12', mid: '#07080D', bot: '#04050A' });
-    glowSpot(ctx, W / 2, 700, 720, C.amber, 0.085);
+  draw(ctx, t) {
+    dawn(ctx, { top: '#05070E', mid: '#080D18', bot: '#0A1220', warmX: 0.3, warmA: 0.10 });
+    glowSpot(ctx, 720, 520, 700, C.amber, 0.07);
 
-    const a1 = EASE.outCubic(clamp(t / 0.7));
-    txt(ctx, 'Bukan kopinya.', W / 2, 560, {
-      size: 70, font: F.display, color: hexA(C.bone, 0.5), align: 'center', alpha: a1,
+    /* ---------------------------------------------------------- statement -- */
+    const a0 = EASE.outCubic(clamp((t - 0.2) / 0.8));
+    ctx.save();
+    ctx.globalAlpha = a0;
+    ctx.translate(0, lerp(30, 0, a0));
+    txt(ctx, 'Snooze bukan', M, 560, { size: 92, font: F.head, color: C.bone, track: -1 });
+    txt(ctx, 'tidur tambahan.', M, 672, { size: 92, font: F.head, color: C.amberHi, track: -1 });
+    txt(ctx, 'Itu tidur yang sama, dipotong jadi sembilan menit.', M, 782, {
+      size: 40, font: F.med, color: hexA(C.bone, 0.62), maxWidth: W - 2 * M,
     });
-    const a2 = EASE.outCubic(clamp((t - 0.35) / 0.6));
-    txt(ctx, 'Jamnya.', W / 2, 706, {
-      size: 148, font: F.display, color: C.amberHi, align: 'center', alpha: a2,
-      glowBlur: 54 * a2, glowColor: hexA(C.amber, 0.32),
-    });
+    ctx.restore();
 
-    // recap: two anchors and a dashed line
-    const a3 = EASE.outCubic(clamp((t - 1.2) / 0.7));
-    if (a3 > 0.01) {
-      const y = 900;
-      const xL = M + 90;
-      const xR = W - M - 90;
+    /* ------------------------------------------------------------ recap --- */
+    const rA = EASE.outCubic(clamp((t - 2.4) / 0.7));
+    if (rA > 0.01) {
       ctx.save();
-      ctx.globalAlpha = a3;
-      ctx.setLineDash([6, 12]);
-      ctx.strokeStyle = hexA(C.bone, 0.18);
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(xL + 30, y);
-      ctx.lineTo(xR - 30, y);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      dot(ctx, xL, y, 12, C.amber, { glow: 24, ring: C.ink0, ringW: 4 });
-      dot(ctx, xR, y, 12, C.mint, { glow: 24, ring: C.ink0, ringW: 4 });
-      txt(ctx, 'KOPI TERAKHIR', xL, y - 42, {
-        size: 21, font: F.num6, color: hexA(C.bone, 0.4), track: 4,
-      });
-      txt(ctx, '15.00', xL, y + 74, { size: 46, font: F.num, color: C.amberHi });
-      txt(ctx, 'JAM TIDUR', xR, y - 42, {
-        size: 21, font: F.num6, color: hexA(C.bone, 0.4), track: 4, align: 'right',
-      });
-      txt(ctx, '23.00', xR, y + 74, { size: 46, font: F.num, color: C.mint, align: 'right' });
-      txt(ctx, '8 JAM', (xL + xR) / 2, y - 14, {
-        size: 22, font: F.num6, color: hexA(C.bone, 0.45), align: 'center', track: 5,
+      ctx.globalAlpha = rA;
+      hairline(ctx, M, 862, W - M, 862, { color: C.bone, alpha: 0.14, lw: 2 });
+      const items = [
+        ['BUKAN RACUN', 'tidak merusak kognisi'],
+        ['BUKAN TIDUR', '9 menit, 0,1 siklus'],
+        ['BUKAN OBAT', 'kurang tidur tetap kurang'],
+      ];
+      items.forEach(([k, v], i) => {
+        const x = M + i * 412;
+        txt(ctx, k, x, 942, { size: 25, font: F.num6, color: hexA(C.amber, 0.85), track: 3.5 });
+        txt(ctx, v, x, 996, {
+          size: 27, font: F.num6, color: hexA(C.bone, 0.5), track: 0.5, maxWidth: 356,
+        });
       });
       ctx.restore();
     }
 
-    const a4 = clamp((t - 2.2) / 0.8);
-    if (a4 > 0.01) mug(ctx, W / 2, 1340, 0.54, { t: meta.t, steamAmt: 0.5, alpha: a4 });
-
-    const a5 = EASE.outCubic(clamp((t - 3.4) / 0.8));
-    if (a5 > 0.01) {
+    /* -------------------------------------------------------------- bill -- */
+    const qA = EASE.outCubic(clamp((t - 5.6) / 0.8));
+    if (qA > 0.01) {
       ctx.save();
-      ctx.globalAlpha = a5;
-      hairline(ctx, M + 80, 1436, W - M - 80, 1436, { alpha: 0.14 });
-      txt(ctx, 'SATU CANGKIR, TIGA JAM LEBIH AWAL', W / 2, 1512, {
-        size: 27, font: F.num6, color: hexA(C.amber, 0.9), align: 'center', track: 3,
+      ctx.globalAlpha = qA;
+      ctx.translate(0, lerp(34, 0, qA));
+      card(ctx, M, 1100, W - 2 * M, 400, {
+        r: 36, fill: 'rgba(255,255,255,0.045)', stroke: 'rgba(255,255,255,0.14)',
       });
-      txt(ctx, 'Kopi terakhirmu kemarin jam berapa?', W / 2, 1600, {
-        size: 40, font: F.head, color: C.bone, align: 'center',
+      txt(ctx, 'TAGIHAN PAGI INI', M + 48, 1176, {
+        size: 25, font: F.num6, color: hexA(C.bone, 0.45), track: 5,
       });
-      txt(ctx, 'tulis di komentar', W / 2, 1650, {
-        size: 25, font: F.num6, color: hexA(C.bone, 0.4), align: 'center', track: 3,
-      });
+      bigStat(ctx, M + 48, 1338, '27', { size: 132, unit: 'menit', color: C.bone, label: 'alarm pertama sampai berdiri' });
+      hairline(ctx, 760, 1200, 760, 1444, { color: C.bone, alpha: 0.12, lw: 2 });
+      bigStat(ctx, 820, 1338, '0', { size: 132, unit: 'siklus', color: C.amberHi, label: 'yang sempat selesai' });
       ctx.restore();
     }
 
-    const a6 = clamp((t - 5.0) / 0.8);
-    if (a6 > 0.01) {
+    /* ------------------------------------------------------------ footer -- */
+    const fA = clamp((t - 9.0) / 0.8);
+    if (fA > 0.01) {
       ctx.save();
-      ctx.globalAlpha = a6 * 0.85;
-      hairline(ctx, M, 1730, W - M, 1730, { alpha: 0.07 });
-      txt(ctx, 'NAYSI', M, 1790, { size: 24, font: F.num6, color: hexA(C.bone, 0.45), track: 8 });
-      txt(ctx, 'tidur, otak, kebiasaan', W - M, 1790, {
-        size: 21, font: F.num6, color: hexA(C.bone, 0.28), align: 'right', track: 2,
+      ctx.globalAlpha = fA * 0.85;
+      txt(ctx, 'NAYSI · TIDUR & OTAK', W / 2, 1640, {
+        size: 24, font: F.num6, color: hexA(C.bone, 0.42), align: 'center', track: 6,
+      });
+      txt(ctx, 'SUMBER: JOURNAL OF SLEEP RESEARCH 2023 · SLEEP 2022', W / 2, 1690, {
+        size: 20, font: F.num6, color: hexA(C.bone, 0.28), align: 'center', track: 3.5,
       });
       ctx.restore();
     }

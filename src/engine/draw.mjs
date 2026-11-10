@@ -111,16 +111,16 @@ export function txt(ctx, s, x, y, o = {}) {
   ctx.save();
   ctx.textAlign = align === 'center' ? 'center' : align === 'right' ? 'right' : 'left';
   ctx.textBaseline = base;
+  if (track) ctx.letterSpacing = `${track}px`;
   if (maxWidth > 0) {
     ctx.font = `${fs2}px ${font}`;
-    let guard = 0;
-    while (ctx.measureText(s).width > maxWidth && fs2 > minSize && guard++ < 64) {
-      fs2 *= 0.96;
-    }
+    const mw = ctx.measureText(s).width;
+    // one deterministic scale step: measuring inside the old loop used the
+    // stale 30px font every iteration, so long strings collapsed to 8px.
+    if (mw > maxWidth) fs2 = Math.max(minSize, fs2 * (maxWidth / mw));
   }
   ctx.font = `${fs2}px ${font}`;
   ctx.globalAlpha *= alpha;
-  if (track) ctx.letterSpacing = `${track}px`;
   if (shadow > 0 || glowBlur > 0) {
     ctx.shadowColor = glowBlur > 0 ? glowColor : shadowColor;
     ctx.shadowBlur = glowBlur > 0 ? glowBlur : shadow;

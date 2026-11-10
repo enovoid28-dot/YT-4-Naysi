@@ -1,14 +1,15 @@
-// Episode 3 (v2) — "Kopi Jam 3 Sore" — narration + captions + scene metadata.
-// Slower delivery, longer cut (target < 3:00, the Shorts ceiling).
+// Episode 4 — "Alarm 5 Menit" — narration + captions + scene metadata.
+// Thesis: snoozing is not a drug, but it is not extra sleep either. The bill
+// is paid in fragments and in the bedtime you did not move earlier.
 
 export const SCENES = [
   {
     id: 's1',
     key: 'k1',
-    label: 'SORE',
+    label: 'BUNYI',
     index: '01',
-    vo: 'Jam tiga sore. Kamu pesan kopi, karena jam empat masih ada rapat. Jam sebelas malam, kamu di kasur, mata terbuka, dan yang kamu salahkan ponsel. Padahal kopi yang kamu minum sore itu belum pergi.',
-    cap: 'Jam *tiga sore*. Kamu pesan kopi, karena jam empat masih ada rapat. Jam *sebelas malam*, kamu di kasur, mata *terbuka*, dan yang kamu salahkan *ponsel*. Padahal *kopi* yang kamu minum sore itu belum pergi.',
+    vo: 'Jam enam pagi. Alarm berbunyi, tanganmu mencari, dan sembilan menit lagi. Kamu pikir itu tidur tambahan. Bukan. Itu tidur yang sama, dipotong jadi tiga bagian, dan tiap bagian dimulai dari nol.',
+    cap: 'Jam *enam pagi*. Alarm berbunyi, tanganmu mencari, dan *sembilan menit* lagi. Kamu pikir itu *tidur tambahan*. Bukan. Itu tidur yang sama, dipotong jadi *tiga bagian*, dan tiap bagian dimulai *dari nol*.',
     pad: 0.9,
   },
   {
@@ -16,8 +17,8 @@ export const SCENES = [
     key: 'k2',
     label: 'ANGKA',
     index: '02',
-    vo: 'Kafein tidak hilang begitu kamu berhenti menyeruput. Waktu paruhnya sekitar lima jam. Dua ratus miligram jam tiga sore: jam delapan malam tinggal seratus, jam satu pagi tinggal lima puluh. Setengah cangkir masih berputar di darahmu.',
-    cap: 'Kafein *tidak hilang* begitu kamu berhenti menyeruput. Waktu paruhnya sekitar *lima jam*. *Dua ratus miligram* jam tiga sore: jam delapan malam tinggal *seratus*, jam satu pagi tinggal *lima puluh*. *Setengah cangkir* masih berputar di darahmu.',
+    vo: 'Alarm pertama jam enam. Kamu berdiri jam enam dua puluh tujuh. Di survei seribu tujuh ratus tiga puluh dua orang, enam puluh sembilan persen menekan snooze, rata-rata dua puluh dua menit. Di data pelacak tidur empat ratus lima puluh pekerja, lima puluh tujuh persen snooze, dan butuh dua puluh tujuh menit sampai benar-benar berdiri.',
+    cap: 'Alarm pertama jam *enam*. Kamu berdiri jam *enam dua puluh tujuh*. Di survei *1.732 orang*, *69 persen* menekan snooze, rata-rata *22 menit*. Di data pelacak tidur *450 pekerja*, *57 persen* snooze, dan butuh *27 menit* sampai benar-benar berdiri.',
     pad: 0.7,
   },
   {
@@ -25,8 +26,8 @@ export const SCENES = [
     key: 'k3',
     label: 'BUKTI',
     index: '03',
-    vo: 'Bukan sekadar hitungan di kertas. Tahun dua ribu tiga belas, peneliti memberi empat ratus miligram kafein enam jam sebelum tidur. Waktu tidur mereka terpotong lebih dari satu jam. Dan mereka merasa tidurnya biasa saja.',
-    cap: 'Bukan sekadar hitungan di kertas. Tahun *dua ribu tiga belas*, peneliti memberi *empat ratus miligram* kafein *enam jam* sebelum tidur. Waktu tidur mereka terpotong *lebih dari satu jam*. Dan mereka *merasa* tidurnya biasa saja.',
+    vo: 'Tahun dua ribu dua puluh tiga, tiga puluh satu orang yang biasa snooze diuji di laboratorium. Tidur tiga puluh menit ekstra. Kognisi mereka tidak rusak. Malah sedikit lebih cepat berpikir, karena lebih jarang bangun dari tidur dalam. Kortisol pagi pun tidak terganggu.',
+    cap: 'Tahun *dua ribu dua puluh tiga*, *31 orang* yang biasa snooze diuji di laboratorium. Tidur *tiga puluh menit* ekstra. Kognisi mereka *tidak rusak*. Malah sedikit *lebih cepat* berpikir, karena lebih jarang bangun dari *tidur dalam*. Kortisol pagi pun *tidak terganggu*.',
     pad: 0.7,
   },
   {
@@ -34,8 +35,8 @@ export const SCENES = [
     key: 'k4',
     label: 'DALAM',
     index: '04',
-    vo: 'Yang hilang bukan cuma durasi. Tidur dalam, tahap paling memulihkan, ikut menyusut. Meta-analisis dua puluh empat studi mencatat rata-rata sebelas menit tidur dalam lenyap, efisiensi tidur turun tujuh persen. Semuanya tanpa terasa.',
-    cap: 'Yang hilang bukan cuma *durasi*. *Tidur dalam*, tahap paling memulihkan, ikut *menyusut*. Meta-analisis *dua puluh empat studi* mencatat rata-rata *sebelas menit* tidur dalam lenyap, efisiensi tidur turun *tujuh persen*. Semuanya *tanpa terasa*.',
+    vo: 'Jadi snooze bukan racun. Tapi lihat isinya. Tidur bergerak dalam siklus sekitar sembilan puluh menit: ringan, dalam, lalu REM. Sembilan menit tidak muat satu siklus. Kamu hanya menyentuh tidur ringan paling atas, lalu ditarik keluar lagi.',
+    cap: 'Jadi snooze *bukan racun*. Tapi lihat *isinya*. Tidur bergerak dalam siklus sekitar *sembilan puluh menit*: *ringan*, *dalam*, lalu *REM*. *Sembilan menit* tidak muat satu siklus. Kamu hanya menyentuh *tidur ringan* paling atas, lalu ditarik keluar lagi.',
     pad: 0.7,
   },
   {
@@ -43,8 +44,8 @@ export const SCENES = [
     key: 'k5',
     label: 'OTAK',
     index: '05',
-    vo: 'Kenapa? Sepanjang hari otak menumpuk adenosin, sinyal yang membuatmu mengantuk. Kafein menempel di reseptornya dan menutup pintu. Rasa kantuk tidak hilang, hanya tidak sampai. Utangnya tetap tercatat, dan ditagih saat kafein habis.',
-    cap: 'Kenapa? Sepanjang hari otak menumpuk *adenosin*, sinyal yang membuatmu *mengantuk*. Kafein menempel di reseptornya dan *menutup pintu*. Rasa kantuk tidak hilang, hanya *tidak sampai*. Utangnya tetap *tercatat*, dan ditagih saat kafein habis.',
+    vo: 'Dan bangun itu ada harganya. Namanya inersia tidur. Aliran darah ke otak butuh sampai tiga puluh menit untuk kembali normal. Tiap kali snooze, kamu menyalakan mesin, lalu mematikannya lagi. Tiga kali snooze, tiga kali start dari dingin.',
+    cap: 'Dan bangun itu ada *harganya*. Namanya *inersia tidur*. Aliran darah ke otak butuh sampai *tiga puluh menit* untuk kembali normal. Tiap kali snooze, kamu *menyalakan mesin*, lalu mematikannya lagi. Tiga kali snooze, *tiga kali* start dari dingin.',
     pad: 0.7,
   },
   {
@@ -52,8 +53,8 @@ export const SCENES = [
     key: 'k6',
     label: 'BEDA',
     index: '06',
-    vo: 'Masalahnya, jam tubuh tiap orang tidak sama. Waktu paruh kafein berkisar satu setengah sampai sembilan setengah jam, tergantung enzim hati dan gen. Kalau punyamu lambat, kopi jam satu siang pun masih ikut begadang.',
-    cap: 'Masalahnya, jam tubuh tiap orang *tidak sama*. Waktu paruh kafein berkisar *satu setengah* sampai *sembilan setengah jam*, tergantung enzim hati dan *gen*. Kalau punyamu *lambat*, kopi jam satu siang pun masih ikut begadang.',
+    vo: 'Snooze juga punya profil. Yang rutin snooze rata-rata enam tahun lebih muda, dan hampir empat kali lebih mungkin tipe malam. Tapi kalau kamu kurang tidur, atau punya insomnia, snooze bukan kebiasaan. Itu gejala, dan tidak selesai dengan sembilan menit.',
+    cap: 'Snooze juga punya *profil*. Yang rutin snooze rata-rata *enam tahun lebih muda*, dan hampir *empat kali* lebih mungkin *tipe malam*. Tapi kalau kamu *kurang tidur*, atau punya *insomnia*, snooze bukan kebiasaan. Itu *gejala*, dan tidak selesai dengan sembilan menit.',
     pad: 0.7,
   },
   {
@@ -61,8 +62,8 @@ export const SCENES = [
     key: 'k7',
     label: 'MITOS',
     index: '07',
-    vo: 'Tiga hal yang sering dianggap aman. Kopi setelah makan siang? Belum tentu. Kafein hilang dalam dua jam? Salah, masih separuh. Decaf bebas kafein? Tidak, masih dua sampai lima belas miligram.',
-    cap: 'Tiga hal yang sering dianggap aman. Kopi setelah makan siang? *Belum tentu*. Kafein hilang dalam dua jam? *Salah*, masih separuh. Decaf bebas kafein? *Tidak*, masih dua sampai lima belas miligram.',
+    vo: 'Tiga hal yang sering dikira benar. Snooze merusak otak? Belum terbukti. Snooze menambah tidur? Tidak, itu tidur yang sama. Lima menit cukup untuk pulih? Tidak. Lima menit tidak menyelesaikan satu tahap pun.',
+    cap: 'Tiga hal yang sering *dikira benar*. Snooze *merusak otak*? *Belum terbukti*. Snooze *menambah tidur*? *Tidak*, itu tidur yang sama. *Lima menit* cukup untuk pulih? *Tidak.* Lima menit tidak menyelesaikan *satu tahap pun*.',
     pad: 0.7,
   },
   {
@@ -70,17 +71,17 @@ export const SCENES = [
     key: 'k8',
     label: 'CARA',
     index: '08',
-    vo: 'Yang bekerja sederhana. Kunci dulu jam tidurmu. Tidur jam sebelas berarti kopi terakhir sebelum jam tiga sore. Kalau sore masih butuh tenaga, tidur dua puluh menit mengalahkan cangkir ketiga. Dan cahaya pagi sepuluh menit membuat jam tubuhmu lebih tegas.',
-    cap: 'Yang bekerja *sederhana*. Kunci dulu *jam tidurmu*. Tidur jam sebelas berarti kopi terakhir *sebelum jam tiga sore*. Kalau sore masih butuh tenaga, *tidur dua puluh menit* mengalahkan cangkir ketiga. Dan *cahaya pagi sepuluh menit* membuat jam tubuhmu lebih tegas.',
-    pad: 0.7,
+    vo: 'Yang bekerja sederhana. Satu alarm, di jam kamu benar-benar harus bangun. Ponsel di luar jangkauan tangan. Cahaya terang dalam sepuluh menit pertama. Dan kalau kamu butuh tiga kali snooze, yang kurang bukan sembilan menit. Tidurmu, empat puluh menit lebih awal.',
+    cap: 'Yang bekerja *sederhana*. *Satu alarm*, di jam kamu benar-benar harus bangun. Ponsel *di luar jangkauan* tangan. *Cahaya terang* dalam sepuluh menit pertama. Dan kalau kamu butuh *tiga kali snooze*, yang kurang bukan sembilan menit. *Tidurmu*, empat puluh menit lebih awal.',
+    pad: 0.8,
   },
   {
     id: 's9',
     key: 'k9',
     label: 'JAMNYA',
     index: '09',
-    vo: 'Kopi bukan masalahnya. Jamnya. Geser satu cangkir tiga jam lebih awal, dan malam ini kamu tidur lebih cepat tanpa mengubah apa pun yang lain.',
-    cap: 'Kopi bukan *masalahnya*. *Jamnya.* Geser satu cangkir *tiga jam lebih awal*, dan malam ini kamu tidur *lebih cepat*, tanpa mengubah apa pun yang lain.',
+    vo: 'Jadi snooze boleh. Selama kamu tahu apa yang kamu beli. Kalau tidurmu cukup, sembilan menit itu cuma ritual. Kalau tidak, tagihannya sama, cuma dibayar dengan bunga. Alarm pertamamu jam berapa, dan berapa kali kamu tekan snooze?',
+    cap: 'Jadi snooze *boleh*. Selama kamu tahu *apa yang kamu beli*. Kalau tidurmu cukup, sembilan menit itu cuma *ritual*. Kalau tidak, tagihannya *sama*, cuma dibayar dengan *bunga*. Alarm pertamamu *jam berapa*, dan berapa kali kamu tekan snooze?',
     pad: 2.2,
   },
 ];

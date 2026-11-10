@@ -1,103 +1,46 @@
-import { W, H, C, M, txt, tracking, hexA, fillRR, linGrad, radGrad, measure } from '../engine/draw.mjs';
+import { W, H, C, M, txt, hexA, fillRR, linGrad } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { bg, glowSpot, card, hairline } from './_ep3.mjs';
+import { clamp, lerp, EASE } from '../engine/anim.mjs';
+import { dawn, kicker, chip, card, hairline } from './_ep4.mjs';
 
+// 07 — MITOS. Three claims that survive because nobody checks them.
 const ROWS = [
-  { at: 0.5, claim: 'Kopi setelah makan siang aman', fix: 'Belum tentu', note: '8 jam sebelum tidur, bukan 4 jam' },
-  { at: 4.2, claim: 'Kafein hilang dalam 2 jam', fix: 'Masih separuh setelah 5 jam', note: 'waktu paruh, bukan waktu kerja' },
-  { at: 7.9, claim: 'Decaf bebas kafein', fix: '2–15 mg per cangkir', note: 'cukup untuk sebagian orang' },
+  { claim: 'Snooze merusak otak', verdict: 'BELUM TERBUKTI', color: C.bone, at: 0.5 },
+  { claim: 'Snooze menambah tidur', verdict: 'SALAH', color: C.red, at: 2.4 },
+  { claim: 'Lima menit cukup untuk pulih', verdict: 'TIDAK', color: C.red, at: 4.3 },
 ];
 
-function cross(ctx, x, y, r, color, a) {
-  ctx.save();
-  ctx.globalAlpha = a;
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 7;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(x - r, y - r);
-  ctx.lineTo(x + r, y + r);
-  ctx.moveTo(x + r, y - r);
-  ctx.lineTo(x - r, y + r);
-  ctx.stroke();
-  ctx.restore();
-}
-
 export default {
-  draw(ctx, t, scene, meta) {
-    bg(ctx, { top: '#0A0A11', mid: '#07070D', bot: '#04050A' });
-    glowSpot(ctx, W / 2, 420, 520, C.amber, 0.035);
+  draw(ctx, t) {
+    dawn(ctx, { top: '#06080F', mid: '#090E19', bot: '#0B1320', warmX: 0.5, warmA: 0.05 });
 
-    tracking(ctx, 'TIGA ANGGAPAN', M, 330, {
-      size: 24, font: F.num6, track: 7, color: hexA(C.bone, 0.45),
-    });
-    txt(ctx, 'Yang sering dianggap aman', M, 470, {
-      size: 64, font: F.display, color: C.bone, alpha: EASE.outCubic(clamp((t - 0.1) / 0.8)),
-    });
+    kicker(ctx, 'TIGA YANG SERING DIKIRA BENAR');
 
-    ROWS.forEach((row, i) => {
-      const a = EASE.outCubic(clamp((t - row.at) / 0.7));
+    ROWS.forEach((r, i) => {
+      const a = EASE.outCubic(clamp((t - r.at) / 0.6));
       if (a <= 0.01) return;
-      const y = 592 + i * 320;
+      const y = 418 + i * 410;
       ctx.save();
       ctx.globalAlpha = a;
-
-      card(ctx, M, y, W - 2 * M, 276, {
-        fill: 'rgba(255,255,255,0.028)', stroke: 'rgba(255,255,255,0.09)', r: 26, shadowBlur: 34,
+      ctx.translate(lerp(0, 0, a), lerp(30, 0, a));
+      card(ctx, M, y, W - 2 * M, 356, { r: 32, fill: 'rgba(255,255,255,0.032)' });
+      txt(ctx, `0${i + 1}`, W - M - 42, y + 78, {
+        size: 24, font: F.num6, color: hexA(C.bone, 0.3), align: 'right', track: 2,
       });
-
-      // claim, struck through
-      txt(ctx, row.claim, M + 46, y + 94, {
-        size: 42, font: F.head, color: hexA(C.bone, 0.45), maxWidth: W - 2 * M - 160,
+      txt(ctx, r.claim, M + 44, y + 172, {
+        size: 58, font: F.semi, color: C.bone, maxWidth: W - 2 * M - 88, minSize: 34,
       });
-      const strike = EASE.outCubic(clamp((t - row.at - 0.5) / 0.6));
-      if (strike > 0.01) {
-        const w = (measure(ctx, row.claim, 42, F.head) + 16) * strike;
-        ctx.save();
-        ctx.strokeStyle = hexA(C.red, 0.75);
-        ctx.lineWidth = 5;
-        ctx.beginPath();
-        ctx.moveTo(M + 44, y + 80);
-        ctx.lineTo(M + 44 + w, y + 80);
-        ctx.stroke();
-        ctx.restore();
-      }
-
-      // correction
-      const fixA = EASE.outCubic(clamp((t - row.at - 0.7) / 0.6));
-      if (fixA > 0.01) {
-        ctx.save();
-        ctx.globalAlpha = a * fixA;
-        ctx.fillStyle = hexA(C.amber, 0.9);
-        ctx.fillRect(M + 46, y + 150, 6, 62);
-        txt(ctx, row.fix, M + 74, y + 200, {
-          size: 46, font: F.head, color: C.amberHi, maxWidth: W - 2 * M - 190,
-        });
-        txt(ctx, row.note, M + 74, y + 246, {
-          size: 25, font: F.num6, color: hexA(C.bone, 0.42), track: 1,
-        });
-        ctx.restore();
-      }
-
-      // cross mark
-      if (strike > 0.5) cross(ctx, W - M - 56, y + 72, 19, hexA(C.red, 0.7), (strike - 0.5) * 2 * a);
+      chip(ctx, M + 44, y + 232, r.verdict, { size: 28, color: r.color, padX: 26, h: 68, track: 3.5 });
       ctx.restore();
     });
 
-    const fA = EASE.outCubic(clamp((t - 11.6) / 0.8));
-    if (fA > 0.01) {
+    const nA = clamp((t - 6.2) / 0.7);
+    if (nA > 0.01) {
       ctx.save();
-      ctx.globalAlpha = fA;
-      const fy = 1580 + (1 - fA) * 24;
-      card(ctx, M, fy, W - 2 * M, 200, {
-        fill: 'rgba(255,176,58,0.06)', stroke: 'rgba(255,176,58,0.28)', r: 26, glowColor: C.amber, shadowBlur: 40,
-      });
-      txt(ctx, 'Aturan simpannya', M + 46, fy + 78, {
-        size: 26, font: F.num6, color: hexA(C.bone, 0.45), track: 2,
-      });
-      txt(ctx, 'delapan jam sebelum jam tidur', M + 46, fy + 146, {
-        size: 44, font: F.head, color: C.amberHi,
+      ctx.globalAlpha = nA * 0.9;
+      hairline(ctx, M, 1636, W - M, 1636, { color: C.bone, alpha: 0.12, lw: 2 });
+      txt(ctx, 'YANG SALAH BUKAN SNOOZE. YANG SALAH ADALAH MENGIRANYA TIDUR.', M, 1700, {
+        size: 26, font: F.num6, color: hexA(C.amber, 0.85), track: 3, maxWidth: W - 2 * M,
       });
       ctx.restore();
     }

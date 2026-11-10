@@ -1,163 +1,81 @@
-import { W, H, C, M, txt, tracking, hexA, fillRR, linGrad, radGrad } from '../engine/draw.mjs';
+import { W, H, C, M, txt, hexA, fillRR, linGrad } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { bg, glowSpot, card, hairline } from './_ep3.mjs';
+import { dawn, kicker, chip, card, hairline, bigStat, glowSpot } from './_ep4.mjs';
 
-const STAGES = ['BANGUN', 'REM', 'N1', 'N2', 'N3'];
-const STEP = 4; // minutes per sample
-
-/** Builds a plausible night: 5 sleep cycles, deep sleep shrinking each cycle. */
-function buildNight({ deepScale = 1, awakenings = [], remScale = 1 }) {
-  const out = [];
-  const push = (v, mins) => {
-    for (let m = 0; m < mins; m += STEP) out.push(v);
-  };
-  for (let c = 0; c < 5; c++) {
-    push(2, 6); // N1
-    push(3, 42); // N2
-    const deep = Math.max(0, Math.round((56 - c * 14) * deepScale));
-    push(4, deep);
-    push(3, 16 + c * 2);
-    push(1, Math.round((9 + c * 4) * remScale));
-    if (c < 4) push(2, 4);
-  }
-  awakenings.forEach((i) => {
-    if (i < out.length) out[i] = 0;
-  });
-  return out;
-}
-
-const PLACEBO = buildNight({});
-const CAFFEINE = buildNight({ deepScale: 0.62, remScale: 0.88, awakenings: [46, 47, 94, 95, 96, 97] });
-
-function hypnogram(ctx, x0, top, w, rowH, data, reveal, color) {
-  const step = w / data.length;
-  const rowY = (v) => top + v * rowH;
-  const n = Math.max(1, Math.floor(data.length * reveal));
-
-  // faint area under the curve
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(x0, rowY(4) + rowH * 0.9);
-  ctx.lineTo(x0, rowY(data[0]) + rowH * 0.5);
-  for (let i = 1; i < Math.min(n, data.length); i++) {
-    ctx.lineTo(x0 + i * step, rowY(data[i]) + rowH * 0.5);
-  }
-  const area = linGrad(ctx, 0, top, 0, rowY(4) + rowH, [
-    [0, hexA(color, 0.16)], [1, hexA(color, 0.02)],
-  ]);
-  ctx.lineTo(x0 + Math.min(n, data.length) * step, rowY(4) + rowH * 0.9);
-  ctx.closePath();
-  ctx.fillStyle = area;
-  ctx.fill();
-  ctx.restore();
-
-  // deep-sleep blocks
-  let i = 0;
-  while (i < Math.min(n, data.length)) {
-    if (data[i] !== 4) { i++; continue; }
-    let j = i;
-    while (j < Math.min(n, data.length) && data[j] === 4) j++;
-    const a = clamp((reveal * data.length - i) / 6);
-    ctx.save();
-    ctx.globalAlpha = 0.85 * a;
-    const g = linGrad(ctx, 0, rowY(4), 0, rowY(4) + rowH, [
-      [0, hexA(color, 0.75)], [1, hexA(color, 0.35)],
-    ]);
-    ctx.fillStyle = g;
-    fillRR(ctx, x0 + i * step + 1, rowY(4) + 5, (j - i) * step - 2, rowH - 10, 8, g);
-    ctx.restore();
-    i = j;
-  }
-
-  // step line
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(x0, rowY(data[0]) + rowH * 0.5);
-  for (let k = 0; k < Math.min(n, data.length); k++) {
-    const x = x0 + k * step;
-    ctx.lineTo(x, rowY(data[k]) + rowH * 0.5);
-    ctx.lineTo(x + step, rowY(data[k]) + rowH * 0.5);
-  }
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 5;
-  ctx.lineJoin = 'round';
-  ctx.lineCap = 'round';
-  ctx.shadowColor = hexA(color, 0.5);
-  ctx.shadowBlur = 18;
-  ctx.stroke();
-  ctx.restore();
-}
-
-function panel(ctx, x, y, w, h, o) {
-  const { label, value, sub, note, data, reveal, color, a } = o;
-  const left = x + 214;
-  const plotW = w - 214 - 66;
-  const top = y + 168;
-  const rowH = 58;
-
-  ctx.save();
-  ctx.globalAlpha = a;
-  card(ctx, x, y, w, h, {
-    fill: 'rgba(255,255,255,0.032)', stroke: hexA(color, 0.22), r: 28, glowColor: color, shadowBlur: 50,
-  });
-
-  tracking(ctx, label, x + 44, y + 62, { size: 23, font: F.num6, track: 5, color: hexA(color, 0.95) });
-  txt(ctx, value, x + w - 44, y + 78, { size: 58, font: F.num, color: color, align: 'right' });
-  txt(ctx, sub, x + w - 44, y + 114, {
-    size: 21, font: F.num6, color: hexA(C.bone, 0.42), align: 'right', track: 1,
-  });
-
-  STAGES.forEach((s, i) => {
-    hairline(ctx, left, top + i * rowH, left + plotW, top + i * rowH, { alpha: i === 4 ? 0 : 0.06 });
-    txt(ctx, s, left - 18, top + i * rowH + rowH * 0.5 + 8, {
-      size: 17, font: F.num6, color: hexA(C.bone, 0.26), align: 'right', track: 1,
-    });
-  });
-  hairline(ctx, left, top + 4 * rowH + rowH, left + plotW, top + 4 * rowH + rowH, { alpha: 0.14 });
-
-  hypnogram(ctx, left, top, plotW, rowH, data, reveal, color);
-
-  txt(ctx, note, x + 44, y + h - 34, { size: 21, font: F.num6, color: hexA(C.bone, 0.44), track: 2 });
-  ctx.restore();
-}
+// 03 — BUKTI. The lab night: thirty minutes of snoozing, and nothing broke.
+// Honest beat — the cost is not cognition, it is minutes.
+const ROWS = [
+  { y: 604, title: 'Kognisi setelah bangun', verdict: 'TIDAK TURUN', color: C.mint, note: 'sedikit lebih cepat, bukan lebih lambat', at: 1.0 },
+  { y: 806, title: 'Bangun dari tidur dalam', verdict: 'LEBIH JARANG', color: C.sky, note: 'pemicu inersia paling berat', at: 3.8 },
+  { y: 1008, title: 'Kortisol pagi', verdict: 'TIDAK BERUBAH', color: C.bone, note: 'sinyal bangun tetap utuh', at: 6.4 },
+];
 
 export default {
-  draw(ctx, t, scene, meta) {
-    bg(ctx, { top: '#0A0B12', mid: '#07080D', bot: '#04050A' });
-    glowSpot(ctx, W / 2, 1200, 900, C.mint, 0.05);
+  draw(ctx, t) {
+    dawn(ctx, { top: '#06090F', mid: '#0A101A', bot: '#0C1522', warmX: 0.2, warmA: 0.07 });
+    glowSpot(ctx, 1100, 500, 520, C.mint, 0.05);
 
-    tracking(ctx, '400 MG, ENAM JAM SEBELUM TIDUR', M, 330, {
-      size: 24, font: F.num6, track: 6, color: hexA(C.bone, 0.45),
-    });
-    txt(ctx, 'Satu malam, dua kondisi', M, 470, {
-      size: 66, font: F.display, color: C.bone, alpha: EASE.outCubic(clamp((t - 0.1) / 0.8)),
-    });
+    kicker(ctx, 'EKSPERIMEN LABORATORIUM · n = 31');
 
-    panel(ctx, M, 536, W - 2 * M, 528, {
-      label: 'TANPA KAFEIN', value: '7,7 jam', sub: 'total tidur',
-      note: 'TIDUR DALAM 5 BLOK, ± 111 MENIT', data: PLACEBO,
-      reveal: clamp((t - 0.9) / 2.6), color: C.mint,
-      a: EASE.outCubic(clamp((t - 0.6) / 0.7)),
-    });
+    const a0 = EASE.outCubic(clamp((t - 0.3) / 0.7));
+    ctx.save();
+    ctx.globalAlpha = a0;
+    ctx.translate(0, lerp(26, 0, a0));
+    card(ctx, M, 372, W - 2 * M, 748, { r: 36, fill: 'rgba(255,255,255,0.035)' });
 
-    panel(ctx, M, 1092, W - 2 * M, 528, {
-      label: '400 MG KAFEIN', value: '6,5 jam', sub: 'total tidur',
-      note: 'TIDUR DALAM 4 BLOK, ± 74 MENIT', data: CAFFEINE,
-      reveal: clamp((t - 5.4) / 2.6), color: C.amber,
-      a: EASE.outCubic(clamp((t - 5.1) / 0.7)),
+    txt(ctx, '30 MENIT SNOOZE', M + 48, 462, { size: 30, font: F.num6, color: C.amberHi, track: 5 });
+    txt(ctx, 'SATU MALAM · DUA KONDISI', W - M - 48, 462, {
+      size: 24, font: F.num6, color: hexA(C.bone, 0.42), align: 'right', track: 4,
     });
 
-    const dA = EASE.outCubic(clamp((t - 9.4) / 0.8));
-    if (dA > 0.01) {
+    ROWS.forEach((r, i) => {
+      const a = EASE.outCubic(clamp((t - r.at) / 0.5));
+      if (a <= 0.01) return;
       ctx.save();
-      ctx.globalAlpha = dA;
-      txt(ctx, '−1,2 jam', W / 2, 1730, {
-        size: 88, font: F.num, color: C.ember, align: 'center',
-        glowBlur: 40, glowColor: hexA(C.ember, 0.45),
+      ctx.globalAlpha = a;
+      ctx.translate(lerp(24, 0, a), 0);
+      if (i > 0) hairline(ctx, M + 48, r.y - 46, W - M - 48, r.y - 46, { color: C.bone, alpha: 0.09, lw: 2 });
+      txt(ctx, r.title, M + 48, r.y + 24, { size: 46, font: F.semi, color: C.bone, maxWidth: 600 });
+      txt(ctx, r.note, M + 48, r.y + 78, {
+        size: 26, font: F.num6, color: hexA(C.bone, 0.45), track: 1, maxWidth: 620,
       });
-      txt(ctx, 'tanpa terasa oleh pesertanya', W / 2, 1790, {
-        size: 27, font: F.num6, color: hexA(C.bone, 0.5), align: 'center', track: 2,
+      chip(ctx, W - M - 48, r.y - 8, r.verdict, {
+        size: 26, color: r.color, align: 'right', padX: 24, h: 64, track: 3,
+      });
+      ctx.restore();
+    });
+    ctx.restore();
+
+    /* ------------------------------------------------------ the real bill -- */
+    const bA = EASE.outCubic(clamp((t - 8.6) / 0.7));
+    if (bA > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = bA;
+      ctx.translate(0, lerp(24, 0, bA));
+      card(ctx, M, 1168, W - 2 * M, 300, {
+        r: 30, fill: 'rgba(255,176,58,0.06)', stroke: 'rgba(255,176,58,0.26)',
+      });
+      txt(ctx, 'HARGA YANG TETAP DIBAYAR', M + 44, 1240, {
+        size: 25, font: F.num6, color: hexA(C.amber, 0.8), track: 4.5,
+      });
+      bigStat(ctx, M + 44, 1372, '6', { size: 96, unit: 'menit tidur hilang', color: C.amberHi });
+      txt(ctx, 'tanpa efek buruk pada kognisi', W - M - 44, 1368, {
+        size: 26, font: F.num6, color: hexA(C.bone, 0.45), align: 'right', track: 1, maxWidth: 470,
+      });
+      ctx.restore();
+    }
+
+    const nA = clamp((t - 11.4) / 0.8);
+    if (nA > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = nA * 0.9;
+      hairline(ctx, M, 1540, W - M, 1540, { color: C.bone, alpha: 0.12, lw: 2 });
+      txt(ctx, 'JADI SNOOZE BUKAN RACUN. MASALAHNYA DI TEMPAT LAIN.', M, 1612, {
+        size: 27, font: F.num6, color: hexA(C.amber, 0.85), track: 3, maxWidth: W - 2 * M,
+      });
+      txt(ctx, 'Sumber: Journal of Sleep Research, 2023 — 31 pengguna snooze rutin, dua malam di lab.', M, 1672, {
+        size: 22, font: F.num6, color: hexA(C.bone, 0.32), track: 1, maxWidth: W - 2 * M,
       });
       ctx.restore();
     }

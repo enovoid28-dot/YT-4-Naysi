@@ -100,16 +100,26 @@ export function buildTimeline() {
     const totalW = sentWeights.reduce((a, b) => a + b, 0);
     const captions = [];
     if (Array.isArray(aligned) && aligned.length === sentences.length) {
+      // word times come with a small lead-in, so two cards can overlap by a few
+      // hundredths. Clamp every card inside its own VO and never let a card
+      // start before the previous one has finished: overlapping cards are what
+      // makes the outgoing line fade while the incoming one is still moving.
+      const num = (v) => Math.max(voOffset, Math.min(audioDur - 0.03, v));
       aligned.forEach((words) => {
         chunkWords(words).forEach((chunk) => {
-          captions.push({
-            words: chunk.map((w) => ({
-              text: w.text,
-              accent: w.accent,
-              start: voOffset + w.start,
-              end: voOffset + w.end,
-            })),
-          });
+          const ws = chunk.map((w) => ({
+            text: w.text,
+            accent: w.accent,
+            start: voOffset + num(w.start),
+            end: voOffset + num(w.end),
+          }));
+          const prev = captions[captions.length - 1];
+          if (prev) {
+            const prevEnd = prev.words[prev.words.length - 1].end;
+            if (ws[0].start < prevEnd + 0.01) ws[0].start = +(prevEnd + 0.01).toFixed(3);
+            if (ws[0].end <= ws[0].start) ws[0].end = +(ws[0].start + 0.08).toFixed(3);
+          }
+          captions.push({ words: ws });
         });
       });
       scenes.push({

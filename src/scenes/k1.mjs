@@ -1,119 +1,82 @@
-import { W, H, C, M, txt, tracking, hexA, fillRR, linGrad, radGrad } from '../engine/draw.mjs';
+import { W, H, C, M, txt, hexA, fillRR, linGrad } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { bg, glowSpot, clockFace, mug, shadow, hairline } from './_ep3.mjs';
+import { dawn, windowLight, lightShaft, phone, kicker, chip, hairline, glowSpot } from './_ep4.mjs';
 
+// 01 — BUNYI. The phone wakes up three times and the morning is spent in the
+// gap between awake and asleep.
 export default {
   draw(ctx, t, scene, meta) {
-    bg(ctx, { top: '#0C0F17', mid: '#080A10', bot: '#04050A' });
+    dawn(ctx, { top: '#05070D', mid: '#080E18', bot: '#0B1420', warmX: 0.12, warmA: 0.08 });
 
-    // room light: warm lamp off-frame left, cool window right
-    glowSpot(ctx, 120, 980, 980, C.amber, 0.11);
-    glowSpot(ctx, 1280, 640, 760, C.sky, 0.055);
+    /* ------------------------------------------------------------- room -- */
+    windowLight(ctx, 954, 372, 372, 486, EASE.outCubic(clamp((t - 0.15) / 1.1)));
+    lightShaft(ctx, { x: 954, y: 440, w: 372, h: 1200, skew: 180, a: 0.10 * clamp((t - 0.4) / 1.4) });
+    glowSpot(ctx, 120, 1480, 760, C.amber, 0.10);
 
-    /* ------------------------------------------------------------- desk -- */
-    const deskY = 1468;
-    const dg = linGrad(ctx, 0, deskY, 0, H, [
-      [0, '#171310'], [0.25, '#100D0B'], [1, '#07060A'],
-    ]);
-    ctx.fillStyle = dg;
+    // nightstand
+    const deskY = 1600;
+    ctx.fillStyle = linGrad(ctx, 0, deskY, 0, H, [[0, '#1A1612'], [0.35, '#100D0B'], [1, '#07060A']]);
     ctx.fillRect(0, deskY, W, H - deskY);
-    hairline(ctx, 0, deskY, W, deskY, { color: C.bone, alpha: 0.14, lw: 3 });
-    // desk sheen
-    const sh = linGrad(ctx, 0, deskY, W, deskY + 260, [
-      [0, 'rgba(255,176,58,0.00)'], [0.35, 'rgba(255,176,58,0.05)'], [1, 'rgba(255,255,255,0)'],
+    hairline(ctx, 0, deskY, W, deskY, { color: C.bone, alpha: 0.13, lw: 3 });
+    ctx.fillStyle = linGrad(ctx, 0, deskY, W, deskY + 240, [
+      [0, 'rgba(150,190,255,0.00)'], [0.3, 'rgba(150,190,255,0.05)'], [1, 'rgba(255,255,255,0)'],
     ]);
-    ctx.fillStyle = sh;
-    ctx.fillRect(0, deskY, W, 340);
-
-    /* ------------------------------------------------------------ clock -- */
-    const cA = EASE.outCubic(clamp((t - 0.2) / 0.9));
-    const mins = 12 + clamp((t - 2.2) / 12) * 6;
-    clockFace(ctx, 700, 618, 288 * lerp(0.93, 1, cA), {
-      hours: 23, minutes: mins, alpha: cA,
-      arc: { from: -Math.PI / 2 + (23 / 12) * TAU, to: -Math.PI / 2 + (23 / 12) * TAU + (8 / 12) * TAU },
-    });
-
-    // date plate under the clock
-    const pA = clamp((t - 1.1) / 0.7);
-    if (pA > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = pA * 0.85;
-      txt(ctx, 'SEKARANG', 700, 968, {
-        size: 22, font: F.num6, color: hexA(C.bone, 0.42), align: 'center', track: 6,
-      });
-      txt(ctx, '23.12', 700, 1040, {
-        size: 62, font: F.num, color: C.amberHi, align: 'center', track: 2,
-        glowBlur: 28, glowColor: hexA(C.amber, 0.5),
-      });
-      ctx.restore();
-    }
-
-    /* -------------------------------------------------------------- mug -- */
-    const mA = EASE.outCubic(clamp((t - 0.5) / 0.9));
-    ctx.save();
-    ctx.globalAlpha = mA;
-    mug(ctx, 400, lerp(1584, 1552, mA), 0.9, {
-      t: meta.t, steamAmt: 0.85, liquidA: 0.95,
-    });
-    ctx.restore();
-
-    const tagA = clamp((t - 7.6) / 0.8);
-    if (tagA > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = tagA;
-      hairline(ctx, 110, 1352, 110, 1262, { color: C.amber, alpha: 0.5, dash: [3, 9] });
-      txt(ctx, 'DIPESAN 15.00', 110, 1236, {
-        size: 23, font: F.num6, color: hexA(C.amber, 0.85), align: 'left', track: 5,
-      });
-      hairline(ctx, 110, 1352, 250, 1352, { color: C.amber, alpha: 0.5, dash: [3, 9] });
-      ctx.restore();
-    }
+    ctx.fillRect(0, deskY, W, 300);
 
     /* ------------------------------------------------------------ phone -- */
-    const phA = EASE.outCubic(clamp((t - 2.4) / 0.9));
-    if (phA > 0.01) {
-      const px = 962;
-      const py = 1108 + (1 - phA) * 46;
-      const pw = 268;
-      const ph = 446;
+    const presses = [5.6, 9.8, 14.0];
+    const snooze = presses.filter((p) => t >= p).length;
+    const time = ['06:00', '06:09', '06:18', '06:27'][snooze];
+    const press = Math.max(
+      0,
+      ...presses.map((p) => (t >= p && t < p + 0.9 ? 1 - (t - p) / 0.9 : 0)),
+    );
+    const pA = EASE.outCubic(clamp((t - 0.1) / 0.9));
+    const pw = 466;
+    phone(ctx, 320, lerp(690, 646, pA), pw, {
+      h: pw * 1.94,
+      alpha: pA,
+      glow: 0.7,
+      time,
+      snooze,
+      press,
+      sub: 'SENIN · 9 NOV',
+    });
+
+    /* ------------------------------------------------------------- log --- */
+    kicker(ctx, 'ALARM PERTAMA · 06.00');
+    const rows = [
+      { at: 5.6, label: 'SNOOZE 1', val: '06.09' },
+      { at: 9.8, label: 'SNOOZE 2', val: '06.18' },
+      { at: 14.0, label: 'SNOOZE 3', val: '06.27' },
+    ];
+    rows.forEach((r, i) => {
+      const a = EASE.outCubic(clamp((t - r.at - 0.05) / 0.5));
+      if (a <= 0.01) return;
+      const y = 1010 + i * 168;
       ctx.save();
-      ctx.globalAlpha = phA;
-      shadow(ctx, px + pw / 2, py + ph + 26, 150, 40, 0.55);
-
-      // body
-      fillRR(ctx, px, py, pw, ph, 34, '#0D1118');
-      ctx.strokeStyle = 'rgba(255,255,255,0.16)';
-      ctx.lineWidth = 3;
+      ctx.globalAlpha = a;
+      ctx.translate(lerp(28, 0, a), 0);
+      hairline(ctx, 906, y + 58, 906, y - 34, { color: C.amber, alpha: 0.35, lw: 2 });
+      ctx.fillStyle = C.amber;
       ctx.beginPath();
-      ctx.roundRect ? ctx.roundRect(px, py, pw, ph, 34) : ctx.rect(px, py, pw, ph);
-      ctx.stroke();
-
-      // screen
-      const sx = px + 14;
-      const sy = py + 14;
-      const sw = pw - 28;
-      const shh = ph - 28;
-      const sg = linGrad(ctx, sx, sy, sx, sy + shh, [
-        [0, 'rgba(96,170,255,0.55)'], [0.55, 'rgba(44,96,170,0.32)'], [1, 'rgba(12,26,46,0.5)'],
-      ]);
-      fillRR(ctx, sx, sy, sw, shh, 24, '#101B2C');
-      ctx.fillStyle = sg;
-      ctx.beginPath();
-      ctx.roundRect ? ctx.roundRect(sx, sy, sw, shh, 24) : ctx.rect(sx, sy, sw, shh);
+      ctx.arc(906, y + 58, 5, 0, TAU);
       ctx.fill();
+      txt(ctx, r.label, 942, y - 8, { size: 26, font: F.num6, color: hexA(C.amber, 0.85), track: 4.5 });
+      txt(ctx, r.val, 942, y + 62, { size: 62, font: F.num, color: C.bone, track: -1 });
+      txt(ctx, '+9 MENIT', 942, y + 112, { size: 25, font: F.num6, color: hexA(C.bone, 0.40), track: 3.5 });
+      ctx.restore();
+    });
 
-      // screen content: clock + a couple of notification lines
-      txt(ctx, '23.12', sx + sw / 2, sy + 150, {
-        size: 58, font: F.num, color: C.bone, align: 'center',
-        glowBlur: 26, glowColor: hexA(C.sky, 0.8),
+    // bottom note
+    const nA = clamp((t - 2.2) / 0.8);
+    if (nA > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = nA * 0.9;
+      txt(ctx, 'WAKTU DI KASUR · BUKAN WAKTU TIDUR', 320, 1692, {
+        size: 24, font: F.num6, color: hexA(C.bone, 0.42), track: 4,
       });
-      txt(ctx, 'masih bangun', sx + sw / 2, sy + 196, {
-        size: 20, font: F.num6, color: 'rgba(240,246,255,0.75)', align: 'center', track: 2,
-      });
-      for (let i = 0; i < 3; i++) {
-        fillRR(ctx, sx + 26, sy + 246 + i * 44, sw - 52, 26, 13, 'rgba(220,235,255,0.16)');
-      }
       ctx.restore();
     }
   },
