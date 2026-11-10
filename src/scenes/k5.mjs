@@ -3,6 +3,7 @@ import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU, rng } from '../engine/anim.mjs';
 import { K, E, at, layer, fillAll, grain, chip } from './_kota.mjs';
 import { G, ponds, houses } from './_garam.mjs';
+import { person } from './_figure.mjs';
 
 // 05 — MENYUSUT. Same drone, later. The pans on the left still work; on the
 // right they have been sold, filled and roofed. The boundary walks left across
@@ -35,6 +36,18 @@ export default {
       });
     });
     ctx.restore();
+
+    // one man standing on the dyke where the price line is being drawn
+    const mA = at(t, 1.2, 0.9);
+    if (mA > 0.01) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(20,14,10,0.35)';
+      ctx.beginPath();
+      ctx.ellipse(560 + 26, 1268, 46, 10, 0, 0, TAU);
+      ctx.fill();
+      ctx.restore();
+      person(ctx, 560, 1262, 320, { pose: 'watch', facing: 1, alpha: mA, cloth: '#CFC7B4' });
+    }
 
     // the boundary itself: a rust line with survey ticks
     const bA = at(t, 0.4, 0.8);

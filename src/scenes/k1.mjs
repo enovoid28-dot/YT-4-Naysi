@@ -3,6 +3,7 @@ import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU, rng } from '../engine/anim.mjs';
 import { K, E, at, layer, fillAll, grain, chip } from './_kota.mjs';
 import { G, ponds, ship, A } from './_garam.mjs';
+import { person, speck } from './_figure.mjs';
 
 // 01 — GARIS PANTAI. From the air: the sea, one shoreline, and then nothing but
 // ponds, plot after plot, all the way to the horizon. The number sits on the
@@ -64,6 +65,52 @@ export default {
         x0: -160, x1: W + 160, y0: SHORE + 34, y1: 1700,
         rows: 12, cols: 13, seed: 6, t, crust: 0.42, a: sA, dyke: 0.07,
       });
+    });
+
+    // people, at the scale the drone sees them: a few specks on a dyke and one
+    // man standing still, looking at the water
+    layer(ctx, cam, 0.24, () => {
+      // a service dyke across the pans: a pale earthen band with a shadow
+      const p0 = { x: 1120, y: 980 };
+      const p1 = { x: 120, y: 726 };
+      const dA = at(t, 1.2, 1.2);
+      if (dA > 0.01) {
+        ctx.save();
+        ctx.globalAlpha = dA;
+        const dx = p1.x - p0.x;
+        const dy = p1.y - p0.y;
+        const len = Math.hypot(dx, dy);
+        const nx = -dy / len;
+        const ny = dx / len;
+        const quad = (w0, w1, fill, ox = 0, oy = 0) => {
+          ctx.beginPath();
+          ctx.moveTo(p0.x + nx * w0 + ox, p0.y + ny * w0 + oy);
+          ctx.lineTo(p1.x + nx * w1 + ox, p1.y + ny * w1 + oy);
+          ctx.lineTo(p1.x - nx * w1 + ox, p1.y - ny * w1 + oy);
+          ctx.lineTo(p0.x - nx * w0 + ox, p0.y - ny * w0 + oy);
+          ctx.closePath();
+          ctx.fillStyle = fill;
+          ctx.fill();
+        };
+        quad(30, 11, 'rgba(40,30,20,0.22)', 0, 8);   // shadow
+        quad(30, 11, '#C6B896');                     // the bank
+        quad(22, 8, '#DED3B8');                      // its dry crest
+        ctx.restore();
+      }
+      const at2 = (u) => ({ x: lerp(p0.x, p1.x, u), y: lerp(p0.y, p1.y, u) });
+      const walk = at(t, 1.6, 1.0);
+      if (walk > 0.01) {
+        for (let i = 0; i < 3; i++) {
+          const u = 0.34 + i * 0.055 + Math.sin(t * 0.5) * 0.004;
+          const p = at2(u);
+          speck(ctx, p.x, p.y, 4.6, { a: walk * 0.95, color: '#2A2620' });
+        }
+      }
+      const man = at(t, 2.2, 0.9);
+      if (man > 0.01) {
+        const p = at2(0.72);
+        person(ctx, p.x, p.y, 104, { pose: 'watch', facing: -1, alpha: man, cloth: '#DCD6C4' });
+      }
     });
 
     // heat haze over the far pans

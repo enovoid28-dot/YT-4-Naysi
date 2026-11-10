@@ -3,12 +3,14 @@ import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU, rng } from '../engine/anim.mjs';
 import { K, E, at, layer, fillAll, sky, stars, water, reflection, grain, chip } from './_kota.mjs';
 import { G, ship, sack } from './_garam.mjs';
+import { person } from './_figure.mjs';
 
 // 06 — KAPAL. The whole argument in one frame: a ship that unloads faster than
 // a pond can dry, and a farmer whose price has to sit under a line he cannot
 // reach. No invented rupiah figures — the shape of the thing is the point.
 
 const SEA = 1108;
+const QUAY = 1252;
 
 export default {
   draw(ctx, t, scene, o = {}) {
@@ -34,14 +36,24 @@ export default {
       ctx.save();
       ctx.globalAlpha = qA;
       // quay deck
-      ctx.fillStyle = linGrad(ctx, 0, 1330, 0, H, [[0, '#33291F'], [1, '#161111']]);
-      ctx.fillRect(-160, 1330, W + 320, H);
+      ctx.fillStyle = linGrad(ctx, 0, QUAY, 0, H, [[0, '#3B3025'], [1, '#171212']]);
+      ctx.fillRect(-160, QUAY, W + 320, H);
       ctx.fillStyle = 'rgba(243,167,95,0.10)';
-      ctx.fillRect(-160, 1330, W + 320, 4);
+      ctx.fillRect(-160, QUAY, W + 320, 4);
       // a bollard for scale
       ctx.fillStyle = '#3A3128';
-      ctx.fillRect(1268, 1256, 34, 74);
+      ctx.fillRect(1268, QUAY - 74, 34, 74);
       ctx.restore();
+
+      // two men working the pile
+      const wA = at(t, 2.0, 0.9);
+      if (wA > 0.01) {
+        person(ctx, 486, QUAY, 302, { pose: 'carry', facing: 1, sack: wA, alpha: wA, cloth: '#C9C2AE' });
+      }
+      const wB = at(t, 2.6, 0.9);
+      if (wB > 0.01) {
+        person(ctx, 656, QUAY, 288, { pose: 'walk', facing: -1, alpha: wB, cloth: '#BDB7A6' });
+      }
 
       const rowsS = [[0, 3], [1, 2], [2, 1]];
       let n = 0;
@@ -50,8 +62,8 @@ export default {
           const a2 = at(t, 1.8 + n * 0.22, 0.7);
           if (a2 <= 0.01) { n++; continue; }
           const x = 120 + i * 148 + row * 74;
-          const y = 1330 - 62 - row * 92;
-          sack(ctx, x, y - 60 + (1 - a2) * 70, 132, 152, { a: a2 * 0.98, tone: '#D8C9AE' });
+          const y = QUAY - 152 - row * 96;
+          sack(ctx, x, y + (1 - a2) * 70, 132, 152, { a: a2 * 0.98, tone: '#D8C9AE' });
           n++;
         }
       }

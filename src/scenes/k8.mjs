@@ -3,6 +3,7 @@ import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU, rng } from '../engine/anim.mjs';
 import { K, E, at, layer, fillAll, grain, kicker, chip } from './_kota.mjs';
 import { G, heap, refinery } from './_garam.mjs';
+import { person } from './_figure.mjs';
 
 // 08 — CUCI. The answer is a machine, not a coastline. Dirty salt goes in on a
 // belt, water washes it, white salt comes out the other side. Under it, the two
@@ -74,6 +75,18 @@ export default {
       txt(ctx, 'LAYAK INDUSTRI', 1180, BASE + 74, { size: 26, font: F.mono6, color: hexA(G.rust2, 0.95), align: 'center', track: 4 });
       txt(ctx, 'di atas 97 persen NaCl', 1180, BASE + 114, { size: 26, font: F.body, color: 'rgba(20,15,12,0.62)', align: 'center' });
       ctx.restore();
+    }
+
+    // he ends the film where the salt becomes usable
+    const mA = at(t, 3.2, 1.0);
+    if (mA > 0.01) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(20,14,10,0.30)';
+      ctx.beginPath();
+      ctx.ellipse(404, BASE - 4, 86, 14, 0, 0, TAU);
+      ctx.fill();
+      ctx.restore();
+      person(ctx, 404, BASE - 6, 352, { pose: 'watch', facing: 1, alpha: mA, cloth: '#D6CFBB' });
     }
 
     // the two coastlines, closing the argument
