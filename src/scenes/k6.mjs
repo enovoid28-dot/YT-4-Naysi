@@ -102,26 +102,22 @@ export default {
       size: 26, font: F.mono6, color: 'rgba(23,19,16,0.5)', align: 'center', track: 5,
     });
 
-    // +1,2 jam callout
-    if (exA > 0.01) {
+    ctx.restore();
+
+
+    // +1,2 jam callout (absolute coordinates, outside the dial transform)
+    const exA2 = EASE.outCubic(clamp((t - 3.6) / 1.0));
+    if (exA2 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = dA * exA;
-      txt(ctx, '+1,2 JAM', 140, 1060, {
+      ctx.globalAlpha = dA * exA2;
+      txt(ctx, '+1,2 JAM', 104, 700, {
         size: 52, font: F.head, color: P.red, track: -1,
       });
-      txt(ctx, 'DARI KONSELING TIDUR', 140, 1104, {
-        size: 19, font: F.mono, color: 'rgba(23,19,16,0.5)', track: 1, maxWidth: 260,
+      txt(ctx, 'DARI KONSELING TIDUR', 104, 744, {
+        size: 19, font: F.mono, color: 'rgba(23,19,16,0.5)', track: 1, maxWidth: 250,
       });
-      // pointer to the red block
-      ctx.strokeStyle = 'rgba(226,69,47,0.55)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(150, 1080);
-      ctx.lineTo(CX + Math.cos(angOf(22.4)) * (R - 30), CY + Math.sin(angOf(22.4)) * (R - 30));
-      ctx.stroke();
       ctx.restore();
     }
-    ctx.restore();
 
     // top tag
     const tgA = clamp((t - 0.8) / 0.6);

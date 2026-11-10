@@ -72,11 +72,8 @@ export default {
       ctx.lineTo(bx1, baseY);
       ctx.stroke();
       ctx.restore();
-      txt(ctx, 'MASIH TINGGI', bx0 + 18, baseY - 24, {
-        size: 24, font: F.mono6, color: P.red, track: 5, alpha: bA,
-      });
-      txt(ctx, 'SAMPAI 21.00', bx1 - 18, baseY - 24, {
-        size: 24, font: F.mono6, color: hexA('#F2E7D3', 0.55), align: 'right', track: 4, alpha: bA,
+      txt(ctx, 'MASIH TINGGI', (bx0 + bx1) / 2, baseY - 24, {
+        size: 23, font: F.mono6, color: P.red, align: 'center', track: 5, alpha: bA,
       });
     }
 
