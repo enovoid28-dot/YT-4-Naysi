@@ -104,7 +104,8 @@ export function buildTimeline() {
       // hundredths. Clamp every card inside its own VO and never let a card
       // start before the previous one has finished: overlapping cards are what
       // makes the outgoing line fade while the incoming one is still moving.
-      const num = (v) => Math.max(voOffset, Math.min(audioDur - 0.03, v));
+      // word times are relative to the audio file, the offset is added below
+      const num = (v) => Math.max(0, Math.min(audioDur - 0.03, v));
       aligned.forEach((words) => {
         chunkWords(words).forEach((chunk) => {
           const ws = chunk.map((w) => ({

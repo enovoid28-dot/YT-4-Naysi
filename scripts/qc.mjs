@@ -78,6 +78,11 @@ for (const scene of tl.scenes) {
         break;
       }
     }
+    g.words.forEach((w) => {
+      if (w.end - w.start < 0.02) {
+        problems.push(`${scene.id}.${i + 1}: word "${w.text}" has no duration`);
+      }
+    });
   });
 }
 
