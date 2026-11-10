@@ -1,60 +1,148 @@
-import { W, H, C, M, txt, hexA, fillRR, linGrad, measure } from '../engine/draw.mjs';
+import { W, H, C, M, txt, hexA, fillRR, linGrad, radGrad, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE } from '../engine/anim.mjs';
-import { dawn, kicker, chip, card, hairline, bigStat, meter } from './_ep4.mjs';
+import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
+import { nightRoom, darkKicker, glowSpot, applyGrain, P } from './_ep5.mjs';
+import { digitalClock, plate, softSeat, priceTag } from './_props.mjs';
 
-// 02 — ANGKA. Two datasets, the same shape: the alarm goes off, and the body
-// does not follow for another twenty-odd minutes.
+// 02 — SALAH TUDUH. A bedside table at 23.47: the two things blamed for the
+// hunger get stamped out, the clock is what is left on the table.
+function crossedTag(ctx, x, y, label, at, t) {
+  const a = EASE.outCubic(clamp((t - 0.15) / 0.5));
+  const st = EASE.outCubic(clamp((t - at) / 0.4));
+  ctx.save();
+  ctx.globalAlpha = a;
+  ctx.translate(x, y);
+  ctx.rotate(-0.03);
+  // tag
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.7)';
+  ctx.shadowBlur = 30;
+  ctx.shadowOffsetY = 14;
+  fillRR(ctx, 0, 0, 320, 84, 4, '#EFE3C6');
+  ctx.restore();
+  ctx.fillStyle = linGrad(ctx, 0, 0, 0, 84, [
+    [0, 'rgba(255,255,255,0.35)'], [1, 'rgba(120,92,56,0.20)'],
+  ]);
+  fillRR(ctx, 0, 0, 320, 84, 4, ctx.fillStyle);
+  txt(ctx, label, 22, 55, {
+    size: 30, font: F.mono6, color: 'rgba(23,19,16,0.72)', track: 4,
+  });
+  // red cross
+  if (st > 0.01) {
+    ctx.save();
+    ctx.strokeStyle = P.red;
+    ctx.lineWidth = 8;
+    ctx.lineCap = 'round';
+    ctx.globalAlpha = a * st;
+    const L = 300 * st;
+    ctx.beginPath();
+    ctx.moveTo(12, 20);
+    ctx.lineTo(12 + L, 20 + 44 * st);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(12, 66);
+    ctx.lineTo(12 + L, 66 - 44 * st);
+    ctx.stroke();
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
 export default {
   draw(ctx, t) {
-    dawn(ctx, { top: '#06080F', mid: '#090F1A', bot: '#0C1522', warmX: 0.8, warmA: 0.08 });
+    nightRoom(ctx, { tableY: 1400, warm: 0.18 });
+    // lamp pool on the wall
+    glowSpot(ctx, W * 0.78, 780, 620, P.amber, 0.30);
 
-    kicker(ctx, 'DUA DATASET · SATU POLA');
+    darkKicker(ctx, 'MEJA SAMPING TEMPAT TIDUR', { y: 292 });
 
-    const blocks = [
-      { y: 372, chip: 'SURVEI · 2023 · n = 1.732', pct: 69, big: '22', unit: 'menit', note: 'rata-rata snooze', at: 0.5 },
-      { y: 940, chip: 'PELACAK TIDUR · 2022 · n = 450', pct: 57, big: '27', unit: 'menit', note: 'alarm pertama sampai berdiri', at: 6.4 },
-    ];
+    // the wall keeps a little texture, and the tape that names the culprit
+    ctx.fillStyle = 'rgba(255,214,160,0.05)';
+    ctx.fillRect(0, 1140, W, 3);
 
-    blocks.forEach((b, i) => {
-      const a = EASE.outCubic(clamp((t - b.at) / 0.7));
-      if (a <= 0.01) return;
-      ctx.save();
-      ctx.globalAlpha = a;
-      ctx.translate(0, lerp(34, 0, a));
-      card(ctx, M, b.y, W - 2 * M, 520, { r: 34, fill: 'rgba(255,255,255,0.035)' });
-      chip(ctx, M + 48, b.y + 44, b.chip, { size: 26, color: hexA(C.bone, 0.62), padX: 22, h: 62, track: 3.5 });
-
-      // percentage
-      bigStat(ctx, M + 48, b.y + 300, `${b.pct}`, {
-        size: 196, unit: '%', color: i === 0 ? C.amberHi : C.sky, label: 'menekan snooze',
-      });
-      meter(ctx, M + 48, b.y + 386, 520, (b.pct / 100) * clamp((t - b.at - 0.3) / 0.9), {
-        h: 12, color: i === 0 ? C.amber : C.sky,
-      });
-
-      // right column
-      hairline(ctx, M + 660, b.y + 96, M + 660, b.y + 424, { color: C.bone, alpha: 0.12, lw: 2 });
-      txt(ctx, b.big, M + 726, b.y + 300, { size: 168, font: F.num, color: C.bone, track: -4 });
-      txt(ctx, b.unit, M + 726 + measure(ctx, b.big, 168, F.num) + 16, b.y + 300, {
-        size: 44, font: F.num6, color: hexA(C.bone, 0.62), track: 1,
-      });
-      txt(ctx, b.note, M + 726, b.y + 366, {
-        size: 30, font: F.num6, color: hexA(C.bone, 0.52), track: 1.5, maxWidth: 420,
-      });
-      ctx.restore();
+    // ---- clock -----------------------------------------------------------
+    const cA = EASE.outCubic(clamp((t - 0.1) / 0.6));
+    const late = t > 4.6;
+    const time = late ? '04.30' : '23.47';
+    ctx.save();
+    ctx.globalAlpha = cA;
+    softSeat(ctx, W / 2 + 10, 1342, 360, 0.6);
+    digitalClock(ctx, 300, 952, 840, 390, time, {
+      small: late ? 'EMPAT JAM TIDUR' : 'MASIH TERJAGA',
+      on: late ? 1 : 0.92,
     });
+    ctx.restore();
 
-    // the gap between the two numbers
-    const gA = clamp((t - 12.4) / 0.7);
-    if (gA > 0.01) {
+    // ---- water glass -----------------------------------------------------
+    ctx.save();
+    ctx.globalAlpha = cA * 0.9;
+    softSeat(ctx, 1206, 1378, 90, 0.5);
+    const gx = 1156;
+    const gy = 1190;
+    fillRR(ctx, gx, gy, 104, 186, 8, 'rgba(206,228,240,0.30)');
+    ctx.save();
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(gx, gy, 104, 186, 8);
+    else ctx.rect(gx, gy, 104, 186);
+    ctx.clip();
+    ctx.fillStyle = 'rgba(150,196,224,0.55)';
+    ctx.fillRect(gx, gy + 62, 104, 124);
+    ctx.fillStyle = 'rgba(255,255,255,0.42)';
+    ctx.fillRect(gx + 14, gy + 10, 10, 160);
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(226,244,252,0.45)';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(gx, gy, 104, 186, 8);
+    else ctx.rect(gx, gy, 104, 186);
+    ctx.stroke();
+    ctx.restore();
+
+    // ---- the two blamed tags, then the empty plate -----------------------
+    crossedTag(ctx, 96, 1492, 'NIAT', 1.5, t);
+    crossedTag(ctx, 96, 1612, 'GULA DARAH', 2.9, t);
+
+    const pA = EASE.outCubic(clamp((t - 6.6) / 0.6));
+    if (pA > 0.01) {
       ctx.save();
-      ctx.globalAlpha = gA;
-      hairline(ctx, M + 24, 1560, W - M - 24, 1560, { color: C.bone, alpha: 0.14, lw: 2 });
-      txt(ctx, 'DUA STUDI BERBEDA, DUA NEGARA, POLA YANG SAMA', M + 24, 1622, {
-        size: 25, font: F.num6, color: hexA(C.bone, 0.44), track: 4,
+      ctx.globalAlpha = pA;
+      plate(ctx, 1080, 1640, 196, { a: pA });
+      // crumbs
+      ctx.fillStyle = 'rgba(126,96,58,0.85)';
+      [[1040, 1632], [1070, 1646], [1106, 1636], [1130, 1650]].forEach(([cx, cy]) => {
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 5, 3.4, 0.4, 0, TAU);
+        ctx.fill();
       });
       ctx.restore();
     }
+
+    // ---- the answer that is left on the table ---------------------------
+    const aA = EASE.outCubic(clamp((t - 5.1) / 0.6));
+    if (aA > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = aA * 0.95;
+      ctx.translate(W / 2, 470);
+      ctx.rotate(-0.012);
+      const label = 'YANG KURANG BUKAN NIAT';
+      const tw = measure(ctx, label, 30, F.mono6, 6);
+      ctx.fillStyle = 'rgba(233,220,190,0.90)';
+      ctx.fillRect(-tw / 2 - 34, -46, tw + 68, 92);
+      ctx.fillStyle = 'rgba(255,255,255,0.20)';
+      ctx.fillRect(-tw / 2 - 34, -46, tw + 68, 3);
+      txt(ctx, label, 0, 12, {
+        size: 30, font: F.mono6, color: 'rgba(30,24,18,0.86)', align: 'center', track: 6,
+      });
+      ctx.strokeStyle = P.red;
+      ctx.lineWidth = 7;
+      ctx.beginPath();
+      ctx.moveTo(-tw / 2, 34);
+      ctx.lineTo(-tw / 2 + tw * aA, 32);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    void priceTag;
+    applyGrain(ctx, 0.055);
   },
 };

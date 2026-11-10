@@ -1,64 +1,187 @@
-import { W, H, C, M, txt, hexA, fillRR, linGrad } from '../engine/draw.mjs';
+import { W, H, C, M, txt, hexA, fillRR, linGrad, radGrad, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { dawn, kicker, chip, card, hairline, bigStat, glowSpot } from './_ep4.mjs';
+import { paperRoom, paperKicker, sheet, tag, applyGrain, P } from './_ep5.mjs';
+import { priceTag, tapeStrip } from './_props.mjs';
 
-// 06 — BEDA. Snoozing has a profile: young night owls with enough sleep, not
-// chronically short sleepers. For the second group it is a symptom.
+// 06 — BALIK. A 24-hour dial: the sleep block grows by 1,2 jam, and the plate
+// underneath shrinks by 270 kcal. Same body, two levers.
+const CX = 720;
+const CY = 950;
+const R = 350;
+const angOf = (h) => (h / 24) * TAU - Math.PI / 2;
+
+function arc(ctx, h0, h1, r0, r1, color, a = 1) {
+  // h1 may be smaller than h0 (the window wraps over midnight)
+  const start = (h0 / 24) * TAU;
+  const sweep = (((h1 - h0 + 24) % 24) / 24) * TAU;
+  const N = 72;
+  ctx.save();
+  ctx.globalAlpha *= a;
+  ctx.beginPath();
+  for (let i = 0; i <= N; i++) {
+    const an = start + (sweep * i) / N;
+    const x = Math.sin(an) * r1;
+    const y = -Math.cos(an) * r1;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  for (let i = N; i >= 0; i--) {
+    const an = start + (sweep * i) / N;
+    ctx.lineTo(Math.sin(an) * r0, -Math.cos(an) * r0);
+  }
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.restore();
+}
+
 export default {
   draw(ctx, t) {
-    dawn(ctx, { top: '#06080F', mid: '#090E19', bot: '#0B1320', warmX: 0.3, warmA: 0.06 });
+    paperRoom(ctx);
+    paperKicker(ctx, 'INI BISA DIBALIK', { y: 292 });
 
-    kicker(ctx, 'SIAPA YANG SNOOZE');
+    const dA = EASE.outCubic(clamp((t - 0.2) / 0.8));
 
-    /* ------------------------------------------------------------ profile -- */
-    const aA = EASE.outCubic(clamp((t - 0.4) / 0.7));
-    if (aA > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = aA;
-      ctx.translate(0, lerp(30, 0, aA));
-      card(ctx, M, 380, W - 2 * M, 528, { r: 34, fill: 'rgba(105,183,255,0.06)', stroke: 'rgba(105,183,255,0.24)' });
-      glowSpot(ctx, M + 180, 560, 300, C.sky, 0.10);
-      chip(ctx, M + 44, 424, 'TIPE MALAM', { size: 27, color: C.sky, padX: 24, h: 64, track: 4 });
-      bigStat(ctx, M + 44, 700, '4', { size: 150, unit: '×', color: C.bone, label: 'lebih mungkin snooze' });
-      hairline(ctx, 800, 460, 800, 800, { color: C.bone, alpha: 0.12, lw: 2 });
-      bigStat(ctx, 856, 700, '6', { size: 150, unit: 'tahun', color: C.bone, label: 'lebih muda' });
-      txt(ctx, 'Snooze bekerja untuk mereka: alarm berulang menghindarkan bangun dari tidur dalam.', M + 44, 862, {
-        size: 26, font: F.num6, color: hexA(C.bone, 0.5), track: 1, maxWidth: W - 2 * M - 88,
-      });
-      ctx.restore();
+    ctx.save();
+    ctx.globalAlpha = dA;
+    ctx.translate(CX, CY);
+
+    // dial plate
+    ctx.save();
+    ctx.shadowColor = 'rgba(80,58,30,0.35)';
+    ctx.shadowBlur = 60;
+    ctx.shadowOffsetY = 26;
+    ctx.fillStyle = '#FBF3E2';
+    ctx.beginPath();
+    ctx.arc(0, 0, R + 26, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(23,19,16,0.35)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(0, 0, R + 26, 0, TAU);
+    ctx.stroke();
+
+    // sleep block (23.00 → 07.00), then the extra 1,2 jam
+    arc(ctx, 23, 7, R * 0.56, R * 0.99, 'rgba(30,95,91,0.88)');
+    const exA = EASE.outCubic(clamp((t - 3.6) / 1.0));
+    if (exA > 0.01) {
+      // 21.48 → 23.00 on top of the block
+      arc(ctx, 21.8, 23, R * 0.56, R * 0.99, 'rgba(226,69,47,0.92)', exA);
     }
 
-    /* ------------------------------------------------------------- symptom -- */
-    const aB = EASE.outCubic(clamp((t - 7.4) / 0.8));
-    if (aB > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = aB;
-      ctx.translate(0, lerp(30, 0, aB));
-      card(ctx, M, 968, W - 2 * M, 604, { r: 34, fill: 'rgba(255,75,59,0.06)', stroke: 'rgba(255,75,59,0.26)' });
-      chip(ctx, M + 44, 1012, 'KURANG TIDUR · INSOMNIA', { size: 27, color: C.red, padX: 24, h: 64, track: 4 });
-      txt(ctx, 'Bukan kebiasaan.', M + 44, 1176, { size: 62, font: F.head, color: C.bone });
-      txt(ctx, 'Itu gejala.', M + 44, 1252, {
-        size: 62, font: F.head, color: C.red,
-      });
-      hairline(ctx, M + 44, 1316, W - M - 44, 1316, { color: C.bone, alpha: 0.12, lw: 2 });
-      txt(ctx, 'Sembilan menit tambahan tidak menutup kekurangan tidur yang menumpuk berbulan-bulan.', M + 44, 1394, {
-        size: 30, font: F.num6, color: hexA(C.bone, 0.58), track: 1, maxWidth: W - 2 * M - 88,
-      });
-      txt(ctx, 'YANG DIBUTUHKAN: JAM TIDUR, BUKAN ALARM KEDUA', M + 44, 1490, {
-        size: 25, font: F.num6, color: hexA(C.red, 0.8), track: 3.5,
-      });
-      ctx.restore();
+    // hour ticks + numbers
+    for (let h = 0; h < 24; h++) {
+      const an = angOf(h);
+      const big = h % 6 === 0;
+      ctx.strokeStyle = big ? 'rgba(23,19,16,0.65)' : 'rgba(23,19,16,0.22)';
+      ctx.lineWidth = big ? 4 : 2;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(an) * (R + 8), Math.sin(an) * (R + 8));
+      ctx.lineTo(Math.cos(an) * (R + (big ? 26 : 16)), Math.sin(an) * (R + (big ? 26 : 16)));
+      ctx.stroke();
+      if (h % 3 === 0) {
+        txt(ctx, String(h).padStart(2, '0'), Math.cos(an) * (R + 62), Math.sin(an) * (R + 62) + 9, {
+          size: 24, font: F.mono, color: 'rgba(23,19,16,0.5)', align: 'center', track: 1,
+        });
+      }
     }
 
-    const nA = clamp((t - 12.6) / 0.7);
-    if (nA > 0.01) {
+    // inner face
+    ctx.fillStyle = 'rgba(251,243,226,0.94)';
+    ctx.beginPath();
+    ctx.arc(0, 0, R * 0.52, 0, TAU);
+    ctx.fill();
+
+    txt(ctx, 'TIDUR', 0, -96, {
+      size: 30, font: F.mono6, color: 'rgba(23,19,16,0.55)', align: 'center', track: 6,
+    });
+    txt(ctx, '7', 0, 40, { size: 132, font: F.display, color: P.ink, align: 'center', track: -4 });
+    txt(ctx, 'JAM', 0, 100, {
+      size: 26, font: F.mono6, color: 'rgba(23,19,16,0.5)', align: 'center', track: 5,
+    });
+
+    // +1,2 jam callout
+    if (exA > 0.01) {
       ctx.save();
-      ctx.globalAlpha = nA * 0.9;
-      txt(ctx, 'DATA: 1.732 RESPONDEN SURVEI · 31 PESERTA LABORATORIUM', M, 1650, {
-        size: 23, font: F.num6, color: hexA(C.bone, 0.38), track: 3.5,
+      ctx.globalAlpha = dA * exA;
+      txt(ctx, '+1,2 JAM', 140, 1060, {
+        size: 52, font: F.head, color: P.red, track: -1,
       });
+      txt(ctx, 'DARI KONSELING TIDUR', 140, 1104, {
+        size: 19, font: F.mono, color: 'rgba(23,19,16,0.5)', track: 1, maxWidth: 260,
+      });
+      // pointer to the red block
+      ctx.strokeStyle = 'rgba(226,69,47,0.55)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(150, 1080);
+      ctx.lineTo(CX + Math.cos(angOf(22.4)) * (R - 30), CY + Math.sin(angOf(22.4)) * (R - 30));
+      ctx.stroke();
       ctx.restore();
     }
+    ctx.restore();
+
+    // top tag
+    const tgA = clamp((t - 0.8) / 0.6);
+    if (tgA > 0.01) {
+      const tw = tag(ctx, 96, 380, '80 ORANG DEWASA · 2 MINGGU', {
+        size: 26, color: 'rgba(23,19,16,0.75)', bg: 'rgba(23,19,16,0.08)', a: tgA,
+      });
+      tag(ctx, 96 + tw + 16, 380, 'TANPA DIET', {
+        size: 26, color: P.red, bg: 'rgba(226,69,47,0.12)', a: tgA,
+      });
+    }
+
+    // ---- the plate: the portion that shrinks ------------------------------
+    const pA = EASE.outCubic(clamp((t - 8.6) / 0.7));
+    if (pA > 0.01) {
+      const shrink = 1 - 0.34 * EASE.outCubic(clamp((t - 9.4) / 1.2));
+      ctx.save();
+      ctx.globalAlpha = pA;
+      const px = 720;
+      const py = 1560;
+      // plate
+      ctx.fillStyle = 'rgba(80,58,30,0.22)';
+      ctx.beginPath();
+      ctx.ellipse(px, py + 14, 250, 66, 0, 0, TAU);
+      ctx.fill();
+      ctx.fillStyle = '#FBF3E2';
+      ctx.beginPath();
+      ctx.ellipse(px, py, 248, 64, 0, 0, TAU);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(23,19,16,0.25)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(px, py, 248, 64, 0, 0, TAU);
+      ctx.stroke();
+      // portion
+      ctx.fillStyle = '#C98A44';
+      ctx.beginPath();
+      ctx.ellipse(px, py - 14, 146 * shrink, 46 * shrink, 0, 0, TAU);
+      ctx.fill();
+      ctx.fillStyle = '#B5713A';
+      ctx.beginPath();
+      ctx.ellipse(px - 24, py - 26, 74 * shrink, 26 * shrink, 0.2, 0, TAU);
+      ctx.fill();
+      ctx.restore();
+
+      const vA = EASE.outCubic(clamp((t - 9.9) / 0.6));
+      if (vA > 0.01) {
+        ctx.save();
+        ctx.globalAlpha = vA;
+        txt(ctx, '−270 KKAL', 720, 1360, {
+          size: 74, font: F.head, color: P.red, align: 'center', track: -2,
+        });
+        txt(ctx, 'PER HARI, TANPA MENGHITUNG', 720, 1404, {
+          size: 22, font: F.mono6, color: 'rgba(23,19,16,0.55)', align: 'center', track: 3,
+        });
+        ctx.restore();
+      }
+    }
+
+    void sheet; void priceTag; void tapeStrip; void measure; void linGrad; void radGrad; void fillRR; void C; void H;
+    applyGrain(ctx, 0.04);
   },
 };

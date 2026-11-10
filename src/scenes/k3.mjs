@@ -1,83 +1,122 @@
-import { W, H, C, M, txt, hexA, fillRR, linGrad } from '../engine/draw.mjs';
+import { W, H, C, M, txt, hexA, fillRR, linGrad, radGrad, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { dawn, kicker, chip, card, hairline, bigStat, glowSpot } from './_ep4.mjs';
+import { nightRoom, darkKicker, glowSpot, sheet, stamp, arrow, applyGrain, P } from './_ep5.mjs';
+import { testTube, rack, softSeat } from './_props.mjs';
 
-// 03 — BUKTI. The lab night: thirty minutes of snoozing, and nothing broke.
-// Honest beat — the cost is not cognition, it is minutes.
-const ROWS = [
-  { y: 604, title: 'Kognisi setelah bangun', verdict: 'TIDAK TURUN', color: C.mint, note: 'sedikit lebih cepat, bukan lebih lambat', at: 1.0 },
-  { y: 806, title: 'Bangun dari tidur dalam', verdict: 'LEBIH JARANG', color: C.sky, note: 'pemicu inersia paling berat', at: 3.8 },
-  { y: 1008, title: 'Kortisol pagi', verdict: 'TIDAK BERUBAH', color: C.bone, note: 'sinyal bangun tetap utuh', at: 6.4 },
-];
+// 03 — HORMON. Two blood tubes from a 2004 sleep study: one rises, one falls.
+const T1 = { x: 330, w: 148, h: 720, y: 620 };
+const T2 = { x: 862, w: 148, h: 720, y: 620 };
 
 export default {
   draw(ctx, t) {
-    dawn(ctx, { top: '#06090F', mid: '#0A101A', bot: '#0C1522', warmX: 0.2, warmA: 0.07 });
-    glowSpot(ctx, 1100, 500, 520, C.mint, 0.05);
+    nightRoom(ctx, { tableY: 1372, warm: 0.13, cold: 0.1, coldX: 0.5 });
+    darkKicker(ctx, 'LAB TIDUR · 2004', { y: 292 });
 
-    kicker(ctx, 'EKSPERIMEN LABORATORIUM · n = 31');
+    const sA = EASE.outCubic(clamp((t - 0.1) / 0.7));
 
-    const a0 = EASE.outCubic(clamp((t - 0.3) / 0.7));
+    // rack sits on the bench
+    softSeat(ctx, W / 2, 1420, 620, 0.6);
+    rack(ctx, 150, 1290, W - 300, 150, { a: sA, label: '12 PRIA MUDA · 4 JAM × 2 MALAM' });
+
+    // tubes: ghrelin rises, leptin falls
+    const gLevel = lerp(0.34, 0.74, EASE.outCubic(clamp((t - 7.0) / 1.2)));
+    const lLevel = lerp(0.74, 0.42, EASE.outCubic(clamp((t - 11.0) / 1.2)));
+
     ctx.save();
-    ctx.globalAlpha = a0;
-    ctx.translate(0, lerp(26, 0, a0));
-    card(ctx, M, 372, W - 2 * M, 748, { r: 36, fill: 'rgba(255,255,255,0.035)' });
+    ctx.globalAlpha = sA;
+    testTube(ctx, T1.x, T1.y, T1.w, T1.h, { level: gLevel, color: '#B33A24', cap: '#26282A' });
+    testTube(ctx, T2.x, T2.y, T2.w, T2.h, { level: lLevel, color: '#1E5F5B', cap: '#26282A' });
+    ctx.restore();
 
-    txt(ctx, '30 MENIT SNOOZE', M + 48, 462, { size: 30, font: F.num6, color: C.amberHi, track: 5 });
-    txt(ctx, 'SATU MALAM · DUA KONDISI', W - M - 48, 462, {
-      size: 24, font: F.num6, color: hexA(C.bone, 0.42), align: 'right', track: 4,
-    });
-
-    ROWS.forEach((r, i) => {
-      const a = EASE.outCubic(clamp((t - r.at) / 0.5));
+    // baseline marks: where each level started
+    const markLine = (tube, level, color, a) => {
       if (a <= 0.01) return;
+      const y = tube.y + tube.h * (1 - level);
       ctx.save();
       ctx.globalAlpha = a;
-      ctx.translate(lerp(24, 0, a), 0);
-      if (i > 0) hairline(ctx, M + 48, r.y - 46, W - M - 48, r.y - 46, { color: C.bone, alpha: 0.09, lw: 2 });
-      txt(ctx, r.title, M + 48, r.y + 24, { size: 46, font: F.semi, color: C.bone, maxWidth: 600 });
-      txt(ctx, r.note, M + 48, r.y + 78, {
-        size: 26, font: F.num6, color: hexA(C.bone, 0.45), track: 1, maxWidth: 620,
-      });
-      chip(ctx, W - M - 48, r.y - 8, r.verdict, {
-        size: 26, color: r.color, align: 'right', padX: 24, h: 64, track: 3,
-      });
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([7, 7]);
+      ctx.beginPath();
+      ctx.moveTo(tube.x - 26, y);
+      ctx.lineTo(tube.x + tube.w + 26, y);
+      ctx.stroke();
       ctx.restore();
+    };
+    markLine(T1, 0.34, hexA('#F2E7D3', 0.35), clamp((t - 1.0) / 0.5));
+    markLine(T2, 0.74, hexA('#F2E7D3', 0.35), clamp((t - 1.0) / 0.5));
+
+    // names on the rack
+    ctx.save();
+    ctx.globalAlpha = sA;
+    txt(ctx, 'GHRELIN', T1.x + T1.w / 2, 432, {
+      size: 36, font: F.mono6, color: hexA('#F2E7D3', 0.92), align: 'center', track: 7,
+    });
+    txt(ctx, 'SINYAL LAPAR', T1.x + T1.w / 2, 478, {
+      size: 22, font: F.mono, color: hexA('#F2E7D3', 0.45), align: 'center', track: 4,
+    });
+    txt(ctx, 'LEPTIN', T2.x + T2.w / 2, 432, {
+      size: 36, font: F.mono6, color: hexA('#F2E7D3', 0.92), align: 'center', track: 7,
+    });
+    txt(ctx, 'SINYAL KENYANG', T2.x + T2.w / 2, 478, {
+      size: 22, font: F.mono, color: hexA('#F2E7D3', 0.45), align: 'center', track: 4,
     });
     ctx.restore();
 
-    /* ------------------------------------------------------ the real bill -- */
-    const bA = EASE.outCubic(clamp((t - 8.6) / 0.7));
-    if (bA > 0.01) {
+    // values appear with their sentence
+    const v1 = EASE.outCubic(clamp((t - 8.0) / 0.6));
+    if (v1 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = bA;
-      ctx.translate(0, lerp(24, 0, bA));
-      card(ctx, M, 1168, W - 2 * M, 300, {
-        r: 30, fill: 'rgba(255,176,58,0.06)', stroke: 'rgba(255,176,58,0.26)',
+      ctx.globalAlpha = v1;
+      txt(ctx, '+28%', T1.x + T1.w / 2, 596, {
+        size: 120, font: F.head, color: P.red, align: 'center', track: -2,
       });
-      txt(ctx, 'HARGA YANG TETAP DIBAYAR', M + 44, 1240, {
-        size: 25, font: F.num6, color: hexA(C.amber, 0.8), track: 4.5,
-      });
-      bigStat(ctx, M + 44, 1372, '6', { size: 96, unit: 'menit tidur hilang', color: C.amberHi });
-      txt(ctx, 'tanpa efek buruk pada kognisi', W - M - 44, 1368, {
-        size: 26, font: F.num6, color: hexA(C.bone, 0.45), align: 'right', track: 1, maxWidth: 470,
+      ctx.restore();
+    }
+    const v2 = EASE.outCubic(clamp((t - 11.9) / 0.6));
+    if (v2 > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = v2;
+      txt(ctx, '−18%', T2.x + T2.w / 2, 596, {
+        size: 120, font: F.head, color: '#5FD3C6', align: 'center', track: -2,
       });
       ctx.restore();
     }
 
-    const nA = clamp((t - 11.4) / 0.8);
-    if (nA > 0.01) {
+    // hunger rating slip, last beat
+    const hA = EASE.outCubic(clamp((t - 15.2) / 0.7));
+    if (hA > 0.01) {
       ctx.save();
-      ctx.globalAlpha = nA * 0.9;
-      hairline(ctx, M, 1540, W - M, 1540, { color: C.bone, alpha: 0.12, lw: 2 });
-      txt(ctx, 'JADI SNOOZE BUKAN RACUN. MASALAHNYA DI TEMPAT LAIN.', M, 1612, {
-        size: 27, font: F.num6, color: hexA(C.amber, 0.85), track: 3, maxWidth: W - 2 * M,
+      ctx.globalAlpha = hA;
+      ctx.translate(W / 2, 1560 + lerp(26, 0, hA));
+      ctx.rotate(-0.02);
+      sheet(ctx, -330, -110, 660, 220, { a: hA, rot: 0, lift: 0.8 });
+      txt(ctx, 'RASA LAPAR', -330 + 44, -40, {
+        size: 30, font: F.mono6, color: 'rgba(23,19,16,0.6)', track: 4,
       });
-      txt(ctx, 'Sumber: Journal of Sleep Research, 2023 — 31 pengguna snooze rutin, dua malam di lab.', M, 1672, {
-        size: 22, font: F.num6, color: hexA(C.bone, 0.32), track: 1, maxWidth: W - 2 * M,
+      txt(ctx, 'subjektif, dilaporkan sendiri', -330 + 44, 2, {
+        size: 20, font: F.mono, color: 'rgba(23,19,16,0.45)', track: 0,
+      });
+      txt(ctx, '+24%', 330 - 44, 34, {
+        size: 108, font: F.head, color: P.red, align: 'right', track: -2,
       });
       ctx.restore();
     }
+
+    // study stamp on the bench
+    const stA = clamp((t - 2.0) / 0.35);
+    if (stA > 0.01) {
+      ctx.save();
+      ctx.translate(W - 520, 900);
+      ctx.rotate(-0.14);
+      stamp(ctx, 0, 0, 'SPIEGEL 2004', {
+        size: 30, color: hexA('#E2452F', 0.85), rot: 0, a: stA * 0.8, padX: 16, padY: 9, font: F.mono6,
+      });
+      ctx.restore();
+    }
+
+    void M; void radGrad; void glowSpot; void measure; void TAU; void fillRR; void linGrad; void arrow;
+    applyGrain(ctx, 0.055);
   },
 };

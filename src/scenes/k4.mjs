@@ -1,135 +1,95 @@
-import { W, H, C, M, txt, hexA, fillRR, linGrad } from '../engine/draw.mjs';
+import { W, H, C, M, txt, hexA, fillRR, linGrad, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { dawn, kicker, chip, card, hairline, bigStat, stair, glowSpot } from './_ep4.mjs';
+import { clamp, lerp, EASE } from '../engine/anim.mjs';
+import { nightRoom, darkKicker, sheet, stamp, applyGrain, P } from './_ep5.mjs';
+import { chipsBag, cakeSlice, iceTub, priceTag, softSeat } from './_props.mjs';
 
-const X0 = 352;
-const X1 = 1250;
-const MMAX = 120;
-const LANES = [700, 840, 980, 1120];
-const NAMES = ['BANGUN', 'REM', 'RINGAN', 'DALAM'];
-
-const PTS = [
-  { m: 0, stage: 0 },
-  { m: 3, stage: 2 },
-  { m: 13, stage: 3 },
-  { m: 30, stage: 3 },
-  { m: 35, stage: 2 },
-  { m: 50, stage: 2 },
-  { m: 55, stage: 3 },
-  { m: 68, stage: 3 },
-  { m: 73, stage: 2 },
-  { m: 82, stage: 1 },
-  { m: 90, stage: 1 },
-  { m: 95, stage: 2 },
-  { m: 104, stage: 3 },
-  { m: 112, stage: 3 },
-  { m: 117, stage: 2 },
-  { m: 120, stage: 0 },
+// 04 — ANGKA. The extra 385 kcal, as actual food on the counter with the
+// price tags still on it.
+const ITEMS = [
+  { at: 1.2, x: 150, label: 'KERIPIK', value: '150' },
+  { at: 2.6, x: 566, label: 'ROTI MANIS', value: '120' },
+  { at: 4.0, x: 946, label: 'ES KRIM', value: '115' },
 ];
 
-// 04 — DALAM. Nine minutes is not a cycle. It barely reaches the top layer.
 export default {
   draw(ctx, t) {
-    dawn(ctx, { top: '#06080F', mid: '#090F1A', bot: '#0B1421', warmX: 0.75, warmA: 0.06 });
+    nightRoom(ctx, { tableY: 1150, warm: 0.16 });
+    darkKicker(ctx, 'YANG MASUK SETELAH MAKAN MALAM', { y: 292 });
 
-    kicker(ctx, 'SATU SIKLUS TIDUR');
-
-    /* ------------------------------------------------------------- lanes -- */
-    const a0 = clamp((t - 0.2) / 0.8);
+    // ---- the three items --------------------------------------------------
+    const a0 = EASE.outCubic(clamp((t - 0.15) / 0.6));
     ctx.save();
     ctx.globalAlpha = a0;
-    NAMES.forEach((n, i) => {
-      const y = LANES[i];
-      hairline(ctx, X0, y, X1, y, { color: C.bone, alpha: i === 3 ? 0.16 : 0.10, lw: 2, dash: [2, 12] });
-      txt(ctx, n, M, y + 11, {
-        size: 27, font: F.num6, color: hexA(i === 3 ? C.sky : C.bone, i === 3 ? 0.85 : 0.5), track: 3.5,
-      });
-    });
-    hairline(ctx, X0, LANES[0] - 40, X0, LANES[3] + 40, { color: C.bone, alpha: 0.18, lw: 2 });
+
+    softSeat(ctx, 300, 1156, 190, 0.55);
+    chipsBag(ctx, 152, 800, 296, 356, { a: 1, rot: -0.05 });
+
+    softSeat(ctx, 700, 1160, 220, 0.5);
+    cakeSlice(ctx, 560, 856, 288, 300, { a: 1 });
+
+    softSeat(ctx, 1136, 1164, 170, 0.5);
+    iceTub(ctx, 1136, 892, 250, 272, { a: 1 });
     ctx.restore();
 
-    /* -------------------------------------------------------- the curve --- */
-    const prog = clamp((t - 0.8) / 6.4);
-    const bands = [
-      { m: 0, label: 'RINGAN' },
-      { m: 13, label: 'DALAM' },
-    ];
-    void bands;
-
-    if (prog > 0.001) {
-      glowSpot(ctx, X0 + 120, LANES[3], 420, C.sky, 0.10);
-      stair(ctx, PTS, {
-        x0: X0, x1: X1, mMax: MMAX, lanes: LANES, color: C.sky, lw: 8, upto: prog,
-      });
-      // leading dot
-      const li = Math.min(PTS.length - 1, Math.floor(prog * (PTS.length - 1)));
-      const lm = PTS[li].m;
-      const lx = lerp(X0, X1, lm / MMAX);
-      const ly = LANES[PTS[li].stage];
+    // ---- price tags -------------------------------------------------------
+    ITEMS.forEach((it, i) => {
+      const a = EASE.outCubic(clamp((t - it.at) / 0.55));
+      if (a <= 0.01) return;
       ctx.save();
-      ctx.fillStyle = C.bone;
-      ctx.shadowColor = hexA(C.sky, 0.9);
-      ctx.shadowBlur = 24;
+      ctx.globalAlpha = a;
+      // string from above
+      ctx.strokeStyle = 'rgba(226,208,176,0.35)';
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.arc(lx, ly, 10, 0, TAU);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    /* ----------------------------------------------------- nine minutes --- */
-    const aA = clamp((t - 7.2) / 0.7);
-    if (aA > 0.01) {
-      const nx = lerp(X0, X1, 9 / MMAX);
-      ctx.save();
-      ctx.globalAlpha = aA;
-      ctx.fillStyle = hexA(C.amber, 0.16);
-      ctx.fillRect(X0, LANES[0] - 44, nx - X0, LANES[3] - LANES[0] + 92);
-      ctx.strokeStyle = hexA(C.amber, 0.55);
-      ctx.lineWidth = 3;
-      ctx.strokeRect(X0, LANES[0] - 44, nx - X0, LANES[3] - LANES[0] + 92);
-      txt(ctx, '9 MENIT', X0 - 6, LANES[0] - 66, { size: 26, font: F.num6, color: C.amberHi, track: 3.5 });
-      // arrow to "not even a cycle"
-      hairline(ctx, nx + 26, LANES[0] - 10, nx + 26, LANES[3] + 10, { color: C.amber, alpha: 0.5, lw: 2, dash: [3, 9] });
-      txt(ctx, '0,1 SIKLUS', nx + 46, 916, {
-        size: 30, font: F.num6, color: hexA(C.amber, 0.9), track: 3,
+      ctx.moveTo(it.x + 128, 300);
+      ctx.lineTo(it.x + 128, 470 + lerp(-40, 0, a));
+      ctx.stroke();
+      priceTag(ctx, it.x + 24, 470 + lerp(-40, 0, a), {
+        label: it.label, value: it.value, a, rot: i === 1 ? 0.04 : -0.03, w: 208, h: 124,
+        size: 50,
       });
-      hairline(ctx, nx + 10, 906, nx + 38, 906, { color: C.amber, alpha: 0.45, lw: 2 });
       ctx.restore();
-    }
+    });
 
-    /* ------------------------------------------------------------- ticks -- */
-    const tA = clamp((t - 2.2) / 0.8);
+    // ---- the total --------------------------------------------------------
+    const tA = EASE.outCubic(clamp((t - 6.2) / 0.7));
     if (tA > 0.01) {
       ctx.save();
       ctx.globalAlpha = tA;
-      [0, 30, 60, 90, 120].forEach((m) => {
-        const x = lerp(X0, X1, m / MMAX);
-        hairline(ctx, x, LANES[3] + 44, x, LANES[3] + 58, { color: C.bone, alpha: 0.24, lw: 2 });
-        txt(ctx, `${m}`, x, LANES[3] + 96, {
-          size: 22, font: F.num6, color: hexA(C.bone, 0.34), align: 'center', track: 1,
-        });
+      ctx.translate(W / 2, 1390 + lerp(30, 0, tA));
+      ctx.rotate(-0.012);
+      sheet(ctx, -540, -130, 1080, 300, { a: tA, rot: 0, lift: 0.9 });
+      txt(ctx, '16 STUDI · 496 ORANG · AL KHATIB 2017', -540 + 42, -66, {
+        size: 22, font: F.mono, color: 'rgba(23,19,16,0.52)', track: 1, maxWidth: 1000,
       });
-      txt(ctx, 'MENIT', X1, LANES[3] + 96, {
-        size: 22, font: F.num6, color: hexA(C.bone, 0.26), align: 'right', track: 3,
+      ctx.fillStyle = 'rgba(23,19,16,0.20)';
+      ctx.fillRect(-540 + 42, -40, 996, 2);
+      txt(ctx, 'TAMBAHAN PER HARI', -540 + 42, 60, {
+        size: 30, font: F.mono6, color: 'rgba(23,19,16,0.62)', track: 4,
+      });
+      txt(ctx, '+385', 540 - 42, 96, {
+        size: 132, font: F.mono6, color: P.red, align: 'right', track: -3,
+      });
+      txt(ctx, 'KKAL', -540 + 42, 118, {
+        size: 40, font: F.mono6, color: 'rgba(23,19,16,0.7)', track: 5,
       });
       ctx.restore();
     }
 
-    /* ------------------------------------------------------------ stats --- */
-    const sA = EASE.outCubic(clamp((t - 10.6) / 0.8));
-    if (sA > 0.01) {
+    // ---- the line that ends the excuse ------------------------------------
+    const kA = EASE.outCubic(clamp((t - 10.4) / 0.6));
+    if (kA > 0.01) {
       ctx.save();
-      ctx.globalAlpha = sA;
-      ctx.translate(0, lerp(26, 0, sA));
-      hairline(ctx, M, 1290, W - M, 1290, { color: C.bone, alpha: 0.12, lw: 2 });
-      bigStat(ctx, M, 1450, '90', { size: 150, unit: 'menit', color: C.bone, label: 'satu siklus tidur' });
-      hairline(ctx, 720, 1312, 720, 1530, { color: C.bone, alpha: 0.10, lw: 2 });
-      bigStat(ctx, 776, 1450, '9', { size: 150, unit: 'menit', color: C.amberHi, label: 'satu snooze' });
-      txt(ctx, 'CUKUP UNTUK TIDUR RINGAN. TIDAK CUKUP UNTUK APA PUN YANG MEMULIHKAN.', M, 1650, {
-        size: 26, font: F.num6, color: hexA(C.bone, 0.48), track: 2.5, maxWidth: W - 2 * M,
+      ctx.globalAlpha = kA;
+      ctx.translate(W / 2, 1660);
+      ctx.rotate(-0.05);
+      stamp(ctx, -measure(ctx, 'TANPA TAMBAHAN PEMBAKARAN', 30, F.mono6, 4) / 2 - 20, 0, 'TANPA TAMBAHAN PEMBAKARAN', {
+        size: 30, color: P.red, rot: 0, a: kA * 0.92, padX: 20, padY: 12, font: F.mono6,
       });
       ctx.restore();
     }
+
+    applyGrain(ctx, 0.055);
   },
 };

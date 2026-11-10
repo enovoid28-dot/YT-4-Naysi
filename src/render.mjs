@@ -42,10 +42,12 @@ function buildLayouts(ctx) {
 function drawChapter(ctx, scene, local, idxGlobal) {
   const p = EASE.outCubic(clamp(local / 0.45));
   const y = H - 96;
+  const light = scene.theme === 'light';
+  const ink = light ? 'rgba(23,19,16,0.62)' : C.bone;
   ctx.save();
-  ctx.globalAlpha = 0.55 * p;
-  txt(ctx, `${scene.index}`, M, y, { size: 26, font: F.num6, color: C.amber, track: 2 });
-  txt(ctx, `—  ${scene.label}`, M + 44, y, { size: 26, font: F.num6, color: C.bone, track: 4 });
+  ctx.globalAlpha = (light ? 0.85 : 0.55) * p;
+  txt(ctx, `${scene.index}`, M, y, { size: 26, font: F.num6, color: light ? '#B32E1C' : C.amber, track: 2 });
+  txt(ctx, `—  ${scene.label}`, M + 44, y, { size: 26, font: F.num6, color: ink, track: 4 });
   ctx.restore();
 
   // series ticks on the right
@@ -56,30 +58,35 @@ function drawChapter(ctx, scene, local, idxGlobal) {
   let x = W - M - total;
   for (let i = 0; i < n; i++) {
     ctx.save();
-    ctx.globalAlpha = i === idxGlobal ? 0.95 : 0.22;
-    fillRR(ctx, x, H - 108, tw, 5, 2.5, i === idxGlobal ? C.amber : C.bone);
+    ctx.globalAlpha = i === idxGlobal ? 0.95 : (scene.theme === 'light' ? 0.30 : 0.22);
+    fillRR(ctx, x, H - 108, tw, 5, 2.5,
+      i === idxGlobal ? (scene.theme === 'light' ? '#B32E1C' : C.amber) : (scene.theme === 'light' ? 'rgba(23,19,16,0.5)' : C.bone));
     ctx.restore();
     x += tw + gap;
   }
 }
 
 function drawChrome(ctx, scene, local, tGlobal, idxGlobal) {
+  const light = scene.theme === 'light';
   ctx.save();
   const gi = ctx.createLinearGradient(0, 0, 0, 300);
-  gi.addColorStop(0, 'rgba(3,4,7,0.55)');
-  gi.addColorStop(1, 'rgba(3,4,7,0)');
+  gi.addColorStop(0, light ? 'rgba(210,190,158,0.55)' : 'rgba(3,4,7,0.55)');
+  gi.addColorStop(1, light ? 'rgba(210,190,158,0)' : 'rgba(3,4,7,0)');
   ctx.fillStyle = gi;
   ctx.fillRect(0, 0, W, 300);
   ctx.restore();
 
   // brand mark
   ctx.save();
-  fillRR(ctx, M, 96, 16, 16, 4, C.amber);
-  txt(ctx, BRAND, M + 30, 115, { size: 34, font: F.head, color: C.bone, track: 7, alpha: 0.92 });
+  fillRR(ctx, M, 96, 16, 16, 4, light ? '#B32E1C' : C.amber);
+  txt(ctx, BRAND, M + 30, 115, {
+    size: 34, font: F.head, color: light ? 'rgba(23,19,16,0.9)' : C.bone, track: 7, alpha: 0.92,
+  });
   ctx.restore();
 
   tracking(ctx, SERIES, W - M, 114, {
-    size: 25, font: F.num6, track: 5, align: 'right', color: hexA(C.bone, 0.55),
+    size: 25, font: F.num6, track: 5, align: 'right',
+    color: light ? 'rgba(23,19,16,0.55)' : hexA(C.bone, 0.55),
   });
 
   drawChapter(ctx, scene, local, idxGlobal);
@@ -87,11 +94,13 @@ function drawChrome(ctx, scene, local, tGlobal, idxGlobal) {
   // progress
   const prog = clamp(tGlobal / timeline.total);
   ctx.save();
-  ctx.globalAlpha = 0.2;
-  ctx.fillStyle = C.bone;
+  ctx.globalAlpha = light ? 0.16 : 0.2;
+  ctx.fillStyle = light ? '#171310' : C.bone;
   ctx.fillRect(0, H - 8, W, 8);
   ctx.globalAlpha = 1;
-  const g = linGrad(ctx, 0, 0, W, 0, [[0, C.ember], [0.6, C.amber], [1, C.amberHi]]);
+  const g = light
+    ? linGrad(ctx, 0, 0, W, 0, [[0, '#8E2216'], [1, '#E2452F']])
+    : linGrad(ctx, 0, 0, W, 0, [[0, C.ember], [0.6, C.amber], [1, C.amberHi]]);
   ctx.fillStyle = g;
   ctx.shadowColor = hexA(C.amber, 0.7);
   ctx.shadowBlur = 18;
@@ -134,7 +143,20 @@ function drawFrame(ctx, frame) {
   ctx.restore();
 
   // captions
-  mark('scrim', () => drawScrim(ctx, 1600, 0.7));
+  mark('scrim', () => {
+    if (scene.theme === 'light') {
+      // cream scenes take a cream wash, not a black one: dark ink needs the
+      // paper to stay bright underneath it.
+      const g = ctx.createLinearGradient(0, 1520, 0, 2100);
+      g.addColorStop(0, 'rgba(243,232,211,0)');
+      g.addColorStop(0.55, 'rgba(243,232,211,0.78)');
+      g.addColorStop(1, 'rgba(243,232,211,0.97)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 1520, W, H - 1520);
+    } else {
+      drawScrim(ctx, 1600, 0.7);
+    }
+  });
   const layouts = captionLayouts.get(scene.id);
   mark('captions', () => scene.captions.forEach((group, gi) => {
     const first = group.words[0].start;
@@ -148,7 +170,13 @@ function drawFrame(ctx, frame) {
     const showTo = Math.min(last + 0.16, nextStart - 0.03, nextFrom + 0.02);
     const a = clamp((local - showFrom) / 0.12) * clamp((showTo - local) / 0.12);
     if (a <= 0.002) return;
-    drawCaption(ctx, layouts[gi], local, { top: CAPTION_TOP, alphaMul: a });
+    drawCaption(ctx, layouts[gi], local, {
+      top: CAPTION_TOP,
+      alphaMul: a,
+      ...(scene.theme === 'light'
+        ? { color: '#171310', accent: '#B32E1C', shadow: 0 }
+        : {}),
+    });
   }));
 
   mark('chrome', () => drawChrome(ctx, scene, local, t, index));

@@ -1,7 +1,7 @@
 {
   "name": "cpi-naysi",
   "version": "1.0.0",
-  "description": "CPI explainer — 2K 90fps motion graphics built entirely in code",
+  "description": "CPI explainer \u2014 2K 90fps motion graphics built entirely in code",
   "scripts": {
     "vo": "node scripts/prep-vo.mjs",
     "audio": "node scripts/audio.mjs",
@@ -24,6 +24,7 @@
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@fontsource/bricolage-grotesque": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
     "@fontsource/inter-tight": "^5.3.0",
     "@fontsource/plus-jakarta-sans": "^5.3.0",
     "@napi-rs/canvas": "^1.1.0",

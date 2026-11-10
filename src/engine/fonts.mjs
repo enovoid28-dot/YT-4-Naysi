@@ -16,6 +16,8 @@ const SPECS = [
   ['IT400', '@fontsource/inter-tight', 'inter-tight-latin-400-normal.woff2'],
   ['BG800', '@fontsource/bricolage-grotesque', 'bricolage-grotesque-latin-800-normal.woff2'],
   ['BG700', '@fontsource/bricolage-grotesque', 'bricolage-grotesque-latin-700-normal.woff2'],
+  ['MONO4', '@fontsource/ibm-plex-mono', 'ibm-plex-mono-latin-400-normal.woff2'],
+  ['MONO6', '@fontsource/ibm-plex-mono', 'ibm-plex-mono-latin-600-normal.woff2'],
 ];
 
 export const F = {
@@ -27,6 +29,8 @@ export const F = {
   body: 'IT400',
   display: 'BG800',
   display7: 'BG700',
+  mono: 'MONO4',
+  mono6: 'MONO6',
 };
 
 export async function ensureFonts() {

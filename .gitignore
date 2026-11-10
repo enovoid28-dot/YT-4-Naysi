@@ -4,3 +4,6 @@ out/
 assets/audio/vo/
 assets/audio/mix.wav
 *.log
+assets/
+public/audio/vo-mp3/
+docs/

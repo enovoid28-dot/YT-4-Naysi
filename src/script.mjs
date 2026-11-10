@@ -1,42 +1,44 @@
-// Episode 4 — "Alarm 5 Menit" — narration + captions + scene metadata.
-// Thesis: snoozing is not a drug, but it is not extra sleep either. The bill
-// is paid in fragments and in the bedtime you did not move earlier.
+// Episode 5 — "Kamu Bukan Lapar" — narration + captions + scene metadata.
+// Thesis: night-time hunger after a normal dinner is usually not hunger. It is
+// short sleep changing appetite hormones and the reward system, and the fix is
+// sleep, not willpower.
 
 export const SCENES = [
   {
     id: 's1',
     key: 'k1',
-    label: 'BUNYI',
+    label: 'KULKAS',
     index: '01',
-    vo: 'Jam enam pagi. Alarm berbunyi, tanganmu mencari, dan sembilan menit lagi. Kamu pikir itu tidur tambahan. Bukan. Itu tidur yang sama, dipotong jadi tiga bagian, dan tiap bagian dimulai dari nol.',
-    cap: 'Jam *enam pagi*. Alarm berbunyi, tanganmu mencari, dan *sembilan menit* lagi. Kamu pikir itu *tidur tambahan*. Bukan. Itu tidur yang sama, dipotong jadi *tiga bagian*, dan tiap bagian dimulai *dari nol*.',
+    vo: 'Jam sebelas malam lebih. Kamu sudah makan malam, kamu sudah kenyang, tapi kamu berdiri di depan kulkas lagi. Dan kamu menyebutnya lapar. Padahal lapar tidak seperti ini.',
+    cap: 'Jam *sebelas malam* lebih. Kamu sudah makan malam, kamu sudah *kenyang*, tapi kamu berdiri di depan *kulkas* lagi. Dan kamu menyebutnya *lapar*. Padahal lapar *tidak seperti ini*.',
     pad: 0.9,
   },
   {
     id: 's2',
     key: 'k2',
-    label: 'ANGKA',
+    theme: 'light',
+    label: 'SALAH TUDUH',
     index: '02',
-    vo: 'Alarm pertama jam enam. Kamu berdiri jam enam dua puluh tujuh. Di survei seribu tujuh ratus tiga puluh dua orang, enam puluh sembilan persen menekan snooze, rata-rata dua puluh dua menit. Di data pelacak tidur empat ratus lima puluh pekerja, lima puluh tujuh persen snooze, dan butuh dua puluh tujuh menit sampai benar-benar berdiri.',
-    cap: 'Alarm pertama jam *enam*. Kamu berdiri jam *enam dua puluh tujuh*. Di survei *1.732 orang*, *69 persen* menekan snooze, rata-rata *22 menit*. Di data pelacak tidur *450 pekerja*, *57 persen* snooze, dan butuh *27 menit* sampai benar-benar berdiri.',
+    vo: 'Ini bukan soal niat. Bukan soal gula darah. Ini soal tidur. Kurang tidur membuat tubuhmu meminta makanan yang tidak kamu butuhkan.',
+    cap: 'Ini bukan soal *niat*. Bukan soal *gula darah*. Ini soal *tidur*. Kurang tidur membuat tubuhmu meminta makanan yang *tidak kamu butuhkan*.',
     pad: 0.7,
   },
   {
     id: 's3',
     key: 'k3',
-    label: 'BUKTI',
+    label: 'HORMON',
     index: '03',
-    vo: 'Tahun dua ribu dua puluh tiga, tiga puluh satu orang yang biasa snooze diuji di laboratorium. Tidur tiga puluh menit ekstra. Kognisi mereka tidak rusak. Malah sedikit lebih cepat berpikir, karena lebih jarang bangun dari tidur dalam. Kortisol pagi pun tidak terganggu.',
-    cap: 'Tahun *dua ribu dua puluh tiga*, *31 orang* yang biasa snooze diuji di laboratorium. Tidur *tiga puluh menit* ekstra. Kognisi mereka *tidak rusak*. Malah sedikit *lebih cepat* berpikir, karena lebih jarang bangun dari *tidur dalam*. Kortisol pagi pun *tidak terganggu*.',
+    vo: 'Tahun dua ribu empat, dua belas pria muda tidur empat jam selama dua malam. Ghrelin, sinyal lapar, naik dua puluh delapan persen. Leptin, sinyal kenyang, turun delapan belas persen. Rasa lapar mereka naik dua puluh empat persen.',
+    cap: 'Tahun *dua ribu empat*, *12 pria muda* tidur *empat jam* selama dua malam. *Ghrelin*, sinyal lapar, naik *28 persen*. *Leptin*, sinyal kenyang, turun *18 persen*. Rasa lapar mereka naik *24 persen*.',
     pad: 0.7,
   },
   {
     id: 's4',
     key: 'k4',
-    label: 'DALAM',
+    label: 'ANGKA',
     index: '04',
-    vo: 'Jadi snooze bukan racun. Tapi lihat isinya. Tidur bergerak dalam siklus sekitar sembilan puluh menit: ringan, dalam, lalu REM. Sembilan menit tidak muat satu siklus. Kamu hanya menyentuh tidur ringan paling atas, lalu ditarik keluar lagi.',
-    cap: 'Jadi snooze *bukan racun*. Tapi lihat *isinya*. Tidur bergerak dalam siklus sekitar *sembilan puluh menit*: *ringan*, *dalam*, lalu *REM*. *Sembilan menit* tidak muat satu siklus. Kamu hanya menyentuh *tidur ringan* paling atas, lalu ditarik keluar lagi.',
+    vo: 'Efeknya terukur. Meta-analisis enam belas studi, empat ratus sembilan puluh enam orang: kurang tidur menambah asupan tiga ratus delapan puluh lima kalori per hari. Tanpa tambahan pembakaran. Struk malammu memang lebih panjang.',
+    cap: 'Efeknya *terukur*. Meta-analisis *16 studi*, *496 orang*: kurang tidur menambah asupan *385 kalori* per hari. Tanpa tambahan *pembakaran*. Struk malammu memang *lebih panjang*.',
     pad: 0.7,
   },
   {
@@ -44,17 +46,18 @@ export const SCENES = [
     key: 'k5',
     label: 'OTAK',
     index: '05',
-    vo: 'Dan bangun itu ada harganya. Namanya inersia tidur. Aliran darah ke otak butuh sampai tiga puluh menit untuk kembali normal. Tiap kali snooze, kamu menyalakan mesin, lalu mematikannya lagi. Tiga kali snooze, tiga kali start dari dingin.',
-    cap: 'Dan bangun itu ada *harganya*. Namanya *inersia tidur*. Aliran darah ke otak butuh sampai *tiga puluh menit* untuk kembali normal. Tiap kali snooze, kamu *menyalakan mesin*, lalu mematikannya lagi. Tiga kali snooze, *tiga kali* start dari dingin.',
+    vo: 'Dan bukan cuma hormon. Setelah empat malam kurang tidur, sinyal hadiah di otak naik tiga puluh tiga persen, dan bertahan sampai jam sembilan malam. Saat diberi camilan, mereka makan lemak hampir dua kali lipat. Perutnya kenyang, otaknya belum.',
+    cap: 'Dan bukan cuma *hormon*. Setelah empat malam kurang tidur, sinyal hadiah di otak naik *33 persen*, dan bertahan sampai *jam sembilan malam*. Saat diberi camilan, mereka makan lemak *hampir dua kali lipat*. Perutnya *kenyang*, otaknya *belum*.',
     pad: 0.7,
   },
   {
     id: 's6',
     key: 'k6',
-    label: 'BEDA',
+    theme: 'light',
+    label: 'BALIK',
     index: '06',
-    vo: 'Snooze juga punya profil. Yang rutin snooze rata-rata enam tahun lebih muda, dan hampir empat kali lebih mungkin tipe malam. Tapi kalau kamu kurang tidur, atau punya insomnia, snooze bukan kebiasaan. Itu gejala, dan tidak selesai dengan sembilan menit.',
-    cap: 'Snooze juga punya *profil*. Yang rutin snooze rata-rata *enam tahun lebih muda*, dan hampir *empat kali* lebih mungkin *tipe malam*. Tapi kalau kamu *kurang tidur*, atau punya *insomnia*, snooze bukan kebiasaan. Itu *gejala*, dan tidak selesai dengan sembilan menit.',
+    vo: 'Kabar baiknya, ini bisa dibalik. Delapan puluh orang dewasa, dua minggu, tidurnya ditambah satu koma dua jam. Tanpa diet. Mereka makan dua ratus tujuh puluh kalori lebih sedikit tiap hari.',
+    cap: 'Kabar baiknya, ini bisa *dibalik*. *80 orang dewasa*, dua minggu, tidurnya ditambah *1,2 jam*. Tanpa *diet*. Mereka makan *270 kalori* lebih sedikit tiap hari.',
     pad: 0.7,
   },
   {
@@ -62,27 +65,19 @@ export const SCENES = [
     key: 'k7',
     label: 'MITOS',
     index: '07',
-    vo: 'Tiga hal yang sering dikira benar. Snooze merusak otak? Belum terbukti. Snooze menambah tidur? Tidak, itu tidur yang sama. Lima menit cukup untuk pulih? Tidak. Lima menit tidak menyelesaikan satu tahap pun.',
-    cap: 'Tiga hal yang sering *dikira benar*. Snooze *merusak otak*? *Belum terbukti*. Snooze *menambah tidur*? *Tidak*, itu tidur yang sama. *Lima menit* cukup untuk pulih? *Tidak.* Lima menit tidak menyelesaikan *satu tahap pun*.',
+    vo: 'Tapi jangan berharap begadang membakar kalori. Satu jam terjaga hanya memakai sekitar tujuh belas kalori. Empat jam: tujuh puluh. Sementara kurang tidur menambah tiga ratus delapan puluh lima kalori masuk. Matematikanya tidak pernah menang.',
+    cap: 'Tapi jangan berharap *begadang* membakar kalori. Satu jam terjaga hanya memakai sekitar *17 kalori*. Empat jam: *70*. Sementara kurang tidur menambah *385 kalori* masuk. Matematikanya *tidak pernah menang*.',
     pad: 0.7,
   },
   {
     id: 's8',
     key: 'k8',
-    label: 'CARA',
-    index: '08',
-    vo: 'Yang bekerja sederhana. Satu alarm, di jam kamu benar-benar harus bangun. Ponsel di luar jangkauan tangan. Cahaya terang dalam sepuluh menit pertama. Dan kalau kamu butuh tiga kali snooze, yang kurang bukan sembilan menit. Tidurmu, empat puluh menit lebih awal.',
-    cap: 'Yang bekerja *sederhana*. *Satu alarm*, di jam kamu benar-benar harus bangun. Ponsel *di luar jangkauan* tangan. *Cahaya terang* dalam sepuluh menit pertama. Dan kalau kamu butuh *tiga kali snooze*, yang kurang bukan sembilan menit. *Tidurmu*, empat puluh menit lebih awal.',
-    pad: 0.8,
-  },
-  {
-    id: 's9',
-    key: 'k9',
+    theme: 'light',
     label: 'JAMNYA',
-    index: '09',
-    vo: 'Jadi snooze boleh. Selama kamu tahu apa yang kamu beli. Kalau tidurmu cukup, sembilan menit itu cuma ritual. Kalau tidak, tagihannya sama, cuma dibayar dengan bunga. Alarm pertamamu jam berapa, dan berapa kali kamu tekan snooze?',
-    cap: 'Jadi snooze *boleh*. Selama kamu tahu *apa yang kamu beli*. Kalau tidurmu cukup, sembilan menit itu cuma *ritual*. Kalau tidak, tagihannya *sama*, cuma dibayar dengan *bunga*. Alarm pertamamu *jam berapa*, dan berapa kali kamu tekan snooze?',
-    pad: 2.2,
+    index: '08',
+    vo: 'Yang bekerja cuma satu: tidur tujuh sampai sembilan jam, di jam yang sama tiap malam. Kalau setelah itu masih lapar, itu lapar sungguhan. Jadi, jam berapa kamu mulai lapar tadi malam?',
+    cap: 'Yang bekerja cuma *satu*: tidur *tujuh sampai sembilan jam*, di jam yang *sama* tiap malam. Kalau setelah itu masih lapar, itu lapar *sungguhan*. Jadi, *jam berapa* kamu mulai lapar tadi malam?',
+    pad: 2.0,
   },
 ];
 
