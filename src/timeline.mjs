@@ -33,6 +33,17 @@ export function readWav(file) {
 
 export const voPath = (id) => path.join(process.cwd(), 'assets', 'audio', 'vo', `${id}.wav`);
 
+/** Real word timings measured from the VO file (scripts/align-vo.mjs). */
+function readAlign() {
+  const file = path.join(process.cwd(), 'assets', 'audio', 'align.json');
+  if (!fs.existsSync(file)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
 const splitSentences = (cap) =>
   cap
     .split(/(?<=[.!?:])\s+/)
@@ -44,6 +55,7 @@ const isAccent = (w) => w.startsWith('*') || w.endsWith('*');
 
 export function buildTimeline() {
   const scenes = [];
+  const align = readAlign();
   let cursor = 0;
   for (let i = 0; i < SCENES.length; i++) {
     const sc = SCENES[i];
@@ -54,6 +66,7 @@ export function buildTimeline() {
     const dur = voOffset + audioDur + sc.pad;
 
     const sentences = splitSentences(sc.cap);
+    const aligned = align?.[sc.id];
     const gap = 0.26;
     const tail = 0.12;
     const speak = audioDur - gap * (sentences.length - 1) - tail;
@@ -62,6 +75,30 @@ export function buildTimeline() {
     );
     const totalW = sentWeights.reduce((a, b) => a + b, 0);
     const captions = [];
+    if (Array.isArray(aligned) && aligned.length === sentences.length) {
+      aligned.forEach((words) => {
+        captions.push({
+          words: words.map((w) => ({
+            text: w.text,
+            accent: w.accent,
+            start: voOffset + w.start,
+            end: voOffset + w.end,
+          })),
+        });
+      });
+      scenes.push({
+        ...sc,
+        start: cursor,
+        dur,
+        audioDur,
+        voOffset,
+        audioStart: cursor + voOffset,
+        captions,
+        timed: 'aligned',
+      });
+      cursor += dur;
+      continue;
+    }
     let st = 0;
     sentences.forEach((sentence, si) => {
       const sdur = (sentWeights[si] / totalW) * speak;

@@ -1,6 +1,6 @@
 import { F } from './fonts.mjs';
 import { C, W, hexA, measure } from './draw.mjs';
-import { clamp, spring, lerp } from './anim.mjs';
+import { clamp, spring, lerp, EASE } from './anim.mjs';
 
 const SIZE_STEPS = [0.94, 0.88, 0.82, 0.76];
 
@@ -52,7 +52,7 @@ export function buildCaption(ctx, group, { maxWidth, size = 78, font = F.semi, m
  */
 export function drawCaption(ctx, layout, t, o = {}) {
   const {
-    bottom = 2150,
+    top = 1842,
     color = C.bone,
     accent = C.amber,
     align = 'center',
@@ -63,8 +63,9 @@ export function drawCaption(ctx, layout, t, o = {}) {
   } = o;
   const { size, font, lines, space } = layout;
   const lh = size * lineHeight;
-  const blockH = lines.length * lh;
-  const top = bottom - blockH + lh * 0.3;
+  // The block is anchored by its first line, never by its bottom: a two-line
+  // caption and a three-line caption therefore share the same starting point,
+  // so the type cannot jump up or down when the sentence changes.
   const baseAlpha = ctx.globalAlpha * alphaMul;
 
   ctx.save();
@@ -81,15 +82,15 @@ export function drawCaption(ctx, layout, t, o = {}) {
       else if (t < w.start) a = lerp(0.34, 0.66, clamp((t - (w.start - 0.26)) / 0.26));
       else if (isActive) a = 1;
       else a = 0.94;
-      const inT = clamp((t - w.start + 0.08) / 0.28);
-      const rise = (1 - spring(inT * 1.3, 15, 0.62)) * 14;
-      const scale = isActive ? 1 + 0.05 * Math.sin(clamp((t - w.start) / 0.26) * Math.PI) : 1;
+      // one-way ease-in: no overshoot, so a word never bounces past its
+      // final spot and the line never appears to shift sideways.
+      const inT = clamp((t - w.start + 0.06) / 0.22);
+      const rise = (1 - EASE.outCubic(inT)) * 10;
 
       ctx.save();
       ctx.globalAlpha = baseAlpha * a;
       ctx.font = `${size}px ${font}`;
       ctx.translate(cx + w.width / 2, y + rise);
-      ctx.scale(scale, scale);
       ctx.shadowColor = isActive ? hexA(accent, 0.6) : 'rgba(0,0,0,0.65)';
       ctx.shadowBlur = isActive ? 16 : shadow;
       ctx.shadowOffsetY = isActive ? 0 : 7;

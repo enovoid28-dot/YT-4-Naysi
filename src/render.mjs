@@ -24,6 +24,9 @@ const has = (name) => args.includes(`--${name}`);
 
 const timeline = buildTimeline();
 const captionLayouts = new Map();
+// fixed anchor for the caption block: the first line never moves, whatever the
+// number of lines in the sentence.
+const CAPTION_TOP = 1832;
 
 function buildLayouts(ctx) {
   for (const s of timeline.scenes) {
@@ -136,12 +139,16 @@ function drawFrame(ctx, frame) {
   mark('captions', () => scene.captions.forEach((group, gi) => {
     const first = group.words[0].start;
     const last = group.words[group.words.length - 1].end;
-    const nextStart = scene.captions[gi + 1]?.words[0].start ?? Infinity;
+    const nextGroup = scene.captions[gi + 1];
+    const nextStart = nextGroup?.words[0].start ?? Infinity;
+    const nextFrom = nextGroup ? nextStart - 0.16 : Infinity;
     const showFrom = first - 0.16;
-    const showTo = Math.min(last + 0.16, nextStart - 0.03);
-    const a = clamp((local - showFrom) / 0.14) * clamp((showTo - local) / 0.14);
+    // never overlap two sentences: the outgoing caption is finished before the
+    // incoming one starts fading in, so no line can appear to double or shift.
+    const showTo = Math.min(last + 0.16, nextStart - 0.03, nextFrom + 0.02);
+    const a = clamp((local - showFrom) / 0.12) * clamp((showTo - local) / 0.12);
     if (a <= 0.002) return;
-    drawCaption(ctx, layouts[gi], local, { bottom: 2124, alphaMul: a });
+    drawCaption(ctx, layouts[gi], local, { top: CAPTION_TOP, alphaMul: a });
   }));
 
   mark('chrome', () => drawChrome(ctx, scene, local, t, index));
