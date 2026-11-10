@@ -2,48 +2,64 @@ import { F } from './fonts.mjs';
 import { C, W, hexA, measure } from './draw.mjs';
 import { clamp, spring, lerp, EASE } from './anim.mjs';
 
-const SIZE_STEPS = [0.94, 0.88, 0.82, 0.76];
+const SCALES = [1, 0.95, 0.9, 0.86, 0.82, 0.78, 0.74, 0.7, 0.66, 0.62];
+const MAX_LINES = 4;
 
-/** Wrap caption words into <=3 lines, shrinking type until it fits. */
-export function buildCaption(ctx, group, { maxWidth, size = 78, font = F.semi, maxLines = 3 }) {
-  for (const scale of [1, ...SIZE_STEPS]) {
+/** Wrap words into lines that fit maxWidth; every line carries a real width. */
+function wrapWords(ctx, words, space, maxWidth) {
+  const lines = [];
+  let line = [];
+  let wsum = 0;
+  for (const word of words) {
+    const ww = ctx.measureText(word.text).width;
+    const add = line.length ? ww + space : ww;
+    if (line.length && wsum + add > maxWidth) {
+      lines.push({ words: line, width: wsum });
+      line = [{ ...word, width: ww }];
+      wsum = ww;
+    } else {
+      line.push({ ...word, width: ww });
+      wsum += add;
+    }
+  }
+  if (line.length) lines.push({ words: line, width: wsum });
+  return lines;
+}
+
+/**
+ * Wrap caption words into at most MAX_LINES lines, shrinking type until it fits.
+ * The returned lines always carry the width that will actually be drawn, so the
+ * block can never be centred on a phantom width and slide off the frame.
+ */
+export function buildCaption(ctx, group, { maxWidth, size = 78, font = F.semi, maxLines = MAX_LINES }) {
+  ctx.save();
+  let three = null;
+  let four = null;
+  let smallest = null;
+  for (const scale of SCALES) {
     const s = Math.round(size * scale);
-    ctx.save();
     ctx.font = `${s}px ${font}`;
     const space = ctx.measureText(' ').width * 1.45;
-    const lines = [];
-    let line = [];
-    let wsum = 0;
-    let overflow = false;
-    for (const word of group.words) {
-      const ww = ctx.measureText(word.text).width;
-      const add = line.length ? ww + space : ww;
-      if (line.length && wsum + add > maxWidth) {
-        lines.push({ words: line, width: wsum });
-        if (lines.length >= maxLines) {
-          overflow = true;
-          break;
-        }
-        line = [{ ...word, width: ww }];
-        wsum = ww;
-      } else {
-        line.push({ ...word, width: ww });
-        wsum += add;
-      }
-    }
-    ctx.restore();
-    if (overflow) continue;
-    if (line.length) lines.push({ words: line, width: wsum });
+    const widest = Math.max(...group.words.map((w) => ctx.measureText(w.text).width));
+    if (widest > maxWidth) continue; // this size cannot hold a single word
+    const lines = wrapWords(ctx, group.words, space, maxWidth);
+    const cand = { size: s, font, lines, space };
+    smallest = cand;
     const widow = lines.length > 1 && lines[lines.length - 1].words.length === 1;
-    if (widow && s > size * 0.72 && scale < SIZE_STEPS[1]) continue;
-    return { size: s, font, lines, space };
+    if (!three && lines.length <= 3 && !widow) three = cand;
+    if (!four && lines.length <= maxLines && !widow) four = cand;
+    if (three) break;
   }
-  ctx.save();
-  ctx.font = `${Math.round(size * 0.72)}px ${font}`;
-  const space = ctx.measureText(' ').width * 1.45;
-  const all = group.words.map((w) => ({ ...w, width: ctx.measureText(w.text).width }));
+  let best = three || four || smallest;
+  if (!best) {
+    // pathological: a single word wider than the frame at every size
+    const s = Math.round(size * SCALES[SCALES.length - 1]);
+    ctx.font = `${s}px ${font}`;
+    const space = ctx.measureText(' ').width * 1.45;
+    best = { size: s, font, lines: wrapWords(ctx, group.words, space, maxWidth), space };
+  }
   ctx.restore();
-  return { size: Math.round(size * 0.72), font, space, lines: [{ words: all, width: 0 }] };
+  return best;
 }
 
 /**
@@ -74,7 +90,11 @@ export function drawCaption(ctx, layout, t, o = {}) {
 
   lines.forEach((line, li) => {
     const y = top + li * lh + size * 0.76;
-    let cx = align === 'center' ? x - line.width / 2 : x;
+    // hard guard: if a line is still wider than the safe area, shrink it about
+    // the anchor instead of letting it run off the right edge.
+    const fit = Math.min(1, (W - 2 * 96) / Math.max(1, line.width));
+    const lsize = size * fit;
+    let cx = align === 'center' ? x - (line.width * fit) / 2 : x;
     for (const w of line.words) {
       const isActive = t >= w.start && t < w.end + 0.13;
       let a;
@@ -89,15 +109,15 @@ export function drawCaption(ctx, layout, t, o = {}) {
 
       ctx.save();
       ctx.globalAlpha = baseAlpha * a;
-      ctx.font = `${size}px ${font}`;
-      ctx.translate(cx + w.width / 2, y + rise);
+      ctx.font = `${lsize}px ${font}`;
+      ctx.translate(cx + (w.width * fit) / 2, y + rise);
       ctx.shadowColor = isActive ? hexA(accent, 0.6) : 'rgba(0,0,0,0.65)';
       ctx.shadowBlur = isActive ? 16 : shadow;
       ctx.shadowOffsetY = isActive ? 0 : 7;
       ctx.fillStyle = isActive ? accent : color;
-      ctx.fillText(w.text, -w.width / 2, 0);
+      ctx.fillText(w.text, (-w.width * fit) / 2, 0);
       ctx.restore();
-      cx += w.width + space;
+      cx += (w.width + space) * fit;
     }
   });
   ctx.restore();

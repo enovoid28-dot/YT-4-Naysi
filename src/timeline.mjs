@@ -53,6 +53,30 @@ const splitSentences = (cap) =>
 const cleanWord = (w) => w.replace(/\*/g, '');
 const isAccent = (w) => w.startsWith('*') || w.endsWith('*');
 
+
+/** Long sentences are split at a comma so no caption needs more than three lines. */
+function chunkWords(words, limit = 11) {
+  if (words.length <= limit) return [words];
+  const isBreak = (w) => /[,;:]$/.test(w.text);
+  const bestCut = () => {
+    let cut = Math.ceil(words.length / 2);
+    let bestIdx = -1;
+    let bestDist = Infinity;
+    words.forEach((w, i) => {
+      if (i === 0 || i > words.length - 3) return;
+      if (!isBreak(w)) return;
+      const d = Math.abs(i + 1 - words.length / 2);
+      if (d < bestDist) {
+        bestDist = d;
+        bestIdx = i + 1;
+      }
+    });
+    return bestIdx > 0 ? bestIdx : cut;
+  };
+  const cut = bestCut();
+  return [...chunkWords(words.slice(0, cut), limit), ...chunkWords(words.slice(cut), limit)];
+}
+
 export function buildTimeline() {
   const scenes = [];
   const align = readAlign();
@@ -77,13 +101,15 @@ export function buildTimeline() {
     const captions = [];
     if (Array.isArray(aligned) && aligned.length === sentences.length) {
       aligned.forEach((words) => {
-        captions.push({
-          words: words.map((w) => ({
-            text: w.text,
-            accent: w.accent,
-            start: voOffset + w.start,
-            end: voOffset + w.end,
-          })),
+        chunkWords(words).forEach((chunk) => {
+          captions.push({
+            words: chunk.map((w) => ({
+              text: w.text,
+              accent: w.accent,
+              start: voOffset + w.start,
+              end: voOffset + w.end,
+            })),
+          });
         });
       });
       scenes.push({
