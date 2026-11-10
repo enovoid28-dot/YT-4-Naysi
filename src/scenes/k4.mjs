@@ -1,95 +1,122 @@
-import { W, H, C, M, txt, hexA, fillRR, linGrad, measure } from '../engine/draw.mjs';
+import { W, H, C, M, txt, hexA, fillRR, strokeRR, linGrad, radGrad, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE } from '../engine/anim.mjs';
-import { nightRoom, darkKicker, sheet, stamp, applyGrain, P } from './_ep5.mjs';
-import { chipsBag, cakeSlice, iceTub, priceTag, softSeat } from './_props.mjs';
+import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
+import { nightRoom, darkKicker, cylinder, stamp, tag, applyGrain, P } from './_ep6.mjs';
 
-// 04 — ANGKA. The extra 385 kcal, as actual food on the counter with the
-// price tags still on it.
-const ITEMS = [
-  { at: 1.2, x: 150, label: 'KERIPIK', value: '150' },
-  { at: 2.6, x: 566, label: 'ROTI MANIS', value: '120' },
-  { at: 4.0, x: 946, label: 'ES KRIM', value: '115' },
-];
+// 04 — SEMBILAN PERSEN. The catch-up sleep, measured in a glass: a film of water
+// at the bottom of a big cylinder that should have been full.
+const CX = 420;
+const TOP = 660;
+const CW = 340;
+const CH = 840;
+const DEBT_H = 12;   // >12 h
+const PAID_H = 1.1;  // 1,1 h
 
 export default {
   draw(ctx, t) {
-    nightRoom(ctx, { tableY: 1150, warm: 0.16 });
-    darkKicker(ctx, 'YANG MASUK SETELAH MAKAN MALAM', { y: 292 });
+    nightRoom(ctx, { tableY: 1500, warm: 0.20 });
 
-    // ---- the three items --------------------------------------------------
-    const a0 = EASE.outCubic(clamp((t - 0.15) / 0.6));
-    ctx.save();
-    ctx.globalAlpha = a0;
+    darkKicker(ctx, 'YANG DIBAYARKAN', { y: 292 });
 
-    softSeat(ctx, 300, 1156, 190, 0.55);
-    chipsBag(ctx, 152, 800, 296, 356, { a: 1, rot: -0.05 });
+    const drain = EASE.inOutQuad(clamp((t - 9.1) / 1.3));
+    const grow = EASE.outCubic(clamp((t - 1.0) / 1.8));
+    const level = 0.09 * grow * (1 - drain);
 
-    softSeat(ctx, 700, 1160, 220, 0.5);
-    cakeSlice(ctx, 560, 856, 288, 300, { a: 1 });
-
-    softSeat(ctx, 1136, 1164, 170, 0.5);
-    iceTub(ctx, 1136, 892, 250, 272, { a: 1 });
-    ctx.restore();
-
-    // ---- price tags -------------------------------------------------------
-    ITEMS.forEach((it, i) => {
-      const a = EASE.outCubic(clamp((t - it.at) / 0.55));
-      if (a <= 0.01) return;
-      ctx.save();
-      ctx.globalAlpha = a;
-      // string from above
-      ctx.strokeStyle = 'rgba(226,208,176,0.35)';
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(it.x + 128, 300);
-      ctx.lineTo(it.x + 128, 470 + lerp(-40, 0, a));
-      ctx.stroke();
-      priceTag(ctx, it.x + 24, 470 + lerp(-40, 0, a), {
-        label: it.label, value: it.value, a, rot: i === 1 ? 0.04 : -0.03, w: 208, h: 124,
-        size: 50,
-      });
-      ctx.restore();
+    cylinder(ctx, CX, TOP, CW, CH, {
+      level, color: '#C0392B', a: clamp((t - 0.4) / 0.6), label: 'UTANG: LEBIH 12 JAM', hourTicks: 12,
     });
 
-    // ---- the total --------------------------------------------------------
-    const tA = EASE.outCubic(clamp((t - 6.2) / 0.7));
-    if (tA > 0.01) {
+    // the film of water we paid back
+    const lA = clamp((t - 2.4) / 0.5);
+    if (lA > 0.01) {
+      const surf = TOP + CH - CH * level - 4;
       ctx.save();
-      ctx.globalAlpha = tA;
-      ctx.translate(W / 2, 1390 + lerp(30, 0, tA));
-      ctx.rotate(-0.012);
-      sheet(ctx, -540, -130, 1080, 300, { a: tA, rot: 0, lift: 0.9 });
-      txt(ctx, '16 STUDI · 496 ORANG · AL KHATIB 2017', -540 + 42, -66, {
-        size: 22, font: F.mono, color: 'rgba(23,19,16,0.52)', track: 1, maxWidth: 1000,
+      ctx.globalAlpha = lA * (1 - drain * 0.9);
+      ctx.strokeStyle = hexA(P.amber, 0.75);
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(CX + CW / 2 + 8, surf);
+      ctx.lineTo(700, surf - 96);
+      ctx.lineTo(860, surf - 96);
+      ctx.stroke();
+      txt(ctx, '1,1 JAM', 872, surf - 84, {
+        size: 34, font: F.display, color: P.amber, track: -0.5,
       });
-      ctx.fillStyle = 'rgba(23,19,16,0.20)';
-      ctx.fillRect(-540 + 42, -40, 996, 2);
-      txt(ctx, 'TAMBAHAN PER HARI', -540 + 42, 60, {
-        size: 30, font: F.mono6, color: 'rgba(23,19,16,0.62)', track: 4,
-      });
-      txt(ctx, '+385', 540 - 42, 96, {
-        size: 132, font: F.mono6, color: P.red, align: 'right', track: -3,
-      });
-      txt(ctx, 'KKAL', -540 + 42, 118, {
-        size: 40, font: F.mono6, color: 'rgba(23,19,16,0.7)', track: 5,
+      txt(ctx, 'DARI 12+ JAM', 872, surf - 46, {
+        size: 21, font: F.mono6, color: hexA('#F2E7D3', 0.55), track: 3,
       });
       ctx.restore();
     }
 
-    // ---- the line that ends the excuse ------------------------------------
-    const kA = EASE.outCubic(clamp((t - 10.4) / 0.6));
-    if (kA > 0.01) {
+    // the verdict, big
+    const vA = EASE.outCubic(clamp((t - 3.4) / 0.6));
+    if (vA > 0.01) {
+      const pct = 9;
       ctx.save();
-      ctx.globalAlpha = kA;
-      ctx.translate(W / 2, 1660);
-      ctx.rotate(-0.05);
-      stamp(ctx, -measure(ctx, 'TANPA TAMBAHAN PEMBAKARAN', 30, F.mono6, 4) / 2 - 20, 0, 'TANPA TAMBAHAN PEMBAKARAN', {
-        size: 30, color: P.red, rot: 0, a: kA * 0.92, padX: 20, padY: 12, font: F.mono6,
+      ctx.globalAlpha = vA;
+      txt(ctx, String(pct), 862, 800, {
+        size: 300, font: F.num, color: P.red, track: -6, glowBlur: 44, glowColor: 'rgba(194,57,43,0.45)',
+      });
+      const wNum = measure(ctx, String(pct), 300, F.num, -6);
+      txt(ctx, '%', 862 + wNum + 6, 800, {
+        size: 130, font: F.num6, color: P.red, track: -2,
+      });
+      ctx.fillStyle = 'rgba(242,231,211,0.22)';
+      ctx.fillRect(862, 852, 470, 2);
+      if (drain > 0.35) {
+        ctx.save();
+        ctx.globalAlpha = vA * clamp((drain - 0.35) / 0.5);
+        const sl = clamp((drain - 0.35) / 0.5);
+        ctx.strokeStyle = hexA(P.red, 0.95);
+        ctx.lineWidth = 11;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(838, 762 - 22 * (1 - sl));
+        ctx.lineTo(838 + 380 * sl, 700 - 22 * (1 - sl));
+        ctx.stroke();
+        ctx.restore();
+      }
+      txt(ctx, 'DARI UTANG SEMINGGU', 862, 902, {
+        size: 24, font: F.mono6, color: hexA('#F2E7D3', 0.62), track: 4,
       });
       ctx.restore();
     }
 
+    // the week, as a bracket under the number
+    const bA = clamp((t - 5.2) / 0.6);
+    if (bA > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = bA * (1 - drain * 0.55);
+      txt(ctx, '5 MALAM × 5 JAM', 862, 1000, {
+        size: 26, font: F.mono6, color: hexA('#F2E7D3', 0.40), track: 3,
+      });
+      txt(ctx, 'BUTUH 8 JAM SEMALAM', 862, 1040, {
+        size: 26, font: F.mono6, color: hexA('#F2E7D3', 0.40), track: 3,
+      });
+      ctx.restore();
+    }
+
+    // and it evaporates on Monday
+    if (drain > 0.02) {
+      ctx.save();
+      ctx.globalAlpha = drain;
+      txt(ctx, 'SENIN: NOL', 862, 1102, {
+        size: 24, font: F.mono6, color: hexA(P.red, 0.75), track: 6,
+      });
+      ctx.restore();
+    }
+    const sA = clamp((t - 9.9) / 0.35);
+    if (sA > 0.01) {
+      ctx.save();
+      ctx.translate(196, 1706);
+      ctx.rotate(-0.07);
+      stamp(ctx, 0, 0, 'HILANG SENIN', {
+        size: 40, color: P.red, rot: 0, a: sA, padX: 24, padY: 12, font: F.mono6, track: 4,
+      });
+      ctx.restore();
+    }
+
+    void DEBT_H; void PAID_H; void tag;
     applyGrain(ctx, 0.055);
   },
 };

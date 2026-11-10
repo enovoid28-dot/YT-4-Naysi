@@ -1,183 +1,131 @@
-import { W, H, C, M, txt, hexA, fillRR, linGrad, radGrad, measure } from '../engine/draw.mjs';
+import { W, H, C, M, txt, hexA, fillRR, strokeRR, linGrad, radGrad, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { paperRoom, paperKicker, sheet, tag, applyGrain, P } from './_ep5.mjs';
-import { priceTag, tapeStrip } from './_props.mjs';
+import { glowSpot, wallClock, tag, applyGrain, P } from './_ep6.mjs';
 
-// 06 — BALIK. A 24-hour dial: the sleep block grows by 1,2 jam, and the plate
-// underneath shrinks by 270 kcal. Same body, two levers.
-const CX = 720;
-const CY = 950;
-const R = 350;
-const angOf = (h) => (h / 24) * TAU - Math.PI / 2;
+// 06 — JAM TUBUH. Two clocks on the same wall: the one you can read, and the
+// one your cells keep. Same morning, 1,7 hours apart.
+const LY = 846;
+const R = 256;
+const LX = 424;
+const RX = 1016;
+const SHIFT = 1.7;
 
-function arc(ctx, h0, h1, r0, r1, color, a = 1) {
-  // h1 may be smaller than h0 (the window wraps over midnight)
-  const start = (h0 / 24) * TAU;
-  const sweep = (((h1 - h0 + 24) % 24) / 24) * TAU;
-  const N = 72;
-  ctx.save();
-  ctx.globalAlpha *= a;
-  ctx.beginPath();
-  for (let i = 0; i <= N; i++) {
-    const an = start + (sweep * i) / N;
-    const x = Math.sin(an) * r1;
-    const y = -Math.cos(an) * r1;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  }
-  for (let i = N; i >= 0; i--) {
-    const an = start + (sweep * i) / N;
-    ctx.lineTo(Math.sin(an) * r0, -Math.cos(an) * r0);
-  }
-  ctx.closePath();
-  ctx.fillStyle = color;
-  ctx.fill();
-  ctx.restore();
+const SAT = [9 * 60 + 12, 9 * 60 + 12 + SHIFT * 60];
+const MON = [6 * 60 + 30, 6 * 60 + 30 - SHIFT * 60];
+
+const hhOf = (m) => Math.floor((((m % 1440) + 1440) % 1440) / 60);
+const mmOf = (m) => Math.round((((m % 1440) + 1440) % 1440) % 60);
+function hm(min) {
+  return `${String(hhOf(min)).padStart(2, '0')}.${String(mmOf(min)).padStart(2, '0')}`;
 }
 
 export default {
   draw(ctx, t) {
-    paperRoom(ctx);
-    paperKicker(ctx, 'INI BISA DIBALIK', { y: 292 });
+    // the wall
+    ctx.fillStyle = linGrad(ctx, 0, 0, W * 0.4, H, [
+      [0, '#15100D'], [0.45, '#1C1512'], [1, '#0A0706'],
+    ]);
+    ctx.fillRect(0, 0, W, H);
+    glowSpot(ctx, W * 0.18, 600, 900, P.amber, 0.13);
 
-    const dA = EASE.outCubic(clamp((t - 0.2) / 0.8));
+    const inA = EASE.outCubic(clamp((t - 0.1) / 0.6));
 
-    ctx.save();
-    ctx.globalAlpha = dA;
-    ctx.translate(CX, CY);
-
-    // dial plate
-    ctx.save();
-    ctx.shadowColor = 'rgba(80,58,30,0.35)';
-    ctx.shadowBlur = 60;
-    ctx.shadowOffsetY = 26;
-    ctx.fillStyle = '#FBF3E2';
-    ctx.beginPath();
-    ctx.arc(0, 0, R + 26, 0, TAU);
-    ctx.fill();
-    ctx.restore();
-    ctx.strokeStyle = 'rgba(23,19,16,0.35)';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(0, 0, R + 26, 0, TAU);
-    ctx.stroke();
-
-    // sleep block (23.00 → 07.00), then the extra 1,2 jam
-    arc(ctx, 23, 7, R * 0.56, R * 0.99, 'rgba(30,95,91,0.88)');
-    const exA = EASE.outCubic(clamp((t - 3.6) / 1.0));
-    if (exA > 0.01) {
-      // 21.48 → 23.00 on top of the block
-      arc(ctx, 21.8, 23, R * 0.56, R * 0.99, 'rgba(226,69,47,0.92)', exA);
-    }
-
-    // hour ticks + numbers
-    for (let h = 0; h < 24; h++) {
-      const an = angOf(h);
-      const big = h % 6 === 0;
-      ctx.strokeStyle = big ? 'rgba(23,19,16,0.65)' : 'rgba(23,19,16,0.22)';
-      ctx.lineWidth = big ? 4 : 2;
-      ctx.beginPath();
-      ctx.moveTo(Math.cos(an) * (R + 8), Math.sin(an) * (R + 8));
-      ctx.lineTo(Math.cos(an) * (R + (big ? 26 : 16)), Math.sin(an) * (R + (big ? 26 : 16)));
-      ctx.stroke();
-      if (h % 3 === 0) {
-        txt(ctx, String(h).padStart(2, '0'), Math.cos(an) * (R + 62), Math.sin(an) * (R + 62) + 9, {
-          size: 24, font: F.mono, color: 'rgba(23,19,16,0.5)', align: 'center', track: 1,
-        });
-      }
-    }
-
-    // inner face
-    ctx.fillStyle = 'rgba(251,243,226,0.94)';
-    ctx.beginPath();
-    ctx.arc(0, 0, R * 0.52, 0, TAU);
-    ctx.fill();
-
-    txt(ctx, 'TIDUR', 0, -96, {
-      size: 30, font: F.mono6, color: 'rgba(23,19,16,0.55)', align: 'center', track: 6,
+    // day label
+    const toMon = EASE.outCubic(clamp((t - 10.9) / 0.8));
+    const dayA = clamp(inA);
+    txt(ctx, 'SABTU', W / 2, 316, {
+      size: 30, font: F.mono6, color: hexA('#F2E7D3', 0.5 * dayA * (1 - toMon)),
+      align: 'center', track: 10,
     });
-    txt(ctx, '7', 0, 40, { size: 132, font: F.display, color: P.ink, align: 'center', track: -4 });
-    txt(ctx, 'JAM', 0, 100, {
-      size: 26, font: F.mono6, color: 'rgba(23,19,16,0.5)', align: 'center', track: 5,
+    txt(ctx, 'SENIN', W / 2, 316, {
+      size: 30, font: F.mono6, color: hexA(P.red, 0.85 * toMon),
+      align: 'center', track: 10,
     });
 
-    ctx.restore();
+    // hands travel from Saturday to Monday
+    const p = toMon;
+    const wallMin = lerp(SAT[0], MON[0], p);
+    const bodyMin = lerp(SAT[1], MON[1], p);
+    const wallH = hhOf(wallMin) + mmOf(wallMin) / 60;
+    const wallM = mmOf(wallMin);
+    const bodyH = hhOf(bodyMin) + mmOf(bodyMin) / 60;
+    const bodyM = mmOf(bodyMin);
 
-
-    // +1,2 jam callout (absolute coordinates, outside the dial transform)
-    const exA2 = EASE.outCubic(clamp((t - 3.6) / 1.0));
-    if (exA2 > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = dA * exA2;
-      txt(ctx, '+1,2 JAM', 104, 700, {
-        size: 52, font: F.head, color: P.red, track: -1,
+    const cA = inA * clamp((t - 0.35) / 0.5);
+    if (cA > 0.01) {
+      wallClock(ctx, LX, LY, R, { hh: wallH, mm: wallM, a: cA, glow: 0.25 });
+      wallClock(ctx, RX, LY, R, {
+        hh: bodyH, mm: bodyM, a: cA, face: '#E9DFC7', accent: P.teal, rim: ['#3F6A66', '#1E5F5B', '#123634'], glow: 0.55,
       });
-      txt(ctx, 'DARI KONSELING TIDUR', 104, 744, {
-        size: 19, font: F.mono, color: 'rgba(23,19,16,0.5)', track: 1, maxWidth: 250,
+    }
+
+    // the two readings
+    const tA = clamp((t - 1.1) / 0.5);
+    if (tA > 0.01) {
+      const lw = hm(wallMin);
+      const lb = hm(bodyMin);
+      ctx.save();
+      ctx.globalAlpha = tA;
+      txt(ctx, lw, LX, 1218, {
+        size: 58, font: F.num6, color: hexA('#F2E7D3', 0.94), align: 'center', track: 1,
+      });
+      txt(ctx, 'JAM DINDING', LX, 1262, {
+        size: 22, font: F.mono6, color: hexA('#F2E7D3', 0.42), align: 'center', track: 5,
+      });
+      txt(ctx, lb, RX, 1218, {
+        size: 58, font: F.num6, color: hexA(P.tealHi, 0.96), align: 'center', track: 1,
+      });
+      txt(ctx, 'JAM TUBUH', RX, 1262, {
+        size: 22, font: F.mono6, color: hexA(P.tealHi, 0.55), align: 'center', track: 5,
       });
       ctx.restore();
     }
 
-    // top tag
-    const tgA = clamp((t - 0.8) / 0.6);
-    if (tgA > 0.01) {
-      const tw = tag(ctx, 96, 380, '80 ORANG DEWASA · 2 MINGGU', {
-        size: 26, color: 'rgba(23,19,16,0.75)', bg: 'rgba(23,19,16,0.08)', a: tgA,
-      });
-      tag(ctx, 96 + tw + 16, 380, 'TANPA DIET', {
-        size: 26, color: P.red, bg: 'rgba(226,69,47,0.12)', a: tgA,
-      });
-    }
-
-    // ---- the plate: the portion that shrinks ------------------------------
-    const pA = EASE.outCubic(clamp((t - 8.6) / 0.7));
-    if (pA > 0.01) {
-      const shrink = 1 - 0.34 * EASE.outCubic(clamp((t - 9.4) / 1.2));
+    // the gap between them, measured above the dials
+    const gA = clamp((t - 2.0) / 0.5);
+    if (gA > 0.01) {
       ctx.save();
-      ctx.globalAlpha = pA;
-      const px = 720;
-      const py = 1560;
-      // plate
-      ctx.fillStyle = 'rgba(80,58,30,0.22)';
-      ctx.beginPath();
-      ctx.ellipse(px, py + 14, 250, 66, 0, 0, TAU);
-      ctx.fill();
-      ctx.fillStyle = '#FBF3E2';
-      ctx.beginPath();
-      ctx.ellipse(px, py, 248, 64, 0, 0, TAU);
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(23,19,16,0.25)';
+      ctx.globalAlpha = gA;
+      const y = 548;
+      ctx.strokeStyle = hexA('#F2E7D3', 0.26);
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.ellipse(px, py, 248, 64, 0, 0, TAU);
+      ctx.moveTo(LX, y);
+      ctx.lineTo(RX, y);
       ctx.stroke();
-      // portion
-      ctx.fillStyle = '#C98A44';
-      ctx.beginPath();
-      ctx.ellipse(px, py - 14, 146 * shrink, 46 * shrink, 0, 0, TAU);
-      ctx.fill();
-      ctx.fillStyle = '#B5713A';
-      ctx.beginPath();
-      ctx.ellipse(px - 24, py - 26, 74 * shrink, 26 * shrink, 0.2, 0, TAU);
-      ctx.fill();
+      [[LX, 1], [RX, -1]].forEach(([x, d]) => {
+        ctx.beginPath();
+        ctx.moveTo(x, y - 10);
+        ctx.lineTo(x + d * 14, y);
+        ctx.lineTo(x, y + 10);
+        ctx.stroke();
+      });
+      txt(ctx, '+1,7 JAM', W / 2, y - 30, {
+        size: 32, font: F.mono6, color: P.amber, align: 'center', track: 4,
+      });
       ctx.restore();
-
-      const vA = EASE.outCubic(clamp((t - 9.9) / 0.6));
-      if (vA > 0.01) {
-        ctx.save();
-        ctx.globalAlpha = vA;
-        txt(ctx, '−270 KKAL', 720, 1360, {
-          size: 74, font: F.head, color: P.red, align: 'center', track: -2,
-        });
-        txt(ctx, 'PER HARI, TANPA MENGHITUNG', 720, 1404, {
-          size: 22, font: F.mono6, color: 'rgba(23,19,16,0.55)', align: 'center', track: 3,
-        });
-        ctx.restore();
-      }
     }
 
-    void sheet; void priceTag; void tapeStrip; void measure; void linGrad; void radGrad; void fillRR; void C; void H;
-    applyGrain(ctx, 0.04);
+    // Monday: the alarm went off, the body did not
+    const mA = toMon;
+    if (mA > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = mA;
+      ctx.translate(0, (1 - mA) * 20);
+      txt(ctx, 'ALARM 06.30', W / 2, 1372, {
+        size: 24, font: F.mono6, color: hexA('#F2E7D3', 0.45), align: 'center', track: 5,
+      });
+      const tw = measure(ctx, 'TUBUH BARU 04.48', 36, F.mono6, 4);
+      fillRR(ctx, W / 2 - (tw + 64) / 2, 1406, tw + 64, 80, 40, hexA(P.red, 0.14));
+      strokeRR(ctx, W / 2 - (tw + 64) / 2, 1406, tw + 64, 80, 40, hexA(P.red, 0.55), 2);
+      txt(ctx, 'TUBUH BARU 04.48', W / 2, 1458, {
+        size: 36, font: F.mono6, color: hexA(P.red, 0.95), align: 'center', track: 4,
+      });
+      ctx.restore();
+    }
+
+    void tag; void H; void C; void M;
+    applyGrain(ctx, 0.06);
   },
 };
