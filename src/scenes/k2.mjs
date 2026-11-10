@@ -1,170 +1,160 @@
-import { W, H, txt, hexA, fillRR, strokeRR, linGrad, measure } from '../engine/draw.mjs';
+import { W, H, txt, hexA, fillRR, linGrad, radGrad } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { K, E, at, layer, concrete, kicker, chip, grain, bracket } from './_kota.mjs';
+import { clamp, lerp, EASE, TAU, rng } from '../engine/anim.mjs';
+import { K, E, at, layer, fillAll, sky, stars, grain, kicker, chip, bracket, bigNumber } from './_kota.mjs';
+import { G } from './_garam.mjs';
 
-// 02 — DUA PULUH LIMA. A two-and-a-half metre tape stands on today's floor.
-// The floor of 2015 was at the top of that tape. The slice it loses every year
-// is at the bottom, and it is exactly one door too tall for comfort.
-const FLOOR = 1580;
-const TAPE_X = 404;
-const LEN = 1150;      // 250 cm at 460 px/m
-const PXM = LEN / 250;
+// 02 — DUA KOMA TUJUH. One stack, two sources. The bottom of the bar is what
+// our own ponds give us; the top is what has to arrive by ship. Built upwards
+// from a single baseline so the proportion is read, not explained.
+
+const BASE = 1444;
+const FULL = 1188;           // px for 4,8 juta ton
+const NEED = 4.8;
+const LOCAL = 2.04;
+const IMPORT = 2.74;
+const BAR_X = 812;
+const BAR_W = 268;
+
+const yOf = (v) => BASE - (v / NEED) * FULL;
 
 export default {
   draw(ctx, t, scene, o = {}) {
     const cam = o.cam;
-    concrete(ctx, -220, -220, W + 440, H + 440, { tone: '#8F8A7C', seed: 3 });
-    // a soft key light from the upper left
+    sky(ctx, { top: '#06080A', mid: '#0A1014', low: '#121C1E', horizon: BASE + 6, t });
+    stars(ctx, { n: 60, seed: 9, t, bottom: BASE - 120, a: 0.35 });
+
+    // baseline + grid ticks, 1 juta ton apart
+    const bA = at(t, 0.1, 0.7);
     ctx.save();
-    const g = ctx.createRadialGradient(280, 320, 40, 280, 320, 1200);
-    g.addColorStop(0, 'rgba(255,238,206,0.20)');
-    g.addColorStop(1, 'rgba(255,238,206,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
-    ctx.restore();
-
-    // floor
-    layer(ctx, cam, 0.2, () => {
-      ctx.fillStyle = linGrad(ctx, 0, FLOOR, 0, H, [[0, '#6E6A5E'], [1, '#2E2C28']]);
-      ctx.fillRect(-80, FLOOR, W + 160, H - FLOOR + 80);
-      // contact shadows
-      const sg = ctx.createLinearGradient(0, FLOOR - 90, 0, FLOOR + 30);
-      sg.addColorStop(0, 'rgba(0,0,0,0)');
-      sg.addColorStop(1, 'rgba(0,0,0,0.45)');
-      ctx.fillStyle = sg;
-      ctx.fillRect(-80, FLOOR - 90, W + 160, 120);
-      ctx.fillStyle = 'rgba(18,15,13,0.5)';
-      ctx.fillRect(-80, FLOOR, W + 160, 5);
-    });
-
-    // the doorway, as a human scale reference: 2,1 m
-    const dA = at(t, 0.15, 0.8);
-    ctx.save();
-    ctx.globalAlpha = dA;
-    const dx = 892;
-    const dw = 384;
-    const dTop = 640;
-    ctx.fillStyle = 'rgba(18,16,14,0.72)';
-    ctx.fillRect(dx, dTop, dw, FLOOR - dTop);
-    ctx.fillStyle = linGrad(ctx, 0, dTop, 0, dTop + 160, [[0, 'rgba(0,0,0,0.5)'], [1, 'rgba(0,0,0,0)']]);
-    ctx.fillRect(dx, dTop, dw, 160);
-    ctx.fillStyle = linGrad(ctx, dx - 34, 0, dx, 0, [[0, '#DCD5C4'], [1, '#A8A192']]);
-    ctx.fillRect(dx - 34, dTop - 34, 34, FLOOR - dTop + 34);
-    ctx.fillStyle = linGrad(ctx, dx + dw, 0, dx + dw + 34, 0, [[0, '#A8A192'], [1, '#7E7869']]);
-    ctx.fillRect(dx + dw, dTop - 34, 34, FLOOR - dTop + 34);
-    ctx.fillStyle = linGrad(ctx, 0, dTop - 40, 0, dTop, [[0, '#E2DBC9'], [1, '#ADA697']]);
-    ctx.fillRect(dx - 34, dTop - 40, dw + 68, 40);
-    // 2,1 m bracket on the door
-    const bA = at(t, 6.2, 0.8);
-    if (bA > 0.01) {
-      bracket(ctx, dx - 74, dTop, FLOOR, { label: '2,1 M', color: hexA('#F3ECDB', 0.9), a: bA, side: -1 });
-      chip(ctx, 'PINTU RUMAH', dx + dw / 2, dTop - 96, {
-        a: bA, ink: '#F6EFE0', bg: 'rgba(22,19,16,0.8)', size: 23, align: 'center',
-      });
-    }
-    ctx.restore();
-
-    // the tape: 250 cm, unwinding upward from the floor
-    const tpA = at(t, 0.5, 0.9);
-    if (tpA > 0.01) {
-      const h = LEN * tpA;
-      const y0 = FLOOR - h;
-      ctx.save();
-      ctx.globalAlpha = tpA;
-      // blade
-      ctx.fillStyle = linGrad(ctx, TAPE_X, 0, TAPE_X + 66, 0, [
-        [0, '#F0D07A'], [0.42, '#E8BF54'], [1, '#B99230'],
-      ]);
-      ctx.fillRect(TAPE_X, y0, 66, h);
-      ctx.fillStyle = 'rgba(20,17,16,0.18)';
-      ctx.fillRect(TAPE_X + 54, y0, 12, h);
-      // ticks every 10 cm, long every 50
-      const ticks = clamp((t - 1.1) / 1.4);
-      for (let cm = 0; cm <= 250; cm += 10) {
-        const yy = FLOOR - cm * PXM;
-        if (yy < y0 - 2) break;
-        if (cm / 250 > ticks) break;
-        const big = cm % 50 === 0;
-        ctx.fillStyle = 'rgba(20,17,16,0.75)';
-        ctx.fillRect(TAPE_X, yy - 2, big ? 38 : 20, big ? 4 : 3);
-        if (big) {
-          txt(ctx, String(cm), TAPE_X + 44, yy + 11, {
-            size: 26, font: F.num6, color: 'rgba(24,18,12,0.85)',
-          });
-        }
-      }
-      // the 25 cm slice at the base
-      const sA = at(t, 3.0, 0.7);
-      if (sA > 0.01) {
-        const sy = FLOOR - 25 * PXM;
-        ctx.fillStyle = hexA(K.rust, 0.30);
-        ctx.fillRect(TAPE_X + 66, sy, 250 * E.out(sA), FLOOR - sy);
-        ctx.fillStyle = hexA(K.rust, 0.95);
-        ctx.fillRect(TAPE_X + 66, sy - 4, 250 * E.out(sA), 6);
-        // the slice slides out, as a block
-        const out = at(t, 3.6, 1.0);
-        if (out > 0.01) {
-          const wy = FLOOR - 25 * PXM;
-          ctx.save();
-          ctx.globalAlpha = out;
-          ctx.setLineDash([10, 8]);
-          ctx.strokeStyle = hexA(K.rust, 0.55);
-          ctx.lineWidth = 2;
-          ctx.strokeRect(TAPE_X + 96, wy, 250, FLOOR - wy);
-          ctx.setLineDash([]);
-          ctx.fillStyle = linGrad(ctx, 0, wy, 0, FLOOR, [[0, '#D8704E'], [1, '#9E3E22']]);
-          fillRR(ctx, TAPE_X + 96 + 40 * (1 - out), wy + (1 - out) * 30, 250, FLOOR - wy, 4, ctx.fillStyle);
-          ctx.fillStyle = 'rgba(0,0,0,0.14)';
-          for (let i = 1; i < 4; i++) ctx.fillRect(TAPE_X + 96, wy + ((FLOOR - wy) / 4) * i, 250, 3);
-          ctx.restore();
-        }
-      }
-      ctx.restore();
-    }
-
-    // the 2015 floor: where the tape top used to be
-    const fA = at(t, 4.4, 0.8);
-    if (fA > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = fA;
-      ctx.setLineDash([20, 14]);
-      ctx.strokeStyle = 'rgba(240,233,215,0.75)';
-      ctx.lineWidth = 3;
+    ctx.globalAlpha = bA;
+    ctx.strokeStyle = 'rgba(251,246,236,0.10)';
+    ctx.lineWidth = 1.5;
+    for (let v = 1; v <= 4; v++) {
+      const y = yOf(v);
       ctx.beginPath();
-      ctx.moveTo(96, FLOOR - LEN);
-      ctx.lineTo(TAPE_X + 340, FLOOR - LEN);
+      ctx.moveTo(120, y);
+      ctx.lineTo(W - 120, y);
       ctx.stroke();
-      ctx.setLineDash([]);
-      chip(ctx, 'LANTAI · 2015', 96, FLOOR - LEN - 46, {
-        a: fA, ink: '#F6EFE0', bg: 'rgba(22,19,16,0.78)', size: 23,
+      txt(ctx, String(v).replace('.', ','), 108, y + 8, {
+        size: 20, font: F.mono, color: 'rgba(251,246,236,0.28)', align: 'right',
       });
-      // 2,5 m bracket
-      bracket(ctx, TAPE_X - 60, FLOOR - LEN, FLOOR, {
-        label: '2,5 M', color: hexA('#F6EFE0', 0.85), a: fA, side: -1,
-      });
-      ctx.restore();
     }
+    ctx.fillStyle = 'rgba(251,246,236,0.5)';
+    ctx.fillRect(120, BASE, W - 240, 2);
+    ctx.restore();
 
-    kicker(ctx, 'JAKARTA UTARA', { y: 250, a: at(t, 0.2, 0.8), ink: '#2A2320' });
+    // ---- the bar: local production first, then the import stacked on top
+    const a1 = at(t, 0.5, 1.2);
+    const a2 = at(t, 2.5, 1.3);
+    const hLocal = (LOCAL / NEED) * FULL * a1;
+    const hImport = (IMPORT / NEED) * FULL * a2;
 
-    // the number that does the work
-    const nA = at(t, 3.2, 0.7);
-    if (nA > 0.01) {
+    if (hLocal > 1) {
       ctx.save();
-      ctx.globalAlpha = nA;
-      txt(ctx, '25', 96, 1010 + (1 - nA) * 24, {
-        size: 176, font: F.num, color: K.rust, track: -6,
+      ctx.shadowColor = 'rgba(0,0,0,0.55)';
+      ctx.shadowBlur = 34;
+      ctx.shadowOffsetY = 10;
+      ctx.fillStyle = G.salt;
+      ctx.fillRect(BAR_X, BASE - hLocal, BAR_W, hLocal);
+      ctx.restore();
+      // contact tone
+      const gg = linGrad(ctx, BAR_X, 0, BAR_X + BAR_W, 0, [[0, 'rgba(255,255,255,0.95)'], [0.6, 'rgba(240,232,216,0.95)'], [1, 'rgba(198,186,164,0.95)']]);
+      ctx.fillStyle = gg;
+      ctx.fillRect(BAR_X, BASE - hLocal, BAR_W, hLocal);
+      // salt grain
+      const r = rng(31);
+      ctx.fillStyle = 'rgba(120,108,86,0.13)';
+      for (let i = 0; i < 130; i++) ctx.fillRect(BAR_X + r() * BAR_W, BASE - r() * hLocal, 3, 3);
+    }
+
+    if (hImport > 1) {
+      const top = BASE - hLocal - hImport;
+      ctx.save();
+      ctx.shadowColor = 'rgba(180,71,44,0.4)';
+      ctx.shadowBlur = 40;
+      ctx.fillStyle = G.rust;
+      ctx.fillRect(BAR_X, top, BAR_W, hImport);
+      ctx.restore();
+      const gg = linGrad(ctx, BAR_X, 0, BAR_X + BAR_W, 0, [[0, '#C9583A'], [0.55, G.rust], [1, G.rust2]]);
+      ctx.fillStyle = gg;
+      ctx.fillRect(BAR_X, top, BAR_W, hImport);
+      // hatch marks, arrival by ship
+      ctx.save();
+      ctx.globalAlpha = 0.16;
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 2;
+      for (let y = top + 12; y < BASE - hLocal; y += 26) {
+        ctx.beginPath();
+        ctx.moveTo(BAR_X, y);
+        ctx.lineTo(BAR_X + BAR_W, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+      // bracket + label
+      const lA = at(t, 3.4, 0.8);
+      if (lA > 0.01) {
+        bracket(ctx, BAR_X + BAR_W + 40, top, BASE - hLocal, { label: '', color: hexA(G.rust, 0.9), a: lA });
+        ctx.save();
+        ctx.globalAlpha = lA;
+        txt(ctx, 'IMPOR', BAR_X + BAR_W + 70, top + (BASE - hLocal - top) / 2 - 10, {
+          size: 42, font: F.num6, color: '#EE9C7E',
+        });
+        txt(ctx, '57% DARI KEBUTUHAN', BAR_X + BAR_W + 70, top + (BASE - hLocal - top) / 2 + 36, {
+          size: 21, font: F.mono6, color: 'rgba(238,156,126,0.8)', track: 3,
+        });
+        ctx.restore();
+      }
+    }
+
+    if (hLocal > 1) {
+      const lA = at(t, 1.6, 0.8);
+      ctx.save();
+      ctx.globalAlpha = lA;
+      bracket(ctx, BAR_X + BAR_W + 54, BASE - hLocal, BASE, { label: '', color: 'rgba(251,246,236,0.6)', a: 1 });
+      txt(ctx, 'PRODUKSI', BAR_X + BAR_W + 84, BASE - hLocal * 0.55, {
+        size: 40, font: F.num6, color: G.bone,
       });
-      txt(ctx, 'CM', 96 + measure(ctx, '25', 176, F.num, -6) + 16, 1010, {
-        size: 76, font: F.num6, color: K.rust,
-      });
-      txt(ctx, 'SETIAP TAHUN', 100, 1070, {
-        size: 24, font: F.mono6, color: 'rgba(28,22,18,0.62)', track: 5,
+      txt(ctx, 'SENDIRI', BAR_X + BAR_W + 84, BASE - hLocal * 0.55 + 44, {
+        size: 22, font: F.mono6, color: 'rgba(251,246,236,0.55)', track: 4,
       });
       ctx.restore();
     }
 
-    grain(ctx, 0.04);
+    // ---- left column: the three numbers, in order of appearance
+    kicker(ctx, 'KEBUTUHAN GARAM NASIONAL', { x: 120, y: 268, a: at(t, 0.2, 0.6), color: G.sun });
+    const n1 = at(t, 0.3, 1.0);
+    bigNumber(ctx, '4,8', 120, 470, { size: 156, color: G.bone, a: n1 });
+    txt(ctx, 'JUTA TON', 128, 522, { size: 24, font: F.mono6, color: 'rgba(251,246,236,0.5)', track: 6, alpha: at(t, 0.5, 0.6) });
+    txt(ctx, 'kebutuhan 2024', 128, 566, { size: 30, font: F.body, color: 'rgba(251,246,236,0.55)', alpha: at(t, 0.8, 0.6) });
+
+    const n2 = at(t, 2.6, 1.1);
+    if (n2 > 0.01) {
+      bigNumber(ctx, '2,74', 120, 800, { size: 132, color: '#EE9C7E', a: n2 });
+      txt(ctx, 'IMPOR · 2024', 128, 852, { size: 24, font: F.mono6, color: hexA(G.rust, 0.95), track: 6, alpha: n2 });
+      txt(ctx, '2,747 juta ton · US$125,9 juta', 128, 896, {
+        size: 26, font: F.body, color: 'rgba(251,246,236,0.5)', alpha: n2,
+      });
+    }
+
+    const n3 = at(t, 1.5, 1.0);
+    if (n3 > 0.01) {
+      // the seam between what we make and what we buy, called out on the bar
+      const yb = BASE - hLocal;
+      ctx.save();
+      ctx.globalAlpha = n3;
+      ctx.strokeStyle = 'rgba(251,246,236,0.55)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(560, yb);
+      ctx.lineTo(BAR_X - 18, yb);
+      ctx.stroke();
+      txt(ctx, '2,04 juta ton', 560, yb - 22, {
+        size: 30, font: F.num6, color: G.bone, track: -1,
+      });
+      ctx.restore();
+    }
+
+    grain(ctx, 0.045);
   },
 };
