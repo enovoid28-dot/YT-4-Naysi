@@ -33,7 +33,7 @@ export default {
 
     layer(ctx, cam, 0.2, () => {
       ponds(ctx, {
-        x0: -160, x1: W + 160, y0: 372, y1: 1660,
+        x0: -160, x1: W + 160, y0: -180, y1: 1760,
         rows: 12, cols: 13, seed: 12, t, crust: 0.06 + grow * 0.94, a: 1, dyke: 0.065,
       });
       // a few workers' paths across the embankments, so the scale reads
@@ -108,9 +108,10 @@ export default {
       ctx.globalAlpha = cA2;
       const lvl = clamp(grow);
       const shown = lerp(4, 100, lvl);
+      fillRR(ctx, 72, 250, 320, 200, 6, 'rgba(246,239,226,0.82)');
       txt(ctx, 'PANEN', 96, 300, { size: 22, font: F.mono6, color: 'rgba(20,15,12,0.55)', track: 5 });
       txt(ctx, `${Math.round(shown)}%`, 96, 392, { size: 84, font: F.num, color: lvl > 0.5 ? 'rgba(20,15,12,0.9)' : G.rust, track: -2 });
-      ctx.fillStyle = 'rgba(20,15,12,0.14)';
+      ctx.fillStyle = 'rgba(20,15,12,0.18)';
       ctx.fillRect(96, 424, 260, 6);
       ctx.fillStyle = lvl > 0.5 ? 'rgba(20,15,12,0.8)' : G.rust;
       ctx.fillRect(96, 424, 260 * lvl, 6);

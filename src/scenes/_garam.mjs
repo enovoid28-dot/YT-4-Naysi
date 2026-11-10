@@ -129,6 +129,12 @@ export function ponds(ctx, {
       ctx.fillRect(x, y + h - edge * 0.5, w, edge * 0.5);
       ctx.fillRect(x, y, edge * 0.5, h);
       ctx.fillRect(x + w - edge * 0.5, y, edge * 0.5, h);
+      // above two thirds the pan closes over completely: this is the harvest
+      if (c > 0.62) {
+        ctx.globalAlpha = a * Math.min(1, (c - 0.62) / 0.3);
+        ctx.fillStyle = G.salt;
+        ctx.fillRect(x, y, w, h);
+      }
       // the pan closes from one corner, irregular
       if (c > 0.55) {
         ctx.globalAlpha = a * Math.min(1, (c - 0.55) * 3.4);
