@@ -13,6 +13,7 @@
 import { createCanvas } from '@napi-rs/canvas';
 import { W, H, txt, hexA, linGrad, radGrad } from '../engine/draw.mjs';
 import { clamp, lerp, EASE, TAU, rng } from '../engine/anim.mjs';
+import { earthLimb } from './_earth.mjs';
 
 export const S = {
   void: '#03050A',
@@ -110,6 +111,23 @@ function tex() {
     snow: noiseTile(256, [{ g: 8, amp: 1 }, { g: 24, amp: 0.6 }, { g: 70, amp: 0.3 }], 37, { stretch: [1.8, 1], contrast: 1.2 }),
   };
   return TEX;
+}
+
+/** Tile a texture across the current clip, at `size` px per tile. No edges. */
+function tileTex(ctx, img, x, y, size, rot, alpha, composite) {
+  const pat = ctx.createPattern(img, 'repeat');
+  if (!pat) return;
+  const k = size / img.width;
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  ctx.globalCompositeOperation = composite;
+  ctx.translate(x, y);
+  ctx.rotate(rot);
+  ctx.scale(k, k);
+  ctx.fillStyle = pat;
+  const reach = 26000 / Math.max(0.0001, k);
+  ctx.fillRect(-reach, -reach, reach * 2, reach * 2);
+  ctx.restore();
 }
 
 /** Draw a texture square centred at (x,y) at `size`, rotated, tiled. */
@@ -299,7 +317,7 @@ export function starfield(ctx, {
 
 /* ---------------------------------- star ---------------------------------- */
 
-export function sunDisc(ctx, x, y, r, { a = 1, t = 0, rays = 1, tone = 1, spots = 1 } = {}) {
+export function sunDisc(ctx, x, y, r, { a = 1, t = 0, rays = 1, tone = 1, spots = 1, flat = 0, grain = 1, spotScale = 1 } = {}) {
   if (a <= 0.01 || r <= 0.5) return;
   const T = tex();
   ctx.save();
@@ -378,22 +396,38 @@ export function sunDisc(ctx, x, y, r, { a = 1, t = 0, rays = 1, tone = 1, spots 
   ctx.beginPath();
   ctx.arc(x, y, r, 0, TAU);
   ctx.fill();
+  if (flat > 0) {
+    // a close-up sees a wall of plasma, not a sphere: the falloff flattens out
+    ctx.globalAlpha = a * flat;
+    const fg = radGrad(ctx, x, y, r * 0.2, r, [
+      [0, 'rgba(255,251,240,1)'],
+      [0.75, 'rgba(255,246,226,1)'],
+      [0.94, 'rgba(255,214,150,1)'],
+      [1, 'rgba(255,182,110,1)'],
+    ]);
+    ctx.fillStyle = fg;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, TAU);
+    ctx.fill();
+    ctx.globalAlpha = a;
+  }
 
   // granulation + faculae, both clipped to the disc and drifting
   ctx.save();
   ctx.beginPath();
   ctx.arc(x, y, r * 0.995, 0, TAU);
   ctx.clip();
-  drawTex(ctx, T.gran, x, y, r * 2.6, t * 0.015, 0.42 * tone, 'soft-light');
-  drawTex(ctx, T.gran2, x, y, r * 1.5, -t * 0.022, 0.30 * tone, 'soft-light');
-  drawTex(ctx, T.gran, x + r * 0.2, y - r * 0.1, r * 4.2, t * 0.008, 0.14 * tone, 'overlay');
+  drawTex(ctx, T.gran, x, y, r * 2.6 * grain, t * 0.015, 0.42 * tone, 'soft-light');
+  drawTex(ctx, T.gran2, x, y, r * 1.5 * grain, -t * 0.022, 0.30 * tone, 'soft-light');
+  drawTex(ctx, T.gran, x + r * 0.2, y - r * 0.1, r * 4.2 * grain, t * 0.008, 0.16 * tone, 'overlay');
+  drawTex(ctx, T.gran2, x - r * 0.1, y + r * 0.12, r * 7.5 * grain, t * 0.006, 0.10 * tone, 'soft-light');
 
   // sunspots: umbra inside a softer penumbra
   if (spots > 0) {
     for (const [sx, sy, sr, al] of [[-0.38, -0.24, 0.05, 0.8], [0.26, 0.33, 0.034, 0.7], [0.5, -0.36, 0.024, 0.6]]) {
       const px = x + sx * r;
       const py = y + sy * r;
-      const pr = sr * r;
+      const pr = sr * r * spotScale;
       const pg = radGrad(ctx, px, py, 0, pr * 3.2, [
         [0, `rgba(104,52,22,${0.5 * al})`],
         [0.34, `rgba(140,80,38,${0.3 * al})`],
@@ -565,6 +599,59 @@ export function bhDisc(ctx, x, y, r, {
 }
 
 /**
+ * The photosphere seen up close: a wall of plasma. Granules, supergranules and
+ * the dark lanes between them, with the limb only at the very edge of frame.
+ */
+export function photosphere(ctx, x, y, r, { a = 1, t = 0, tone = 1, dark = 0.07 } = {}) {
+  if (a <= 0.01) return;
+  const T = tex();
+  ctx.save();
+  ctx.globalAlpha *= a;
+  const g = radGrad(ctx, x, y, r * 0.2, r, [
+    [0, '#FFF8E6'],
+    [0.55, '#FFF1CE'],
+    [0.82, '#FFE0AE'],
+    [0.94, '#FFC483'],
+    [1, '#FFA860'],
+  ]);
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, TAU);
+  ctx.fill();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.999, 0, TAU);
+  ctx.clip();
+  // supergranulation first, then the granules that sit inside it
+  tileTex(ctx, T.gran2, x, y, r * 1.45, t * 0.004, 0.26 * tone, 'soft-light');
+  tileTex(ctx, T.gran, x, y, r * 0.52, t * 0.010, 0.32 * tone, 'soft-light');
+  tileTex(ctx, T.gran2, x, y, r * 0.30, -t * 0.006, 0.20 * tone, 'overlay');
+  // the lanes between granules are darker than the granules are bright
+  tileTex(ctx, T.gran, x, y, r * 0.52, t * 0.010, dark * tone, 'multiply');
+  // and the whole surface keeps its colour
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+  ctx.globalAlpha = a * 0.10 * tone;
+  const warm = radGrad(ctx, x, y, 0, r, [[0, 'rgba(255,196,120,1)'], [0.8, 'rgba(255,168,86,1)'], [1, 'rgba(255,140,60,1)']]);
+  ctx.fillStyle = warm;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, TAU);
+  ctx.fill();
+  ctx.restore();
+  ctx.restore();
+
+  // chromosphere, only where the disc actually ends
+  ctx.globalAlpha = a * 0.5;
+  ctx.strokeStyle = '#FFB47A';
+  ctx.lineWidth = Math.max(1.5, r * 0.0035);
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.999, 0, TAU);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/**
  * The disk, baked once per radius: a circular sheet of glowing gas in the disk
  * plane, masked by a radial gradient so it has no edge. Drawing it squashed is
  * what gives the low inclination; the streaks on top give the motion.
@@ -583,9 +670,9 @@ function diskSheet(R) {
   const k = mid / 2.05; // one disk radius in sprite pixels
   // base glow: hot at the innermost stable orbit, colder outward
   const g = c.createRadialGradient(mid, mid, k * 0.92, mid, mid, mid);
-  g.addColorStop(0, 'rgba(255,242,218,0.92)');
-  g.addColorStop(0.09, 'rgba(255,198,134,0.82)');
-  g.addColorStop(0.28, 'rgba(255,142,66,0.50)');
+  g.addColorStop(0, 'rgba(255,232,196,0.90)');
+  g.addColorStop(0.09, 'rgba(255,186,116,0.86)');
+  g.addColorStop(0.28, 'rgba(255,128,52,0.54)');
   g.addColorStop(0.58, 'rgba(206,80,32,0.22)');
   g.addColorStop(0.84, 'rgba(148,56,24,0.06)');
   g.addColorStop(1, 'rgba(112,40,20,0)');
@@ -593,8 +680,8 @@ function diskSheet(R) {
   c.fillRect(0, 0, SZ, SZ);
   // structure: plasma turbulence, spiralled so it wraps around the hole
   c.save();
-  c.globalCompositeOperation = 'overlay';
-  c.globalAlpha = 0.6;
+  c.globalCompositeOperation = 'soft-light';
+  c.globalAlpha = 0.75;
   for (let i = 0; i < 3; i++) {
     c.save();
     c.translate(mid, mid);
@@ -655,7 +742,7 @@ export function accretion(ctx, x, y, R, { a = 1, t = 0, back = true, tilt = -0.1
   ctx.globalCompositeOperation = 'lighter';
 
   // the gas sheet (doppler beaming is already baked into it)
-  ctx.globalAlpha = a * 0.72 * tone;
+  ctx.globalAlpha = a * 0.60 * tone;
   ctx.drawImage(sheet, -rx, -ry, rx * 2, ry * 2);
 
   // fine streaks: they carry the rotation, the eye reads them as speed
@@ -713,114 +800,29 @@ export function accretion(ctx, x, y, R, { a = 1, t = 0, back = true, tilt = -0.1
 
 /* --------------------------------- planet --------------------------------- */
 
-/** Earth from orbit: night side with cloud tops, airglow and city clusters. */
+/**
+ * Earth seen from low orbit. The surface comes from the procedural map in
+ * _earth.mjs; this wrapper places the sun above the horizon and adds the
+ * airglow line that is really all the atmosphere is.
+ */
 export function limb(ctx, cx, cy, r, {
-  a = 1, t = 0, glow = 1, lights = 1, dawn = 0, dawnX = 1260, clouds = 1,
+  a = 1, t = 0, glow = 1, lights = 1, dawn = 0, dawnX = 1260, clouds = 1, ice = 0, rot,
 } = {}) {
   if (a <= 0.01) return;
-  const T = tex();
-  ctx.save();
-  ctx.globalAlpha *= a;
-
-  // the body: a dark ocean under a thin skin of air
-  const g = radGrad(ctx, cx, cy, r * 0.4, r + 24, [
-    [0, '#010205'],
-    [0.6, '#03080F'],
-    [0.86, '#061726'],
-    [0.96, '#0A2C44'],
-    [1, '#14506E'],
-  ]);
-  ctx.fillStyle = g;
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, TAU);
-  ctx.fill();
-
-  // cloud tops, only where the sun would still reach them
-  if (clouds > 0) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, cy, r - 1, 0, TAU);
-    ctx.clip();
-    ctx.globalCompositeOperation = 'screen';
-    ctx.globalAlpha = a * 0.85 * clouds;
-    ctx.drawImage(cloudMask(cx, r, dawnX, cy - r), cx - r * 1.2, cy - r * 1.2, r * 2.4, r * 2.4);
-    ctx.restore();
-  }
-
-  // warm dawn creeping over the terminator
-  if (dawn > 0) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, cy, r - 2, 0, TAU);
-    ctx.clip();
-    const dg = radGrad(ctx, dawnX, cy - r + 150, 10, 520, [
-      [0, `rgba(255,214,164,${0.34 * dawn})`],
-      [0.5, `rgba(255,168,104,${0.12 * dawn})`],
-      [1, 'rgba(255,160,100,0)'],
-    ]);
-    ctx.fillStyle = dg;
-    ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
-    ctx.restore();
-  }
-
-  // airglow: the green-cyan line that is all the atmosphere really is
-  if (glow > 0) {
-    const haze = radGrad(ctx, cx, cy, r - 6, r + 120, [
-      [0, 'rgba(110,190,220,0)'],
-      [0.24, `rgba(120,214,226,${0.30 * glow})`],
-      [0.5, `rgba(150,214,255,${0.16 * glow})`],
-      [1, 'rgba(120,170,240,0)'],
-    ]);
-    ctx.fillStyle = haze;
-    ctx.fillRect(cx - r - 130, cy - r - 130, (r + 130) * 2, (r + 130) * 2);
-
-    ctx.save();
-    ctx.strokeStyle = `rgba(196,242,238,${0.9 * glow})`;
-    ctx.lineWidth = Math.max(2.5, r * 0.0035);
-    ctx.shadowColor = 'rgba(150,230,235,0.95)';
-    ctx.shadowBlur = 26;
-    ctx.beginPath();
-    ctx.arc(cx, cy, r + 1.5, 0, TAU);
-    ctx.stroke();
-    ctx.strokeStyle = `rgba(255,214,170,${0.32 * glow * (0.4 + dawn)})`;
-    ctx.lineWidth = Math.max(1.4, r * 0.002);
-    ctx.beginPath();
-    ctx.arc(cx, cy, r + 5, 0, TAU);
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  // cities: clusters, not confetti
-  if (lights > 0) {
-    const rl = rng(303);
-    const clusters = 26;
-    for (let c = 0; c < clusters; c++) {
-      const ang = -Math.PI * 0.96 + rl() * Math.PI * 0.92;
-      const rr = r - 12 - rl() * r * 0.2;
-      const bx = cx + Math.cos(ang) * rr;
-      const by = cy + Math.sin(ang) * rr;
-      const n = 3 + Math.floor(rl() * 9);
-      const spread = 6 + rl() * 26;
-      for (let i = 0; i < n; i++) {
-        const x = bx + (rl() - 0.5) * spread;
-        const y = by + (rl() - 0.5) * spread * 0.7;
-        const tw = 0.5 + 0.5 * Math.sin(t * (0.8 + rl() * 1.6) + i * 2.1);
-        ctx.globalAlpha = a * lights * (0.25 + rl() * 0.55) * tw;
-        ctx.fillStyle = rl() > 0.74 ? '#FFE9C0' : '#FFB765';
-        ctx.beginPath();
-        ctx.arc(x, y, 1.2 + rl() * 2.6, 0, TAU);
-        ctx.fill();
-      }
-      ctx.globalAlpha = a * lights * 0.10;
-      const cg2 = radGrad(ctx, bx, by, 2, spread * 1.6, [[0, 'rgba(255,190,120,0.75)'], [1, 'rgba(255,170,90,0)']]);
-      ctx.fillStyle = cg2;
-      ctx.fillRect(bx - spread * 1.6, by - spread * 1.6, spread * 3.2, spread * 3.2);
-    }
-  }
-  ctx.restore();
+  // the star has dropped below this horizon: the surface is night, and the only
+  // light left is the airglow — plus whatever dawn is still climbing the limb
+  const dx = (dawnX ?? cx + r * 0.6) - cx;
+  const sl = Math.hypot(dx, r * 0.9) || 1;
+  const sun = { x: (dx / sl) * 0.55, y: (r * 0.9) / sl };
+  earthLimb(ctx, cx, cy, r, {
+    a, t, glow, lights, clouds,
+    rot: rot ?? 0.16 + Math.sin(t * 0.05) * 0.01,
+    sun,
+    ice,
+    night: 0.75 + 0.25 * clamp(dawn),
+  });
 }
 
-/** A whole planet, for the rare wide shot. */
 export function earth(ctx, cx, cy, r, { a = 1, t = 0, spin = 0, light = 'left' } = {}) {
   if (a <= 0.01) return;
   ctx.save();
