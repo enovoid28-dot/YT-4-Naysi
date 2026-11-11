@@ -36,13 +36,54 @@ export default {
 
     layer(ctx, cam, 0.12, () => iceSea(ctx, HZ, { t, h: H - HZ + 160, seed: 23 }));
 
-    // one person, on a surface that used to move
+    // one person, on a surface that used to move: a silhouette with a rim,
+    // a shadow at the boots and a whisper of a reflection in the ice
     layer(ctx, cam, 0.3, () => {
-      person(ctx, 1000, 1570, 244, {
-        pose: 'stand', facing: -1, hat: 0, cloth: '#33424C', skin: '#7D6048',
-        rim: 0.55, alpha: 0.97,
+      const PX = 1000;
+      const PY = 1570;
+      // contact shadow
+      const sh = radGrad(ctx, PX, PY + 4, 4, 108, [
+        [0, 'rgba(16,32,44,0.42)'],
+        [0.5, 'rgba(20,40,54,0.18)'],
+        [1, 'rgba(30,50,64,0)'],
+      ]);
+      ctx.save();
+      ctx.fillStyle = sh;
+      ctx.beginPath();
+      ctx.ellipse(PX, PY + 4, 108, 30, 0, 0, TAU);
+      ctx.fill();
+      ctx.restore();
+
+      // reflection
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(PX - 200, PY, 400, 240);
+      ctx.clip();
+      ctx.translate(0, PY * 2);
+      ctx.scale(1, -1);
+      person(ctx, PX, PY, 244, {
+        pose: 'stand', facing: -1, hat: 0, cloth: '#0E161C', skin: '#120E0C',
+        rim: 0.1, alpha: 0.13, lit: 0.1,
+      });
+      ctx.restore();
+
+      person(ctx, PX, PY, 244, {
+        pose: 'stand', facing: -1, hat: 0, cloth: '#18222A', skin: '#221C18',
+        rim: 0.9, alpha: 1, lit: 0.12,
       });
     });
+
+    // haze that sits in front of the ice, as cold air does
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    const fg = linGrad(ctx, 0, HZ - 10, 0, HZ + 420, [
+      [0, 'rgba(150,186,204,0.30)'],
+      [0.5, 'rgba(150,186,204,0.10)'],
+      [1, 'rgba(150,186,204,0)'],
+    ]);
+    ctx.fillStyle = fg;
+    ctx.fillRect(-240, HZ - 10, W + 480, 430);
+    ctx.restore();
 
     kicker(ctx, 'LAUT TIDAK LAGI BERGERAK', { x: 104, y: 250, color: '#8FB4E8', ink: hexA(S.bone, 0.86) });
 

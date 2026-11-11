@@ -132,6 +132,7 @@ export function person(ctx, x, y, h, o = {}) {
   const {
     pose = 'stand', facing = 1, alpha = 1, hat = 1, cloth = PAL.shirt,
     rake = 0, sack = 0, tarp = 0, seedlings = 0, rim = 0.55, key = 1, skin = PAL.skin,
+    lit = 0.6,
   } = o;
   if (alpha <= 0.01 || h < 6) return;
   const P = POSES[pose] || POSES.stand;
@@ -194,7 +195,7 @@ export function person(ctx, x, y, h, o = {}) {
   ctx.quadraticCurveTo(hx + lwTorso * 0.6, (hy + sy) / 2, hx + lwTorso * 0.44, hy);
   ctx.closePath();
   const tg = ctx.createLinearGradient(hx - lwTorso, 0, hx + lwTorso, 0);
-  tg.addColorStop(0, mixHex(cloth, PAL.shirtLit, 0.6));
+  tg.addColorStop(0, mixHex(cloth, PAL.shirtLit, lit));
   tg.addColorStop(0.45, cloth);
   tg.addColorStop(1, mixHex(cloth, PAL.shirtDark, 0.65));
   ctx.fillStyle = tg;
@@ -238,7 +239,7 @@ export function person(ctx, x, y, h, o = {}) {
   ctx.beginPath();
   ctx.ellipse(hcx, hcy, hr * 0.92, hr, 0.06 * facing, 0, Math.PI * 2);
   const hg = ctx.createLinearGradient(hcx - hr, hcy - hr, hcx + hr, hcy + hr);
-  hg.addColorStop(0, PAL.skinLit);
+  hg.addColorStop(0, mixHex(skin, PAL.skinLit, lit));
   hg.addColorStop(0.6, skin);
   hg.addColorStop(1, '#5A3F2B');
   ctx.fillStyle = hg;
@@ -266,7 +267,7 @@ export function person(ctx, x, y, h, o = {}) {
   }
 
   // front arm
-  const sleeve = mixHex(cloth, '#7E7866', 0.26);
+  const sleeve = mixHex(cloth, '#7E7866', lit * 0.45);
   arm(P.shoulder, P.elbowB, P.handB, sleeve, mixHex(skin, PAL.skinLit, 0.5));
 
   // props

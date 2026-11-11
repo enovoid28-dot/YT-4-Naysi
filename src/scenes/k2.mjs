@@ -52,9 +52,13 @@ export default {
       const y = lerp(BHy + 20, ey, q);
       ctx.save();
       ctx.globalAlpha = 0.9 * Math.sin(q * Math.PI) ** 0.5;
-      const gg = radGrad(ctx, x, y, 0, 26, [[0, 'rgba(255,240,200,0.9)'], [1, 'rgba(255,200,120,0)']]);
+      const gg = radGrad(ctx, x, y, 0, 17, [
+        [0, 'rgba(255,252,238,1)'],
+        [0.18, 'rgba(255,238,196,0.75)'],
+        [1, 'rgba(255,200,120,0)'],
+      ]);
       ctx.fillStyle = gg;
-      ctx.fillRect(x - 26, y - 26, 52, 52);
+      ctx.fillRect(x - 17, y - 17, 34, 34);
       ctx.restore();
     }
 

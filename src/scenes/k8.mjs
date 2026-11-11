@@ -45,10 +45,10 @@ export default {
       }
       ctx.restore();
 
-      bhDisc(ctx, CX, CY, 286, { t, glow: 1, ring: 1, hot: 1 });
+      orbit(ctx, CX, CY, RX, RY, { rot: 0, color: 'rgba(255,170,110,0.30)', lw: 2.4, prog: at(t, 0.3, 1.0) });
+      orbit(ctx, CX, CY, RX, RY, { rot: 0, color: 'rgba(255,120,60,0.09)', lw: 14 });
 
-      orbit(ctx, CX, CY, RX, RY, { rot: 0, color: 'rgba(255,170,110,0.35)', lw: 2.4, prog: at(t, 0.3, 1.0) });
-      orbit(ctx, CX, CY, RX, RY, { rot: 0, color: 'rgba(255,120,60,0.10)', lw: 14 });
+      bhDisc(ctx, CX, CY, 286, { t, glow: 1, ring: 1, hot: 1 });
 
       const ang = -0.6 + t * 2.4;
       for (let i = 0; i < 22; i++) {
