@@ -1,92 +1,104 @@
-// Episode 9 — "4,5 Juta Ton Beras dari Negeri Lain"
+// Episode 10 — "Matahari Diganti Lubang Hitam"
 // Two spoken sentences per scene == two caption cards per scene, so card timing
 // is measured from the audio instead of guessed.
 //
-// Thesis: a country can be self-sufficient for three years, lose it in one bad
-// season, and buy its way back. The numbers are the story; the field is the why.
+// Thesis: swapping the Sun for a black hole of the same MASS changes nothing
+// about gravity — orbits are untouched. What dies is the light, and therefore
+// everything that lives on it. The premise only turns lethal if you swap the
+// black hole's SIZE for the Sun's, which multiplies the mass 236 000 times.
 
-export const SERIES = 'NEGERI · PADI';
+export const SERIES = 'SEMESTA · LUBANG HITAM';
 export const BRAND = 'NAYSI';
 
 export const SCENES = [
   {
     id: 's1',
     key: 'k1',
-    label: 'EMPAT KOMA LIMA',
+    label: 'BUKAN PADAM',
     index: '01',
     theme: 'dark',
-    vo: 'Beras adalah makanan yang paling kita jaga. Tapi tahun dua ribu dua puluh empat, kita membeli empat koma lima juta ton beras dari luar negeri.',
-    cap: 'Beras adalah makanan yang paling kita jaga. Tapi tahun 2024, kita membeli *4,5 juta ton* beras dari luar negeri.',
-    pad: 0.9,
+    vo: 'Matahari kita hilang dalam sekejap. Bukan padam pelan-pelan, tapi diganti sebuah lubang hitam.',
+    cap: 'Bayangkan *Matahari* hilang dalam sekejap. Bukan padam pelan-pelan — tapi diganti *lubang hitam*.',
+    pad: 0.85,
   },
   {
     id: 's2',
     key: 'k2',
-    label: 'SEBELAS KALI',
+    label: 'DELAPAN MENIT',
     index: '02',
     theme: 'dark',
-    vo: 'Pada dua ribu dua puluh satu, impor kita hanya empat ratus ribu ton. Tiga tahun kemudian angkanya sebelas kali lipat, tertinggi dalam tujuh tahun.',
-    cap: 'Pada 2021 impor kita hanya *400 ribu ton*. Tiga tahun kemudian angkanya *11 kali lipat* — tertinggi dalam tujuh tahun.',
+    vo: 'Kita baru menyadarinya delapan menit dua puluh detik kemudian. Selama itu, cahaya terakhir masih di jalan menuju Bumi.',
+    cap: 'Kita baru sadar *8 menit 20 detik* kemudian. Selama itu, cahaya terakhir masih di jalan menuju Bumi.',
     pad: 0.7,
   },
   {
     id: 's3',
     key: 'k3',
-    label: 'SELISIHNYA',
+    label: 'MASSA YANG SAMA',
     index: '03',
     theme: 'light',
-    vo: 'Produksi dua ribu dua puluh empat turun ke tiga puluh koma tiga juta ton. Konsumsi tiga puluh koma sembilan juta ton, defisit hampir enam ratus ribu ton.',
-    cap: 'Produksi 2024 turun ke *30,3 juta ton*. Konsumsi *30,9 juta ton* — defisit hampir *600 ribu ton*.',
-    pad: 0.7,
+    vo: 'Tapi inilah kejutannya. Gravitasi hanya peduli pada massa. Kalau lubang hitam itu massanya sama dengan Matahari, orbit Bumi tidak berubah sama sekali.',
+    cap: 'Kejutannya: gravitasi hanya peduli pada *massa*. Kalau massanya sama, orbit Bumi *tidak berubah sama sekali*.',
+    pad: 0.75,
   },
   {
     id: 's4',
     key: 'k4',
-    label: 'CUACA',
+    label: 'TIGA KILOMETER',
     index: '04',
-    theme: 'light',
-    vo: 'Penyebabnya cuaca. El Nino menunda tanam dan memperpendek musim panen, sementara sawah kita bergantung pada hujan.',
-    cap: 'Penyebabnya cuaca. *El Nino* menunda tanam dan memperpendek musim panen — dan sawah kita bergantung pada hujan.',
+    theme: 'dark',
+    vo: 'Bumi tetap mengorbit titik yang sama, tiga ratus enam puluh lima hari sekali putaran. Hanya saja titik itu kini selebar tiga kilometer.',
+    cap: 'Bumi tetap mengorbit titik yang sama, *365 hari* sekali putaran. Bedanya, titik itu kini hanya *3 kilometer* lebarnya.',
     pad: 0.75,
   },
   {
     id: 's5',
     key: 'k5',
-    label: 'LAHAN',
+    label: 'DINGIN',
     index: '05',
-    theme: 'dark',
-    vo: 'Sawahnya juga terus berkurang, berubah menjadi perumahan dan kawasan industri. Dan yang menanamnya semakin tua.',
-    cap: 'Sawahnya juga terus berkurang, berubah jadi *perumahan* dan kawasan industri. Dan yang menanamnya *semakin tua*.',
+    theme: 'light',
+    vo: 'Yang hilang bukan tarikannya, tapi cahayanya. Tanpa sinar matahari, suhu Bumi jatuh ke nol derajat dalam sekitar seminggu, dan minus dua puluh dalam setahun.',
+    cap: 'Yang hilang bukan tarikannya, tapi *cahayanya*. Suhu Bumi jatuh ke *0 derajat* dalam seminggu, lalu *minus 20* dalam setahun.',
     pad: 0.75,
   },
   {
     id: 's6',
     key: 'k6',
-    label: 'KAPAL',
+    label: 'LAUT MEMBEKU',
     index: '06',
     theme: 'dark',
-    vo: 'Jadi beras datang dengan kapal dari Thailand, Vietnam, dan Pakistan. Cepat, seragam, dan selalu tersedia saat kita kekurangan.',
-    cap: 'Jadi beras datang dengan kapal dari *Thailand, Vietnam, Pakistan*. Cepat, seragam, dan *selalu tersedia* saat kita kekurangan.',
-    pad: 0.7,
+    vo: 'Lautan membeku dari permukaan ke bawah. Fotosintesis berhenti, dan seluruh rantai makanan kehilangan dasarnya.',
+    cap: 'Lautan membeku dari *permukaan* ke bawah. Fotosintesis berhenti, dan rantai makanan kehilangan *dasarnya*.',
+    pad: 0.75,
   },
   {
     id: 's7',
     key: 'k7',
-    label: '2025',
+    label: 'BUKAN PENYEDOT',
     index: '07',
     theme: 'light',
-    vo: 'Tahun dua ribu dua puluh lima, produksi naik ke tiga puluh empat koma tujuh juta ton. Impor pun jatuh ke empat ratus lima puluh ribu ton.',
-    cap: 'Tahun 2025 produksi naik ke *34,7 juta ton*. Impor pun jatuh ke *450 ribu ton*.',
-    pad: 0.7,
+    vo: 'Dan tidak, lubang hitam bukan penyedot. Tidak ada yang tersedot masuk. Bumi justru mengorbit dengan tenang, mengelilingi sesuatu yang tidak bisa dilihat.',
+    cap: 'Lubang hitam *bukan penyedot*. Tidak ada yang tersedot masuk — Bumi tetap mengorbit, tenang.',
+    pad: 0.75,
   },
   {
     id: 's8',
     key: 'k8',
-    label: 'BUKAN ANGKA',
+    label: 'UKURANNYA',
     index: '08',
-    theme: 'light',
-    vo: 'Tapi swasembada bukan angka satu tahun. Ia ditentukan oleh lahan, air, dan orang orang yang mau tetap menanam.',
-    cap: 'Tapi swasembada bukan *angka satu tahun*. Ia ditentukan oleh lahan, air, dan *orang yang mau tetap menanam*.',
-    pad: 0.95,
+    theme: 'dark',
+    vo: 'Kecuali kalau ukurannya sama dengan Matahari. Maka massanya dua ratus tiga puluh enam ribu kali lipat. Orbit Bumi runtuh jadi delapan belas jam, dan pasang surut naik ratusan ribu kali.',
+    cap: 'Tapi kalau ukurannya *sebesar Matahari*, massanya *236.000 kali*. Setahun jadi *18 jam*, dan pasang surut naik *ratusan ribu kali*.',
+    pad: 0.75,
+  },
+  {
+    id: 's9',
+    key: 'k9',
+    label: 'CAHAYA',
+    index: '09',
+    theme: 'dark',
+    vo: 'Jadi yang menjaga kita hidup bukan massa Matahari, tapi cahayanya. Ganti massanya, orbit tetap. Ganti cahayanya, dunia membeku.',
+    cap: 'Yang menjaga kita bukan massa Matahari, tapi *cahayanya*. Massa tetap, orbit tenang — cahaya hilang, dunia membeku.',
+    pad: 1.0,
   },
 ];

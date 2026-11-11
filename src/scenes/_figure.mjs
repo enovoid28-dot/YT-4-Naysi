@@ -180,7 +180,7 @@ export function person(ctx, x, y, h, o = {}) {
   };
 
   // back arm: sleeve a shade under the shirt so the upper arm separates
-  arm(P.shoulder, P.elbowA, P.handA, PAL.shirtDark, '#6B4B34');
+  arm(P.shoulder, P.elbowA, P.handA, mixHex(cloth, PAL.shirtDark, 0.5), mixHex(skin, '#6B4B34', 0.4));
 
   // torso: a slightly tapered body from hip to shoulder
   const hx = px(P.hip);
@@ -194,9 +194,9 @@ export function person(ctx, x, y, h, o = {}) {
   ctx.quadraticCurveTo(hx + lwTorso * 0.6, (hy + sy) / 2, hx + lwTorso * 0.44, hy);
   ctx.closePath();
   const tg = ctx.createLinearGradient(hx - lwTorso, 0, hx + lwTorso, 0);
-  tg.addColorStop(0, PAL.shirtLit);
+  tg.addColorStop(0, mixHex(cloth, PAL.shirtLit, 0.6));
   tg.addColorStop(0.45, cloth);
-  tg.addColorStop(1, PAL.shirtDark);
+  tg.addColorStop(1, mixHex(cloth, PAL.shirtDark, 0.65));
   ctx.fillStyle = tg;
   ctx.fill();
   // one soft fold, no hard crease
@@ -267,7 +267,7 @@ export function person(ctx, x, y, h, o = {}) {
 
   // front arm
   const sleeve = mixHex(cloth, '#7E7866', 0.26);
-  arm(P.shoulder, P.elbowB, P.handB, sleeve, PAL.skinLit);
+  arm(P.shoulder, P.elbowB, P.handB, sleeve, mixHex(skin, PAL.skinLit, 0.5));
 
   // props
   if (rake > 0.01) {

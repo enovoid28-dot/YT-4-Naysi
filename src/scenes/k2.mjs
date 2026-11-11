@@ -1,103 +1,108 @@
-import { W, H, txt, hexA, fillRR, linGrad, radGrad } from '../engine/draw.mjs';
+import { W, H, txt, hexA, linGrad, radGrad, fillRR } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { K, E, at, layer, fillAll, sky, stars, grain, kicker, chip, bracket } from './_kota.mjs';
-import { P } from './_padi.mjs';
+import { S, starfield, bhDisc, limb } from './_space.mjs';
+import { at, layer, kicker, chip } from './_kota.mjs';
 
-// 02 — SEBELAS KALI. Four bars, one baseline. Three of them look like a country
-// that solved its problem; the fourth is the year it did not.
+// 02 — DELAPAN MENIT. The light is already dead; the world simply has not been
+// told yet. The only object in motion is the last eight minutes of it.
 
-const BASE = 1452;
-const FULL = 1010;
-const DATA = [
-  { y: '2021', v: 0.41, label: '407 ribu' },
-  { y: '2022', v: 0.43, label: '429 ribu' },
-  { y: '2023', v: 3.06, label: '3,06 juta' },
-  { y: '2024', v: 4.52, label: '4,52 juta' },
-];
-const BW = 190;
-const GAP = 92;
-const X0 = (W - (DATA.length * BW + (DATA.length - 1) * GAP)) / 2;
+const BHx = 1128;
+const BHy = 430;
 
 export default {
   draw(ctx, t, scene, o = {}) {
     const cam = o.cam;
-    sky(ctx, { top: '#070C0A', mid: '#0B1310', low: '#16241C', horizon: BASE + 8, t });
-    stars(ctx, { n: 54, seed: 21, t, bottom: BASE - 140, a: 0.3 });
 
-    // faint reference grid
-    ctx.save();
-    ctx.strokeStyle = 'rgba(251,246,234,0.07)';
-    ctx.lineWidth = 1.5;
-    for (let v = 1; v <= 4; v++) {
-      const y = BASE - (v / 4.52) * FULL;
-      ctx.beginPath();
-      ctx.moveTo(120, y);
-      ctx.lineTo(W - 120, y);
-      ctx.stroke();
-      txt(ctx, `${v}`, 108, y + 8, { size: 20, font: F.mono, color: 'rgba(251,246,234,0.24)', align: 'right' });
-    }
-    ctx.restore();
+    const g = linGrad(ctx, 0, -200, 0, H, [[0, '#04060C'], [0.5, '#060A12'], [1, '#02040A']]);
+    ctx.fillStyle = g;
+    ctx.fillRect(-240, -240, W + 480, H + 480);
 
-    // baseline
-    const bA = at(t, 0.15, 0.7);
-    ctx.save();
-    ctx.globalAlpha = bA;
-    ctx.fillStyle = 'rgba(251,246,234,0.45)';
-    ctx.fillRect(120, BASE, W - 240, 2);
-    ctx.restore();
+    starfield(ctx, { n: 210, seed: 41, t, a: 0.85, bottom: 1700 });
 
-    DATA.forEach((d, i) => {
-      const x = X0 + i * (BW + GAP);
-      const a = at(t, 0.5 + i * 0.55, 1.0);
-      const h = (d.v / 4.52) * FULL * a;
-      const isLast = i === DATA.length - 1;
-      if (h > 1) {
-        ctx.save();
-        if (isLast) {
-          ctx.shadowColor = 'rgba(180,71,44,0.45)';
-          ctx.shadowBlur = 48;
-        }
-        const g = isLast
-          ? linGrad(ctx, x, 0, x + BW, 0, [[0, '#C9583A'], [0.6, P.rust], [1, '#7C2B17']])
-          : linGrad(ctx, x, 0, x + BW, 0, [[0, '#CFC4A4'], [0.55, '#A79C7E'], [1, '#6E6650']]);
-        ctx.fillStyle = g;
-        ctx.fillRect(x, BASE - h, BW, h);
-        ctx.restore();
-        // top edge light
-        ctx.fillStyle = 'rgba(255,255,255,0.35)';
-        ctx.fillRect(x, BASE - h, BW, 4);
-      }
-      // year under the bar
-      ctx.save();
-      ctx.globalAlpha = at(t, 0.4 + i * 0.5, 0.7);
-      txt(ctx, d.y, x + BW / 2, BASE + 56, {
-        size: 30, font: F.num6, color: isLast ? '#EE9C7E' : 'rgba(251,246,234,0.75)', align: 'center',
-      });
-      txt(ctx, d.label, x + BW / 2, BASE + 100, {
-        size: 22, font: F.mono6, color: isLast ? 'rgba(238,156,126,0.9)' : 'rgba(251,246,234,0.42)',
-        align: 'center', track: 2,
-      });
-      ctx.restore();
+    // Earth's limb, very close: the last thing the light will ever touch
+    layer(ctx, cam, 0.18, () => {
+      limb(ctx, 250, 2560, 1120, { t, glow: 1, dawn: 0.6, dawnX: 700 });
     });
 
-    kicker(ctx, 'IMPOR BERAS INDONESIA', { x: 120, y: 268, a: at(t, 0.2, 0.6), color: P.gold });
-    txt(ctx, 'juta ton', W - 120, 274, { size: 22, font: F.mono6, color: 'rgba(251,246,234,0.4)', track: 5, align: 'right', alpha: at(t, 0.5, 0.6) });
+    // the black hole, distant and small
+    layer(ctx, cam, 0.32, () => {
+      bhDisc(ctx, BHx, BHy, 17, { t, glow: 0.7, ring: 1 });
+    });
 
-    // the multiplier, once the last bar has landed
-    const mA = at(t, 3.4, 1.0);
-    if (mA > 0.01) {
+    // the beam: dotted, from the dark point to the lit limb
+    const ex = 372;
+    const ey = 1478;
+    const p = clamp(t / 8.35);
+    ctx.save();
+    ctx.globalAlpha = 0.75;
+    ctx.strokeStyle = 'rgba(255,226,170,0.7)';
+    ctx.lineWidth = 2.6;
+    ctx.setLineDash([4, 12]);
+    ctx.beginPath();
+    ctx.moveTo(BHx - 16, BHy + 20);
+    ctx.lineTo(ex, ey);
+    ctx.stroke();
+    ctx.restore();
+
+    // three photons on the wire
+    for (let i = 0; i < 3; i++) {
+      const q = (p * 1.6 + i / 3) % 1;
+      const x = lerp(BHx - 16, ex, q);
+      const y = lerp(BHy + 20, ey, q);
       ctx.save();
-      ctx.globalAlpha = mA;
-      const lx = X0 + 3 * (BW + GAP) - 26;
-      const top = BASE - FULL;
-      bracket(ctx, lx, top, BASE, { label: '', color: hexA(P.rust, 0.85), a: 1 });
-      const lc = X0 + 3 * (BW + GAP) + BW / 2;
-      txt(ctx, '11×', lc, top - 72, { size: 88, font: F.num, color: '#EE9C7E', track: -3, align: 'center' });
-      txt(ctx, 'DALAM TIGA TAHUN', lc, top - 32, { size: 17, font: F.mono6, color: 'rgba(238,156,126,0.85)', track: 3, align: 'center' });
+      ctx.globalAlpha = 0.9 * Math.sin(q * Math.PI) ** 0.5;
+      const gg = radGrad(ctx, x, y, 0, 26, [[0, 'rgba(255,240,200,0.9)'], [1, 'rgba(255,200,120,0)']]);
+      ctx.fillStyle = gg;
+      ctx.fillRect(x - 26, y - 26, 52, 52);
       ctx.restore();
     }
 
-    grain(ctx, 0.045);
+    // the clock
+    const a0 = at(t, 0.15, 0.6);
+    ctx.save();
+    ctx.globalAlpha = a0;
+    txt(ctx, '08:20', 104, 1064, { size: 268, font: F.num, color: S.bone, track: -12 });
+    txt(ctx, 'CAHAYA TERAKHIR DALAM PERJALANAN', 110, 1130, { size: 25, font: F.mono6, color: hexA(S.bone, 0.55), track: 6 });
+    ctx.restore();
+
+    // ruler: 0 → 8 menit 20 detik
+    const rx0 = 110;
+    const rx1 = 1290;
+    const ry = 1206;
+    ctx.save();
+    ctx.globalAlpha = at(t, 0.5, 0.8) * 0.55;
+    ctx.strokeStyle = hexA(S.bone, 0.55);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(rx0, ry);
+    ctx.lineTo(rx1, ry);
+    for (let i = 0; i <= 20; i++) {
+      const x = rx0 + ((rx1 - rx0) * i) / 20;
+      const h = i % 5 === 0 ? 14 : 7;
+      ctx.moveTo(x, ry - h);
+      ctx.lineTo(x, ry + h);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    // elapsed marker
+    const mx = lerp(rx0, rx1, p);
+    ctx.save();
+    ctx.globalAlpha = 0.9;
+    ctx.fillStyle = '#FFB03A';
+    ctx.shadowColor = 'rgba(255,176,58,0.9)';
+    ctx.shadowBlur = 22;
+    ctx.fillRect(mx - 3, ry - 26, 6, 52);
+    ctx.restore();
+    txt(ctx, `${Math.floor(p * 8)}:${String(Math.floor((p * 500) % 60)).padStart(2, '0')}`, mx + 16, ry - 40, {
+      size: 28, font: F.num6, color: S.amber, track: 1,
+    });
+
+    kicker(ctx, 'JARAK 150 JUTA KM', { x: 104, y: 250, color: '#8FB4E8', ink: hexA(S.bone, 0.86) });
+    chip(ctx, 'TIDAK ADA YANG TAHU, SELAMA 8 MENIT', 104, 1462, {
+      a: at(t, 5.4, 0.6) * 0.9, bg: 'rgba(6,9,16,0.7)', ink: hexA(S.bone, 0.82),
+      border: 'rgba(160,190,240,0.24)', size: 22, track: 2,
+    });
   },
 };
