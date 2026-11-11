@@ -230,50 +230,52 @@ export function earthMaps() {
  * `rot` is the longitude facing the camera, in turns.
  */
 function sphereMap(ctx, map, cx, cy, r, rot, alpha = 1, composite = 'source-over', latShift = 0) {
-  // a big sphere needs fewer columns: at the limb they are sub-pixel anyway
-  const N = clamp(Math.round(r / (r > 900 ? 6.5 : 1.6)), 48, 420);
+  // A big sphere needs fewer columns: at the limb they are sub-pixel on screen.
+  const N = clamp(Math.round(r / (r > 900 ? 4.5 : 1.5)), 48, 460);
   const step = (2 * r) / N;
   ctx.save();
   ctx.globalAlpha *= alpha;
   ctx.globalCompositeOperation = composite;
+  const yShift = ((latShift % 1) + 1) % 1;
+  const sy0 = Math.round(yShift * map.height);
+  const h1 = map.height - sy0;
+  const h2 = sy0;
   for (let i = 0; i < N; i++) {
     const x0 = -r + i * step;
     const x1 = x0 + step;
+    // edge-snapped columns: abutting integer edges leave no seam to blend
+    const dl = Math.round(cx + x0);
+    const dr = Math.round(cx + x1);
+    const dw = dr - dl;
+    if (dw <= 0) continue;
     const th0 = Math.asin(clamp(x0 / r, -0.9995, 0.9995));
     const th1 = Math.asin(clamp(x1 / r, -0.9995, 0.9995));
-    const u0 = rot + th0 / TAU;
-    const u1 = rot + th1 / TAU;
-    let sx0 = ((u0 % 1) + 1) % 1;
-    let sx1 = ((u1 % 1) + 1) % 1;
+    let sx0 = ((rot + th0 / TAU) % 1 + 1) % 1;
+    let sx1 = ((rot + th1 / TAU) % 1 + 1) % 1;
     let w = sx1 - sx0;
     if (w < 0) w += 1;
     const y0 = cy - Math.sqrt(Math.max(0, r * r - x0 * x0));
     const y1 = cy + Math.sqrt(Math.max(0, r * r - x0 * x0));
     const dh = y1 - y0;
-    // a column near the limb can cover most of the map: split it in two
     const sxPix = sx0 * map.width;
     const wPix = w * map.width;
-    const yShift = ((latShift % 1) + 1) % 1;
-    const sy0 = Math.round(yShift * map.height);
-    const h1 = map.height - sy0;
-    const h2 = sy0;
-    const drawCol = (sx, sw, dx0, dw) => {
-      if (sw <= 0.01) return;
+    const drawCol = (sx, sw, dx0, dwid) => {
+      if (sw <= 0.01 || dwid <= 0) return;
       if (h2 <= 0) {
-        ctx.drawImage(map, sx, 0, sw, map.height, dx0, y0, dw, dh);
+        ctx.drawImage(map, sx, 0, sw, map.height, dx0, y0, dwid, dh);
         return;
       }
-      ctx.drawImage(map, sx, sy0, sw, h1, dx0, y0, dw, dh * (h1 / map.height));
-      ctx.drawImage(map, sx, 0, sw, h2, dx0, y0 + dh * (h1 / map.height), dw, dh * (h2 / map.height));
+      ctx.drawImage(map, sx, sy0, sw, h1, dx0, y0, dwid, dh * (h1 / map.height));
+      ctx.drawImage(map, sx, 0, sw, h2, dx0, y0 + dh * (h1 / map.height), dwid, dh * (h2 / map.height));
     };
     if (sxPix + wPix <= map.width) {
-      drawCol(sxPix, wPix, cx + x0, step + 1.6);
+      drawCol(sxPix, wPix, dl, dw);
     } else {
       const w1 = map.width - sxPix;
       const w2 = wPix - w1;
-      const d1 = (step + 1.6) * (w1 / wPix);
-      drawCol(sxPix, w1, cx + x0, d1);
-      drawCol(0, w2, cx + x0 + d1, (step + 1.6) * (w2 / wPix));
+      const d1 = Math.round(dw * (w1 / wPix));
+      drawCol(sxPix, w1, dl, d1);
+      drawCol(0, w2, dl + d1, dw - d1);
     }
   }
   ctx.restore();
@@ -327,7 +329,7 @@ export function globe(ctx, cx, cy, r, {
   // lining up into visible columns
   // small spheres are supersampled; a whole limb is drawn at half resolution and
   // scaled up, which is invisible on a smooth cloud deck and four times cheaper
-  const ss = r > 900 ? 0.5 : r <= 560 ? 2 : 1;
+  const ss = r > 900 ? 1 : r <= 760 ? 2 : 1;
   const size = Math.max(16, Math.ceil(r * 2 * ss) + 2);
   const buf = orthoBuf(size);
   const b = buf.getContext('2d');
