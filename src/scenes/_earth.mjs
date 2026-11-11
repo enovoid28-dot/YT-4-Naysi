@@ -230,7 +230,8 @@ export function earthMaps() {
  * `rot` is the longitude facing the camera, in turns.
  */
 function sphereMap(ctx, map, cx, cy, r, rot, alpha = 1, composite = 'source-over', latShift = 0) {
-  const N = clamp(Math.round(r / 1.6), 64, 420);
+  // a big sphere needs fewer columns: at the limb they are sub-pixel anyway
+  const N = clamp(Math.round(r / (r > 900 ? 6.5 : 1.6)), 48, 420);
   const step = (2 * r) / N;
   ctx.save();
   ctx.globalAlpha *= alpha;
@@ -324,7 +325,9 @@ export function globe(ctx, cx, cy, r, {
 
   // supersample small spheres: the strip edges then average away instead of
   // lining up into visible columns
-  const ss = r <= 760 ? 2 : 1;
+  // small spheres are supersampled; a whole limb is drawn at half resolution and
+  // scaled up, which is invisible on a smooth cloud deck and four times cheaper
+  const ss = r > 900 ? 0.5 : r <= 560 ? 2 : 1;
   const size = Math.max(16, Math.ceil(r * 2 * ss) + 2);
   const buf = orthoBuf(size);
   const b = buf.getContext('2d');
