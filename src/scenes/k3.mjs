@@ -1,177 +1,124 @@
-import { W, H, txt, hexA, fillRR, strokeRR, linGrad, radGrad } from '../engine/draw.mjs';
+import { W, H, txt, hexA, fillRR, linGrad, radGrad } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE, TAU, rng } from '../engine/anim.mjs';
+import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
 import { K, E, at, layer, fillAll, grain, kicker, chip } from './_kota.mjs';
-import { G, gauge } from './_garam.mjs';
+import { P } from './_padi.mjs';
 
-// 03 — KADARNYA. Two lumps of the same mineral, side by side, at the same size.
-// The left one is what the ponds give; the right one is what a factory needs.
-// Everything is in the percentage, not in the sea.
+// 03 — SELISIHNYA. Two lines almost on top of each other: what we grow and what
+// we eat. The whole episode lives in the sliver between them.
 
-const CY = 660;      // crystal centre
-const SIZE = 520;
-
-function crystal(ctx, x, y, s, { rough = false, a = 1, t = 0, seed = 3 } = {}) {
-  const r = rng(seed);
-  ctx.save();
-  ctx.globalAlpha *= a;
-  // shadow
-  ctx.fillStyle = radGrad(ctx, x, y + s * 0.62, 6, s * 0.6, [[0, 'rgba(30,22,16,0.30)'], [1, 'rgba(30,22,16,0)']]);
-  ctx.fillRect(x - s * 0.8, y + s * 0.3, s * 1.6, s * 0.6);
-
-  const body = rough ? '#D9C7A6' : '#FDFCF8';
-  const g = linGrad(ctx, x - s / 2, y - s / 2, x + s / 2, y + s / 2, [
-    [0, rough ? '#E8DCC2' : '#FFFFFF'],
-    [0.5, body],
-    [1, rough ? '#A98F69' : '#CFD6CF'],
-  ]);
-  // faceted outline: a crystal, not a box
-  ctx.beginPath();
-  ctx.moveTo(x - s * 0.5, y - s * 0.22);
-  ctx.lineTo(x - s * 0.2, y - s * 0.52);
-  ctx.lineTo(x + s * 0.34, y - s * 0.46);
-  ctx.lineTo(x + s * 0.5, y - s * 0.05);
-  ctx.lineTo(x + s * 0.38, y + s * 0.44);
-  ctx.lineTo(x - s * 0.12, y + s * 0.52);
-  ctx.lineTo(x - s * 0.48, y + s * 0.18);
-  ctx.closePath();
-  ctx.fillStyle = g;
-  ctx.fill();
-  ctx.strokeStyle = rough ? 'rgba(120,96,64,0.35)' : 'rgba(90,110,105,0.35)';
-  ctx.lineWidth = 3;
-  ctx.stroke();
-
-  // internal facets
-  ctx.save();
-  ctx.globalAlpha *= 0.5;
-  ctx.strokeStyle = rough ? 'rgba(120,96,64,0.5)' : 'rgba(120,150,145,0.55)';
-  ctx.lineWidth = 2;
-  for (let i = 0; i < (rough ? 7 : 4); i++) {
-    const a1 = r() * TAU;
-    const a2 = a1 + 1.2 + r();
-    ctx.beginPath();
-    ctx.moveTo(x + Math.cos(a1) * s * 0.35, y + Math.sin(a1) * s * 0.35);
-    ctx.lineTo(x + Math.cos(a2) * s * 0.3, y + Math.sin(a2) * s * 0.3);
-    ctx.stroke();
-  }
-  ctx.restore();
-
-  // impurities / purity: dots of clay on the left, nothing on the right
-  if (rough) {
-    ctx.fillStyle = 'rgba(110,80,48,0.55)';
-    for (let i = 0; i < 90; i++) {
-      const u = r() * TAU;
-      const v = Math.sqrt(r()) * s * 0.42;
-      ctx.fillRect(x + Math.cos(u) * v, y + Math.sin(u) * v * 0.9, 3 + r() * 5, 3 + r() * 5);
-    }
-  } else {
-    // a moving specular highlight
-    const hx = x + Math.sin(t * 0.7) * s * 0.1;
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    ctx.beginPath();
-    ctx.moveTo(hx - s * 0.06, y - s * 0.4);
-    ctx.lineTo(hx + s * 0.1, y - s * 0.34);
-    ctx.lineTo(hx + s * 0.02, y - s * 0.02);
-    ctx.lineTo(hx - s * 0.12, y - s * 0.1);
-    ctx.closePath();
-    ctx.fill();
-  }
-  ctx.restore();
-}
+const X0 = 200;
+const X1 = W - 200;
+const PROD = 30.34;
+const CONS = 30.92;
+const MAX = 32;
+const PX = (v) => X0 + ((v - 28) / (MAX - 28)) * (X1 - X0);
 
 export default {
   draw(ctx, t, scene, o = {}) {
     const cam = o.cam;
-    fillAll(ctx, G.paper);
-    // a warm key from the upper left, a cool fill from the right
+    fillAll(ctx, P.paper);
     ctx.save();
-    const g1 = radGrad(ctx, 320, 260, 40, 1100, [[0, 'rgba(243,167,95,0.30)'], [1, 'rgba(243,167,95,0)']]);
-    ctx.fillStyle = g1;
-    ctx.fillRect(-200, -200, W + 400, H + 400);
-    const g2 = radGrad(ctx, 1180, 900, 40, 900, [[0, 'rgba(120,180,175,0.22)'], [1, 'rgba(120,180,175,0)']]);
-    ctx.fillStyle = g2;
+    const g = radGrad(ctx, 720, 300, 60, 1100, [[0, 'rgba(255,251,240,0.95)'], [1, 'rgba(206,192,164,0)']]);
+    ctx.fillStyle = g;
     ctx.fillRect(-200, -200, W + 400, H + 400);
     ctx.restore();
 
-    kicker(ctx, 'KADAR NATRIUM KLORIDA', { x: 96, y: 262, a: at(t, 0.2, 0.6), color: G.rust, ink: 'rgba(20,15,12,0.75)' });
+    kicker(ctx, 'PANEN vs KONSUMSI · 2024', { x: 96, y: 268, a: at(t, 0.2, 0.6), color: P.rust, ink: 'rgba(20,24,18,0.7)' });
+    txt(ctx, 'juta ton', W - 96, 274, { size: 22, font: F.mono6, color: 'rgba(20,24,18,0.4)', track: 5, align: 'right', alpha: at(t, 0.4, 0.6) });
 
-    // left crystal: what the ponds give
-    const lA = at(t, 0.35, 0.9);
-    layer(ctx, cam, 0.16, () => crystal(ctx, 420, CY, SIZE, { rough: true, a: lA, t, seed: 7 }));
-    const lc = at(t, 0.9, 1.2);
-    if (lc > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = lc;
-      txt(ctx, 'GARAM RAKYAT', 420, CY + 396, { size: 26, font: F.mono6, color: 'rgba(20,15,12,0.6)', align: 'center', track: 5 });
-      const v = Math.round(lerp(88, 90, lc));
-      txt(ctx, `${v}%`, 420, CY + 340, { size: 96, font: F.num, color: G.ink, align: 'center', track: -3 });
-      txt(ctx, 'kebanyakan di bawah 90', 420, CY + 446, { size: 27, font: F.body, color: 'rgba(20,15,12,0.55)', align: 'center' });
-      ctx.restore();
+    // axis
+    const axA = at(t, 0.2, 0.8);
+    ctx.save();
+    ctx.globalAlpha = axA;
+    ctx.strokeStyle = 'rgba(20,24,18,0.14)';
+    ctx.lineWidth = 1.5;
+    for (let v = 28; v <= 32; v++) {
+      const x = PX(v);
+      ctx.beginPath();
+      ctx.moveTo(x, 520);
+      ctx.lineTo(x, 1560);
+      ctx.stroke();
+      txt(ctx, String(v), x, 1610, { size: 22, font: F.mono, color: 'rgba(20,24,18,0.4)', align: 'center' });
     }
+    ctx.restore();
 
-    // right crystal: what the factory needs
-    const rA = at(t, 1.5, 0.9);
-    layer(ctx, cam, 0.16, () => crystal(ctx, 1024, CY, SIZE * 1.02, { rough: false, a: rA, t, seed: 4 }));
-    const rc = at(t, 2.1, 1.2);
-    if (rc > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = rc;
-      txt(ctx, 'GARAM INDUSTRI', 1024, CY + 396, { size: 26, font: F.mono6, color: hexA(G.rust2, 0.85), align: 'center', track: 5 });
-      const v = Math.round(lerp(90, 97, rc));
-      txt(ctx, `${v}%`, 1024, CY + 340, { size: 96, font: F.num, color: G.ink, align: 'center', track: -3 });
-      txt(ctx, 'minimal 97 untuk bahan baku', 1024, CY + 446, { size: 27, font: F.body, color: 'rgba(20,15,12,0.55)', align: 'center' });
-      ctx.restore();
-    }
+    // production line
+    const pA = at(t, 0.5, 1.2);
+    const pEnd = PX(lerp(28, PROD, E.out(pA)));
+    ctx.save();
+    ctx.globalAlpha = clamp(pA * 2);
+    ctx.strokeStyle = P.ink;
+    ctx.lineWidth = 12;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(X0, 780);
+    ctx.lineTo(pEnd, 780);
+    ctx.stroke();
+    ctx.fillStyle = P.ink;
+    ctx.beginPath();
+    ctx.arc(pEnd, 780, 13, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+    txt(ctx, 'PRODUKSI', 96, 700, { size: 24, font: F.mono6, color: 'rgba(20,24,18,0.6)', track: 5, alpha: at(t, 0.5, 0.6) });
+    txt(ctx, '30,3', 96, 646, { size: 76, font: F.num, color: P.ink, track: -2, alpha: at(t, 0.7, 0.8) });
 
-    // the distance between them: a ruler, and the threshold that matters
+    // consumption line
+    const cA = at(t, 2.0, 1.4);
+    const cEnd = PX(lerp(28, CONS, E.out(cA)));
+    ctx.save();
+    ctx.globalAlpha = clamp(cA * 2);
+    ctx.strokeStyle = P.rust;
+    ctx.lineWidth = 12;
+    ctx.beginPath();
+    ctx.moveTo(X0, 1080);
+    ctx.lineTo(cEnd, 1080);
+    ctx.stroke();
+    ctx.fillStyle = P.rust;
+    ctx.beginPath();
+    ctx.arc(cEnd, 1080, 13, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+    txt(ctx, 'KONSUMSI', 96, 1000, { size: 24, font: F.mono6, color: hexA(P.rust, 0.9), track: 5, alpha: at(t, 2.0, 0.6) });
+    txt(ctx, '30,9', 96, 946, { size: 76, font: F.num, color: P.rust, track: -2, alpha: at(t, 2.2, 0.8) });
+
+    // the sliver between them
     const gA = at(t, 3.2, 1.0);
     if (gA > 0.01) {
       ctx.save();
       ctx.globalAlpha = gA;
-      const gx = 168;
-      const gw = W - 336;
-      const gy = 1330;
-      txt(ctx, 'PERSEN NaCl', gx, gy - 44, { size: 22, font: F.mono6, color: 'rgba(20,15,12,0.5)', track: 5 });
-      gauge(ctx, gx, gy, gw, { a: 1, t });
-      // threshold at 97
-      const px = gx + ((97 - 80) / 20) * gw;
-      ctx.strokeStyle = G.rust;
-      ctx.lineWidth = 3;
-      ctx.setLineDash([9, 8]);
+      const xa = PX(PROD);
+      const xb = PX(CONS);
+      ctx.fillStyle = 'rgba(180,71,44,0.18)';
+      ctx.fillRect(xa, 740, xb - xa, 380);
+      ctx.strokeStyle = hexA(P.rust, 0.8);
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 8]);
       ctx.beginPath();
-      ctx.moveTo(px, gy - 62);
-      ctx.lineTo(px, gy + 66);
+      ctx.moveTo(xa, 740);
+      ctx.lineTo(xa, 1140);
+      ctx.moveTo(xb, 740);
+      ctx.lineTo(xb, 1140);
       ctx.stroke();
       ctx.setLineDash([]);
-      txt(ctx, 'AMBANG INDUSTRI', px, gy - 78, { size: 22, font: F.mono6, color: G.rust, track: 4, align: 'center' });
-      // the two measured marks
-      const m1 = gx + ((90 - 80) / 20) * gw;
-      const m2 = px;
-      ctx.fillStyle = 'rgba(20,15,12,0.85)';
-      ctx.beginPath();
-      ctx.arc(m1, gy + 2, 9, 0, TAU);
-      ctx.fill();
-      ctx.fillStyle = G.rust;
-      ctx.beginPath();
-      ctx.arc(m2, gy + 2, 9, 0, TAU);
-      ctx.fill();
-      // the gap, bracketed
-      ctx.strokeStyle = 'rgba(20,15,12,0.4)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(m1, gy + 96);
-      ctx.lineTo(m2, gy + 96);
-      ctx.moveTo(m1, gy + 86);
-      ctx.lineTo(m1, gy + 106);
-      ctx.moveTo(m2, gy + 86);
-      ctx.lineTo(m2, gy + 106);
-      ctx.stroke();
-      txt(ctx, 'SELISIHNYA YANG MENENTUKAN', (m1 + m2) / 2, gy + 146, {
-        size: 24, font: F.mono6, color: 'rgba(20,15,12,0.55)', track: 4, align: 'center',
+      txt(ctx, 'DEFISIT', xb + 26, 940, { size: 24, font: F.mono6, color: P.rust, track: 5 });
+      txt(ctx, '0,58', xb + 26, 1002, { size: 64, font: F.num, color: P.rust });
+      txt(ctx, 'juta ton', xb + 30, 1044, { size: 22, font: F.mono6, color: 'rgba(20,24,18,0.5)', track: 4 });
+      ctx.restore();
+    }
+
+    // the note: a five percent harvest shortfall is a national problem
+    const nA = at(t, 5.2, 1.0);
+    if (nA > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = nA;
+      fillRR(ctx, 96, 1290, W - 192, 132, 6, 'rgba(20,24,18,0.06)');
+      txt(ctx, 'Selisihnya cuma 2 persen dari panen — cukup untuk memaksa impor sejuta ton lebih.', 128, 1372, {
+        size: 30, font: F.body, color: 'rgba(20,24,18,0.72)',
       });
       ctx.restore();
     }
 
-    grain(ctx, 0.035);
+    grain(ctx, 0.03);
   },
 };

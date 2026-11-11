@@ -87,14 +87,14 @@ for (const scene of tl.scenes) {
 }
 
 // files and totals
-const mix = path.join(process.cwd(), 'assets', 'audio', 'mix.wav');
+const mix = path.join(process.cwd(), 'assets', 'audio', process.env.MIX || 'mix.wav');
 if (fs.existsSync(mix)) {
   const d = readWav(mix).duration;
   if (Math.abs(d - tl.total) > 0.75) {
-    problems.push(`mix.wav is ${d.toFixed(2)}s but the timeline is ${tl.total.toFixed(2)}s`);
+    problems.push(`${path.basename(mix)} is ${d.toFixed(2)}s but the timeline is ${tl.total.toFixed(2)}s`);
   }
 } else {
-  problems.push('assets/audio/mix.wav missing');
+  problems.push(`${path.basename(mix)} missing`);
 }
 
 const cards = rows.length;

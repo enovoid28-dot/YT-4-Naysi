@@ -1,202 +1,213 @@
 import { W, H, txt, hexA, fillRR, linGrad, radGrad } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU, rng } from '../engine/anim.mjs';
-import { K, E, at, layer, fillAll, grain, chip } from './_kota.mjs';
-import { G, ponds, ship, A } from './_garam.mjs';
+import { K, E, at, layer, fillAll, stars, grain, chip } from './_kota.mjs';
+import { P, sawah, clump, blades, PA } from './_padi.mjs';
 import { person, speck } from './_figure.mjs';
 
-// 01 — GARIS PANTAI. From the air: the sea, one shoreline, and then nothing but
-// ponds, plot after plot, all the way to the horizon. The number sits on the
-// water like a data overlay. Then a bulk carrier slides in from the right and
-// the second sentence lands: the salt is not ours.
+// 01 — EMPAT KOMA LIMA. Dawn over a paddy. Water, green, a road of mud between
+// the plots, and one man walking it. The number arrives quietly, because it is
+// the only thing in the frame that is not growing.
 
-const SHORE = 436;
+const HZ = 905;
 
 export default {
   draw(ctx, t, scene, o = {}) {
     const cam = o.cam;
-    fillAll(ctx, G.paper);
 
-    // the sea, top of frame, lit from the left
-    layer(ctx, cam, 0.12, () => {
-      const g = linGrad(ctx, 0, -120, 0, SHORE + 40, [
-        [0, '#2A5F63'], [0.55, G.pond2], [1, G.pond],
-      ]);
-      ctx.fillStyle = g;
-      ctx.fillRect(-220, -220, W + 440, SHORE + 260);
-      // swell
-      ctx.strokeStyle = 'rgba(255,255,255,0.16)';
-      const r = rng(21);
-      for (let i = 0; i < 26; i++) {
-        const y = -20 + r() * (SHORE + 30);
-        const len = 90 + r() * 220;
-        const x = r() * W;
-        ctx.lineWidth = 1.5 + r() * 2;
-        ctx.beginPath();
-        for (let k = 0; k <= 10; k++) {
-          const px = x + (len * k) / 10;
-          const py = y + Math.sin(k * 0.9 + t * 1.4 + i) * 3.4;
-          k ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
-        }
-        ctx.stroke();
-      }
-    });
-
-    // the shore itself: a hard bright edge, foam, then the embankments
-    const sA = at(t, 0.1, 1.0);
+    // sky: night giving up
     ctx.save();
-    ctx.globalAlpha = sA;
-    ctx.fillStyle = '#F2EEE2';
-    ctx.beginPath();
-    ctx.moveTo(-220, SHORE + 26);
-    for (let x = -220; x <= W + 220; x += 40) {
-      const y = SHORE + Math.sin(x * 0.004) * 12 + Math.sin(x * 0.011 + 1) * 6;
-      ctx.lineTo(x, y);
-    }
-    ctx.lineTo(W + 220, SHORE + 60);
-    ctx.lineTo(-220, SHORE + 60);
-    ctx.closePath();
-    ctx.fill();
+    const g = linGrad(ctx, 0, -140, 0, HZ + 30, [
+      [0, '#1B2F33'], [0.42, '#3B5054'], [0.72, '#8E8A6E'], [1, '#D9AE72'],
+    ]);
+    ctx.fillStyle = g;
+    ctx.fillRect(-240, -240, W + 480, HZ + 300);
+    ctx.restore();
+    stars(ctx, { n: 40, seed: 13, t, bottom: 420, a: 0.22 * (1 - at(t, 0.2, 3)) });
+
+    // the sun, still under the hill
+    const sunA = at(t, 0.4, 2.4);
+    ctx.save();
+    ctx.globalAlpha = sunA;
+    const sg = radGrad(ctx, 980, HZ + 10, 10, 620, [[0, 'rgba(255,214,150,0.55)'], [0.3, 'rgba(255,196,120,0.18)'], [1, 'rgba(255,196,120,0)']]);
+    ctx.fillStyle = sg;
+    ctx.fillRect(240, -200, 1400, 1200);
     ctx.restore();
 
-    // the ponds: the subject of the episode, laid out under the shore
-    layer(ctx, cam, 0.22, () => {
-      ponds(ctx, {
-        x0: -160, x1: W + 160, y0: SHORE + 34, y1: 1700,
-        rows: 12, cols: 13, seed: 6, t, crust: 0.42, a: sA, dyke: 0.07,
-      });
+    // far hills, two layers
+    layer(ctx, cam, 0.1, () => {
+      ctx.fillStyle = 'rgba(40,54,50,0.55)';
+      ctx.beginPath();
+      ctx.moveTo(-200, HZ + 6);
+      for (let x = -200; x <= W + 200; x += 60) {
+        const y = HZ - 40 - Math.sin(x * 0.0032) * 46 - Math.sin(x * 0.0011 + 2) * 26;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(W + 200, HZ + 40);
+      ctx.lineTo(-200, HZ + 40);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = 'rgba(26,38,34,0.8)';
+      ctx.beginPath();
+      ctx.moveTo(-200, HZ + 10);
+      for (let x = -200; x <= W + 200; x += 40) {
+        const y = HZ - 12 - Math.sin(x * 0.006 + 1) * 18 - Math.sin(x * 0.0023) * 10;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(W + 200, HZ + 60);
+      ctx.lineTo(-200, HZ + 60);
+      ctx.closePath();
+      ctx.fill();
     });
 
-    // people, at the scale the drone sees them: a few specks on a dyke and one
-    // man standing still, looking at the water
+    // a low treeline where the field meets the hill
+    layer(ctx, cam, 0.13, () => {
+      ctx.save();
+      ctx.fillStyle = 'rgba(34,48,38,0.82)';
+      ctx.beginPath();
+      ctx.moveTo(-60, HZ + 30);
+      for (let x = -60; x <= W + 60; x += 18) {
+        const y = HZ - 12 - (Math.sin(x * 0.021) * 0.5 + 0.5) * 34 - (Math.sin(x * 0.0057 + 1.7) * 0.5 + 0.5) * 44;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(W + 60, HZ + 30);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = 'rgba(22,34,26,0.85)';
+      ctx.beginPath();
+      ctx.moveTo(-60, HZ + 30);
+      for (let x = -60; x <= W + 60; x += 11) {
+        const y = HZ - 4 - (Math.sin(x * 0.047 + 0.8) * 0.5 + 0.5) * 20;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(W + 60, HZ + 30);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    });
+
+    // the plots
+    layer(ctx, cam, 0.16, () => {
+      sawah(ctx, { y0: HZ + 6, y1: 1760, rows: 12, cols: 13, seed: 9, t, mature: 0.3 + 0.1 * Math.sin(t * 0.2), water: 0.7, bund: 0.05, haze: '#C2B491' });
+    });
+
+    // a mud track through the plots, and the man walking it
     layer(ctx, cam, 0.24, () => {
-      // a service dyke across the pans: a pale earthen band with a shadow
-      const p0 = { x: 1120, y: 980 };
-      const p1 = { x: 120, y: 726 };
-      const dA = at(t, 1.2, 1.2);
-      if (dA > 0.01) {
-        ctx.save();
-        ctx.globalAlpha = dA;
-        const dx = p1.x - p0.x;
-        const dy = p1.y - p0.y;
-        const len = Math.hypot(dx, dy);
+      // the track: a quadratic curve from the near corner to the horizon
+      const A = { x: 250, y: 1740 };
+      const C = { x: 620, y: 1330 };
+      const B = { x: 1010, y: 930 };
+      const at2 = (u) => ({
+        x: (1 - u) * (1 - u) * A.x + 2 * (1 - u) * u * C.x + u * u * B.x,
+        y: (1 - u) * (1 - u) * A.y + 2 * (1 - u) * u * C.y + u * u * B.y,
+      });
+      const wAt = (u) => lerp(104, 13, Math.pow(u, 0.8));
+      const N = 26;
+      const left = [];
+      const right = [];
+      for (let i = 0; i <= N; i++) {
+        const u = i / N;
+        const p = at2(u);
+        const q = at2(Math.min(1, u + 0.01));
+        const dx = q.x - p.x;
+        const dy = q.y - p.y;
+        const len = Math.hypot(dx, dy) || 1;
         const nx = -dy / len;
         const ny = dx / len;
-        const quad = (w0, w1, fill, ox = 0, oy = 0) => {
-          ctx.beginPath();
-          ctx.moveTo(p0.x + nx * w0 + ox, p0.y + ny * w0 + oy);
-          ctx.lineTo(p1.x + nx * w1 + ox, p1.y + ny * w1 + oy);
-          ctx.lineTo(p1.x - nx * w1 + ox, p1.y - ny * w1 + oy);
-          ctx.lineTo(p0.x - nx * w0 + ox, p0.y - ny * w0 + oy);
-          ctx.closePath();
-          ctx.fillStyle = fill;
-          ctx.fill();
-        };
-        quad(30, 11, 'rgba(40,30,20,0.22)', 0, 8);   // shadow
-        quad(30, 11, '#C6B896');                     // the bank
-        quad(22, 8, '#DED3B8');                      // its dry crest
-        ctx.restore();
+        const w = wAt(u) / 2;
+        left.push([p.x + nx * w, p.y + ny * w]);
+        right.push([p.x - nx * w, p.y - ny * w]);
       }
-      const at2 = (u) => ({ x: lerp(p0.x, p1.x, u), y: lerp(p0.y, p1.y, u) });
-      const walk = at(t, 1.6, 1.0);
-      if (walk > 0.01) {
-        for (let i = 0; i < 3; i++) {
-          const u = 0.34 + i * 0.055 + Math.sin(t * 0.5) * 0.004;
-          const p = at2(u);
-          speck(ctx, p.x, p.y, 4.6, { a: walk * 0.95, color: '#2A2620' });
-        }
-      }
-      const man = at(t, 2.2, 0.9);
-      if (man > 0.01) {
-        const p = at2(0.72);
-        person(ctx, p.x, p.y, 104, { pose: 'watch', facing: -1, alpha: man, cloth: '#DCD6C4' });
+      const band = (off, fill) => {
+        ctx.beginPath();
+        left.forEach(([x, y], i) => (i ? ctx.lineTo(x, y + off) : ctx.moveTo(x, y + off)));
+        for (let i = right.length - 1; i >= 0; i--) ctx.lineTo(right[i][0], right[i][1] + off);
+        ctx.closePath();
+        ctx.fillStyle = fill;
+        ctx.fill();
+      };
+      const rA = at(t, 0.6, 1.2);
+      ctx.save();
+      ctx.globalAlpha = rA;
+      band(8, 'rgba(24,18,10,0.30)');
+      band(0, '#9E8760');
+      // wet centre of the track
+      ctx.globalAlpha = rA * 0.55;
+      band(0, 'rgba(0,0,0,0)');
+      ctx.beginPath();
+      left.forEach(([x, y], i) => (i ? ctx.lineTo(x * 1 + 0, y + 2) : ctx.moveTo(x, y + 2)));
+      ctx.strokeStyle = 'rgba(58,46,30,0.35)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.restore();
+
+      // the walker
+      ctx.save();
+      ctx.globalAlpha = rA;
+      const walk = E.inOut(at(t, 0.4, scene.dur * 0.95));
+      const u = lerp(0.10, 0.74, walk);
+      const p = at2(u);
+      const h = lerp(340, 160, u);
+      ctx.fillStyle = 'rgba(16,12,6,0.35)';
+      ctx.beginPath();
+      ctx.ellipse(p.x + 6, p.y + h * 0.02, h * 0.2, h * 0.045, 0, 0, TAU);
+      ctx.fill();
+      person(ctx, p.x, p.y, h, {
+        pose: 'walk', facing: -1, cloth: '#D2C9B0', rim: 0.75, hat: 1,
+      });
+      ctx.restore();
+
+      // two more, further off, on the next bund
+      speck(ctx, 470, 1002, 5, { a: rA * 0.75 });
+      speck(ctx, 548, 1018, 5.4, { a: rA * 0.75 });
+    });
+
+    // foreground rice, out of focus
+    layer(ctx, cam, 0.5, () => {
+      const a = at(t, 0.2, 1.2);
+      for (let i = 0; i < 8; i++) {
+        blades(ctx, -40 + i * 52, H + 30, 700 + (i % 3) * 120, {
+          n: 5, a: a * 0.5, seed: 20 + i, t, tone: '#1E3322', spread: 1.2, lean: -0.12,
+        });
+        blades(ctx, W + 40 - i * 54, H + 40, 740 + (i % 4) * 110, {
+          n: 5, a: a * 0.48, seed: 40 + i, t, tone: '#1B2E20', spread: 1.2, lean: 0.1,
+        });
       }
     });
 
-    // heat haze over the far pans
-    ctx.save();
-    ctx.fillStyle = linGrad(ctx, 0, SHORE + 20, 0, SHORE + 260, [
-      [0, 'rgba(233,243,238,0.85)'], [1, 'rgba(233,243,238,0)'],
-    ]);
-    ctx.fillRect(-220, SHORE + 20, W + 440, 260);
-    ctx.restore();
-
-    // ---- data panel: the number
-    const pA = at(t, 0.5, 0.9);
+    // ---- the number
+    const pA = at(t, 1.2, 1.0);
     if (pA > 0.01) {
       ctx.save();
       ctx.globalAlpha = pA;
       const px = 72;
-      const py = 1146;
-      const pw = 700;
-      const ph = 330;
+      const py = 1130;
+      const pw = 720;
+      const ph = 340;
       ctx.save();
-      ctx.shadowColor = 'rgba(10,7,5,0.35)';
-      ctx.shadowBlur = 40;
-      ctx.shadowOffsetY = 14;
-      fillRR(ctx, px, py, pw, ph, 6, 'rgba(18,13,10,0.90)');
+      ctx.shadowColor = 'rgba(8,6,4,0.45)';
+      ctx.shadowBlur = 44;
+      ctx.shadowOffsetY = 16;
+      fillRR(ctx, px, py, pw, ph, 6, 'rgba(14,18,14,0.90)');
       ctx.restore();
-      // hairline top rule
-      ctx.fillStyle = hexA(G.sun, 0.9);
+      ctx.fillStyle = hexA(P.gold, 0.95);
       ctx.fillRect(px + 34, py + 40, 46, 4);
-      txt(ctx, 'GARIS PANTAI', px + 94, py + 48, {
-        size: 22, font: F.mono6, color: 'rgba(251,246,236,0.72)', track: 6,
+      txt(ctx, 'IMPOR BERAS · 2024', px + 94, py + 48, {
+        size: 22, font: F.mono6, color: 'rgba(251,246,234,0.7)', track: 5,
       });
-      // counting number
-      const c = E.out(at(t, 0.7, 1.5));
-      const v = Math.round(lerp(0, 99093, c));
-      txt(ctx, v.toLocaleString('id-ID'), px + 34, py + 196, {
-        size: 118, font: F.num, color: G.bone, track: -4,
-      });
-      txt(ctx, 'KILOMETER', px + 38, py + 250, {
-        size: 26, font: F.mono6, color: hexA(G.sun, 0.95), track: 6,
-      });
-      txt(ctx, 'terpanjang kedua di dunia', px + 38, py + 296, {
-        size: 28, font: F.body, color: 'rgba(251,246,236,0.62)',
+      const c = E.out(at(t, 1.3, 1.6));
+      const v = (lerp(0, 4.52, c)).toFixed(2).replace('.', ',');
+      txt(ctx, v, px + 34, py + 208, { size: 140, font: F.num, color: P.bone, track: -5 });
+      txt(ctx, 'JUTA TON', px + 38, py + 262, { size: 26, font: F.mono6, color: hexA(P.gold, 0.95), track: 6 });
+      txt(ctx, 'tertinggi dalam tujuh tahun', px + 38, py + 306, {
+        size: 28, font: F.body, color: 'rgba(251,246,234,0.6)',
       });
       ctx.restore();
     }
 
-    // ---- second beat: the ship, and where it came from
-    const shA = at(t, 4.6, 1.4);
-    if (shA > 0.01) {
-      const sx = lerp(W + 380, 940, E.out(at(t, 4.6, 2.6)));
-      ship(ctx, sx, 372, 0.62, { a: shA * 0.96, t });
-      // route dashes
-      ctx.save();
-      ctx.globalAlpha = shA * 0.55;
-      ctx.strokeStyle = hexA(G.sun, 0.9);
-      ctx.lineWidth = 3;
-      ctx.setLineDash([10, 16]);
-      ctx.lineDashOffset = -t * 30;
-      ctx.beginPath();
-      ctx.moveTo(sx + 40, 300);
-      ctx.lineTo(W + 40, 214);
-      ctx.stroke();
-      ctx.restore();
-      chip(ctx, 'GARAM IMPOR · AUSTRALIA', 96, 214, { a: shA, bg: 'rgba(18,13,10,0.86)', ink: G.bone, border: hexA(G.sun, 0.55) });
-      ctx.save();
-      ctx.globalAlpha = shA;
-      ctx.fillStyle = hexA(G.rust, 0.9);
-      ctx.fillRect(748, 292, 120, 3);
-      ctx.restore();
-    }
+    const cA = at(t, 7.4, 0.9);
+    if (cA > 0.01) chip(ctx, 'DARI THAILAND · VIETNAM · PAKISTAN', 74, 1516, { a: cA, bg: 'rgba(14,18,14,0.82)', ink: P.bone, border: hexA(P.gold, 0.5) });
 
-    // ---- label on the shore
-    const lA = at(t, 1.4, 0.8);
-    if (lA > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = lA * 0.9;
-      ctx.strokeStyle = 'rgba(20,15,12,0.6)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(300, SHORE + 60);
-      ctx.lineTo(300, SHORE + 120);
-      ctx.stroke();
-      txt(ctx, 'TAMBAK', 300, SHORE + 152, { size: 24, font: F.mono6, color: 'rgba(20,15,12,0.6)', track: 5, align: 'center' });
-      ctx.restore();
-    }
-
-    grain(ctx, 0.03);
+    grain(ctx, 0.045);
   },
 };

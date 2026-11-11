@@ -1,118 +1,115 @@
-import { W, H, txt, hexA, fillRR, strokeRR, linGrad, radGrad } from '../engine/draw.mjs';
+import { W, H, txt, hexA, fillRR, linGrad, radGrad } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE, TAU, rng } from '../engine/anim.mjs';
-import { K, E, at, layer, fillAll, grain, kicker, chip, bracket } from './_kota.mjs';
-import { G } from './_garam.mjs';
+import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
+import { K, E, at, layer, fillAll, grain, kicker, chip } from './_kota.mjs';
+import { P } from './_padi.mjs';
 
-// 07 — 2025. The wall of the year, seen as a bar that did not get built. The
-// target is a ghost rectangle; the harvest fills less than half of it. The rest
-// of the year's salt comes in on the same ships as before.
+// 07 — 2025. The year the field answered. One bar collapses, one climbs, and the
+// country discovers that self-sufficiency is a thing you have to keep doing.
 
-const BASE = 1502;
-const TARGET = 2.25;
-const REAL = 1.035;
-const FULL = 940;
-const TX = 300;
-const BW = 300;
-const hOf = (v) => (v / TARGET) * FULL;
-const RX = TX + BW + 160;
+const BASE = 1500;
+const FULL = 900;
+const Impor = [{ y: '2024', v: 4.52, c: P.rust }, { y: '2025', v: 0.45, c: '#6E9A50' }];
 
 export default {
   draw(ctx, t, scene, o = {}) {
     const cam = o.cam;
-    fillAll(ctx, G.paper);
-    // sun-bleached ground
+    fillAll(ctx, P.paper);
     ctx.save();
-    const g = linGrad(ctx, 0, 200, 0, H, [[0, 'rgba(255,247,232,0.9)'], [1, 'rgba(206,192,167,0.55)']]);
+    const g = linGrad(ctx, 0, 120, 0, H, [[0, 'rgba(255,250,236,0.95)'], [1, 'rgba(206,192,167,0.5)']]);
     ctx.fillStyle = g;
     ctx.fillRect(-200, -200, W + 400, H + 400);
     ctx.restore();
 
-    kicker(ctx, 'PRODUKSI GARAM NASIONAL', { x: 96, y: 262, a: at(t, 0.15, 0.6), color: G.rust, ink: 'rgba(20,15,12,0.7)' });
-    txt(ctx, '2 0 2 5', W - 96, 268, { size: 30, font: F.mono6, color: 'rgba(20,15,12,0.4)', track: 8, align: 'right' });
+    kicker(ctx, 'IMPOR BERAS', { x: 96, y: 262, a: at(t, 0.15, 0.6), color: P.rust, ink: 'rgba(20,24,18,0.7)' });
+    txt(ctx, 'juta ton', W - 96, 268, { size: 22, font: F.mono6, color: 'rgba(20,24,18,0.4)', track: 5, align: 'right', alpha: at(t, 0.4, 0.6) });
 
     // baseline
     const bA = at(t, 0.2, 0.7);
     ctx.save();
     ctx.globalAlpha = bA;
-    ctx.fillStyle = 'rgba(20,15,12,0.55)';
-    ctx.fillRect(200, BASE, W - 400, 3);
+    ctx.fillStyle = 'rgba(20,24,18,0.5)';
+    ctx.fillRect(220, BASE, W - 440, 3);
     ctx.restore();
 
-    // the target: an outline that never fills
-    const tA = at(t, 0.4, 1.1);
-    const th = hOf(TARGET) * tA;
-    ctx.save();
-    ctx.globalAlpha = tA;
-    ctx.fillStyle = 'rgba(20,15,12,0.045)';
-    ctx.fillRect(TX, BASE - th, BW, th);
-    ctx.strokeStyle = 'rgba(20,15,12,0.5)';
-    ctx.lineWidth = 4;
-    ctx.setLineDash([16, 12]);
-    ctx.strokeRect(TX, BASE - th, BW, th);
-    ctx.setLineDash([]);
-    txt(ctx, 'TARGET', TX, BASE - th - 74, { size: 22, font: F.mono6, color: 'rgba(20,15,12,0.5)', track: 5 });
-    txt(ctx, '2,25 juta', TX, BASE - th - 30, { size: 44, font: F.num6, color: 'rgba(20,15,12,0.55)' });
-    ctx.restore();
+    // two bars, side by side, far apart in height
+    const barW = 300;
+    const xs = [330, 810];
+    Impor.forEach((d, i) => {
+      const a = at(t, 0.4 + i * 1.4, 1.1);
+      const h = (d.v / 4.6) * FULL * a;
+      if (h > 1) {
+        const gg = linGrad(ctx, xs[i], 0, xs[i] + barW, 0, [[0, d.c], [1, i === 0 ? '#7C2B17' : '#3E6B32']]);
+        ctx.fillStyle = gg;
+        ctx.fillRect(xs[i], BASE - h, barW, h);
+        ctx.fillStyle = 'rgba(255,255,255,0.28)';
+        ctx.fillRect(xs[i], BASE - h, barW, 5);
+      }
+      txt(ctx, d.y, xs[i] + barW / 2, BASE + 60, { size: 32, font: F.num6, color: 'rgba(20,24,18,0.7)', align: 'center', alpha: at(t, 0.4 + i * 1.4, 0.6) });
+      const val = i === 0 ? '4,52' : '0,45';
+      txt(ctx, val, xs[i] + barW / 2, BASE - h - 28, {
+        size: 56, font: F.num6, color: d.c, align: 'center', alpha: at(t, 0.6 + i * 1.4, 0.7),
+      });
+    });
 
-    // the harvest: what actually arrived
-    const rA = at(t, 1.4, 1.5);
-    const rh = hOf(REAL) * rA;
-    if (rh > 1) {
+    // the collapse, called out
+    const cA = at(t, 3.4, 1.0);
+    if (cA > 0.01) {
       ctx.save();
-      const g2 = linGrad(ctx, RX, 0, RX + BW, 0, [[0, '#C9583A'], [0.5, G.rust], [1, G.rust2]]);
-      ctx.fillStyle = g2;
-      ctx.fillRect(RX, BASE - rh, BW, rh);
-      // salt texture on top edge
-      ctx.fillStyle = 'rgba(255,255,255,0.35)';
-      ctx.fillRect(RX, BASE - rh, BW, 6);
-      ctx.restore();
-      txt(ctx, 'REALISASI', RX, BASE - rh - 74, { size: 22, font: F.mono6, color: hexA(G.rust2, 0.9), track: 5 });
-      txt(ctx, '1,035 juta', RX, BASE - rh - 30, { size: 44, font: F.num6, color: G.ink });
-    }
-
-    // the 2024 watermark, for the fall
-    const wA = at(t, 2.6, 0.9);
-    if (wA > 0.01) {
-      const y = BASE - hOf(2.04);
-      ctx.save();
-      ctx.globalAlpha = wA * 0.75;
-      ctx.strokeStyle = 'rgba(20,15,12,0.45)';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([6, 10]);
+      ctx.globalAlpha = cA;
+      const ax = xs[0] + barW + 40;
+      const ay0 = BASE - FULL * (4.52 / 4.6);
+      const ay1 = BASE - FULL * (0.45 / 4.6) * 0.999;
+      const bx = xs[1] - 40;
+      ctx.strokeStyle = 'rgba(20,24,18,0.35)';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([10, 10]);
       ctx.beginPath();
-      ctx.moveTo(200, y);
-      ctx.lineTo(W - 200, y);
+      ctx.moveTo(bx, ay1);
+      ctx.lineTo(xs[1] + barW, ay1);
       ctx.stroke();
       ctx.setLineDash([]);
-      txt(ctx, '2024 · 2,04 juta', 200, y + 42, { size: 22, font: F.mono6, color: 'rgba(20,15,12,0.55)', track: 3 });
+      // arrow from the tall bar down to the short one
+      ctx.strokeStyle = P.rust;
+      ctx.lineWidth = 10;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(ax, ay0 + 24);
+      ctx.bezierCurveTo(ax + 96, ay0 - 20, bx - 96, ay1 - 40, bx - 16, ay1 - 18);
+      ctx.stroke();
+      // a solid head on the end of it
+      ctx.fillStyle = P.rust;
+      ctx.beginPath();
+      ctx.moveTo(bx + 4, ay1 - 14);
+      ctx.lineTo(bx - 34, ay1 - 40);
+      ctx.lineTo(bx - 40, ay1 + 2);
+      ctx.closePath();
+      ctx.fill();
       ctx.restore();
     }
 
-    // the percentage, over the empty part of the target
-    const pA = at(t, 3.0, 1.0);
+    // the percentage
+    const pA = at(t, 3.8, 1.1);
     if (pA > 0.01) {
       ctx.save();
       ctx.globalAlpha = pA;
-      const v = Math.round(lerp(0, 46, E.out(at(t, 3.0, 1.2))));
-      txt(ctx, `${v}%`, 1058, 610, { size: 150, font: F.num, color: G.rust, track: -5 });
-      txt(ctx, 'DARI TARGET', 1064, 662, { size: 24, font: F.mono6, color: G.ink, track: 6 });
-      txt(ctx, 'turun 49% dari 2024', 1064, 706, { size: 27, font: F.body, color: 'rgba(20,15,12,0.55)' });
+      const v = Math.round(lerp(0, 90, E.out(at(t, 3.8, 1.3))));
+      txt(ctx, `-${v}%`, 996, 642, { size: 100, font: F.num, color: '#3E6B32', track: -5 });
+      txt(ctx, 'IMPOR', 1000, 692, { size: 24, font: F.mono6, color: 'rgba(20,24,18,0.6)', track: 6 });
+      txt(ctx, 'dalam satu tahun', 1000, 736, { size: 26, font: F.body, color: 'rgba(20,24,18,0.5)' });
       ctx.restore();
     }
 
-    // the import chip lands with the second sentence
-    const cA = at(t, 5.0, 0.9);
-    if (cA > 0.01) {
-      chip(ctx, 'IMPOR TETAP 2,6 JUTA TON', 96, 1218, { a: cA, bg: 'rgba(20,15,12,0.88)', ink: G.bone, border: hexA(G.rust, 0.7) });
+    // harvest note
+    const hA = at(t, 6.6, 1.0);
+    if (hA > 0.01) {
       ctx.save();
-      ctx.globalAlpha = cA * 0.8;
-      ctx.strokeStyle = hexA(G.rust, 0.7);
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(96, 1250);
-      ctx.lineTo(96, BASE + 26);
-      ctx.stroke();
+      ctx.globalAlpha = hA;
+      fillRR(ctx, 96, 1592, W - 192, 150, 6, 'rgba(20,24,18,0.07)');
+      txt(ctx, '34,7 JUTA TON', 128, 1672, { size: 46, font: F.num6, color: P.ink });
+      txt(ctx, 'panen 2025 — naik 13,3 persen dari tahun sebelumnya', 128, 1720, {
+        size: 27, font: F.body, color: 'rgba(20,24,18,0.6)',
+      });
       ctx.restore();
     }
 

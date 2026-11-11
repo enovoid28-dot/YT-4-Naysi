@@ -1,113 +1,95 @@
-import { W, H, txt, hexA, fillRR, strokeRR, linGrad, radGrad } from '../engine/draw.mjs';
+import { W, H, txt, hexA, fillRR, linGrad, radGrad } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU, rng } from '../engine/anim.mjs';
 import { K, E, at, layer, fillAll, grain, kicker, chip } from './_kota.mjs';
-import { G, heap, refinery } from './_garam.mjs';
+import { P, sawah, clump, stalk, blades } from './_padi.mjs';
 import { person } from './_figure.mjs';
 
-// 08 — CUCI. The answer is a machine, not a coastline. Dirty salt goes in on a
-// belt, water washes it, white salt comes out the other side. Under it, the two
-// coastlines, side by side, to close the loop opened in shot one.
+// 08 — BUKAN ANGKA. Back to the water, back to the morning, back to the only
+// thing that has ever produced a harvest: a person standing in mud, planting.
 
-const BASE = 1108;
+const HZ = 900;
+const GROUND = 1460;
 
 export default {
   draw(ctx, t, scene, o = {}) {
     const cam = o.cam;
-    fillAll(ctx, '#EFE8D9');
+
+    // dawn again, warmer than shot one
     ctx.save();
-    const g = radGrad(ctx, 720, 620, 60, 1080, [[0, 'rgba(255,250,238,0.95)'], [1, 'rgba(214,201,177,0)']]);
+    const g = linGrad(ctx, 0, -140, 0, HZ + 24, [[0, '#26383A'], [0.45, '#586A62'], [0.76, '#B49A70'], [1, '#E8C48A']]);
     ctx.fillStyle = g;
-    ctx.fillRect(-200, -200, W + 400, H + 400);
+    ctx.fillRect(-240, -240, W + 480, HZ + 260);
     ctx.restore();
 
-    kicker(ctx, 'PENCUCIAN & PEMURNIAN', { x: 96, y: 262, a: at(t, 0.2, 0.6), color: G.rust, ink: 'rgba(20,15,12,0.72)' });
-
-    // ground plane
-    const gA = at(t, 0.15, 0.7);
+    const sA = at(t, 0.2, 2.0);
     ctx.save();
-    ctx.globalAlpha = gA;
-    const floor = linGrad(ctx, 0, BASE, 0, BASE + 320, [[0, 'rgba(20,15,12,0.14)'], [1, 'rgba(20,15,12,0.02)']]);
-    ctx.fillStyle = floor;
-    ctx.fillRect(-160, BASE, W + 320, 340);
-    ctx.fillStyle = 'rgba(20,15,12,0.45)';
-    ctx.fillRect(-160, BASE, W + 320, 3);
+    ctx.globalAlpha = sA;
+    const sg = radGrad(ctx, 760, HZ - 20, 10, 700, [[0, 'rgba(255,226,168,0.6)'], [0.3, 'rgba(255,206,140,0.18)'], [1, 'rgba(255,206,140,0)']]);
+    ctx.fillStyle = sg;
+    ctx.fillRect(0, -200, W, 1200);
     ctx.restore();
 
-    // dirty heap, in
-    const h1 = at(t, 0.5, 1.0);
-    layer(ctx, cam, 0.14, () => heap(ctx, 268, BASE, 470, 330, { a: h1, tone: '#D6C3A0', t }));
-    if (h1 > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = h1;
-      txt(ctx, 'GARAM RAKYAT', 268, BASE + 74, { size: 26, font: F.mono6, color: 'rgba(20,15,12,0.8)', align: 'center', track: 4 });
-      txt(ctx, 'kotor, kadar rendah', 268, BASE + 114, { size: 26, font: F.body, color: 'rgba(20,15,12,0.6)', align: 'center' });
-      ctx.restore();
-    }
+    // water mirror in the near plots
+    layer(ctx, cam, 0.14, () => {
+      sawah(ctx, { y0: HZ + 4, y1: 1900, rows: 12, cols: 10, seed: 55, t, mature: 0.12, water: 1, bund: 0.05 });
+    });
 
-    // the plant, standing on its own plinth
-    const rA = at(t, 1.3, 1.1);
-    if (rA > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = rA;
-      // plinth
-      ctx.fillStyle = 'rgba(20,15,12,0.16)';
-      ctx.fillRect(500, 1024, 480, BASE - 1024);
-      ctx.fillStyle = '#7E8A84';
-      ctx.fillRect(500, 1018, 480, 10);
-      ctx.restore();
-    }
-    layer(ctx, cam, 0.1, () => refinery(ctx, 536, 556, 408, 462, { a: rA, t, spray: at(t, 2.0, 1.0) }));
-    const rlA = at(t, 1.9, 0.8);
-    if (rlA > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = rlA;
-      txt(ctx, 'CUCI + MURNI', 740, 1074, { size: 24, font: F.mono6, color: 'rgba(20,15,12,0.55)', align: 'center', track: 5 });
-      ctx.restore();
-    }
-
-    // clean heap, out
-    const h2 = at(t, 2.8, 1.1);
-    layer(ctx, cam, 0.14, () => heap(ctx, 1180, BASE, 400, 372, { a: h2, tone: G.salt, t }));
-    if (h2 > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = h2;
-      txt(ctx, 'LAYAK INDUSTRI', 1180, BASE + 74, { size: 26, font: F.mono6, color: hexA(G.rust2, 0.95), align: 'center', track: 4 });
-      txt(ctx, 'di atas 97 persen NaCl', 1180, BASE + 114, { size: 26, font: F.body, color: 'rgba(20,15,12,0.62)', align: 'center' });
-      ctx.restore();
-    }
-
-    // he ends the film where the salt becomes usable
-    const mA = at(t, 3.2, 1.0);
+    // the man, planting: bent forward, hands in the water
+    const mA = at(t, 0.6, 1.0);
     if (mA > 0.01) {
       ctx.save();
-      ctx.fillStyle = 'rgba(20,14,10,0.30)';
+      ctx.globalAlpha = mA;
+      // his reflection in the flooded plot
+      ctx.fillStyle = 'rgba(24,30,22,0.22)';
       ctx.beginPath();
-      ctx.ellipse(404, BASE - 4, 86, 14, 0, 0, TAU);
+      ctx.ellipse(1130, GROUND + 22, 150, 24, 0, 0, TAU);
       ctx.fill();
       ctx.restore();
-      person(ctx, 404, BASE - 6, 352, { pose: 'watch', facing: 1, alpha: mA, cloth: '#D6CFBB' });
+      person(ctx, 1120, GROUND, 430, { pose: 'plant', facing: 1, alpha: mA, cloth: '#D8CFB4', rim: 0.85, hat: 1, seedlings: 1 });
     }
 
-    // the two coastlines, closing the argument
-    const cA = at(t, 4.6, 1.0);
+    // a line of seedlings half planted behind him
+    const rA = at(t, 1.4, 1.0);
+    if (rA > 0.01) {
+      const r = rng(12);
+      for (let row = 0; row < 3; row++) {
+        for (let i = 0; i < 22; i++) {
+          const x = 90 + i * 60 + row * 18 + (r() - 0.5) * 16;
+          const y = GROUND - 90 + row * 46;
+          const hh = (54 - row * 8) * (0.8 + r() * 0.5);
+          stalk(ctx, x, y, hh, { lean: 0.08, mature: 0, a: rA * (0.85 - row * 0.12), tone: row ? '#6E9A50' : '#86B061' });
+        }
+      }
+    }
+
+    // foreground clumps, warm
+    layer(ctx, cam, 0.48, () => {
+      const a = at(t, 0.3, 1.2);
+      for (let i = 0; i < 10; i++) {
+        blades(ctx, -20 + i * 44, H + 30, 620 + (i % 3) * 80, { n: 5, a: a * 0.16, seed: 60 + i, t, tone: '#2A4228', spread: 1.2, lean: -0.1 });
+        blades(ctx, W + 20 - i * 46, H + 40, 660 + (i % 4) * 70, { n: 5, a: a * 0.15, seed: 80 + i, t, tone: '#274026', spread: 1.2, lean: 0.1 });
+      }
+    });
+
+    // the closing line, set as type, not as a chip
+    const cA = at(t, 4.6, 1.1);
     if (cA > 0.01) {
       ctx.save();
       ctx.globalAlpha = cA;
-      const x = 96;
-      const y = 1400;
-      txt(ctx, 'PANTAI', x, y - 112, { size: 22, font: F.mono6, color: 'rgba(20,15,12,0.5)', track: 5 });
-      // ours: the full length of the ruler
-      ctx.fillStyle = G.ink;
-      ctx.fillRect(x, y - 72, 830 * E.out(at(t, 4.6, 1.4)), 34);
-      txt(ctx, 'INDONESIA 99.093 KM', x + 830 + 24, y - 46, { size: 25, font: F.mono6, color: 'rgba(20,15,12,0.82)', track: 2 });
-      // theirs: a quarter of it
-      ctx.fillStyle = hexA(G.rust, 0.92);
-      ctx.fillRect(x, y + 34, 830 * (25760 / 99093) * E.out(at(t, 5.0, 1.4)), 34);
-      txt(ctx, 'AUSTRALIA 25.760 KM', x + 830 * (25760 / 99093) + 26, y + 60, { size: 25, font: F.mono6, color: hexA(G.rust2, 0.95), track: 2 });
+      fillRR(ctx, 72, 1080, 860, 300, 6, 'rgba(14,18,14,0.86)');
+      ctx.fillStyle = hexA(P.gold, 0.95);
+      ctx.fillRect(104, 1116, 46, 4);
+      txt(ctx, 'SWASEMBADA', 104, 1250, { size: 76, font: F.num, color: P.bone, track: -2 });
+      txt(ctx, 'bukan angka satu tahun', 108, 1310, {
+        size: 34, font: F.body, color: 'rgba(251,246,234,0.72)',
+      });
       ctx.restore();
     }
 
-    grain(ctx, 0.03);
+    const eA = at(t, 6.4, 1.0);
+    if (eA > 0.01) chip(ctx, 'LAHAN · AIR · ORANG', 72, 1420, { a: eA, bg: 'rgba(14,18,14,0.84)', ink: P.bone, border: hexA(P.gold, 0.5) });
+
+    grain(ctx, 0.04);
   },
 };

@@ -1,134 +1,116 @@
-import { W, H, txt, hexA, fillRR, strokeRR, linGrad, radGrad } from '../engine/draw.mjs';
+import { W, H, txt, hexA, fillRR, linGrad, radGrad } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, TAU, rng } from '../engine/anim.mjs';
 import { K, E, at, layer, fillAll, sky, stars, water, reflection, grain, chip } from './_kota.mjs';
-import { G, ship, sack } from './_garam.mjs';
+import { P, riceSack } from './_padi.mjs';
+import { ship } from './_garam.mjs';
 import { person } from './_figure.mjs';
 
-// 06 — KAPAL. The whole argument in one frame: a ship that unloads faster than
-// a pond can dry, and a farmer whose price has to sit under a line he cannot
-// reach. No invented rupiah figures — the shape of the thing is the point.
+// 06 — KAPAL. A hull the length of the frame, sacks on the quay, three flags
+// that are not ours. The point is not that it is foreign; it is that it is
+// reliable, while a harvest is not.
 
-const SEA = 1108;
-const QUAY = 1252;
+const SEA = 1100;
+const QUAY = 1258;
+const FLAGS = [
+  { t: 'THAILAND', x: 300 },
+  { t: 'VIETNAM', x: 640 },
+  { t: 'PAKISTAN', x: 980 },
+];
 
 export default {
   draw(ctx, t, scene, o = {}) {
     const cam = o.cam;
-    sky(ctx, { top: '#0A0C10', mid: '#141A1E', low: '#3A3A34', horizon: SEA, sun: [700, SEA - 8, 320, '#F3A75F'], t });
-    stars(ctx, { n: 40, seed: 27, t, bottom: 620, a: 0.3 });
+    sky(ctx, { top: '#080A0C', mid: '#12181A', low: '#3A3A30', horizon: SEA, sun: [660, SEA - 10, 300, '#D9A93F'], t });
+    stars(ctx, { n: 38, seed: 33, t, bottom: 600, a: 0.26 });
 
     layer(ctx, cam, 0.3, () => {
-      water(ctx, SEA, { t, h: H - SEA, depth: 1, color: '#16323A', calm: 0.8 });
-      reflection(ctx, SEA, { t, h: 420, color: 'rgba(243,167,95,0.16)', alpha: 0.5, seed: 4 });
+      water(ctx, SEA, { t, h: H - SEA, depth: 1, color: '#15302C', calm: 0.85 });
+      reflection(ctx, SEA, { t, h: 420, color: 'rgba(217,169,63,0.16)', alpha: 0.5, seed: 6 });
     });
 
-    // the ship, arriving and staying
-    const shA = at(t, 0.4, 1.6);
+    // the hull
+    const shA = at(t, 0.3, 1.6);
     layer(ctx, cam, 0.45, () => {
-      const sx = lerp(W + 660, 806, E.out(at(t, 0.4, 3.2)));
-      ship(ctx, sx, SEA + 52, 1.18, { a: shA, t, tone: '#1B2A31' });
+      const sx = lerp(W + 700, 800, E.out(at(t, 0.3, 3.4)));
+      ship(ctx, sx, SEA + 52, 1.24, { a: shA, t, tone: '#1A2A2A' });
     });
 
-    // sacks on the quay: the unit of the trade, stacking up
-    const qA = at(t, 1.6, 0.8);
+    // quay, sacks, and the men who move them
+    const qA = at(t, 1.4, 0.8);
     if (qA > 0.01) {
       ctx.save();
       ctx.globalAlpha = qA;
-      // quay deck
       ctx.fillStyle = linGrad(ctx, 0, QUAY, 0, H, [[0, '#3B3025'], [1, '#171212']]);
-      ctx.fillRect(-160, QUAY, W + 320, H);
-      ctx.fillStyle = 'rgba(243,167,95,0.10)';
-      ctx.fillRect(-160, QUAY, W + 320, 4);
-      // a bollard for scale
+      ctx.fillRect(-180, QUAY, W + 360, H);
+      ctx.fillStyle = 'rgba(217,169,63,0.12)';
+      ctx.fillRect(-180, QUAY, W + 360, 4);
       ctx.fillStyle = '#3A3128';
-      ctx.fillRect(1268, QUAY - 74, 34, 74);
+      ctx.fillRect(1280, QUAY - 74, 34, 74);
       ctx.restore();
 
-      // two men working the pile
-      const wA = at(t, 2.0, 0.9);
-      if (wA > 0.01) {
-        person(ctx, 486, QUAY, 302, { pose: 'carry', facing: 1, sack: wA, alpha: wA, cloth: '#C9C2AE' });
-      }
-      const wB = at(t, 2.6, 0.9);
-      if (wB > 0.01) {
-        person(ctx, 656, QUAY, 288, { pose: 'walk', facing: -1, alpha: wB, cloth: '#BDB7A6' });
-      }
-
-      const rowsS = [[0, 3], [1, 2], [2, 1]];
+      // a stack of sacks, three on the ground and two on top of them
+      const rowsS = [[0, 3], [1, 2]];
       let n = 0;
       for (const [row, count] of rowsS) {
         for (let i = 0; i < count; i++) {
-          const a2 = at(t, 1.8 + n * 0.22, 0.7);
+          const a2 = at(t, 1.7 + n * 0.22, 0.7);
           if (a2 <= 0.01) { n++; continue; }
-          const x = 120 + i * 148 + row * 74;
-          const y = QUAY - 152 - row * 96;
-          sack(ctx, x, y + (1 - a2) * 70, 132, 152, { a: a2 * 0.98, tone: '#D8C9AE' });
+          const x = 92 + i * 142 + row * 74;
+          const y = QUAY - 168 - row * 150;
+          riceSack(ctx, x, y + (1 - a2) * 60, 118, 148, { a: a2 * 0.98, tone: '#CBB188' });
           n++;
         }
       }
+
+      // one man hauling a sack up the quay, one walking past him
+      const wA = at(t, 2.2, 0.9);
+      if (wA > 0.01) {
+        person(ctx, 560, QUAY + 6, 330, {
+          pose: 'carry', facing: 1, sack: wA, alpha: wA, cloth: '#C9C2AE', rim: 0.5,
+        });
+      }
+      const wB = at(t, 2.8, 0.9);
+      if (wB > 0.01) {
+        person(ctx, 860, QUAY + 26, 292, {
+          pose: 'walk', facing: -1, alpha: wB, cloth: '#B4AC96', rim: 0.4, hat: 0,
+        });
+      }
+      const wC = at(t, 3.3, 0.9);
+      if (wC > 0.01) {
+        person(ctx, 1080, QUAY + 44, 236, {
+          pose: 'stand', facing: -1, alpha: wC * 0.9, cloth: '#A9A28C', rim: 0.3, hat: 0,
+        });
+      }
     }
 
-    // ---- the price panel
-    const pA = at(t, 3.2, 1.0);
+    // flags on the hull: where the rice comes from
+    const fA = at(t, 3.6, 0.8);
+    if (fA > 0.01) {
+      FLAGS.forEach((f, i) => {
+        const a = fA * (1 - clamp((i * 0.3 - (t - 3.6)) * 0)) * 1;
+        chip(ctx, f.t, f.x, 300, {
+          a: clamp(a) * (0.7 + 0.3 * Math.sin(t * 0.6 + i)),
+          bg: 'rgba(12,14,12,0.86)', ink: P.bone, border: hexA(P.gold, 0.45),
+        });
+      });
+    }
+
+    // the reliability ledger
+    const pA = at(t, 6.4, 1.0);
     if (pA > 0.01) {
       ctx.save();
       ctx.globalAlpha = pA;
-      const px = 84;
-      const py = 268;
-      const pw = 780;
-      const ph = 480;
-      fillRR(ctx, px, py, pw, ph, 6, 'rgba(8,6,5,0.93)');
-      ctx.fillStyle = hexA(G.sun, 0.9);
-      ctx.fillRect(px + 34, py + 38, 44, 4);
-      txt(ctx, 'HARGA PER KILO', px + 92, py + 46, { size: 22, font: F.mono6, color: 'rgba(251,246,236,0.72)', track: 6 });
-
-      const x0 = px + 40;
-      const wMax = pw - 300;
-      // import bar
-      const b1 = at(t, 3.5, 1.0);
-      ctx.fillStyle = G.rust;
-      ctx.fillRect(x0, py + 96, wMax * 1.0 * b1, 62);
-      txt(ctx, 'IMPOR', x0 + wMax + 24, py + 138, { size: 26, font: F.mono6, color: '#EE9C7E', track: 4, alpha: b1 });
-      txt(ctx, 'kapal, seragam, murah', x0, py + 190, { size: 25, font: F.body, color: 'rgba(251,246,236,0.5)', alpha: b1 });
-
-      // cost line
-      const b2 = at(t, 4.4, 0.9);
-      const cy = py + 300;
-      ctx.strokeStyle = 'rgba(251,246,236,0.75)';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([10, 9]);
-      ctx.beginPath();
-      ctx.moveTo(x0, cy - 34);
-      ctx.lineTo(x0 + wMax * 0.86, cy - 34);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      txt(ctx, 'BIAYA PRODUKSI PETANI', x0, cy - 48, { size: 21, font: F.mono6, color: 'rgba(251,246,236,0.55)', track: 4, alpha: b2 });
-
-      // what the farmer actually gets: below the line
-      const b3 = at(t, 4.9, 1.1);
-      if (b3 > 0.01) {
-        ctx.fillStyle = '#8E8A7C';
-        ctx.fillRect(x0, cy, wMax * 0.58 * b3, 56);
-        txt(ctx, 'HARGA PETANI', x0 + wMax * 0.58 + 24, cy + 38, { size: 25, font: F.mono6, color: 'rgba(251,246,236,0.85)', track: 3, alpha: b3 });
-        // the shortfall, bracketed downwards
-        ctx.strokeStyle = hexA('#EE9C7E', 0.9);
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(x0 + wMax * 0.3, cy - 34);
-        ctx.lineTo(x0 + wMax * 0.3, cy + 4);
-        ctx.moveTo(x0 + wMax * 0.3 - 10, cy - 18);
-        ctx.lineTo(x0 + wMax * 0.3, cy - 4);
-        ctx.lineTo(x0 + wMax * 0.3 + 10, cy - 18);
-        ctx.stroke();
-        txt(ctx, 'DI BAWAH BIAYA', x0, py + ph - 44, { size: 30, font: F.num6, color: '#EE9C7E', alpha: b3 });
-      }
+      const px = 96;
+      const py = 1436;
+      fillRR(ctx, px, py, 700, 240, 6, 'rgba(10,8,6,0.9)');
+      ctx.fillStyle = hexA(P.gold, 0.9);
+      ctx.fillRect(px + 30, py + 34, 42, 4);
+      txt(ctx, 'YANG DIBELI BUKAN CUACA', px + 86, py + 42, { size: 21, font: F.mono6, color: 'rgba(251,246,234,0.7)', track: 4 });
+      txt(ctx, 'kepastian', px + 30, py + 130, { size: 54, font: F.num, color: P.bone });
+      txt(ctx, 'pasokan yang tidak bergantung musim', px + 32, py + 180, { size: 25, font: F.body, color: 'rgba(251,246,234,0.55)' });
       ctx.restore();
     }
-
-    // chips
-    const cA = at(t, 2.4, 0.8);
-    if (cA > 0.01) chip(ctx, 'BONGKAR MUATAN · TANPA MUSIM', 986, 220, { a: cA, bg: 'rgba(10,8,6,0.8)', ink: G.bone, border: hexA(G.sun, 0.45), align: 'center' });
 
     grain(ctx, 0.05);
   },

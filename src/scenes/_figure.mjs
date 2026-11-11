@@ -17,6 +17,14 @@ const CAP = (ctx, x1, y1, x2, y2, w, color) => {
   ctx.stroke();
 };
 
+const mixHex = (a, b, k) => {
+  const p = (s) => [1, 3, 5].map((i) => parseInt(s.substr(i, 2), 16));
+  const [r1, g1, b1] = p(a);
+  const [r2, g2, b2] = p(b);
+  const f = (x, y) => Math.round(x + (y - x) * k).toString(16).padStart(2, '0');
+  return `#${f(r1, r2)}${f(g1, g2)}${f(b1, b2)}`;
+};
+
 const PAL = {
   skin: '#7E5A3E',
   skinLit: '#A87A55',
@@ -47,11 +55,29 @@ const POSES = {
   },
   watch: {
     hip: [0, 0.48], chest: [0.005, 0.70], shoulder: [0.01, 0.815], head: [0.03, 0.905],
-    elbowA: [-0.07, 0.66], handA: [-0.02, 0.90],
-    elbowB: [0.10, 0.62], handB: [0.13, 0.46],
+    elbowA: [-0.17, 0.635], handA: [-0.05, 0.495],
+    elbowB: [0.16, 0.625], handB: [0.05, 0.505],
     kneeA: [-0.05, 0.25], footA: [-0.07, 0.01],
     kneeB: [0.07, 0.25], footB: [0.085, 0.01],
     lean: 0,
+  },
+  // bent double, one hand in the water, the other holding a bundle of seedlings
+  plant: {
+    hip: [-0.03, 0.40], chest: [0.09, 0.545], shoulder: [0.15, 0.62], head: [0.26, 0.695],
+    elbowA: [0.23, 0.455], handA: [0.30, 0.245],
+    elbowB: [0.04, 0.49], handB: [-0.04, 0.335],
+    kneeA: [-0.21, 0.20], footA: [-0.27, 0.01],
+    kneeB: [0.19, 0.20], footB: [0.25, 0.01],
+    lean: 0.24,
+  },
+  // walking away, sack on the shoulder
+  haul: {
+    hip: [0, 0.48], chest: [0.03, 0.70], shoulder: [0.05, 0.815], head: [0.09, 0.905],
+    elbowA: [-0.09, 0.645], handA: [-0.05, 0.79],
+    elbowB: [0.16, 0.60], handB: [0.21, 0.44],
+    kneeA: [-0.15, 0.26], footA: [-0.23, 0.03],
+    kneeB: [0.12, 0.25], footB: [0.18, 0.01],
+    lean: 0.05,
   },
   rake: {
     hip: [-0.02, 0.47], chest: [0.06, 0.66], shoulder: [0.09, 0.78], head: [0.15, 0.855],
@@ -105,7 +131,7 @@ const POSES = {
 export function person(ctx, x, y, h, o = {}) {
   const {
     pose = 'stand', facing = 1, alpha = 1, hat = 1, cloth = PAL.shirt,
-    rake = 0, sack = 0, tarp = 0, rim = 0.55, key = 1, skin = PAL.skin,
+    rake = 0, sack = 0, tarp = 0, seedlings = 0, rim = 0.55, key = 1, skin = PAL.skin,
   } = o;
   if (alpha <= 0.01 || h < 6) return;
   const P = POSES[pose] || POSES.stand;
@@ -126,7 +152,7 @@ export function person(ctx, x, y, h, o = {}) {
 
   const lwLeg = h * 0.085;
   const lwArm = h * 0.062;
-  const lwTorso = h * 0.145;
+  const lwTorso = h * 0.136;
 
   // pelvis: the mass that stops the legs reading as two sticks
   CAP(ctx, px([-0.05, P.hip[1]]), py(P.hip), px([0.05, P.hip[1]]), py(P.hip), lwLeg * 1.12, PAL.pants);
@@ -143,9 +169,18 @@ export function person(ctx, x, y, h, o = {}) {
   ctx.ellipse(px(P.footB), py(P.footB), h * 0.045, h * 0.022, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // back arm
-  CAP(ctx, px(P.shoulder), py(P.shoulder), px(P.elbowA), py(P.elbowA), lwArm, PAL.shirtDark);
-  CAP(ctx, px(P.elbowA), py(P.elbowA), px(P.handA), py(P.handA), lwArm * 0.9, PAL.shirtDark);
+  // arms: upper arm in the shirt, forearm bare, hand as a small mass
+  const arm = (a, b, c, sleeve, skinCol) => {
+    CAP(ctx, px(a), py(a), px(b), py(b), lwArm, sleeve);
+    CAP(ctx, px(b), py(b), px(c), py(c), lwArm * 0.78, skinCol);
+    ctx.fillStyle = skinCol;
+    ctx.beginPath();
+    ctx.ellipse(px(c), py(c), h * 0.03, h * 0.036, 0, 0, Math.PI * 2);
+    ctx.fill();
+  };
+
+  // back arm: sleeve a shade under the shirt so the upper arm separates
+  arm(P.shoulder, P.elbowA, P.handA, PAL.shirtDark, '#6B4B34');
 
   // torso: a slightly tapered body from hip to shoulder
   const hx = px(P.hip);
@@ -164,30 +199,21 @@ export function person(ctx, x, y, h, o = {}) {
   tg.addColorStop(1, PAL.shirtDark);
   ctx.fillStyle = tg;
   ctx.fill();
-  // shoulder caps and short sleeves, so the arms sit under the shirt
-  ctx.fillStyle = cloth;
-  for (const sgn of [-1, 1]) {
-    const ax0 = sx + sgn * lwTorso * 0.42;
-    ctx.beginPath();
-    ctx.ellipse(ax0, sy + h * 0.012, h * 0.036, h * 0.042, 0, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // cloth folds
-  ctx.strokeStyle = 'rgba(30,24,18,0.16)';
-  ctx.lineWidth = Math.max(1, h * 0.008);
+  // one soft fold, no hard crease
+  ctx.strokeStyle = 'rgba(30,24,18,0.10)';
+  ctx.lineWidth = Math.max(1, h * 0.007);
   ctx.beginPath();
-  ctx.moveTo((hx + sx) / 2 - lwTorso * 0.2, (hy + sy) / 2 - h * 0.06);
-  ctx.lineTo((hx + sx) / 2 + lwTorso * 0.12, (hy + sy) / 2 + h * 0.05);
+  ctx.moveTo((hx + sx) / 2 + lwTorso * 0.05, (hy + sy) / 2 - h * 0.05);
+  ctx.quadraticCurveTo((hx + sx) / 2 - lwTorso * 0.02, (hy + sy) / 2, (hx + sx) / 2 + lwTorso * 0.06, (hy + sy) / 2 + h * 0.05);
   ctx.stroke();
 
   if (sack > 0.01) {
     ctx.save();
     ctx.globalAlpha *= sack;
-    const bx = px(P.shoulder) + h * 0.13 * facing;
-    const by = py(P.shoulder) - h * 0.02;
-    const sw2 = h * 0.24;
-    const sh = h * 0.19;
+    const bx = px(P.shoulder) + h * 0.11 * facing;
+    const by = py(P.shoulder) + h * 0.055;
+    const sw2 = h * 0.22;
+    const sh = h * 0.17;
     const sg = ctx.createLinearGradient(bx - sw2 / 2, by - sh / 2, bx + sw2 / 2, by + sh);
     sg.addColorStop(0, '#EFE4CB');
     sg.addColorStop(0.6, PAL.sack);
@@ -208,7 +234,7 @@ export function person(ctx, x, y, h, o = {}) {
   const hcx = px(P.head);
   const hcy = py(P.head);
   const hr = h * 0.058;
-  CAP(ctx, (sx + hcx) / 2, sy, hcx, hcy + hr * 0.7, h * 0.035, PAL.skin);
+  CAP(ctx, (sx + hcx) / 2, sy + h * 0.006, hcx, hcy + hr * 0.75, h * 0.042, PAL.skin);
   ctx.beginPath();
   ctx.ellipse(hcx, hcy, hr * 0.92, hr, 0.06 * facing, 0, Math.PI * 2);
   const hg = ctx.createLinearGradient(hcx - hr, hcy - hr, hcx + hr, hcy + hr);
@@ -223,7 +249,7 @@ export function person(ctx, x, y, h, o = {}) {
     ctx.save();
     ctx.globalAlpha *= hat;
     ctx.beginPath();
-    ctx.ellipse(hcx, hcy - hr * 0.55, hr * 1.85, hr * 0.5, 0.04 * facing, 0, Math.PI * 2);
+    ctx.ellipse(hcx, hcy - hr * 0.5, hr * 2.05, hr * 0.52, 0.04 * facing, 0, Math.PI * 2);
     const hg2 = ctx.createLinearGradient(hcx - hr * 2, hcy - hr, hcx + hr * 2, hcy);
     hg2.addColorStop(0, PAL.hatLit);
     hg2.addColorStop(0.55, PAL.hat);
@@ -240,8 +266,8 @@ export function person(ctx, x, y, h, o = {}) {
   }
 
   // front arm
-  CAP(ctx, sx, sy, px(P.elbowB), py(P.elbowB), lwArm, cloth);
-  CAP(ctx, px(P.elbowB), py(P.elbowB), px(P.handB), py(P.handB), lwArm * 0.9, PAL.skinLit);
+  const sleeve = mixHex(cloth, '#7E7866', 0.26);
+  arm(P.shoulder, P.elbowB, P.handB, sleeve, PAL.skinLit);
 
   // props
   if (rake > 0.01) {
@@ -274,6 +300,34 @@ export function person(ctx, x, y, h, o = {}) {
       ctx.lineTo(bx + ux * h * 0.045, by + uy * h * 0.045);
       ctx.stroke();
     }
+    ctx.restore();
+  }
+
+  if (seedlings > 0.01) {
+    ctx.save();
+    ctx.globalAlpha *= seedlings;
+    const bx = px(P.handB);
+    const by = py(P.handB);
+    const rg = ctx.createLinearGradient(bx - h * 0.06, by, bx + h * 0.06, by - h * 0.18);
+    rg.addColorStop(0, '#5C7F3E');
+    rg.addColorStop(1, '#9DC46A');
+    ctx.strokeStyle = rg;
+    ctx.lineWidth = Math.max(2, h * 0.012);
+    ctx.lineCap = 'round';
+    for (let i = 0; i < 7; i++) {
+      const a = -0.9 + i * 0.30;
+      ctx.beginPath();
+      ctx.moveTo(bx, by);
+      ctx.quadraticCurveTo(
+        bx + Math.sin(a) * h * 0.05, by - h * 0.10,
+        bx + Math.sin(a) * h * 0.09 + h * 0.01, by - h * 0.17 - Math.cos(a) * h * 0.02,
+      );
+      ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(60,44,26,0.55)';
+    ctx.beginPath();
+    ctx.ellipse(bx, by + h * 0.005, h * 0.028, h * 0.016, 0, 0, Math.PI * 2);
+    ctx.fill();
     ctx.restore();
   }
 
