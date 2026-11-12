@@ -112,12 +112,15 @@ export function buildTimeline() {
         }));
         const last = ci === aligned.cards.length - 1;
         const speechEnd = voOffset + num(aligned.end);
+        // Cards must never overlap: each one closes just before the pause that
+        // the next one opens on. Two captions drawn on top of each other is the
+        // one thing that reads as "out of sync", whatever the timing says.
         captions.push({
           words: ws,
-          from: ci === 0 ? voOffset + Math.max(0, aligned.onset) - 0.12 : ws[0].start - 0.1,
+          from: ci === 0 ? voOffset + Math.max(0, aligned.onset) - 0.12 : ws[0].start,
           to: last
             ? Math.min(dur - 0.02, speechEnd + 0.55)
-            : ws[ws.length - 1].end + 0.28,
+            : ws[ws.length - 1].end - 0.02,
         });
       });
       scenes.push({

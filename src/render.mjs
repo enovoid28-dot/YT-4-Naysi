@@ -6,7 +6,7 @@ import { once } from 'node:events';
 import { ensureFonts, F } from './engine/fonts.mjs';
 import { W, H, FPS, C, M, txt, tracking, linGrad, hexA, fillRR } from './engine/draw.mjs';
 import {
-  initFilm, drawGrain, drawVignette, drawScrim, drawLeak, drawFlash, drawDust, drawFilm,
+  initFilm, drawGrain, drawVignette, drawScrim, drawFlash, drawFilm,
 } from './engine/film.mjs';
 import { buildCaption, drawCaption, drawCard } from './engine/caption.mjs';
 import { buildTimeline, sceneAt } from './timeline.mjs';
@@ -102,8 +102,6 @@ function drawChrome(ctx, scene, local, tGlobal, idxGlobal) {
     ? linGrad(ctx, 0, 0, W, 0, [[0, '#8E2216'], [1, '#E2452F']])
     : linGrad(ctx, 0, 0, W, 0, [[0, C.ember], [0.6, C.amber], [1, C.amberHi]]);
   ctx.fillStyle = g;
-  ctx.shadowColor = hexA(C.amber, 0.7);
-  ctx.shadowBlur = 18;
   ctx.fillRect(0, H - 8, W * prog, 8);
   ctx.restore();
 }
@@ -207,9 +205,6 @@ function drawFrame(ctx, frame) {
       ctx.restore();
     }
   }
-  drawLeak(ctx, t, index > 0 ? Math.max(0, 0.55 - local * 0.9) : 0, C.amber);
-
-  mark('dust', () => drawDust(ctx, t, clamp(local / 1.2) * 0.7));
   mark('film', () => drawFilm(ctx, frame));
 
   // global fades

@@ -17,7 +17,7 @@ export const SCENES = [
     index: '01',
     theme: 'dark',
     vo: 'Tujuh puluh satu persen permukaan Bumi tertutup air. Tapi baru sekitar seperempat dasar laut yang benar-benar kita petakan. Padahal peta Mars jauh lebih tajam daripada peta dasar laut kita sendiri.',
-    cap: 'Tujuh puluh satu persen Bumi tertutup air, tapi baru *seperempat dasar laut* yang kita petakan. Peta *Mars* justru lebih tajam.',
+    cap: '*71 persen* permukaan Bumi tertutup air. ' + 'Baru *seperempat* dasar laut yang kita petakan. ' + 'Peta *Mars* justru lebih tajam. ',
     pad: 4.5,
   },
   {
@@ -27,7 +27,7 @@ export const SCENES = [
     index: '02',
     theme: 'dark',
     vo: 'Cahaya matahari hanya sanggup menembus dua ratus meter pertama. Di bawah garis itu, fotosintesis berhenti. Semua makanan di kedalaman harus jatuh dari atas, turun pelan-pelan seperti salju.',
-    cap: 'Cahaya hanya menembus *200 meter* pertama. Di bawahnya fotosintesis berhenti, dan makanan jatuh dari atas seperti salju.',
+    cap: 'Cahaya hanya menembus *200 meter* pertama. ' + 'Di bawah garis itu, *fotosintesis berhenti*. ' + 'Makanan jatuh dari atas seperti *salju*. ',
     pad: 4.0,
   },
   {
@@ -37,7 +37,7 @@ export const SCENES = [
     index: '03',
     theme: 'dark',
     vo: 'Di seribu meter, matahari benar-benar hilang. Tapi justru di sini kehidupan membuat cahayanya sendiri. Tiga per empat makhluk di kedalaman mampu bercahaya, untuk berburu dan mengelabui.',
-    cap: 'Di *1.000 meter* matahari hilang total. Di sini kehidupan membuat cahayanya sendiri: *tiga per empat* makhluk bercahaya.',
+    cap: 'Di *1.000 meter*, matahari benar-benar hilang. ' + 'Di sini kehidupan membuat *cahayanya sendiri*. ' + '*Tiga per empat* makhluk bercahaya. ',
     pad: 3.8,
   },
   {
@@ -47,7 +47,7 @@ export const SCENES = [
     index: '04',
     theme: 'dark',
     vo: 'Bangkai Titanic berbaring di tiga ribu delapan ratus meter. Tekanannya tiga ratus delapan puluh kali tekanan di permukaan. Setiap sepuluh meter ke bawah, tekanan bertambah satu atmosfer.',
-    cap: 'Titanic berbaring di *3.800 meter*. Tekanannya *380 kali* tekanan permukaan, dan tiap 10 meter turun tambah satu atmosfer.',
+    cap: 'Titanic berbaring di *3.800 meter*. ' + 'Tekanannya *380 kali* tekanan permukaan. ' + 'Tiap *10 meter* turun, tambah satu atmosfer. ',
     pad: 4.2,
   },
   {
@@ -57,7 +57,7 @@ export const SCENES = [
     index: '05',
     theme: 'dark',
     vo: 'Di bawah enam ribu meter kita masuk zona hadal, parit yang menyayat kerak Bumi. Ikan masih ada, tapi tubuhnya mulai rusak: proteinnya terlipat oleh tekanan. Delapan ribu meter adalah batas terakhirnya.',
-    cap: 'Di bawah *6.000 meter* kita masuk zona hadal, parit yang menyayat kerak Bumi. Ikan masih ada, tapi proteinnya *terlipat* tekanan.',
+    cap: 'Di bawah *6.000 meter*: zona hadal. ' + 'Ikan masih ada, tapi proteinnya *terlipat* tekanan. ' + 'Di *8.000 meter*, batas terakhirnya. ',
     pad: 4.0,
   },
   {
@@ -67,7 +67,7 @@ export const SCENES = [
     index: '06',
     theme: 'dark',
     vo: 'Titik terdalam bernama Challenger Deep, sebelas kilometer di bawah permukaan. Tekanannya seribu delapan puluh enam bar. Setiap sentimeter persegi menanggung lebih dari satu ton. Dan tetap ada kehidupan.',
-    cap: 'Titik terdalam bernama *Challenger Deep*, 11 kilometer. Tekanan *1.086 bar*, lebih dari satu ton tiap sentimeter persegi.',
+    cap: 'Titik terdalam: *Challenger Deep*, 11 km. ' + 'Tekanannya *1.086 bar*. ' + 'Tiap sentimeter persegi menanggung *lebih dari satu ton*. ' + 'Dan tetap ada kehidupan. ',
     pad: 5.3,
   },
   {
@@ -77,7 +77,7 @@ export const SCENES = [
     index: '07',
     theme: 'dark',
     vo: 'Tekanan itu tidak meremukkan karena air bukan gas. Air hampir tidak bisa dimampatkan, jadi ia menekan dari segala arah dengan sama rata. Yang berbahaya justru rongga berisi udara.',
-    cap: 'Tekanan tidak meremukkan karena air *hampir tak termampatkan*. Ia menekan dari *segala arah* dengan sama rata.',
+    cap: 'Tekanan itu tidak meremukkan karena air bukan gas. ' + 'Air *hampir tak termampatkan*: menekan dari segala arah. ' + 'Yang berbahaya justru *rongga berisi udara*. ',
     pad: 3.4,
   },
   {
@@ -87,7 +87,7 @@ export const SCENES = [
     index: '08',
     theme: 'dark',
     vo: 'Hanya sekitar tiga puluh orang pernah sampai ke dasar itu. Dua belas manusia sudah berjalan di Bulan. Tahun sembilan belas enam puluh, Piccard dan Walsh turun dengan Trieste.',
-    cap: 'Hanya *±30 orang* pernah sampai ke dasar itu. Dua belas manusia sudah berjalan di *Bulan*.',
+    cap: 'Hanya *±30 orang* pernah sampai ke dasar itu. ' + 'Dua belas manusia sudah berjalan di *Bulan*. ' + '1960: Piccard dan Walsh turun dengan *Trieste*. ',
     pad: 4.0,
   },
   {
@@ -97,7 +97,7 @@ export const SCENES = [
     index: '09',
     theme: 'dark',
     vo: 'Sembilan puluh lima persen dasar laut masih berupa tebakan yang halus. Setiap ekspedisi ke bawah hampir selalu menemukan makhluk yang belum punya nama. Dan kita baru saja mulai.',
-    cap: '*95 persen* dasar laut masih tebakan yang halus. Tiap ekspedisi menemukan makhluk yang belum *punya nama*.',
+    cap: '*95 persen* dasar laut masih tebakan halus. ' + 'Tiap ekspedisi menemukan makhluk *tanpa nama*. ' + 'Dan kita baru saja mulai. ',
     pad: 4.2,
   },
 ];

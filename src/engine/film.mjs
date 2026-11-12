@@ -55,7 +55,7 @@ export function initFilm({ createCanvas }) {
   for (let i = 0; i < 2; i++) {
     const c = createCanvas(W, H);
     const fo = c.getContext('2d');
-    fo.globalAlpha = 0.055;
+    fo.globalAlpha = 0.075;
     fo.drawImage(makeNoise(W, H, createCanvas, 7 + i * 977), 0, 0);
     fo.globalAlpha = 1;
     fo.drawImage(vignetteCanvas, 0, 0);
