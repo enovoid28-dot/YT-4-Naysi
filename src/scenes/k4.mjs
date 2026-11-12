@@ -1,107 +1,164 @@
-import { W, H, txt, hexA, linGrad, radGrad, fillRR } from '../engine/draw.mjs';
+import { W, H, txt, hexA, linGrad, radGrad, fillRR, strokeRR, tracking } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { S, starfield, bhDisc, orbit, orbitPos } from './_space.mjs';
+import { clamp, lerp, TAU, rng } from '../engine/anim.mjs';
 import { at, layer, kicker, chip } from './_kota.mjs';
+import { O, EA, column, snow, drawRule, motes } from './_ocean.mjs';
 
-// 04 — TIGA KILOMETER. Same orbit, same year, a centre you cannot see. Then the
-// scale bar underneath: the whole object is one pixel next to the planet.
+// 04 — TITANIC. A wreck on the abyssal plain, lit by one lamp. The pressure is
+// the point: every ten metres of water is another atmosphere, all the way down.
 
-const CX = 720;
-const CY = 872;
-const RX = 528;
-const RY = 272;
-const ROT = -0.1;
+function seabed(ctx, y, t, { seed = 5 } = {}) {
+  const r = rng(seed);
+  const g = linGrad(ctx, 0, y - 40, 0, y + 260, [[0, '#0A1A1E'], [1, '#040C10']]);
+  ctx.fillStyle = g;
+  ctx.fillRect(-260, y, W + 520, H - y + 260);
+  // sediment ripples
+  ctx.save();
+  ctx.globalAlpha = 0.25;
+  for (let i = 0; i < 22; i++) {
+    const yy = y + 12 + i * 9 + r() * 6;
+    ctx.strokeStyle = hexA(O.dust, 0.10 + r() * 0.10);
+    ctx.lineWidth = 1 + r();
+    ctx.beginPath();
+    for (let x = -120; x <= W + 120; x += 26) {
+      const dy = Math.sin(x * 0.008 + i * 0.6 + t * 0.15) * (3 + i * 0.2);
+      if (x === -120) ctx.moveTo(x, yy + dy);
+      else ctx.lineTo(x, yy + dy);
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function wreck(ctx, x, y, s, t) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(s, s);
+  // hull, bow to the left, settling into the sediment
+  ctx.beginPath();
+  ctx.moveTo(-330, 0);
+  ctx.lineTo(-300, -96);
+  ctx.lineTo(250, -110);
+  ctx.lineTo(320, -30);
+  ctx.lineTo(300, 0);
+  ctx.closePath();
+  ctx.fillStyle = '#050D10';
+  ctx.fill();
+  ctx.strokeStyle = hexA(O.pale, 0.16);
+  ctx.lineWidth = 2.2;
+  ctx.stroke();
+  // superstructure + funnels
+  for (let i = 0; i < 3; i++) {
+    const fx = -150 + i * 118;
+    const broken = i === 2;
+    ctx.save();
+    ctx.translate(fx, -104);
+    ctx.shadowColor = hexA(O.pale, 0.18);
+    ctx.shadowBlur = 18;
+    ctx.fillStyle = '#071417';
+    ctx.fillRect(-26, broken ? -46 : -88, 52, broken ? 46 : 88);
+    if (!broken) { ctx.beginPath(); ctx.ellipse(0, -88, 26, 9, 0, 0, Math.PI * 2); ctx.fillStyle = '#0A1A1E'; ctx.fill(); }
+    ctx.strokeStyle = hexA(O.dust, 0.12);
+    ctx.strokeRect(-26, broken ? -46 : -88, 52, broken ? 46 : 88);
+    ctx.restore();
+  }
+  // bridge block
+  ctx.fillStyle = '#071317';
+  ctx.fillRect(-210, -150, 74, 56);
+  ctx.strokeStyle = hexA(O.dust, 0.14);
+  ctx.strokeRect(-210, -150, 74, 56);
+  // debris field
+  ctx.fillStyle = 'rgba(4,12,14,0.9)';
+  for (let i = 0; i < 14; i++) {
+    const dx = -380 + i * 56 + Math.sin(i * 2.1) * 14;
+    ctx.fillRect(dx, -6 + Math.sin(i) * 4, 22 + (i % 4) * 8, 5);
+  }
+  ctx.restore();
+}
 
 export default {
   draw(ctx, t, scene, o = {}) {
     const cam = o.cam;
+    column(ctx, 0.92, { t, glowTop: 0.06 });
 
-    const g = linGrad(ctx, 0, -200, 0, H, [[0, '#050810'], [0.5, '#080D18'], [1, '#03050B']]);
-    ctx.fillStyle = g;
-    ctx.fillRect(-240, -240, W + 480, H + 480);
-    starfield(ctx, { n: 170, seed: 63, t, a: 0.6, bottom: 1600 });
-
-    layer(ctx, cam, 0.3, () => {
-      orbit(ctx, CX, CY, RX, RY, { rot: ROT, prog: at(t, 0.2, 1.4), color: 'rgba(150,190,240,0.42)', lw: 2.2 });
-      orbit(ctx, CX, CY, RX, RY, { rot: ROT, color: 'rgba(150,190,240,0.16)', lw: 10 });
-
-      ctx.save();
-      ctx.globalAlpha = 0.5 * at(t, 0.6, 1);
-      ctx.strokeStyle = 'rgba(150,190,240,0.5)';
-      ctx.lineWidth = 1.4;
-      for (let i = 0; i < 12; i++) {
-        const ang = (i / 12) * TAU;
-        const p0 = orbitPos(CX, CY, RX, RY, ang, ROT);
-        const p1 = orbitPos(CX, CY, RX * 1.045, RY * 1.09, ang, ROT);
-        ctx.beginPath();
-        ctx.moveTo(p0.x, p0.y);
-        ctx.lineTo(p1.x, p1.y);
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      bhDisc(ctx, CX, CY, 13, { t, glow: 0.9, ring: 1 });
-
-      const ang = -0.4 + t * 0.52;
-      const p = orbitPos(CX, CY, RX, RY, ang, ROT);
-      ctx.save();
-      const gl = radGrad(ctx, p.x, p.y, 2, 46, [[0, 'rgba(140,200,255,0.55)'], [1, 'rgba(90,150,230,0)']]);
-      ctx.fillStyle = gl;
-      ctx.fillRect(p.x - 46, p.y - 46, 92, 92);
-      ctx.fillStyle = '#8FC4F0';
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 9, 0, TAU);
-      ctx.fill();
-      ctx.fillStyle = '#EAF4FF';
-      ctx.beginPath();
-      ctx.arc(p.x - 2.4, p.y - 2.4, 4, 0, TAU);
-      ctx.fill();
-      ctx.restore();
-
-      const q = orbitPos(CX, CY, RX * 0.56, RY * 0.56, ang + Math.PI, ROT);
-      ctx.save();
-      ctx.globalAlpha = 0.5 * at(t, 1.0, 0.9);
-      ctx.strokeStyle = 'rgba(240,228,200,0.55)';
-      ctx.lineWidth = 1.4;
-      ctx.setLineDash([6, 9]);
-      ctx.beginPath();
-      ctx.moveTo(CX, CY);
-      ctx.lineTo(q.x, q.y);
-      ctx.stroke();
-      ctx.restore();
-      txt(ctx, '150 JUTA KM', (CX + q.x) / 2 - 26, (CY + q.y) / 2 - 22, {
-        size: 24, font: F.mono6, color: hexA(S.bone, 0.62), track: 3, alpha: at(t, 1.2, 0.8),
-      });
+    const bedY = 1218;
+    layer(ctx, cam, 0.1, () => {
+      // a soft haze along the bottom separates the hull from open water
+      const hz = linGrad(ctx, 0, bedY - 420, 0, bedY + 40, [[0, 'rgba(10,34,36,0)'], [1, 'rgba(14,44,46,0.55)']]);
+      ctx.fillStyle = hz;
+      ctx.fillRect(-260, bedY - 420, W + 520, 470);
+      seabed(ctx, bedY, t);
     });
+    layer(ctx, cam, 0.22, () => wreck(ctx, W * 0.52, bedY + 26, 1.55, t));
 
-    kicker(ctx, 'SATU PUTARAN, TANPA PERUBAHAN', { x: 104, y: 250, color: '#8FB4E8', ink: hexA(S.bone, 0.86) });
-    chip(ctx, '1 TAHUN = 365 HARI', 806, 250, {
-      a: at(t, 0.8, 0.7), bg: 'rgba(6,9,16,0.7)', ink: hexA(S.bone, 0.9),
-      border: 'rgba(160,190,240,0.3)', size: 22, track: 3,
-    });
+    snow(ctx, t, { n: 150, seed: 44, a: 0.34, speed: 12, scale: 1.05 });
 
-    const sa = at(t, 1.2, 0.9);
+    // the lamp of an ROV: soft, additive, sweeping the bow
+    const sweep = Math.sin(t * 0.55) * 0.10;
     ctx.save();
-    ctx.globalAlpha = sa;
-    txt(ctx, 'BUMI', 104, 1318, { size: 24, font: F.mono6, color: hexA(S.bone, 0.62), track: 5 });
-    ctx.fillStyle = 'rgba(143,196,240,0.85)';
-    ctx.fillRect(300, 1296, 820, 22);
-    ctx.fillStyle = 'rgba(234,244,255,0.9)';
-    ctx.fillRect(300, 1296, 820, 8);
-    txt(ctx, '12.742 KM', 1120, 1272, { size: 24, font: F.mono6, color: hexA(S.bone, 0.8), track: 3 });
-
-    txt(ctx, 'LUBANG HITAM', 104, 1418, { size: 24, font: F.mono6, color: hexA(S.bone, 0.62), track: 5 });
-    ctx.fillStyle = '#FFB03A';
-    ctx.shadowColor = 'rgba(255,176,58,0.9)';
-    ctx.shadowBlur = 18;
-    ctx.fillRect(332, 1406, 7, 7);
-    ctx.shadowBlur = 0;
-    txt(ctx, '6 KM', 356, 1418, { size: 24, font: F.mono6, color: '#FFB03A', track: 3 });
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.translate(-40, 1480);
+    ctx.rotate(-0.62 + sweep);
+    for (let i = 0; i < 5; i++) {
+      const w0 = 12 + i * 8;
+      const len = 1500;
+      const g = ctx.createLinearGradient(0, 0, 0, len);
+      g.addColorStop(0, hexA(O.pale, 0.055));
+      g.addColorStop(0.4, hexA(O.pale, 0.022));
+      g.addColorStop(1, hexA(O.pale, 0));
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.moveTo(-w0, 0);
+      ctx.lineTo(w0, 0);
+      ctx.lineTo(220 + i * 70, len);
+      ctx.lineTo(-220 - i * 70, len);
+      ctx.closePath();
+      ctx.fill();
+    }
     ctx.restore();
+    motes(ctx, 260, 1180, 420, { t, a: 0.28, n: 30, seed: 8 });
 
-    txt(ctx, '0,05% lebar Bumi — satu titik di tengah orbit', 300, 1476, {
-      size: 22, font: F.body, color: hexA(S.bone, 0.5), alpha: at(t, 2.0, 0.7),
+    /* ------------------------------ pressure ---------------------------- */
+    const px = 888;
+    const py = 470;
+    const p = at(t, 2.4, 0.7);
+    if (p > 0.01) {
+      const filled = Math.round(EASE_out(clamp((t - 2.6) / 2.6)) * 38);
+      ctx.save();
+      ctx.globalAlpha = p;
+      tracking(ctx, 'TEKANAN', px, py - 36, { size: 20, font: F.mono6, track: 5, color: hexA(O.pale, 0.5) });
+      // 38 columns, one per 100 m
+      for (let i = 0; i < 38; i++) {
+        const x = px + i * 10.5;
+        const on = i < filled;
+        ctx.fillStyle = on ? hexA(O.amber, 0.85) : hexA(O.bone, 0.10);
+        fillRR(ctx, x, py - (on ? 56 : 8), 6, on ? 56 : 8, 2, ctx.fillStyle);
+      }
+      txt(ctx, `${Math.round(filled * 10)}`, px, py + 66, { size: 54, font: F.num, color: O.amber, track: -2 });
+      tracking(ctx, '× TEKANAN PERMUKAAN', px + 96, py + 62, {
+        size: 18, font: F.mono6, track: 4, color: hexA(O.pale, 0.5),
+      });
+      ctx.restore();
+    }
+
+    // depth + name
+    const q = at(t, 1.2, 0.8);
+    ctx.save();
+    ctx.globalAlpha = q;
+    txt(ctx, '3.800', 132, 700, { size: 132, font: F.num, color: O.bone, track: -4 });
+    tracking(ctx, 'METER', 138, 748, { size: 22, font: F.mono6, track: 8, color: hexA(O.pale, 0.55) });
+    ctx.restore();
+    drawRule(ctx, 132, 132 + 300 * q, 660, 1, { color: O.aqua, a: 0.4 });
+
+    chip(ctx, 'BANGKAI TITANIC · DITEMUKAN 1985', 132, 830, {
+      a: at(t, 2.0, 0.7) * 0.92, bg: 'rgba(4,12,14,0.72)', ink: hexA(O.bone, 0.85),
+      border: hexA(O.aqua, 0.22), size: 20, track: 3,
     });
+
+    kicker(ctx, 'SAMUDRA · TITANIC', { x: 104, y: 250, color: O.aqua, ink: hexA(O.bone, 0.9), a: at(t, 0.3, 0.6) });
   },
 };
+
+function EASE_out(x) {
+  return 1 - Math.pow(1 - x, 3);
+}

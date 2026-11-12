@@ -1,77 +1,141 @@
-import { W, H, txt, hexA, linGrad, radGrad } from '../engine/draw.mjs';
+import { W, H, txt, hexA, linGrad, radGrad, fillRR, tracking } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { S, starfield } from './_space.mjs';
-import { globe } from './_earth.mjs';
-import { at, layer, kicker } from './_kota.mjs';
+import { clamp, lerp, TAU, rng } from '../engine/anim.mjs';
+import { at, layer, kicker, chip } from './_kota.mjs';
+import { O, EA, column, snow, bathyscaphe, snailfish, ruler, motes, drawRule } from './_ocean.mjs';
 
-// 05 — DINGIN. No chart: the planet itself does the talking. The camera hangs a
-// little above the equator while the ice line walks down from the poles, the
-// clouds thin out, and the last daylight leaves the rim.
+// 05 — ZONA HADAL. A trench is a crack in the planet. One small machine is
+// falling down it, and the last fish in the world lives at the bottom.
 
-const CX = 720;
-const CY = 1210;
-const R0 = 372;
-const R1 = 486;
+function wall(ctx, side, t) {
+  const x0 = side < 0 ? -60 : W + 60;
+  const pts = [
+    [x0, -80],
+    [x0 - side * (side < 0 ? 300 : 250), -80],
+    [x0 - side * (side < 0 ? 210 : 250), 620],
+    [x0 - side * (side < 0 ? 150 : 300), 1180],
+    [x0 - side * (side < 0 ? 240 : 200), 1760],
+    [x0 - side * (side < 0 ? 120 : 260), 2600],
+    [x0, 2600],
+  ];
+  // jitter the inner edge so it reads as rock, not a rectangle
+  const r = rng(side < 0 ? 3 : 8);
+  const edge = [];
+  for (let i = 1; i <= 26; i++) {
+    const u = i / 27;
+    const y = -80 + u * 2680;
+    const base = side < 0
+      ? 300 - u * 120 + Math.sin(u * 5.5) * 60 + Math.sin(u * 13) * 22
+      : 250 + u * 30 + Math.sin(u * 6) * 55 + Math.sin(u * 12) * 20;
+    edge.push([x0 - side * (base + (r() - 0.5) * 26), y]);
+  }
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(x0, -80);
+  for (const [px, py] of edge) ctx.lineTo(px, py);
+  ctx.lineTo(x0, 2600);
+  ctx.closePath();
+  const g = linGrad(ctx, side < 0 ? 0 : W, 0, side < 0 ? 520 : W - 520, 0, [
+    [0, '#0C2429'],
+    [0.55, '#081920'],
+    [1, '#040F14'],
+  ]);
+  ctx.fillStyle = g;
+  ctx.fill();
+  // the inner edge catches a rim of light
+  ctx.strokeStyle = hexA(O.pale, 0.16);
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  edge.forEach(([px, py], i) => (i ? ctx.lineTo(px, py) : ctx.moveTo(px, py)));
+  ctx.stroke();
+  // a few strata lines following the wall
+  ctx.globalAlpha = 0.5;
+  for (let i = 0; i < 9; i++) {
+    const u = (i + 1) / 10;
+    ctx.beginPath();
+    for (let k = 0; k <= 10; k++) {
+      const v = k / 10;
+      const px = x0 - side * (40 + v * (side < 0 ? 250 : 230));
+      const py = -80 + (u + v * 0.04) * 2680;
+      if (k === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.strokeStyle = hexA(O.aqua, 0.10);
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function walls(ctx, t) {
+  wall(ctx, -1, t);
+  wall(ctx, 1, t);
+}
 
 export default {
   draw(ctx, t, scene, o = {}) {
     const cam = o.cam;
+    column(ctx, 0.98, { t, glowTop: 0.02 });
+    layer(ctx, cam, 0.12, () => walls(ctx, t));
+    snow(ctx, t, { n: 140, seed: 61, a: 0.28, speed: 9, scale: 1.1 });
 
-    const g = linGrad(ctx, 0, -200, 0, H, [[0, '#03050C'], [0.45, '#05080F'], [1, '#02040A']]);
-    ctx.fillStyle = g;
-    ctx.fillRect(-240, -240, W + 480, H + 480);
-    starfield(ctx, { n: 210, seed: 307, t, a: 0.7, bottom: 1500 });
+    // the descent: 6 km down to 8,6 km across the scene
+    const drop = EA.inOut(clamp((t - 0.6) / Math.max(4, scene.dur - 2.2)));
+    const depthM = lerp(6000, 8600, drop);
+    const subY = lerp(330, 1180, drop);
+    const subX = W * 0.5 + Math.sin(t * 0.4) * 26;
 
-    const k = EASE.inOutQuad(clamp(t / Math.max(1, scene.dur)));
-    const r = lerp(R0, R1, k);
-    const ice = EASE.outQuad(clamp((t - 1.2) / 7.5));
-    const night = lerp(0.18, 0.94, EASE.inOutQuad(clamp(t / (scene.dur * 0.85))));
-    const sunAng = lerp(-2.2, -2.72, k);
-
-    layer(ctx, cam, 0.35, () => {
-      globe(ctx, CX, CY - k * 130, r, {
-        t,
-        rot: 0.62 + t * 0.012,
-        cloudRot: 0.66 + t * 0.016,
-        sun: { x: Math.cos(sunAng), y: Math.sin(sunAng) },
-        clouds: 0.62 - ice * 0.28,
-        lights: 0.25 + night * 0.75,
-        ice: ice * 0.85,
-        night,
-        atmos: 1,
-      });
-    });
-
-    // the cold that arrives before the ice does
+    // trail of disturbed water above the machine
     ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-    const cold = radGrad(ctx, CX, CY - 120, R0 * 0.9, R0 * 1.9, [
-      [0, `rgba(88,130,190,${0.05 + night * 0.05})`],
-      [1, 'rgba(60,100,160,0)'],
-    ]);
-    ctx.fillStyle = cold;
-    ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < 16; i++) {
+      const u = i / 15;
+      const yy = subY - 60 - u * 320;
+      ctx.globalAlpha = (1 - u) * 0.18;
+      ctx.fillStyle = hexA(O.glow, 0.5);
+      ctx.beginPath();
+      ctx.arc(subX + Math.sin(t * 0.9 + i) * (6 + u * 22), yy, 2 + u * 5, 0, TAU);
+      ctx.fill();
+    }
     ctx.restore();
 
-    kicker(ctx, 'TANPA CAHAYA, TIDAK ADA YANG HANGAT', { x: 104, y: 250, color: '#8FB4E8', ink: hexA(S.bone, 0.86) });
+    layer(ctx, cam, 0.4, () => {
+      bathyscaphe(ctx, subX, subY, 0.8, { t, a: 1, lamp: 1, window: 1 });
+    });
+    motes(ctx, subX, subY + 80, 260, { t, a: 0.30, n: 24, seed: 14 });
 
-    // one number, stamped where the ice has got to
-    const fa = at(t, 5.2, 0.8);
-    if (fa > 0.01) {
+    // the last fish, waiting near the bottom
+    const fishA = at(t, 3.6, 1.6);
+    if (fishA > 0.01) {
+      const fy = 1230 + Math.sin(t * 0.7) * 10;
+      snailfish(ctx, 900 + Math.sin(t * 0.33) * 60, fy, 1.0, {
+        t, a: fishA * 0.8, flip: Math.sin(t * 0.33) > 0 ? 1 : 0,
+      });
       ctx.save();
-      ctx.globalAlpha = fa;
-      txt(ctx, '0 °C', 104, 1490, { size: 92, font: F.num, color: S.bone, track: -2 });
-      txt(ctx, 'AIR MEMBEKU · MINGGU PERTAMA', 110, 1546, { size: 24, font: F.mono6, color: hexA(S.bone, 0.62), track: 5 });
+      ctx.globalAlpha = fishA * 0.7;
+      drawRule(ctx, 620, 620 + 220 * fishA, fy - 90, 1, { color: O.glow, a: 0.5 });
+      tracking(ctx, 'IKAN TERDALAM · 8.300 M', 620, fy - 108, {
+        size: 18, font: F.mono6, track: 4, color: hexA(O.glow, 0.75),
+      });
       ctx.restore();
     }
-    const fb = at(t, 7.6, 0.9);
-    if (fb > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = fb;
-      txt(ctx, '−20 °C', 104, 1660, { size: 92, font: F.num, color: '#9EC4E8', track: -2 });
-      txt(ctx, 'SETAHUN KEMUDIAN', 110, 1716, { size: 24, font: F.mono6, color: hexA(S.bone, 0.55), track: 5 });
-      ctx.restore();
-    }
+
+    ruler(ctx, W - 250, {
+      y0: 330, y1: 1420, max: 11000, cur: depthM, a: at(t, 0.4, 0.8), ticks: 11, label: '',
+    });
+
+    const q = at(t, 1.0, 0.8);
+    ctx.save();
+    ctx.globalAlpha = q;
+    txt(ctx, '6.000', 132, 470, { size: 118, font: F.num, color: O.bone, track: -4 });
+    tracking(ctx, 'METER · ZONA HADAL', 138, 514, { size: 20, font: F.mono6, track: 5, color: hexA(O.pale, 0.5) });
+    ctx.restore();
+
+    chip(ctx, 'TEKANAN 600 BAR', 132, 620, {
+      a: at(t, 2.2, 0.7) * 0.9, bg: 'rgba(3,12,16,0.7)', ink: hexA(O.bone, 0.85),
+      border: hexA(O.aqua, 0.22), size: 20, track: 3,
+    });
+
+    kicker(ctx, 'SAMUDRA · ZONA HADAL', { x: 104, y: 250, color: O.aqua, ink: hexA(O.bone, 0.9), a: at(t, 0.3, 0.6) });
   },
 };

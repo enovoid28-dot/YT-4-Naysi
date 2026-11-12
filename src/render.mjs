@@ -140,8 +140,19 @@ function drawFrame(ctx, frame) {
   ctx.translate(W / 2 + camDx, H / 2 + camDy);
   ctx.scale(1 + zoom, 1 + zoom);
   ctx.translate(-W / 2, -H / 2);
-  if (mod) mark('scene', () => mod.draw(ctx, local, scene, { t, frame, index, cam }));
-  else {
+  if (mod) {
+    try {
+      mark('scene', () => mod.draw(ctx, local, scene, { t, frame, index, cam }));
+    } catch (err) {
+      // one bad frame must never cost a 15 000-frame render
+      if (!globalThis.__sceneErr) globalThis.__sceneErr = new Set();
+      const key = `${scene.key}:${err.message}`;
+      if (!globalThis.__sceneErr.has(key)) {
+        globalThis.__sceneErr.add(key);
+        console.error(`scene ${scene.key} failed at frame ${frame}: ${err.message}`);
+      }
+    }
+  } else {
     ctx.fillStyle = C.ink1;
     ctx.fillRect(0, 0, W, H);
     txt(ctx, scene.key.toUpperCase(), W / 2, 800, { size: 90, font: F.head, color: C.bone, align: 'center' });

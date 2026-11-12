@@ -1,70 +1,91 @@
-import { W, H, txt, hexA, linGrad, radGrad } from '../engine/draw.mjs';
+import { W, H, txt, hexA, linGrad, radGrad, fillRR, tracking } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE, TAU } from '../engine/anim.mjs';
-import { S, photosphere, bhDisc, starfield } from './_space.mjs';
-import { at, layer, kicker } from './_kota.mjs';
+import { clamp, lerp, TAU } from '../engine/anim.mjs';
+import { at, layer, kicker, chip } from './_kota.mjs';
+import { O, EA, column, snow, anglerfish, jelly, motes, ruler } from './_ocean.mjs';
 
-// 03 — MASSA YANG SAMA. The same mass, two sizes. No side-by-side figure: the
-// camera looks at the photosphere, and a three-kilometre hole crosses in front
-// of it. The lensing does the explaining — that is all the difference there is.
-
-const SUNX = 720;
-const SUNY = 1620;
-const SUNR = 1260;
+// 03 — GELAP TOTAL. At a kilometre the sun is gone, so the animals make their
+// own. One lamp in the dark, then the count: three in four of them glow.
 
 export default {
   draw(ctx, t, scene, o = {}) {
     const cam = o.cam;
+    column(ctx, 0.72, { t, glowTop: 0.15 });
 
-    ctx.fillStyle = '#04060C';
-    ctx.fillRect(-240, -240, W + 480, H + 480);
-    starfield(ctx, { n: 90, seed: 23, t, a: 0.35, bottom: 900 });
-
-    const k = EASE.inOutQuad(clamp(t / Math.max(1, scene.dur)));
-    const r = lerp(SUNR, SUNR * 1.09, k);
-    const cy = SUNY + r - SUNR;
-
-    layer(ctx, cam, 0.18, () => {
-      photosphere(ctx, SUNX, cy, r, { t, tone: 1 });
+    layer(ctx, cam, 0.15, () => {
+      snow(ctx, t, { n: 150, seed: 31, a: 0.35, speed: 16, scale: 0.9 });
     });
 
-    // the hole, crossing the disc: same mass, six kilometres wide
-    const bx = lerp(1120, 452, EASE.inOutQuad(clamp((t - 1.0) / (scene.dur - 2.6))));
-    const by = lerp(452, 604, k) + Math.sin(t * 0.4) * 6;
-    const br = 11;
+    // the lure is the only light source in frame, and it hangs off the fish
+    const fx = 900 + Math.sin(t * 0.5) * 18;
+    const fy = 980 + Math.cos(t * 0.42) * 14;
+    let esca = { lx: fx + 58, ly: fy - 198 };
 
-    layer(ctx, cam, 0.34, () => {
-      // the sky behind it is dragged into a ring
+    layer(ctx, cam, 0.3, () => {
+      jelly(ctx, 288, 1080 + Math.sin(t * 0.6) * 14, 1.05, { t, a: at(t, 1.1, 1.0) * 0.5 });
+      esca = anglerfish(ctx, fx, fy, 1.35, { t, a: at(t, 0.4, 1.2), lure: 1 });
+    });
+
+    if (esca) motes(ctx, esca.lx, esca.ly, 330, { t, a: 0.45 * at(t, 0.4, 1.2), n: 34, seed: 12 });
+
+    // the swatch of animals that make light
+    const p = at(t, 1.8, 0.9);
+    if (p > 0.01) {
+      const x0 = 132;
+      const y0 = 420;
       ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      for (let i = 0; i < 14; i++) {
-        const q = i / 14;
-        const rr = br * (1.28 + q * 0.55);
-        ctx.globalAlpha = 0.13 * (1 - q * 0.8) * (0.55 + 0.45 * Math.sin(t * 1.3 + i * 1.7));
-        ctx.strokeStyle = i < 3 ? '#FFF3DC' : '#FFD3A4';
-        ctx.lineWidth = br * (0.22 - q * 0.13);
+      ctx.globalAlpha = p;
+      tracking(ctx, 'MAKHLUK YANG BERCAHAYA', x0, y0 - 26, {
+        size: 20, font: F.mono6, track: 5, color: hexA(O.pale, 0.5),
+      });
+      for (let i = 0; i < 12; i++) {
+        const cx = x0 + (i % 4) * 66;
+        const cy = y0 + Math.floor(i / 4) * 66;
+        const lit = i < 9;
+        const on = at(t, 2.1 + i * 0.075, 0.5);
+        if (lit) {
+          ctx.save();
+          ctx.globalCompositeOperation = 'lighter';
+          const g = radGrad(ctx, cx, cy, 0, 30, [[0, hexA(O.glow, 0.55 * on)], [1, hexA(O.glow, 0)]]);
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(cx, cy, 30, 0, TAU);
+          ctx.fill();
+          ctx.restore();
+        }
         ctx.beginPath();
-        ctx.arc(bx, by, rr, 0, TAU);
+        ctx.arc(cx, cy, 14, 0, TAU);
+        ctx.fillStyle = lit ? hexA(O.glow, 0.25 + 0.7 * on) : 'rgba(120,160,160,0.12)';
+        ctx.fill();
+        ctx.strokeStyle = lit ? hexA(O.glow, 0.55) : 'rgba(140,180,180,0.18)';
+        ctx.lineWidth = 1.5;
         ctx.stroke();
       }
       ctx.restore();
-      bhDisc(ctx, bx, by, br, { t, glow: 1, ring: 1, hot: 0 });
+    }
+
+    const num = at(t, 2.9, 1.1, EA.quart);
+    if (num > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = num;
+      ctx.translate(0, (1 - num) * 26);
+      txt(ctx, '3/4', 132, 780, { size: 190, font: F.num, color: O.bone, track: -6 });
+      tracking(ctx, 'DARI SEMUA MAKHLUK DI SINI', 138, 836, {
+        size: 19, font: F.mono6, track: 4, color: hexA(O.pale, 0.5),
+      });
+      ctx.restore();
+    }
+
+    ruler(ctx, W - 250, {
+      y0: 420, y1: 1420, max: 4000, cur: lerp(760, 1000, EA.inOut(clamp(t / Math.max(3, scene.dur)))),
+      a: at(t, 0.5, 0.8), ticks: 8, label: '',
     });
 
-    // the frame falls off toward the bottom, the way a long lens would
-    ctx.save();
-    const vg = linGrad(ctx, 0, 1120, 0, 1980, [
-      [0, 'rgba(3,4,8,0)'],
-      [0.55, 'rgba(3,4,8,0.62)'],
-      [1, 'rgba(3,4,8,0.94)'],
-    ]);
-    ctx.fillStyle = vg;
-    ctx.fillRect(-200, 1120, W + 400, H - 1000);
-    ctx.restore();
+    chip(ctx, 'MATAHARI TIDAK SAMPAI KE SINI', 132, 1400, {
+      a: at(t, 3.4, 0.7) * 0.9, bg: 'rgba(3,14,18,0.7)', ink: hexA(O.pale, 0.85),
+      border: hexA(O.aqua, 0.25), size: 21, track: 3,
+    });
 
-    // the scale, spoken by the camera rather than a caption: the disc's own
-    // granulation is a kilometre across, and the hole is the size of a town
-    kicker(ctx, 'MASSA SAMA, UKURANNYA TIDAK', { x: 104, y: 250, color: '#FFB86B', ink: hexA(S.bone, 0.9) });
-
+    kicker(ctx, 'SAMUDRA · GELAP TOTAL', { x: 104, y: 250, color: O.aqua, ink: hexA(O.bone, 0.9), a: at(t, 0.3, 0.6) });
   },
 };
