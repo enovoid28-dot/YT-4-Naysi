@@ -17,13 +17,13 @@ export default {
     snow(ctx, t, { n: 90, seed: 91, a: 0.16, speed: 8 });
 
     const cx = W * 0.5;
-    const cy = 860;
+    const cy = 900;
 
     /* ------------------------- the hull sphere ------------------------- */
     layer(ctx, cam, 0.2, () => {
-      const R = 250;
-      const gg = radGrad(ctx, cx - 70, cy - 90, 20, R * 1.5, [
-        [0, 'rgba(40,96,100,0.55)'], [0.55, 'rgba(12,40,46,0.9)'], [1, 'rgba(4,16,20,0.98)'],
+      const R = 318;
+      const gg = radGrad(ctx, cx - 90, cy - 110, 20, R * 1.5, [
+        [0, 'rgba(56,132,138,0.62)'], [0.55, 'rgba(14,48,54,0.94)'], [1, 'rgba(4,16,20,0.99)'],
       ]);
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, TAU);
@@ -34,11 +34,11 @@ export default {
       ctx.stroke();
 
       // water pressure: arrows converging from every direction
-      const push = clamp((t - 0.6) / 2.2);
+      const push = clamp((t - 0.2) / 1.6);
       const n = 18;
       for (let i = 0; i < n; i++) {
         const ang = (i / n) * TAU;
-        const r0 = R + 190 + Math.sin(i * 2.3) * 40;
+        const r0 = R + 150 + Math.sin(i * 2.3) * 34;
         const r1 = R + 22 - push * 0;
         const x0 = cx + Math.cos(ang) * r0;
         const y0 = cy + Math.sin(ang) * r0;
@@ -63,10 +63,10 @@ export default {
       }
 
       // inside: an air pocket that cannot survive, and water that can
-      const squeeze = EA.inOut(clamp((t - 2.6) / 3.2));
-      const ax = cx - 96;
-      const ay = cy + 6;
-      const ar = lerp(58, 12, squeeze);
+      const squeeze = EA.inOut(clamp((t - 2.0) / 3.0));
+      const ax = cx - 112;
+      const ay = cy + 8;
+      const ar = lerp(72, 16, squeeze);
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
       const ag = radGrad(ctx, ax, ay, 0, ar * 2.2, [[0, hexA(O.amber, 0.5)], [1, hexA(O.amber, 0)]]);
@@ -82,25 +82,25 @@ export default {
       ctx.strokeStyle = hexA(O.amberHi, 0.85);
       ctx.lineWidth = 2;
       ctx.stroke();
-      tracking(ctx, 'UDARA', ax, ay + 108, {
+      tracking(ctx, 'UDARA', ax, ay + 130, {
         size: 19, font: F.mono6, track: 4, align: 'center', color: hexA(O.amber, 0.85),
       });
 
       // water-filled side: same volume, unmoved
-      const bx = cx + 104;
+      const bx = cx + 118;
       ctx.beginPath();
-      ctx.arc(bx, ay, 58, 0, TAU);
+      ctx.arc(bx, ay, 72, 0, TAU);
       ctx.fillStyle = hexA(O.aqua, 0.16);
       ctx.fill();
       ctx.strokeStyle = hexA(O.aqua, 0.8);
       ctx.stroke();
-      tracking(ctx, 'AIR', bx, ay + 108, {
+      tracking(ctx, 'AIR', bx, ay + 130, {
         size: 19, font: F.mono6, track: 4, align: 'center', color: hexA(O.aqua, 0.85),
       });
     });
 
     /* --------------------------- the labels ---------------------------- */
-    const p = at(t, 1.2, 0.8);
+    const p = at(t, 0.45, 0.8);
     ctx.save();
     ctx.globalAlpha = p;
     txt(ctx, '1.086', 132, 470, { size: 118, font: F.num, color: O.bone, track: -3 });
@@ -110,7 +110,7 @@ export default {
     drawRule(ctx, 132, 132 + 300 * p, 430, 1, { color: O.aqua, a: 0.4 });
     ctx.restore();
 
-    const q = at(t, 3.4, 0.9);
+    const q = at(t, 2.4, 0.9);
     if (q > 0.01) {
       ctx.save();
       ctx.globalAlpha = q;

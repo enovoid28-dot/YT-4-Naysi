@@ -36,6 +36,30 @@ export default {
     });
     motes(ctx, W * 0.5, subY + 40, 200, { t, a: 0.24, n: 20, seed: 5 });
 
+    // a measuring line from the surface to the floor of the world
+    const ml = at(t, 1.4, 2.2);
+    if (ml > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = ml * 0.5;
+      ctx.strokeStyle = hexA(O.aqua, 0.55);
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 14]);
+      ctx.beginPath();
+      ctx.moveTo(W * 0.5 + 300, 240);
+      ctx.lineTo(W * 0.5 + 300, lerp(240, subY - 120, ml));
+      ctx.stroke();
+      ctx.setLineDash([]);
+      for (let i = 1; i <= 10; i++) {
+        const y = 240 + ((subY - 360) * i) / 11;
+        ctx.globalAlpha = ml * 0.35;
+        ctx.beginPath();
+        ctx.moveTo(W * 0.5 + 292, y);
+        ctx.lineTo(W * 0.5 + 308, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
     // the number
     const p = at(t, 1.2, 1.6, EA.quart);
     const val = Math.round(lerp(8000, 10935, p));

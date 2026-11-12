@@ -89,32 +89,16 @@ export default {
       ctx.fillRect(-260, bedY - 420, W + 520, 470);
       seabed(ctx, bedY, t);
     });
-    layer(ctx, cam, 0.22, () => wreck(ctx, W * 0.52, bedY + 26, 1.55, t));
+    layer(ctx, cam, 0.22, () => wreck(ctx, W * 0.5, bedY + 34, 1.85, t));
 
     snow(ctx, t, { n: 150, seed: 44, a: 0.34, speed: 12, scale: 1.05 });
 
-    // the lamp of an ROV: soft, additive, sweeping the bow
-    const sweep = Math.sin(t * 0.55) * 0.10;
+    // one soft pool of work light, no hard cone
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
-    ctx.translate(-40, 1480);
-    ctx.rotate(-0.62 + sweep);
-    for (let i = 0; i < 5; i++) {
-      const w0 = 12 + i * 8;
-      const len = 1500;
-      const g = ctx.createLinearGradient(0, 0, 0, len);
-      g.addColorStop(0, hexA(O.pale, 0.055));
-      g.addColorStop(0.4, hexA(O.pale, 0.022));
-      g.addColorStop(1, hexA(O.pale, 0));
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.moveTo(-w0, 0);
-      ctx.lineTo(w0, 0);
-      ctx.lineTo(220 + i * 70, len);
-      ctx.lineTo(-220 - i * 70, len);
-      ctx.closePath();
-      ctx.fill();
-    }
+    const pool = radGrad(ctx, W * 0.34, bedY - 60, 0, 620, [[0, hexA(O.pale, 0.14)], [1, hexA(O.pale, 0)]]);
+    ctx.fillStyle = pool;
+    ctx.fillRect(-200, bedY - 700, W + 400, 780);
     ctx.restore();
     motes(ctx, 260, 1180, 420, { t, a: 0.28, n: 30, seed: 8 });
 
