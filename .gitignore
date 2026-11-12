@@ -4,3 +4,6 @@ out/
 google_drive/
 *.log
 .DS_Store
+
+# final masters (delivered via Drive/Release, not committed)
+/*.mp4

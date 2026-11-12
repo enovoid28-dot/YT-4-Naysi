@@ -9,6 +9,9 @@ const still = args.includes('--still');
 const frameArg = args.indexOf('--frame');
 const frame = frameArg >= 0 ? Number(args[frameArg + 1]) : 360;
 const outArg = args.indexOf('--out');
+const fromArg = args.indexOf('--from');
+const toArg = args.indexOf('--to');
+const frameRange = fromArg >= 0 && toArg >= 0 ? [Number(args[fromArg + 1]), Number(args[toArg + 1])] : null;
 const browser = path.join(root, '.cache/browser/chromium');
 if (!fs.existsSync(browser)) throw new Error('Run npm run prepare:browser first');
 process.env.LD_LIBRARY_PATH = [path.join(root, '.cache/browser/lib/lib'), process.env.LD_LIBRARY_PATH].filter(Boolean).join(':');
@@ -36,7 +39,8 @@ if (still) {
     codec: 'h264', crf: 18, pixelFormat: 'yuv420p', colorSpace: 'bt709',
     imageFormat: 'jpeg', jpegQuality: 92, concurrency: 2,
     audioCodec: 'aac', audioBitrate: '192k',
-    output: out,
+    outputLocation: out,
+    ...(frameRange ? {frameRange} : {}),
     onProgress: ({progress, renderedFrames, encodedFrames}) => {
       if (renderedFrames % 180 === 0 || progress === 1) {
         const elapsed = (Date.now() - started) / 1000;
@@ -45,4 +49,5 @@ if (still) {
     },
   });
   console.log(`DONE ${out} (${((Date.now() - started) / 1000).toFixed(0)}s)`);
+  console.log(`SIZE ${fs.statSync(out).size} bytes`);
 }
