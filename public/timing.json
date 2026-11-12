@@ -1,0 +1,1448 @@
+{
+  "fps": 90,
+  "width": 1440,
+  "height": 2560,
+  "totalFrames": 6197,
+  "duration": 68.85555555555555,
+  "title": "Paylater: Cicilan Kecil, Tagihan Besar",
+  "scenes": [
+    {
+      "id": "01",
+      "startFrame": 0,
+      "durationFrames": 640,
+      "audioStartFrame": 27,
+      "audioDuration": 6.456,
+      "start": 0,
+      "duration": 7.111111111111111,
+      "audioStart": 0.3,
+      "active": [
+        [
+          0,
+          1.31608
+        ],
+        [
+          1.7791,
+          2.22965
+        ],
+        [
+          2.33515,
+          2.96073
+        ],
+        [
+          3.29369,
+          4.67119
+        ],
+        [
+          4.99815,
+          5.25687
+        ],
+        [
+          5.42883,
+          6.456
+        ]
+      ],
+      "captions": [
+        {
+          "from": 0.3,
+          "to": 1.4982,
+          "words": [
+            {
+              "text": "Seratus",
+              "start": 0.3,
+              "end": 0.7264,
+              "accent": true
+            },
+            {
+              "text": "ribu",
+              "start": 0.7264,
+              "end": 0.97,
+              "accent": false
+            },
+            {
+              "text": "per",
+              "start": 0.97,
+              "end": 1.1528,
+              "accent": false
+            },
+            {
+              "text": "bulan.",
+              "start": 1.1528,
+              "end": 1.4982,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 1.5182,
+          "to": 3.8006,
+          "words": [
+            {
+              "text": "Kedengarannya",
+              "start": 1.5182,
+              "end": 2.8786,
+              "accent": false
+            },
+            {
+              "text": "kecil,",
+              "start": 2.8786,
+              "end": 3.244,
+              "accent": true
+            },
+            {
+              "text": "kan?",
+              "start": 3.244,
+              "end": 3.8006,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 3.8206,
+          "to": 5.7614,
+          "words": [
+            {
+              "text": "Tapi",
+              "start": 3.8206,
+              "end": 4.0643,
+              "accent": false
+            },
+            {
+              "text": "coba",
+              "start": 4.0643,
+              "end": 4.3079,
+              "accent": false
+            },
+            {
+              "text": "kalikan",
+              "start": 4.3079,
+              "end": 4.7343,
+              "accent": false
+            },
+            {
+              "text": "dua",
+              "start": 4.7343,
+              "end": 4.917,
+              "accent": true
+            },
+            {
+              "text": "belas.",
+              "start": 4.917,
+              "end": 5.7614,
+              "accent": true
+            }
+          ]
+        },
+        {
+          "from": 5.7814,
+          "to": 6.736,
+          "words": [
+            {
+              "text": "Satu",
+              "start": 5.7814,
+              "end": 6.0251,
+              "accent": false
+            },
+            {
+              "text": "koma",
+              "start": 6.0251,
+              "end": 6.2687,
+              "accent": false
+            },
+            {
+              "text": "dua",
+              "start": 6.2687,
+              "end": 6.4514,
+              "accent": true
+            },
+            {
+              "text": "juta.",
+              "start": 6.4514,
+              "end": 6.736,
+              "accent": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "startFrame": 640,
+      "durationFrames": 695,
+      "audioStartFrame": 665,
+      "audioDuration": 7.104,
+      "start": 7.111111111111111,
+      "duration": 7.722222222222222,
+      "audioStart": 7.388888888888889,
+      "active": [
+        [
+          0,
+          1.34827
+        ],
+        [
+          1.57488,
+          1.72871
+        ],
+        [
+          1.83354,
+          2.59819
+        ],
+        [
+          3.17008,
+          4.37796
+        ],
+        [
+          4.66935,
+          7.104
+        ]
+      ],
+      "captions": [
+        {
+          "from": 7.3889,
+          "to": 8.5264,
+          "words": [
+            {
+              "text": "Mata",
+              "start": 7.3889,
+              "end": 7.6326,
+              "accent": false
+            },
+            {
+              "text": "melihat",
+              "start": 7.6326,
+              "end": 8.059,
+              "accent": false
+            },
+            {
+              "text": "cicilan.",
+              "start": 8.059,
+              "end": 8.5264,
+              "accent": true
+            }
+          ]
+        },
+        {
+          "from": 8.5464,
+          "to": 9.8325,
+          "words": [
+            {
+              "text": "Bukan",
+              "start": 8.5464,
+              "end": 9.0776,
+              "accent": false
+            },
+            {
+              "text": "harga",
+              "start": 9.0776,
+              "end": 9.487,
+              "accent": false
+            },
+            {
+              "text": "penuh.",
+              "start": 9.487,
+              "end": 9.8325,
+              "accent": true
+            }
+          ]
+        },
+        {
+          "from": 9.8525,
+          "to": 12.097,
+          "words": [
+            {
+              "text": "Barangnya",
+              "start": 9.8525,
+              "end": 10.9727,
+              "accent": false
+            },
+            {
+              "text": "datang",
+              "start": 10.9727,
+              "end": 11.3382,
+              "accent": false
+            },
+            {
+              "text": "hari",
+              "start": 11.3382,
+              "end": 11.5819,
+              "accent": true
+            },
+            {
+              "text": "ini,",
+              "start": 11.5819,
+              "end": 12.097,
+              "accent": true
+            }
+          ]
+        },
+        {
+          "from": 12.117,
+          "to": 13.4372,
+          "words": [
+            {
+              "text": "tetapi",
+              "start": 12.117,
+              "end": 12.4825,
+              "accent": false
+            },
+            {
+              "text": "bayarnya",
+              "start": 12.4825,
+              "end": 12.9699,
+              "accent": false
+            },
+            {
+              "text": "menempel",
+              "start": 12.9699,
+              "end": 13.4372,
+              "accent": true
+            }
+          ]
+        },
+        {
+          "from": 13.4572,
+          "to": 14.4729,
+          "words": [
+            {
+              "text": "sampai",
+              "start": 13.4572,
+              "end": 13.8228,
+              "accent": false
+            },
+            {
+              "text": "bulan",
+              "start": 13.8228,
+              "end": 14.1274,
+              "accent": true
+            },
+            {
+              "text": "depan.",
+              "start": 14.1274,
+              "end": 14.4729,
+              "accent": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "startFrame": 1335,
+      "durationFrames": 736,
+      "audioStartFrame": 1360,
+      "audioDuration": 7.56,
+      "start": 14.833333333333334,
+      "duration": 8.177777777777777,
+      "audioStart": 15.11111111111111,
+      "active": [
+        [
+          0,
+          1.56942
+        ],
+        [
+          1.95188,
+          3.19767
+        ],
+        [
+          3.70933,
+          4.79896
+        ],
+        [
+          5.23565,
+          7.56
+        ]
+      ],
+      "captions": [
+        {
+          "from": 15.1111,
+          "to": 16.4957,
+          "words": [
+            {
+              "text": "Sekarang",
+              "start": 15.1111,
+              "end": 15.5997,
+              "accent": false
+            },
+            {
+              "text": "ada",
+              "start": 15.5997,
+              "end": 15.7829,
+              "accent": false
+            },
+            {
+              "text": "tiga",
+              "start": 15.7829,
+              "end": 16.0272,
+              "accent": true
+            },
+            {
+              "text": "cicilan.",
+              "start": 16.0272,
+              "end": 16.4957,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 16.5157,
+          "to": 18.9166,
+          "words": [
+            {
+              "text": "Masing-masing",
+              "start": 16.5157,
+              "end": 17.6921,
+              "accent": false
+            },
+            {
+              "text": "seratus",
+              "start": 17.6921,
+              "end": 18.1196,
+              "accent": true
+            },
+            {
+              "text": "ribu.",
+              "start": 18.1196,
+              "end": 18.9166,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 18.9366,
+          "to": 20.3915,
+          "words": [
+            {
+              "text": "Kecil",
+              "start": 18.9366,
+              "end": 19.242,
+              "accent": false
+            },
+            {
+              "text": "saat",
+              "start": 19.242,
+              "end": 19.4862,
+              "accent": false
+            },
+            {
+              "text": "sendiri,",
+              "start": 19.4862,
+              "end": 20.3915,
+              "accent": true
+            }
+          ]
+        },
+        {
+          "from": 20.4115,
+          "to": 21.1854,
+          "words": [
+            {
+              "text": "tiga",
+              "start": 20.4115,
+              "end": 20.6558,
+              "accent": true
+            },
+            {
+              "text": "ratus",
+              "start": 20.6558,
+              "end": 20.9611,
+              "accent": true
+            },
+            {
+              "text": "ribu",
+              "start": 20.9611,
+              "end": 21.1854,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 21.2054,
+          "to": 22.6511,
+          "words": [
+            {
+              "text": "saat",
+              "start": 21.2054,
+              "end": 21.4497,
+              "accent": false
+            },
+            {
+              "text": "jatuh",
+              "start": 21.4497,
+              "end": 21.7551,
+              "accent": false
+            },
+            {
+              "text": "tempo",
+              "start": 21.7551,
+              "end": 22.0604,
+              "accent": false
+            },
+            {
+              "text": "bersamaan.",
+              "start": 22.0604,
+              "end": 22.6511,
+              "accent": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "startFrame": 2071,
+      "durationFrames": 671,
+      "audioStartFrame": 2096,
+      "audioDuration": 6.84,
+      "start": 23.011111111111113,
+      "duration": 7.455555555555556,
+      "audioStart": 23.288888888888888,
+      "active": [
+        [
+          0,
+          1.69425
+        ],
+        [
+          1.8901,
+          2.4119
+        ],
+        [
+          2.55975,
+          4.29173
+        ],
+        [
+          4.59848,
+          5.11621
+        ],
+        [
+          5.32231,
+          6.84
+        ]
+      ],
+      "captions": [
+        {
+          "from": 23.2889,
+          "to": 24.8727,
+          "words": [
+            {
+              "text": "Nol",
+              "start": 23.2889,
+              "end": 23.4739,
+              "accent": true
+            },
+            {
+              "text": "persen",
+              "start": 23.4739,
+              "end": 23.8441,
+              "accent": false
+            },
+            {
+              "text": "belum",
+              "start": 23.8441,
+              "end": 24.1525,
+              "accent": false
+            },
+            {
+              "text": "tentu",
+              "start": 24.1525,
+              "end": 24.4609,
+              "accent": false
+            },
+            {
+              "text": "gratis.",
+              "start": 24.4609,
+              "end": 24.8727,
+              "accent": true
+            }
+          ]
+        },
+        {
+          "from": 24.8927,
+          "to": 26.265,
+          "words": [
+            {
+              "text": "Contoh:",
+              "start": 24.8927,
+              "end": 25.5203,
+              "accent": false
+            },
+            {
+              "text": "biaya",
+              "start": 25.5203,
+              "end": 25.9766,
+              "accent": false
+            },
+            {
+              "text": "admin",
+              "start": 25.9766,
+              "end": 26.265,
+              "accent": true
+            }
+          ]
+        },
+        {
+          "from": 26.285,
+          "to": 27.4987,
+          "words": [
+            {
+              "text": "sepuluh",
+              "start": 26.285,
+              "end": 26.7168,
+              "accent": true
+            },
+            {
+              "text": "ribu",
+              "start": 26.7168,
+              "end": 26.9636,
+              "accent": false
+            },
+            {
+              "text": "per",
+              "start": 26.9636,
+              "end": 27.1486,
+              "accent": false
+            },
+            {
+              "text": "bulan.",
+              "start": 27.1486,
+              "end": 27.4987,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 27.5187,
+          "to": 28.8752,
+          "words": [
+            {
+              "text": "Setahun,",
+              "start": 27.5187,
+              "end": 28.319,
+              "accent": false
+            },
+            {
+              "text": "tambah",
+              "start": 28.319,
+              "end": 28.8752,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 28.8952,
+          "to": 30.1089,
+          "words": [
+            {
+              "text": "seratus",
+              "start": 28.8952,
+              "end": 29.327,
+              "accent": true
+            },
+            {
+              "text": "dua",
+              "start": 29.327,
+              "end": 29.512,
+              "accent": true
+            },
+            {
+              "text": "puluh",
+              "start": 29.512,
+              "end": 29.8205,
+              "accent": true
+            },
+            {
+              "text": "ribu.",
+              "start": 29.8205,
+              "end": 30.1089,
+              "accent": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "startFrame": 2742,
+      "durationFrames": 790,
+      "audioStartFrame": 2767,
+      "audioDuration": 8.16,
+      "start": 30.466666666666665,
+      "duration": 8.777777777777779,
+      "audioStart": 30.744444444444444,
+      "active": [
+        [
+          0,
+          2.28656
+        ],
+        [
+          2.69525,
+          3.08862
+        ],
+        [
+          3.19769,
+          3.65837
+        ],
+        [
+          3.83929,
+          4.31604
+        ],
+        [
+          4.49196,
+          5.03458
+        ],
+        [
+          5.51708,
+          5.96983
+        ],
+        [
+          6.07867,
+          8.16
+        ]
+      ],
+      "captions": [
+        {
+          "from": 30.7444,
+          "to": 31.8401,
+          "words": [
+            {
+              "text": "Gaji",
+              "start": 30.7444,
+              "end": 31.007,
+              "accent": true
+            },
+            {
+              "text": "tidak",
+              "start": 31.007,
+              "end": 31.3351,
+              "accent": false
+            },
+            {
+              "text": "membayar",
+              "start": 31.3351,
+              "end": 31.8401,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 31.8601,
+          "to": 32.8245,
+          "words": [
+            {
+              "text": "satu",
+              "start": 31.8601,
+              "end": 32.1226,
+              "accent": true
+            },
+            {
+              "text": "tombol",
+              "start": 32.1226,
+              "end": 32.5164,
+              "accent": false
+            },
+            {
+              "text": "saja.",
+              "start": 32.5164,
+              "end": 32.8245,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 32.8445,
+          "to": 34.9014,
+          "words": [
+            {
+              "text": "Ada",
+              "start": 32.8445,
+              "end": 33.4501,
+              "accent": false
+            },
+            {
+              "text": "makan,",
+              "start": 33.4501,
+              "end": 33.953,
+              "accent": true
+            },
+            {
+              "text": "kos,",
+              "start": 33.953,
+              "end": 34.2155,
+              "accent": false
+            },
+            {
+              "text": "listrik.",
+              "start": 34.2155,
+              "end": 34.9014,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 34.9214,
+          "to": 37.5063,
+          "words": [
+            {
+              "text": "Cicilan",
+              "start": 34.9214,
+              "end": 35.5567,
+              "accent": false
+            },
+            {
+              "text": "kecil",
+              "start": 35.5567,
+              "end": 36.3674,
+              "accent": false
+            },
+            {
+              "text": "bisa",
+              "start": 36.3674,
+              "end": 36.6299,
+              "accent": false
+            },
+            {
+              "text": "berebut",
+              "start": 36.6299,
+              "end": 37.1981,
+              "accent": true
+            },
+            {
+              "text": "ruang",
+              "start": 37.1981,
+              "end": 37.5063,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 37.5263,
+          "to": 38.8844,
+          "words": [
+            {
+              "text": "dengan",
+              "start": 37.5263,
+              "end": 37.92,
+              "accent": false
+            },
+            {
+              "text": "kebutuhan",
+              "start": 37.92,
+              "end": 38.5107,
+              "accent": false
+            },
+            {
+              "text": "wajib.",
+              "start": 38.5107,
+              "end": 38.8844,
+              "accent": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "06",
+      "startFrame": 3532,
+      "durationFrames": 1068,
+      "audioStartFrame": 3557,
+      "audioDuration": 11.184,
+      "start": 39.24444444444445,
+      "duration": 11.866666666666667,
+      "audioStart": 39.522222222222226,
+      "active": [
+        [
+          0,
+          1.2236
+        ],
+        [
+          1.84308,
+          2.64156
+        ],
+        [
+          3.1026,
+          4.22256
+        ],
+        [
+          4.45517,
+          6.65219
+        ],
+        [
+          6.88517,
+          8.30808
+        ],
+        [
+          8.8246,
+          11.184
+        ]
+      ],
+      "captions": [
+        {
+          "from": 39.5222,
+          "to": 40.4144,
+          "words": [
+            {
+              "text": "Skalanya",
+              "start": 39.5222,
+              "end": 40.0434,
+              "accent": false
+            },
+            {
+              "text": "besar.",
+              "start": 40.0434,
+              "end": 40.4144,
+              "accent": true
+            }
+          ]
+        },
+        {
+          "from": 40.4344,
+          "to": 43.1237,
+          "words": [
+            {
+              "text": "Data",
+              "start": 40.4344,
+              "end": 40.695,
+              "accent": false
+            },
+            {
+              "text": "OJK:",
+              "start": 40.695,
+              "end": 41.5751,
+              "accent": true
+            },
+            {
+              "text": "paylater",
+              "start": 41.5751,
+              "end": 42.0963,
+              "accent": false
+            },
+            {
+              "text": "perbankan",
+              "start": 42.0963,
+              "end": 43.1237,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 43.1437,
+          "to": 44.7245,
+          "words": [
+            {
+              "text": "tiga",
+              "start": 43.1437,
+              "end": 43.4043,
+              "accent": true
+            },
+            {
+              "text": "puluh",
+              "start": 43.4043,
+              "end": 43.7301,
+              "accent": true
+            },
+            {
+              "text": "satu",
+              "start": 43.7301,
+              "end": 44.2233,
+              "accent": false
+            },
+            {
+              "text": "koma",
+              "start": 44.2233,
+              "end": 44.4839,
+              "accent": false
+            },
+            {
+              "text": "lima",
+              "start": 44.4839,
+              "end": 44.7245,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 44.7445,
+          "to": 45.6366,
+          "words": [
+            {
+              "text": "triliun",
+              "start": 44.7445,
+              "end": 45.2006,
+              "accent": true
+            },
+            {
+              "text": "rupiah,",
+              "start": 45.2006,
+              "end": 45.6366,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 45.6566,
+          "to": 47.7591,
+          "words": [
+            {
+              "text": "September",
+              "start": 45.6566,
+              "end": 46.476,
+              "accent": true
+            },
+            {
+              "text": "dua",
+              "start": 46.476,
+              "end": 46.6715,
+              "accent": true
+            },
+            {
+              "text": "ribu",
+              "start": 46.6715,
+              "end": 46.9321,
+              "accent": false
+            },
+            {
+              "text": "dua",
+              "start": 46.9321,
+              "end": 47.1275,
+              "accent": true
+            },
+            {
+              "text": "puluh",
+              "start": 47.1275,
+              "end": 47.4533,
+              "accent": true
+            },
+            {
+              "text": "enam.",
+              "start": 47.4533,
+              "end": 47.7591,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 47.7791,
+          "to": 49.7741,
+          "words": [
+            {
+              "text": "Naik",
+              "start": 47.7791,
+              "end": 48.5562,
+              "accent": false
+            },
+            {
+              "text": "hampir",
+              "start": 48.5562,
+              "end": 48.9471,
+              "accent": false
+            },
+            {
+              "text": "dua",
+              "start": 48.9471,
+              "end": 49.1426,
+              "accent": true
+            },
+            {
+              "text": "puluh",
+              "start": 49.1426,
+              "end": 49.4683,
+              "accent": true
+            },
+            {
+              "text": "tujuh",
+              "start": 49.4683,
+              "end": 49.7741,
+              "accent": true
+            }
+          ]
+        },
+        {
+          "from": 49.7941,
+          "to": 50.6862,
+          "words": [
+            {
+              "text": "persen",
+              "start": 49.7941,
+              "end": 50.185,
+              "accent": false
+            },
+            {
+              "text": "setahun.",
+              "start": 50.185,
+              "end": 50.6862,
+              "accent": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "07",
+      "startFrame": 4600,
+      "durationFrames": 771,
+      "audioStartFrame": 4625,
+      "audioDuration": 7.944,
+      "start": 51.111111111111114,
+      "duration": 8.566666666666666,
+      "audioStart": 51.388888888888886,
+      "active": [
+        [
+          0,
+          0.816771
+        ],
+        [
+          0.979604,
+          0.979667
+        ],
+        [
+          1.17052,
+          1.28648
+        ],
+        [
+          1.39965,
+          2.11762
+        ],
+        [
+          2.57719,
+          4.08188
+        ],
+        [
+          4.75367,
+          5.48756
+        ],
+        [
+          5.60798,
+          7.03933
+        ],
+        [
+          7.33394,
+          7.944
+        ]
+      ],
+      "captions": [
+        {
+          "from": 51.3889,
+          "to": 53.3625,
+          "words": [
+            {
+              "text": "Sebelum",
+              "start": 51.3889,
+              "end": 51.7999,
+              "accent": false
+            },
+            {
+              "text": "klik,",
+              "start": 51.7999,
+              "end": 52.0935,
+              "accent": false
+            },
+            {
+              "text": "cek",
+              "start": 52.0935,
+              "end": 52.6234,
+              "accent": false
+            },
+            {
+              "text": "total",
+              "start": 52.6234,
+              "end": 53.0302,
+              "accent": true
+            },
+            {
+              "text": "biaya.",
+              "start": 53.0302,
+              "end": 53.3625,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 53.3825,
+          "to": 55.4075,
+          "words": [
+            {
+              "text": "Jumlahkan",
+              "start": 53.3825,
+              "end": 54.3705,
+              "accent": true
+            },
+            {
+              "text": "cicilan",
+              "start": 54.3705,
+              "end": 54.7816,
+              "accent": false
+            },
+            {
+              "text": "bulan",
+              "start": 54.7816,
+              "end": 55.0752,
+              "accent": false
+            },
+            {
+              "text": "depan.",
+              "start": 55.0752,
+              "end": 55.4075,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 55.4275,
+          "to": 57.0805,
+          "words": [
+            {
+              "text": "Kalau",
+              "start": 55.4275,
+              "end": 56.3929,
+              "accent": false
+            },
+            {
+              "text": "bayar",
+              "start": 56.3929,
+              "end": 56.6865,
+              "accent": false
+            },
+            {
+              "text": "utang",
+              "start": 56.6865,
+              "end": 57.0805,
+              "accent": true
+            }
+          ]
+        },
+        {
+          "from": 57.1005,
+          "to": 58.2549,
+          "words": [
+            {
+              "text": "harus",
+              "start": 57.1005,
+              "end": 57.3941,
+              "accent": false
+            },
+            {
+              "text": "pakai",
+              "start": 57.3941,
+              "end": 57.6877,
+              "accent": false
+            },
+            {
+              "text": "utang",
+              "start": 57.6877,
+              "end": 57.9813,
+              "accent": true
+            },
+            {
+              "text": "baru,",
+              "start": 57.9813,
+              "end": 58.2549,
+              "accent": true
+            }
+          ]
+        },
+        {
+          "from": 58.2749,
+          "to": 59.3129,
+          "words": [
+            {
+              "text": "berhenti",
+              "start": 58.2749,
+              "end": 59.0393,
+              "accent": true
+            },
+            {
+              "text": "dulu.",
+              "start": 59.0393,
+              "end": 59.3129,
+              "accent": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "08",
+      "startFrame": 5371,
+      "durationFrames": 826,
+      "audioStartFrame": 5396,
+      "audioDuration": 8.4,
+      "start": 59.67777777777778,
+      "duration": 9.177777777777777,
+      "audioStart": 59.955555555555556,
+      "active": [
+        [
+          0,
+          2.07767
+        ],
+        [
+          2.21633,
+          2.49881
+        ],
+        [
+          2.70198,
+          4.26535
+        ],
+        [
+          4.43556,
+          5.51438
+        ],
+        [
+          5.64687,
+          5.72965
+        ],
+        [
+          5.83727,
+          6.60671
+        ],
+        [
+          6.85533,
+          8.4
+        ]
+      ],
+      "captions": [
+        {
+          "from": 59.9556,
+          "to": 61.8514,
+          "words": [
+            {
+              "text": "Paylater",
+              "start": 59.9556,
+              "end": 60.4841,
+              "accent": false
+            },
+            {
+              "text": "memindahkan",
+              "start": 60.4841,
+              "end": 61.2108,
+              "accent": true
+            },
+            {
+              "text": "pembayaran",
+              "start": 61.2108,
+              "end": 61.8514,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 61.8714,
+          "to": 62.7218,
+          "words": [
+            {
+              "text": "ke",
+              "start": 61.8714,
+              "end": 62.0036,
+              "accent": false
+            },
+            {
+              "text": "depan,",
+              "start": 62.0036,
+              "end": 62.7218,
+              "accent": true
+            }
+          ]
+        },
+        {
+          "from": 62.7418,
+          "to": 64.5436,
+          "words": [
+            {
+              "text": "bukan",
+              "start": 62.7418,
+              "end": 63.0721,
+              "accent": false
+            },
+            {
+              "text": "menggratiskan",
+              "start": 63.0721,
+              "end": 63.9309,
+              "accent": true
+            },
+            {
+              "text": "barang.",
+              "start": 63.9309,
+              "end": 64.5436,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 64.5636,
+          "to": 66.5014,
+          "words": [
+            {
+              "text": "Kirim",
+              "start": 64.5636,
+              "end": 64.8939,
+              "accent": true
+            },
+            {
+              "text": "ini",
+              "start": 64.8939,
+              "end": 65.0921,
+              "accent": false
+            },
+            {
+              "text": "ke",
+              "start": 65.0921,
+              "end": 65.2242,
+              "accent": false
+            },
+            {
+              "text": "teman",
+              "start": 65.2242,
+              "end": 65.7947,
+              "accent": false
+            },
+            {
+              "text": "yang",
+              "start": 65.7947,
+              "end": 66.0589,
+              "accent": false
+            },
+            {
+              "text": "bilang:",
+              "start": 66.0589,
+              "end": 66.5014,
+              "accent": false
+            }
+          ]
+        },
+        {
+          "from": 66.5214,
+          "to": 68.3356,
+          "words": [
+            {
+              "text": "cuma",
+              "start": 66.5214,
+              "end": 67.0343,
+              "accent": true
+            },
+            {
+              "text": "seratus",
+              "start": 67.0343,
+              "end": 67.4967,
+              "accent": false
+            },
+            {
+              "text": "ribu",
+              "start": 67.4967,
+              "end": 67.761,
+              "accent": false
+            },
+            {
+              "text": "per",
+              "start": 67.761,
+              "end": 67.9592,
+              "accent": false
+            },
+            {
+              "text": "bulan.",
+              "start": 67.9592,
+              "end": 68.3356,
+              "accent": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,419 +1,155 @@
-/**
- * Builds the full soundtrack: procedural score, sound design and VO,
- * mixed sample-accurately in Node, written to assets/audio/mix.wav
- */
+// Original procedural score + sound design. No sampled music, no licensing deps.
 import fs from 'node:fs';
 import path from 'node:path';
-import { buildTimeline, readWav } from '../src/timeline.mjs';
+import {execFileSync} from 'node:child_process';
 
+const root = process.cwd();
+const tl = JSON.parse(fs.readFileSync(path.join(root, 'public/timing.json'), 'utf8'));
 const SR = 48000;
-const tl = buildTimeline();
-const N = Math.ceil((tl.total + 0.5) * SR);
-
-const music = [new Float32Array(N), new Float32Array(N)];
-const sfx = [new Float32Array(N), new Float32Array(N)];
-const vo = [new Float32Array(N), new Float32Array(N)];
-
+const N = Math.ceil(tl.duration * SR);
+const L = new Float32Array(N);
+const R = new Float32Array(N);
 const TAU = Math.PI * 2;
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+let seed = 20261112;
+const rand = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
 
-/* ------------------------------- synthesis ------------------------------- */
-
-let seed = 12345;
-const rand = () => {
-  seed = (seed * 1664525 + 1013904223) >>> 0;
-  return seed / 4294967296;
-};
-
-const addTone = (buf, t0, dur, make, o = {}) => {
-  const { gain = 1, pan = 0, bufIdx = 0 } = o;
-  const start = Math.floor(t0 * SR);
-  const len = Math.floor(dur * SR);
-  const gl = Math.cos((clamp(pan, -1, 1) + 1) * Math.PI * 0.25) * gain;
-  const gr = Math.sin((clamp(pan, -1, 1) + 1) * Math.PI * 0.25) * gain;
-  const out = buf;
-  for (let i = 0; i < len; i++) {
-    const idx = start + i;
-    if (idx < 0 || idx >= N) continue;
-    const t = i / SR;
-    const v = make(t, i);
-    out[bufIdx][idx] += v * gl;
-    if (buf.length > 1) out[1 - bufIdx][idx] += v * gr;
+function add(t0, dur, fn, gain = 1, pan = 0) {
+  const s = Math.floor(t0 * SR);
+  const n = Math.floor(dur * SR);
+  const gl = Math.cos((clamp(pan, -1, 1) + 1) * Math.PI / 4) * gain;
+  const gr = Math.sin((clamp(pan, -1, 1) + 1) * Math.PI / 4) * gain;
+  for (let i = 0; i < n; i++) {
+    const k = s + i;
+    if (k < 0 || k >= N) continue;
+    const v = fn(i / SR, i);
+    L[k] += v * gl;
+    R[k] += v * gr;
   }
-};
+}
 
-const sine = (f, ph = 0) => (t) => Math.sin(TAU * f * t + ph);
-const tri = (f) => (t) => {
-  const p = (t * f) % 1;
-  return 4 * Math.abs(p - 0.5) - 1;
-};
-const saw = (f) => (t) => 2 * ((t * f) % 1) - 1;
-
-/** one-pole filters applied offline to a mono generator */
-const lp = (cut) => {
-  let y = 0;
-  return (x) => {
-    const a = clamp(TAU * cut / SR, 0, 1);
-    y += a * (x - y);
-    return y;
-  };
-};
-
-const noiseGen = () => {
-  let last = 0;
-  return () => {
-    const w = rand() * 2 - 1;
-    const hp = w - last * 0.92;
-    last = w;
-    return hp;
-  };
-};
-
-/* --------------------------------- score --------------------------------- */
-
-const BPM = 92;
+const note = (f) => 440 * Math.pow(2, (f - 69) / 12);
+// D minor pentatonic, warm and curious rather than ominous.
+const chords = [[50, 57, 60, 65], [48, 55, 60, 64], [46, 53, 58, 62], [45, 52, 57, 61]];
+const BPM = 104;
 const BEAT = 60 / BPM;
 const BAR = BEAT * 4;
-const CHORDS = [
-  [110.0, 130.81, 164.81, 220.0], // Am
-  [87.31, 110.0, 130.81, 174.61], // F
-  [130.81, 164.81, 196.0, 261.63], // C
-  [98.0, 123.47, 146.83, 196.0], // G
-];
 
-const totalBars = Math.ceil(tl.total / BAR);
-const padBuf = [new Float32Array(N), new Float32Array(N)];
-const musicTarget = [new Float32Array(N), new Float32Array(N)];
+function pluck(t, f, g = 0.1, pan = 0) {
+  add(t, 0.7, (x) => {
+    const env = Math.exp(-x * 7.5) * (1 - Math.exp(-x * 180));
+    return (Math.sin(TAU * f * x) * 0.7 + Math.sin(TAU * f * 2 * x) * 0.2 + Math.sin(TAU * f * 3.01 * x) * 0.08) * env;
+  }, g, pan);
+}
 
-function renderMusic() {
-  for (let bar = 0; bar < totalBars; bar++) {
-    const t0 = bar * BAR;
-    if (t0 > tl.total + 1) break;
-    const chord = CHORDS[bar % CHORDS.length];
-    const full = bar >= 3;
-    // pad
-    addTone(padBuf, t0, BAR * 1.08, (t) => {
-      const att = clamp(t / 0.9);
-      const rel = clamp((BAR * 1.08 - t) / 1.1);
-      let v = 0;
-      chord.forEach((f, i) => {
-        const amp = i === 0 ? 0.5 : 0.28;
-        v += amp * Math.sin(TAU * f * t + Math.sin(t * 0.7 + i) * 0.4);
-        v += amp * 0.35 * Math.sin(TAU * f * 2.002 * t);
-      });
-      return (v / 4) * att * rel * 0.5;
-    }, { gain: 0.34 });
+function kick(t, g = 0.16) {
+  add(t, 0.32, (x) => Math.sin(TAU * (48 * x + 26 * (1 - Math.exp(-x * 28)) / 28)) * Math.exp(-x * 16), g);
+}
 
-    // sub pulses on 8ths
-    for (let b = 0; b < 8; b++) {
-      const bt = t0 + b * (BEAT / 2);
-      if (bt > tl.total) break;
-      const f = chord[0] / 2;
-      addTone(musicTarget, bt, 0.5, (t) => {
-        const e = Math.exp(-t * 7) * clamp(t / 0.01);
-        return Math.sin(TAU * f * t) * e * 0.5;
-      }, { gain: 0.2 });
-    }
+function hat(t, g = 0.025) {
+  let last = 0;
+  add(t, 0.07, (x) => { const w = rand() * 2 - 1; const hp = w - last; last = w; return hp * Math.exp(-x * 70); }, g, 0.25);
+}
 
-    if (full) {
-      // kick on 1 and 3
-      [0, 2].forEach((b) => {
-        addTone(musicTarget, t0 + b * BEAT, 0.34, (t) => {
-          const f = 110 * Math.exp(-t * 26) + 42;
-          return Math.sin(TAU * f * t) * Math.exp(-t * 11) * 0.9;
-        }, { gain: 0.3 });
-      });
-      // hats on the off-beats
-      [1, 3, 5, 7].forEach((b) => {
-        let n = noiseGen();
-        addTone(musicTarget, t0 + b * (BEAT / 2), 0.12, (t) => {
-          const v = n() * Math.exp(-t * 55);
-          return v * 0.5;
-        }, { gain: 0.12, pan: b % 4 === 0 ? -0.2 : 0.2 });
-      });
-      // arp pluck
-      for (let b = 0; b < 8; b++) {
-        const f = chord[b % chord.length] * 2;
-        addTone(musicTarget, t0 + b * (BEAT / 2), 0.6, (t) => {
-          const e = Math.exp(-t * 9);
-          return (tri(f)(t) * 0.5 + Math.sin(TAU * f * t) * 0.5) * e;
-        }, { gain: 0.055, pan: b % 2 ? 0.28 : -0.28 });
-      }
-    }
-  }
+function bass(t, f, dur, g = 0.09) {
+  add(t, dur, (x) => {
+    const env = Math.min(1, x / 0.04) * Math.min(1, (dur - x) / 0.12);
+    return (Math.sin(TAU * f * x) + 0.22 * Math.sin(TAU * f * 2 * x)) * env;
+  }, g);
+}
 
-  // gentle filtering + stereo width on pad
-  for (let ch = 0; ch < 2; ch++) {
-    let f = lp(2600);
-    for (let i = 0; i < N; i++) {
-      const v = padBuf[ch][i];
-      music[ch][i] += f(v) + musicTarget[ch][i] * 0.9;
-    }
-  }
-  // fade in / out
-  const fadeIn = 2.2 * SR;
-  const fadeOut = 3.2 * SR;
-  for (let i = 0; i < N; i++) {
-    const g = Math.min(clamp(i / fadeIn), clamp((N - i) / fadeOut));
-    music[0][i] *= g;
-    music[1][i] *= g;
+function pad(t, freqs, dur, g = 0.05) {
+  add(t, dur, (x) => {
+    const env = Math.min(1, x / 1.2) * Math.min(1, (dur - x) / 1.4);
+    let v = 0;
+    for (const f of freqs) v += Math.sin(TAU * f * x) * 0.5 + Math.sin(TAU * f * 1.004 * x) * 0.25;
+    return (v / freqs.length) * env;
+  }, g, -0.1);
+}
+
+function impact(t, g = 0.2) {
+  let n = 0;
+  add(t, 0.8, (x) => {
+    n = n * 0.7 + (rand() * 2 - 1) * 0.3;
+    return (Math.sin(TAU * (62 * x + 40 * (1 - Math.exp(-x * 18)) / 18)) * 0.7 + n * 0.3) * Math.exp(-x * 7);
+  }, g);
+}
+
+function whoosh(t, g = 0.07, dur = 0.45) {
+  let lp = 0;
+  add(t, dur, (x) => {
+    const p = x / dur;
+    const w = rand() * 2 - 1;
+    lp += (0.08 + 0.5 * p) * (w - lp);
+    return lp * Math.sin(Math.PI * p) ** 1.4;
+  }, g, 0.15);
+}
+
+function tick(t, g = 0.05, f = 1500) {
+  add(t, 0.06, (x) => Math.sin(TAU * f * x) * Math.exp(-x * 65), g, -0.2);
+}
+
+const bars = Math.ceil(tl.duration / BAR);
+for (let b = 0; b < bars; b++) {
+  const t0 = b * BAR;
+  const chord = chords[b % chords.length];
+  pad(t0, chord.map((m) => note(m + 12)), BAR * 1.05, 0.045);
+  bass(t0, note(chord[0] - 12), BAR * 0.92, 0.085);
+  for (let beat = 0; beat < 4; beat++) {
+    const t = t0 + beat * BEAT;
+    if (t >= tl.duration) break;
+    if (beat === 0 || beat === 2) kick(t, 0.14);
+    hat(t + BEAT / 2, 0.02);
+    const arp = chord[(b + beat) % chord.length] + 12;
+    pluck(t + BEAT * 0.5, note(arp), 0.075, beat % 2 ? 0.3 : -0.3);
+    if (beat === 3) pluck(t + BEAT * 0.75, note(arp + 7), 0.045, 0.15);
   }
 }
 
-/* --------------------------------- sfx ---------------------------------- */
-
-const SFX = {
-  impact(t, g = 0.7) {
-    let n = noiseGen();
-    addTone(sfx, t, 2.2, (x) => {
-      const f = 160 * Math.exp(-x * 8) + 32;
-      return Math.sin(TAU * f * x) * Math.exp(-x * 2.4) * 0.9 + n() * Math.exp(-x * 16) * 0.35;
-    }, { gain: g });
-  },
-  riser(t, g = 0.4, dur = 1.2) {
-    let n = noiseGen();
-    addTone(sfx, t, dur, (x) => {
-      const p = x / dur;
-      const v = n() * p * p;
-      const f = 300 + 1400 * p * p;
-      return v * 0.6 + Math.sin(TAU * f * x) * 0.25 * p;
-    }, { gain: g, pan: 0 });
-  },
-  swish(t, g = 0.35, dur = 0.45) {
-    let n = noiseGen();
-    addTone(sfx, t, dur, (x) => {
-      const p = x / dur;
-      return n() * Math.sin(Math.PI * p) * 0.8;
-    }, { gain: g, pan: 0.3 });
-  },
-  blip(t, g = 0.3, f = 880) {
-    addTone(sfx, t, 0.22, (x) => Math.sin(TAU * f * x) * Math.exp(-x * 22), { gain: g, pan: -0.1 });
-    addTone(sfx, t, 0.22, (x) => Math.sin(TAU * f * 2 * x) * Math.exp(-x * 30) * 0.4, { gain: g, pan: 0.1 });
-  },
-  stamp(t, g = 0.65) {
-    let n = noiseGen();
-    addTone(sfx, t, 0.9, (x) => {
-      const f = 120 * Math.exp(-x * 22) + 48;
-      return Math.sin(TAU * f * x) * Math.exp(-x * 8) * 0.7 + n() * Math.exp(-x * 30) * 0.5;
-    }, { gain: g });
-  },
-  explosion(t, g = 0.9) {
-    let n = noiseGen();
-    addTone(sfx, t, 4.0, (x) => {
-      const f = 90 * Math.exp(-x * 4) + 28;
-      const sub = Math.sin(TAU * f * x) * Math.exp(-x * 1.6);
-      const crack = n() * Math.exp(-x * 2.2) * 0.9;
-      const tail = n() * Math.exp(-x * 0.8) * 0.22;
-      return sub * 0.8 + crack + tail;
-    }, { gain: g });
-    let n2 = noiseGen();
-    addTone(sfx, t, 0.4, (x) => n2() * Math.exp(-x * 18) * 0.9, { gain: g * 0.6, pan: 0.4 });
-  },
-  paper(t, g = 0.3) {
-    let n = noiseGen();
-    addTone(sfx, t, 0.5, (x) => n() * Math.exp(-x * 12) * Math.sin(Math.PI * clamp(x / 0.5)), { gain: g, pan: -0.2 });
-  },
-  chime(t, g = 0.28) {
-    [1318.5, 1975.5, 2637].forEach((f, i) =>
-      addTone(sfx, t + i * 0.02, 1.4, (x) => Math.sin(TAU * f * x) * Math.exp(-x * (3 + i)), { gain: g * (1 - i * 0.25), pan: 0.2 - i * 0.2 }),
-    );
-  },
-  thud(t, g = 0.4) {
-    addTone(sfx, t, 0.6, (x) => {
-      const f = 90 * Math.exp(-x * 14) + 40;
-      return Math.sin(TAU * f * x) * Math.exp(-x * 9);
-    }, { gain: g });
-    let n = noiseGen();
-    addTone(sfx, t, 0.18, (x) => n() * Math.exp(-x * 40) * 0.4, { gain: g });
-  },
-  flyby(t, g = 0.35) {
-    let n = noiseGen();
-    addTone(sfx, t, 3.4, (x) => {
-      const p = x / 3.4;
-      const amt = Math.sin(Math.PI * p);
-      const f = 220 + 380 * Math.sin(Math.PI * p);
-      return (n() * 0.5 + Math.sin(TAU * f * x) * 0.3) * amt * amt;
-    }, { gain: g, pan: -0.5 });
-  },
-  swell(t, g = 0.3, dur = 2.6) {
-    addTone(sfx, t, dur, (x) => {
-      const p = clamp(x / dur);
-      const env = Math.sin(Math.PI * p);
-      let v = 0;
-      [110, 164.81, 220, 329.63].forEach((f, i) => {
-        v += Math.sin(TAU * f * x + i) * (i === 0 ? 1 : 0.6);
-      });
-      return (v / 4) * env;
-    }, { gain: g });
-  },
-  counter(t, g = 0.16) {
-    for (let i = 0; i < 7; i++) {
-      addTone(sfx, t + i * 0.09, 0.06, (x) => Math.sin(TAU * 1400 * x) * Math.exp(-x * 60), { gain: g, pan: 0.2 });
-    }
-  },
-};
-
-/* ------------------------------- timeline -------------------------------- */
-
-const w = (scene, i, re) => {
-  const group = scene.captions[i];
-  if (!group) return null;
-  if (!re) return group.words[0].start;
-  return group.words.find((x) => re.test(x.text))?.start ?? null;
-};
-
-function renderSFX() {
-  const S = (i) => tl.scenes[i];
-  // transitions between scenes
-  tl.scenes.forEach((sc, i) => {
-    if (i === 0) return;
-    SFX.riser(sc.start - 0.95, 0.24, 0.95);
-    SFX.impact(sc.start, 0.46);
-    SFX.swish(sc.start - 0.1, 0.2);
-  });
-
-  // s1 — bedroom, clock, double vision
-  const s1 = S(0);
-  SFX.riser(s1.start + 0.02, 0.18, 0.7);
-  SFX.riser(s1.start + 0.28, 0.16, 0.7);
-  // wall clock ticks under the first room beat
-  for (let i = 0; i < 7; i++) SFX.blip(s1.start + 0.95 + i * 0.92, 0.045, 1650);
-  SFX.swish(s1.start + 3.9, 0.22);
-  SFX.blip(s1.start + 7.45, 0.12, 720);
-  SFX.riser(s1.start + 10.1, 0.24, 0.7);
-  SFX.impact(s1.start + 10.72, 0.34);
-
-  // s2 — nightly deficit bars
-  const s2 = S(1);
-  for (let i = 0; i < 7; i++) SFX.blip(s2.start + 0.22 + i * 0.055, 0.06, 560 + i * 26);
-  SFX.stamp(s2.start + 6.9, 0.42);
-  SFX.counter(s2.start + 10.35, 0.12);
-  SFX.chime(s2.start + 11.5, 0.1);
-
-  // s3 — the ten day chart
-  const s3 = S(2);
-  SFX.riser(s3.start + 0.2, 0.2, 0.7);
-  SFX.impact(s3.start + 0.9, 0.3);
-  SFX.stamp(s3.start + 4.25, 0.55);
-  SFX.thud(s3.start + 6.7, 0.22);
-
-  // s4 — brain network
-  const s4 = S(3);
-  SFX.swell(s4.start + 0.15, 0.2, 3.0);
-  SFX.blip(s4.start + 2.1, 0.11, 880);
-  SFX.blip(s4.start + 3.2, 0.11, 990);
-  SFX.blip(s4.start + 4.6, 0.11, 1100);
-  SFX.thud(s4.start + 8.1, 0.2);
-  SFX.thud(s4.start + 9.75, 0.24);
-
-  // s5 — the myth clock
-  const s5 = S(4);
-  SFX.thud(s5.start + 4.85, 0.3);
-  SFX.swish(s5.start + 4.9, 0.2);
-  SFX.blip(s5.start + 6.0, 0.12, 620);
-  SFX.riser(s5.start + 7.0, 0.22, 0.55);
-  SFX.impact(s5.start + 7.35, 0.28);
-
-  // s6 — four fixes
-  const s6 = S(5);
-  [2.0, 4.55, 6.45, 9.1].forEach((at) => SFX.paper(s6.start + at, 0.26));
-  SFX.chime(s6.start + 9.55, 0.12);
-
-  // s7 — outro
-  const s7 = S(6);
-  [1.45, 2.6, 4.1].forEach((at) => SFX.thud(s7.start + at, 0.24));
-  SFX.swell(s7.start + 4.85, 0.24, 2.6);
-  SFX.chime(s7.start + 6.55, 0.14);
-  SFX.swell(s7.start + 9.7, 0.26, 3.2);
+// Scene punctuation and caption ticks sit exactly on the measured timeline.
+for (const s of tl.scenes) {
+  impact(s.start, 0.16);
+  whoosh(Math.max(0, s.start - 0.18), 0.06);
+  for (const c of s.captions) for (const w of c.words) if (w.accent) tick(w.start, 0.035, 1200 + rand() * 600);
 }
+// Final button-click / loop hook.
+impact(tl.duration - 0.55, 0.12);
+tick(tl.duration - 0.4, 0.06, 1800);
 
-/* ------------------------------- VO load --------------------------------- */
-
-function loadVO() {
-  tl.scenes.forEach((sc) => {
-    const wav = readWav(path.join(process.cwd(), 'assets', 'audio', 'vo', `${sc.id}.wav`));
-    const start = Math.floor(sc.audioStart * SR);
-    const n = wav.data.length / 4;
-    for (let i = 0; i < n; i++) {
-      const idx = start + i;
-      if (idx < 0 || idx >= N) continue;
-      vo[0][idx] = wav.data.readInt16LE(i * 4) / 32768;
-      vo[1][idx] = wav.data.readInt16LE(i * 4 + 2) / 32768;
-    }
-  });
+// Duck under measured speech; leave gaps breathing.
+const duck = new Float32Array(N).fill(0.9);
+for (const s of tl.scenes) {
+  for (const [a, b] of s.active) {
+    const from = Math.max(0, Math.floor((s.audioStart + a - 0.08) * SR));
+    const to = Math.min(N, Math.ceil((s.audioStart + b + 0.12) * SR));
+    for (let i = from; i < to; i++) duck[i] = Math.min(duck[i], 0.34);
+  }
 }
-
-/* --------------------------------- mix ----------------------------------- */
-
-function mix() {
-  // ducking envelope from VO
-  const block = Math.floor(SR * 0.01);
-  const env = new Float32Array(Math.ceil(N / block) + 2);
-  for (let b = 0; b < env.length; b++) {
-    let peak = 0;
-    for (let i = b * block; i < Math.min(N, (b + 1) * block); i++) {
-      peak = Math.max(peak, Math.abs(vo[0][i]), Math.abs(vo[1][i]));
-    }
-    env[b] = peak;
-  }
-  // attack / release smoothing
-  const smooth = new Float32Array(env.length);
-  let v = 0;
-  for (let b = 0; b < env.length; b++) {
-    const target = clamp(env[b] * 4);
-    v += (target - v) * (target > v ? 0.5 : 0.06);
-    smooth[b] = v;
-  }
-
-  const outL = new Float32Array(N);
-  const outR = new Float32Array(N);
-  for (let i = 0; i < N; i++) {
-    const duck = 1 - 0.62 * smooth[Math.floor(i / block)];
-    outL[i] = vo[0][i] * 1.0 + music[0][i] * 0.5 * duck + sfx[0][i] * 0.85;
-    outR[i] = vo[1][i] * 1.0 + music[1][i] * 0.5 * duck + sfx[1][i] * 0.85;
-  }
-
-  // gentle bus compression + soft clip + normalise
-  let peak = 0;
-  for (let i = 0; i < N; i++) {
-    outL[i] = Math.tanh(outL[i] * 1.15);
-    outR[i] = Math.tanh(outR[i] * 1.15);
-    peak = Math.max(peak, Math.abs(outL[i]), Math.abs(outR[i]));
-  }
-  const norm = peak > 0 ? 0.89 / peak : 1;
-
-  const buf = Buffer.alloc(44 + N * 4);
-  buf.write('RIFF', 0);
-  buf.writeUInt32LE(36 + N * 4, 4);
-  buf.write('WAVE', 8);
-  buf.write('fmt ', 12);
-  buf.writeUInt32LE(16, 16);
-  buf.writeUInt16LE(1, 20);
-  buf.writeUInt16LE(2, 22);
-  buf.writeUInt32LE(SR, 24);
-  buf.writeUInt32LE(SR * 4, 28);
-  buf.writeUInt16LE(4, 32);
-  buf.writeUInt16LE(16, 34);
-  buf.write('data', 36);
-  buf.writeUInt32LE(N * 4, 40);
-  for (let i = 0; i < N; i++) {
-    buf.writeInt16LE(Math.round(clamp(outL[i] * norm, -1, 1) * 32767), 44 + i * 4);
-    buf.writeInt16LE(Math.round(clamp(outR[i] * norm, -1, 1) * 32767), 46 + i * 4);
-  }
-  const file = path.join(process.cwd(), 'assets', 'audio', 'mix.wav');
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, buf);
-  console.log(`mix.wav  ${(N / SR).toFixed(2)}s  peak ${(peak * norm).toFixed(3)}`);
+// Smooth duck envelope to avoid zipper noise.
+let smooth = 0.9;
+for (let i = 0; i < N; i++) { smooth += (duck[i] - smooth) * 0.002; duck[i] = smooth; }
+const fadeIn = Math.floor(0.6 * SR);
+const fadeOut = Math.floor(1.2 * SR);
+let peak = 0;
+for (let i = 0; i < N; i++) {
+  const g = duck[i] * Math.min(1, i / fadeIn) * Math.min(1, (N - i) / fadeOut);
+  L[i] *= g; R[i] *= g;
+  peak = Math.max(peak, Math.abs(L[i]), Math.abs(R[i]));
 }
-
-loadVO();
-renderMusic();
-renderSFX();
-
-const rms = (arr) => Math.sqrt(arr.reduce((a, v) => a + v * v, 0) / arr.length);
-const db = (x) => (20 * Math.log10(Math.max(x, 1e-9))).toFixed(1);
-console.log('vo   rms', db(rms(vo[0])), 'dB');
-console.log('mus  rms', db(rms(music[0])), 'dB');
-console.log('sfx  rms', db(rms(sfx[0])), 'dB');
-
-mix();
+const norm = peak > 0 ? 0.12 / peak : 1;
+const wav = Buffer.alloc(44 + N * 4);
+wav.write('RIFF', 0); wav.writeUInt32LE(36 + N * 4, 4); wav.write('WAVE', 8);
+wav.write('fmt ', 12); wav.writeUInt32LE(16, 16); wav.writeUInt16LE(1, 20); wav.writeUInt16LE(2, 22);
+wav.writeUInt32LE(SR, 24); wav.writeUInt32LE(SR * 4, 28); wav.writeUInt16LE(4, 32); wav.writeUInt16LE(16, 34);
+wav.write('data', 36); wav.writeUInt32LE(N * 4, 40);
+for (let i = 0; i < N; i++) {
+  wav.writeInt16LE(Math.round(clamp(L[i] * norm, -1, 1) * 32767), 44 + i * 4);
+  wav.writeInt16LE(Math.round(clamp(R[i] * norm, -1, 1) * 32767), 46 + i * 4);
+}
+fs.mkdirSync(path.join(root, '.cache'), {recursive: true});
+fs.mkdirSync(path.join(root, 'public/audio'), {recursive: true});
+const tmp = path.join(root, '.cache/bed.wav');
+fs.writeFileSync(tmp, wav);
+const ffmpeg = path.join(root, 'node_modules/@ffmpeg-installer/linux-x64/ffmpeg');
+execFileSync(ffmpeg, ['-hide_banner', '-loglevel', 'error', '-y', '-i', tmp, '-c:a', 'libmp3lame', '-b:a', '192k', path.join(root, 'public/audio/bed.mp3')]);
+console.log(`bed: ${tl.duration.toFixed(2)}s, peak ${peak.toFixed(3)} -> public/audio/bed.mp3`);

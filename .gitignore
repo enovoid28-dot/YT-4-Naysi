@@ -1,9 +1,6 @@
 node_modules/
 out/
-.fonts/
-assets/audio/vo/
-assets/audio/mix.wav
+.cache/
+google_drive/
 *.log
-assets/
-public/audio/vo-mp3/
-docs/
+.DS_Store
