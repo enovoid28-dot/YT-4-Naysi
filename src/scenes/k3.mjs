@@ -1,102 +1,141 @@
-import { W, H, txt, hexA, linGrad, radGrad, fillRR, tracking } from '../engine/draw.mjs';
+import { W, H, txt, hexA, linGrad, radGrad, fillRR, strokeRR, measure, tracking } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, TAU } from '../engine/anim.mjs';
-import { at, layer, kicker, chip } from './_kota.mjs';
-import { O, EA, column, anglerfish, jelly, ruler, drawRule } from './_ocean.mjs';
+import { P, plate, eyebrow, ease, group } from './_fare.mjs';
+import { tag, panel, ticks, wipeText, ghosts, rings } from '../engine/motion.mjs';
 
-// 03 — GELAP TOTAL. At a kilometre the sun is gone, so the animals make their
-// own. One lamp in the dark, hung off a fish's head, then the count.
+// 03 — TINGKAT HARGA
+// Ten rungs that already exist inside one economy cabin. The cursor is not
+// "you": it is inventory opening the next rung the moment the cheap one is gone.
+
+const RUNGS = [
+  { cls: 'Q', seats: 6, add: 0 },
+  { cls: 'V', seats: 8, add: 90 },
+  { cls: 'W', seats: 10, add: 180 },
+  { cls: 'S', seats: 12, add: 275 },
+  { cls: 'T', seats: 10, add: 370 },
+  { cls: 'L', seats: 8, add: 470 },
+  { cls: 'K', seats: 6, add: 575 },
+  { cls: 'H', seats: 4, add: 690 },
+  { cls: 'M', seats: 2, add: 810 },
+  { cls: 'Y', seats: 1, add: 950 },
+];
+
+const YB = 1420; // y of the cheapest rung
+const PITCH = 60;
+const BARX = 196;
 
 export default {
   draw(ctx, t, scene, o = {}) {
-    const cam = o.cam;
-    column(ctx, 0.74, { t, glowTop: 0.1 });
+    const a = (s, d = 0.6) => ease.out(clamp((t - s) / d));
+    plate(ctx, { t, glow: P.mint, glowX: W * 0.3, glowY: 1150, glowA: 0.05 });
 
-    // the lure is the only light in frame, so it is also the only fill light:
-    // a small pool that reaches the fish's own jaw and nothing else
-    const fx = 880 + Math.sin(t * 0.45) * 16;
-    const fy = 1010 + Math.cos(t * 0.38) * 12;
-    const esca = { lx: fx + 60 * 1.32, ly: fy - 196 * 1.32 };
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const pool = radGrad(ctx, esca.lx, esca.ly, 0, 330, [
-      [0, 'rgba(226,238,228,0.055)'], [0.45, 'rgba(206,226,216,0.022)'], [1, 'rgba(206,226,216,0)'],
-    ]);
-    ctx.fillStyle = pool;
-    ctx.fillRect(esca.lx - 340, esca.ly - 340, 680, 680);
-    ctx.restore();
+    eyebrow(ctx, 'SATU KABIN · SEPULUH TINGKAT', { a: a(0.05, 0.5), rule: P.mint });
 
-    layer(ctx, cam, 0.3, () => {
-      anglerfish(ctx, fx, fy, 1.32, { t, a: at(t, 0.35, 1.1), lure: 1 });
-    });
-
-    layer(ctx, cam, 0.22, () => {
-      jelly(ctx, 330, 1210 + Math.sin(t * 0.6) * 12, 1.12, { t, a: at(t, 1.1, 1.0) * 0.62 });
-    });
-
-    /* ------------------------ the count of light ------------------------ */
-    const p = at(t, 1.8, 0.9);
-    if (p > 0.01) {
-      const x0 = 132;
-      const y0 = 424;
-      ctx.save();
-      ctx.globalAlpha = p;
-      tracking(ctx, 'MAKHLUK YANG BERCAHAYA', x0, y0 - 28, {
-        size: 20, font: F.mono6, track: 5, color: hexA(O.pale, 0.5),
-      });
-      for (let i = 0; i < 12; i++) {
-        const cx = x0 + (i % 4) * 64;
-        const cy = y0 + Math.floor(i / 4) * 64;
-        const lit = i < 9;
-        const on = at(t, 2.1 + i * 0.07, 0.5);
-        ctx.beginPath();
-        ctx.arc(cx, cy, 13, 0, TAU);
-        ctx.fillStyle = lit ? hexA(O.bone, 0.10 + 0.62 * on) : 'rgba(118,138,138,0.07)';
-        ctx.fill();
-        ctx.strokeStyle = lit ? hexA(O.bone, 0.30) : 'rgba(136,156,156,0.12)';
-        ctx.lineWidth = 1.4;
-        ctx.stroke();
+    /* ---------------------------- which rung ---------------------------- */
+    const jumps = [5.6, 7.6, 9.4];
+    let idx = 0;
+    let frac = 0;
+    for (let j = 0; j < jumps.length; j++) {
+      const p = clamp((t - jumps[j]) / 0.55);
+      if (p > 0) {
+        idx = j + 1;
+        frac = ease.expo(p);
       }
-      ctx.restore();
     }
 
-    const num = at(t, 2.9, 1.1, EA.quart);
-    if (num > 0.01) {
+    /* ------------------------------ readout ----------------------------- */
+    const rA = a(1.0, 0.7);
+    if (rA > 0.01) {
+      const price = 700000 + RUNGS[idx].add * 1000;
       ctx.save();
-      ctx.globalAlpha = num;
-      ctx.translate(0, (1 - num) * 22);
-      txt(ctx, '3/4', 130, 784, { size: 188, font: F.num, color: O.bone, track: -6 });
-      tracking(ctx, 'DARI SEMUA MAKHLUK DI SINI', 136, 834, {
-        size: 19, font: F.mono6, track: 4, color: hexA(O.pale, 0.5),
+      ctx.globalAlpha = rA;
+      tracking(ctx, 'HARGA YANG TAMPIL DI APLIKASI', 120, 596, {
+        size: 20, font: F.mono6, track: 5, color: hexA(P.bone, 0.38),
       });
-      ctx.restore();
-      drawRule(ctx, 132, 132 + 300 * num, 880, 1, { color: O.aqua, a: 0.35 });
-    }
-
-    // one kilometre: the depth that makes all of this necessary
-    const dd = at(t, 2.2, 0.8);
-    if (dd > 0.01) {
       ctx.save();
-      ctx.globalAlpha = dd * 0.9;
-      tracking(ctx, '1.000 M', 136, 960, {
-        size: 26, font: F.mono6, track: 5, color: hexA(O.aqua, 0.85),
+      ghosts(ctx, { dx: 6, dy: 0, n: 3, spread: 1.2, alpha: 0.10 }, () => {
+        txt(ctx, `Rp ${group(price)}`, 114, 706, { size: 104, font: F.num, color: P.bone, track: -4 });
       });
-      tracking(ctx, 'MATAHARI SUDAH HABIS', 136, 1002, {
-        size: 17, font: F.mono6, track: 4, color: hexA(O.pale, 0.4),
+      ctx.restore();
+      // class chip
+      const cw = 120;
+      fillRR(ctx, 120, 748, cw, 52, 6, hexA(P.amber, 0.16));
+      strokeRR(ctx, 120, 748, cw, 52, 6, hexA(P.amber, 0.55), 1.4);
+      tracking(ctx, `KELAS ${RUNGS[idx].cls}`, 120 + cw / 2, 782, {
+        size: 24, font: F.mono6, track: 4, color: P.amber, align: 'center',
       });
+      tracking(ctx, 'KAMU TIDAK PERNAH MELIHAT SEPULUH TINGKAT INI', W - 120, 782, {
+        size: 19, font: F.mono6, track: 4, color: hexA(P.bone, 0.3), align: 'right',
+      });
+      // divider
+      ctx.fillStyle = hexA(P.bone, 0.10);
+      ctx.fillRect(120, 838, W - 240, 1);
       ctx.restore();
     }
 
-    ruler(ctx, 1246, {
-      y0: 420, y1: 1420, max: 4000, cur: lerp(760, 1000, EA.inOut(clamp(t / Math.max(3, scene.dur)))),
-      a: at(t, 0.5, 0.8), ticks: 8, label: '',
+    /* ------------------------------ rungs ------------------------------- */
+    RUNGS.forEach((r, i) => {
+      const p = clamp((t - 0.7 - i * 0.065) / 0.55);
+      if (p <= 0) return;
+      const y = YB - i * PITCH;
+      const w = 210 + i * 26;
+      const pass = i < idx;
+      const active = i === idx;
+      const e = ease.out(p);
+      ctx.save();
+      ctx.globalAlpha = e;
+      ctx.translate(0, (1 - e) * 16);
+
+      // bar
+      const bg = active
+        ? linGrad(ctx, BARX, 0, BARX + w, 0, [[0, hexA(P.amber, 0.40)], [1, hexA(P.amber, 0.05)]])
+        : linGrad(ctx, BARX, 0, BARX + w, 0, [[0, hexA(P.mint, pass ? 0.05 : 0.17)], [1, hexA(P.mint, 0.02)]]);
+      fillRR(ctx, BARX, y, w, 24, 4, bg);
+      if (active) strokeRR(ctx, BARX, y, w, 24, 4, hexA(P.amber, 0.55), 1.4);
+
+      // class letter
+      tracking(ctx, r.cls, 132, y + 20, {
+        size: 24, font: F.mono6, track: 2, color: active ? P.amber : hexA(P.bone, pass ? 0.24 : 0.5),
+      });
+
+      // remaining seats
+      const soldOut = i < idx;
+      for (let s = 0; s < r.seats; s++) {
+        const px = BARX + w + 20 + s * 15;
+        const on = !soldOut && (active ? s < Math.max(0, r.seats - Math.floor(frac * r.seats)) : true);
+        ctx.fillStyle = on ? hexA(active ? P.amberHi : P.mint, 0.75) : hexA(P.bone, 0.09);
+        ctx.fillRect(px, y + 8, 5, 9);
+      }
+
+      // price, right-aligned on one column
+      tracking(ctx, `Rp ${group(700000 + r.add * 1000)}`, W - 132, y + 20, {
+        size: 25, font: F.mono6, track: 2,
+        color: active ? P.amber : hexA(P.bone, pass ? 0.2 : 0.52), align: 'right',
+      });
+      ctx.restore();
     });
 
-    chip(ctx, 'MATAHARI TIDAK SAMPAI KE SINI', 132, 1452, {
-      a: at(t, 3.4, 0.7) * 0.9, bg: 'rgba(3,14,18,0.72)', ink: hexA(O.pale, 0.85),
-      border: hexA(O.aqua, 0.22), size: 21, track: 3,
-    });
-
-    kicker(ctx, 'SAMUDRA · GELAP TOTAL', { x: 104, y: 250, color: O.aqua, ink: hexA(O.bone, 0.9), a: at(t, 0.3, 0.6) });
+    /* ------------------------------ footer ------------------------------ */
+    const fA = a(3.4, 0.7);
+    if (fA > 0.01) {
+      const cy = YB + 6;
+      ctx.save();
+      ctx.globalAlpha = fA;
+      const pulse = 0.5 + 0.5 * Math.sin(t * 5);
+      ctx.beginPath();
+      ctx.arc(126, cy + 42, 5, 0, TAU);
+      ctx.fillStyle = hexA(P.amber, 0.5 + 0.5 * pulse);
+      ctx.fill();
+      tracking(ctx, 'KURSI TERMURAH YANG MASIH ADA', 142, cy + 48, {
+        size: 20, font: F.mono6, track: 4, color: hexA(P.amber, 0.85),
+      });
+      tracking(ctx, `SISA ${RUNGS[idx].seats - Math.floor(frac * RUNGS[idx].seats)} KURSI · KELAS ${RUNGS[idx].cls}`, W - 132, cy + 48, {
+        size: 20, font: F.mono6, track: 4, color: hexA(P.bone, 0.32), align: 'right',
+      });
+      ctx.fillStyle = hexA(P.bone, 0.10);
+      ctx.fillRect(120, cy + 22, W - 240, 1);
+      ctx.restore();
+    }
   },
 };
