@@ -1,191 +1,293 @@
-import { W, H, txt, hexA, linGrad, radGrad, fillRR, strokeRR, measure, tracking } from '../engine/draw.mjs';
+import { W, H, txt, hexA, linGrad, radGrad, fillRR, strokeRR, measure, tracking, rr } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, TAU, noise1 } from '../engine/anim.mjs';
-import { P, plate, eyebrow, ease } from './_fare.mjs';
-import { tag, panel, ticks, wipeText, rings } from '../engine/motion.mjs';
+import { P, eyebrow, ease, nightWall, lightCone, engraved, sticker } from './_fare.mjs';
 
 // 05 — JENDELA WAKTU
-// A departure calendar, priced. Eight weeks of cells, one heat scale, and the
-// last fourteen days lit like a warning — which is exactly what they are.
+// A calendar on the wall of a dark room. The last two weeks before departure
+// are the expensive ones, Tuesday to Thursday are the cheap ones, and the
+// sticky note on top is the trick that does nothing.
 
-const DAYS = ['SEN', 'SEL', 'RAB', 'KAM', 'JUM', 'SAB', 'MIN'];
+const COLX = 130;
+const COLY = 614;
+const CW = 150;
+const CH = 142;
+const ROWS = 5;
 const COLS = 7;
-const ROWS = 8;
-const CELL = 80;
-const GAP = 12;
-const GW = COLS * CELL + (COLS - 1) * GAP;
-const GH = ROWS * CELL + (ROWS - 1) * GAP;
-const GX = (W - GW) / 2;
-const GY = 676;
+const DOW = ['SEN', 'SEL', 'RAB', 'KAM', 'JUM', 'SAB', 'MIN'];
+const DEPART = 31;
+const WINDOW_FROM = 18;
 
-const heat = (v) => {
-  const a1 = [0x6f, 0xe3, 0xc0];
-  const b1 = [0xf5, 0xb2, 0x3c];
-  const c1 = [0xe9, 0x60, 0x3f];
-  const t = clamp(v);
-  const mix = (p, q, k) => p.map((n, i) => Math.round(lerp(n, q[i], k)));
-  return t < 0.62 ? mix(a1, b1, t / 0.62) : mix(b1, c1, (t - 0.62) / 0.38);
+// July 2026 starts on a Wednesday -> offset 2 in a Monday-first grid
+const OFFSET = 2;
+const DAYS = 31;
+
+const cellPos = (day) => {
+  const idx = OFFSET + day - 1;
+  return { c: idx % COLS, r: Math.floor(idx / COLS) };
 };
 
 export default {
   draw(ctx, t, scene, o = {}) {
     const a = (s, d = 0.6) => ease.out(clamp((t - s) / d));
-    plate(ctx, { t, glow: P.ember, glowX: W * 0.5, glowY: 1330, glowA: 0.06, horizon: 1600 });
 
-    eyebrow(ctx, 'DELAPAN MINGGU SEBELUM TERBANG', { a: a(0.05, 0.5), rule: P.ember });
+    nightWall(ctx, { spotX: W * 0.5, spotY: 520, spotA: 0.13, panels: 4 });
+    lightCone(ctx, W * 0.44, -140, 1500, 170, 700, { color: '#FFDFB4', a: 0.05 });
 
-    /* ------------------------------- legend ------------------------------ */
-    const lA = a(0.4, 0.7);
-    if (lA > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = lA;
-      const lx = W - 104 - 230;
-      const g = linGrad(ctx, lx, 0, lx + 230, 0, [
-        [0, hexA(P.mint, 0.9)], [0.55, hexA(P.amber, 0.9)], [1, hexA(P.ember, 0.95)],
-      ]);
-      fillRR(ctx, lx, 566, 230, 10, 5, g);
-      tracking(ctx, 'MURAH', lx, 606, { size: 17, font: F.mono6, track: 4, color: hexA(P.mint, 0.75) });
-      tracking(ctx, 'MAHAL', lx + 230, 606, { size: 17, font: F.mono6, track: 4, color: hexA(P.ember, 0.85), align: 'right' });
-      ctx.restore();
+    eyebrow(ctx, 'JENDELA WAKTU', { a: a(0.05, 0.5), rule: P.mint, color: 'rgba(246,241,230,0.62)' });
+
+    /* --------------------------- the calendar --------------------------- */
+    const cA = a(0.02, 0.65);
+    if (cA <= 0.01) return;
+    const s0 = ease.out(clamp((t - 0.02) / 0.55));
+
+    const px = COLX - 26;
+    const py = 396 + (1 - s0) * -30;
+    const pw = COLS * CW + 52;
+    const ph = COLY - py + ROWS * CH + 52;
+
+    ctx.save();
+    ctx.globalAlpha = cA;
+
+    // paper, with a soft shadow on the wall
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.70)';
+    ctx.shadowBlur = 54;
+    ctx.shadowOffsetY = 26;
+    fillRR(ctx, px, py, pw, ph, 6, '#F1E5CC');
+    ctx.restore();
+
+    // curl at the bottom-right corner
+    const gr = linGrad(ctx, px, py, px, py + ph, [
+      [0, 'rgba(255,255,255,0.34)'], [0.55, 'rgba(255,255,255,0.02)'], [1, 'rgba(108,84,50,0.22)'],
+    ]);
+    ctx.save();
+    rr(ctx, px, py, pw, ph, 6);
+    ctx.clip();
+    ctx.fillStyle = gr;
+    ctx.fillRect(px, py, pw, ph);
+    ctx.restore();
+
+    // spiral binding
+    ctx.save();
+    for (let i = 0; i < 12; i++) {
+      const bx = px + 46 + i * ((pw - 92) / 11);
+      ctx.strokeStyle = 'rgba(206,222,238,0.55)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(bx, py - 26);
+      ctx.lineTo(bx + 2, py + 12);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(bx + 1, py - 24, 9, Math.PI, Math.PI * 2.02);
+      ctx.strokeStyle = 'rgba(226,238,250,0.42)';
+      ctx.lineWidth = 3.4;
+      ctx.stroke();
+    }
+    ctx.restore();
+    // punched holes along the top
+    for (let i = 0; i < 12; i++) {
+      const bx = px + 46 + i * ((pw - 92) / 11);
+      ctx.beginPath();
+      ctx.arc(bx, py + 16, 5, 0, TAU);
+      ctx.fillStyle = 'rgba(30,26,20,0.35)';
+      ctx.fill();
     }
 
-    /* ---------------------------- day headers ---------------------------- */
-    const dA = a(0.45, 0.6);
-    if (dA > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = dA * 0.68;
-      DAYS.forEach((d, i) => {
-        tracking(ctx, d, GX + i * (CELL + GAP) + CELL / 2, GY - 28, {
-          size: 18, font: F.mono6, track: 3, align: 'center',
-          color: hexA(i >= 1 && i <= 3 ? P.mint : P.bone, 0.7),
-        });
+    // header
+    ctx.fillStyle = 'rgba(178,58,36,0.90)';
+    ctx.fillRect(px + 40, py + 46, 74, 5);
+    tracking(ctx, 'JULI 2026', px + 40, py + 96, {
+      size: 46, font: F.head, track: 2, color: 'rgba(23,19,16,0.90)',
+    });
+    tracking(ctx, 'JADWAL KEBERANGKATAN', px + 40, py + 130, {
+      size: 17, font: F.mono6, track: 4, color: 'rgba(23,19,16,0.48)',
+    });
+    tracking(ctx, 'HARI KEBERANGKATAN', px + pw - 40, py + 96, {
+      size: 16, font: F.mono6, track: 4, color: 'rgba(23,19,16,0.45)', align: 'right',
+    });
+    txt(ctx, '31', px + pw - 40, py + 148, {
+      size: 52, font: F.num, color: '#B23A24', align: 'right', track: -2,
+    });
+
+    /* ------------------------- the weekday strip ------------------------ */
+    const tueThu = [1, 2, 3];
+    DOW.forEach((d, c) => {
+      const x = COLX + c * CW + CW / 2;
+      const on = tueThu.includes(c);
+      if (on) {
+        const g = linGrad(ctx, 0, COLY - 62, 0, COLY - 24, [
+          [0, 'rgba(60,150,120,0.00)'], [1, 'rgba(60,150,120,0.22)'],
+        ]);
+        ctx.fillStyle = g;
+        ctx.fillRect(COLX + c * CW + 4, COLY - 62, CW - 8, 40);
+      }
+      tracking(ctx, d, x, COLY - 34, {
+        size: 17, font: F.mono6, track: 3, align: 'center',
+        color: on ? 'rgba(20,86,68,0.85)' : 'rgba(23,19,16,0.38)',
       });
+    });
+
+    /* ------------------------------ the grid ---------------------------- */
+    for (let d = 1; d <= DAYS; d++) {
+      const { c, r } = cellPos(d);
+      const x = COLX + c * CW;
+      const y = COLY + r * CH;
+      const inWindow = d >= WINDOW_FROM;
+      const heat = inWindow ? (d - WINDOW_FROM) / (DEPART - WINDOW_FROM) : 0;
+      const appear = ease.out(clamp((t - 0.42 - (r * 0.05 + c * 0.018)) / 0.5));
+      if (appear <= 0.01) continue;
+
+      ctx.save();
+      ctx.globalAlpha *= appear;
+
+      // heat underlay
+      if (inWindow) {
+        ctx.globalAlpha *= 0.16 + 0.62 * heat;
+        fillRR(ctx, x + 4, y + 4, CW - 8, CH - 8, 4, heat > 0.75 ? '#C2352A' : '#D9772F');
+        ctx.globalAlpha /= 0.16 + 0.62 * heat;
+      }
+
+      // hairline cell
+      ctx.strokeStyle = 'rgba(23,19,16,0.09)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + CW, y);
+      ctx.moveTo(x, y);
+      ctx.lineTo(x, y + CH);
+      ctx.stroke();
+
+      // the day number
+      const inkCol = inWindow
+        ? (heat > 0.62 ? 'rgba(255,246,238,0.95)' : 'rgba(23,19,16,0.92)')
+        : 'rgba(23,19,16,0.62)';
+      txt(ctx, `${d}`, x + 16, y + 42, { size: 28, font: F.num6, color: inkCol, track: -0.5 });
+
+      // price level, as a row of small bars (no numbers: too busy at this size)
+      if (inWindow) {
+        const bars = 1 + Math.round(heat * 4);
+        for (let b = 0; b < 5; b++) {
+          const onBar = b < bars;
+          ctx.fillStyle = onBar
+            ? (heat > 0.6 ? 'rgba(255,246,238,0.85)' : 'rgba(150,44,26,0.80)')
+            : (heat > 0.6 ? 'rgba(255,246,238,0.22)' : 'rgba(150,44,26,0.16)');
+          ctx.fillRect(x + 16, y + 62 + b * 11, 44 + b * 6, 4);
+        }
+      }
+
+      // departure day: circled in red
+      if (d === DEPART) {
+        const cp = ease.out(clamp((t - 2.1) / 0.85));
+        if (cp > 0.01) {
+          ctx.save();
+          ctx.globalAlpha *= cp;
+          ctx.strokeStyle = 'rgba(178,58,36,0.95)';
+          ctx.lineWidth = 6;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.ellipse(x + CW * 0.55, y + CH * 0.52, CW * 0.40 * cp, CH * 0.36 * cp, 0.12, 0, TAU * Math.min(1, cp * 1.02));
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
       ctx.restore();
     }
 
-    /* -------------------------------- cells ------------------------------ */
-    for (let r = 0; r < ROWS; r++) {
-      for (let c = 0; c < COLS; c++) {
-        const i = r * COLS + c;
-        const p = clamp((t - 0.55 - i * 0.013) / 0.55);
-        if (p <= 0) continue;
-        const e = ease.out(p);
-        const week = r / (ROWS - 1);
-        let v = 0.16 + Math.pow(week, 1.6) * 0.9;
-        if (r >= ROWS - 2) v += 0.34;
-        if (c >= 1 && c <= 3) v -= 0.10;
-        if (c === 4 || c === 6) v += 0.10;
-        v = clamp(v + (noise1(i * 2.3, 11) - 0.5) * 0.12);
-        const col = heat(v);
+    /* ------------------------- the 14-day bracket ----------------------- */
+    const bA = clamp((t - 2.5) / 0.6);
+    if (bA > 0.01) {
+      const from = cellPos(WINDOW_FROM);
+      const to = cellPos(DEPART);
+      const bx = COLX + from.c * CW + 4;
+      const by = COLY + from.r * CH + CH - 4;
+      const bw = COLS * CW - 8;
+      const by2 = COLY + to.r * CH + CH - 4;
+      ctx.save();
+      ctx.globalAlpha = bA;
+      ctx.strokeStyle = hexA(P.ember, 0.75);
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(bx, by);
+      ctx.lineTo(bx, by + 14);
+      ctx.lineTo(COLX + COLS * CW - 4, by + 14);
+      ctx.lineTo(COLX + COLS * CW - 4, by2 + 14);
+      ctx.stroke();
+      // a second, lower tick for the final row
+      ctx.strokeStyle = hexA(P.ember, 0.45);
+      ctx.beginPath();
+      ctx.moveTo(COLX + COLS * CW - 4, by2);
+      ctx.lineTo(COLX + COLS * CW - 4, by2 + 14);
+      ctx.stroke();
+      ctx.restore();
+    }
 
-        const x = GX + c * (CELL + GAP);
-        const y = GY + r * (CELL + GAP);
-        const s = 0.86 + 0.14 * e;
+    /* --------------------------- the sticky note ------------------------ */
+    const nA = a(4.4, 0.6);
+    if (nA > 0.01) {
+      const s = ease.expo(clamp((t - 4.4) / 0.6));
+      ctx.save();
+      ctx.translate(1016, 1470);
+      ctx.rotate(-0.075);
+      ctx.scale(0.9 + 0.1 * s, 0.9 + 0.1 * s);
+      ctx.globalAlpha = nA;
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.62)';
+      ctx.shadowBlur = 34;
+      ctx.shadowOffsetY = 16;
+      fillRR(ctx, -196, -110, 392, 220, 3, '#F2D06B');
+      ctx.restore();
+      ctx.fillStyle = linGrad(ctx, 0, -110, 0, 110, [
+        [0, 'rgba(255,255,255,0.35)'], [0.5, 'rgba(255,255,255,0.0)'], [1, 'rgba(120,88,20,0.20)'],
+      ]);
+      fillRR(ctx, -196, -110, 392, 220, 3, ctx.fillStyle);
+      tracking(ctx, 'MODE', -168, -56, {
+        size: 20, font: F.mono6, track: 5, color: 'rgba(23,19,16,0.55)',
+      });
+      txt(ctx, 'INCOGNITO', -168, -6, {
+        size: 46, font: F.head, color: 'rgba(23,19,16,0.88)', track: 0,
+      });
+      tracking(ctx, 'TIDAK MENOLONG', -168, 44, {
+        size: 18, font: F.mono6, track: 4, color: 'rgba(178,58,36,0.80)',
+      });
+      // struck through
+      const sp = ease.out(clamp((t - 5.5) / 0.5));
+      if (sp > 0.01) {
         ctx.save();
-        ctx.globalAlpha = e;
-        ctx.translate(x + CELL / 2, y + CELL / 2);
-        ctx.scale(s, s);
-        ctx.translate(-CELL / 2, -CELL / 2);
-        fillRR(ctx, 0, 0, CELL, CELL, 7, `rgba(${col[0]},${col[1]},${col[2]},${0.10 + v * 0.42})`);
-        strokeRR(ctx, 0, 0, CELL, CELL, 7, `rgba(${col[0]},${col[1]},${col[2]},${0.22 + v * 0.35})`, 1.2);
-        const bh = 10 + v * 42;
-        ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},0.9)`;
-        ctx.fillRect(12, CELL - 12 - bh, 5, bh);
+        ctx.globalAlpha *= sp;
+        ctx.strokeStyle = 'rgba(178,58,36,0.92)';
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-176, -24);
+        ctx.lineTo(-176 + 336 * sp, -30 + 8 * sp);
+        ctx.stroke();
         ctx.restore();
       }
-    }
-
-    /* --------------------------- the last 14 days ------------------------ */
-    const bandA = a(4.5, 0.8);
-    if (bandA > 0.01) {
-      const y0 = GY + (ROWS - 2) * (CELL + GAP) - 9;
-      const hgt = 2 * CELL + GAP + 18;
-      const grow = ease.out(clamp((t - 4.5) / 0.9));
-      ctx.save();
-      ctx.globalAlpha = bandA;
-      ctx.strokeStyle = hexA(P.ember, 0.9);
-      ctx.lineWidth = 2.6;
-      ctx.setLineDash([12, 10]);
-      ctx.beginPath();
-      ctx.rect(GX - 9, y0, (GW + 18) * grow, hgt);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // the label lives in the left margin, tied to the band with a rule
-      const la = bandA * clamp((t - 5.0) / 0.45);
-      if (la > 0.01) {
-        ctx.globalAlpha = la;
-        tracking(ctx, '14 HARI', 104, y0 + 44, {
-          size: 26, font: F.mono6, track: 4, color: P.ember,
-        });
-        tracking(ctx, 'TERAKHIR', 104, y0 + 80, {
-          size: 26, font: F.mono6, track: 4, color: hexA(P.ember, 0.8),
-        });
-        tracking(ctx, 'HARGA PALING TINGGI', 104, y0 + 120, {
-          size: 16, font: F.mono6, track: 3, color: hexA(P.bone, 0.34),
-        });
-        ctx.fillStyle = hexA(P.ember, 0.55);
-        ctx.fillRect(104 + 176, y0 + 34, 96, 2);
-      }
       ctx.restore();
     }
 
-    /* -------------------------- weekday bracket -------------------------- */
-    const brA = a(6.9, 0.8);
-    if (brA > 0.01) {
-      const bx0 = GX + 1 * (CELL + GAP);
-      const bx1 = GX + 4 * (CELL + GAP) - GAP;
-      const by = GY + GH + 30;
-      const grow = ease.out(clamp((t - 6.9) / 0.8));
-      const xm = lerp(bx0, bx1, grow);
+    /* ------------------------------ the rail ---------------------------- */
+    const stA = a(7.2, 0.6);
+    if (stA > 0.01) {
       ctx.save();
-      ctx.globalAlpha = brA;
-      ctx.strokeStyle = hexA(P.mint, 0.8);
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(bx0, by);
-      ctx.lineTo(xm, by);
-      if (grow > 0.98) {
-        ctx.moveTo(bx0, by - 12);
-        ctx.lineTo(bx0, by + 4);
-        ctx.moveTo(bx1, by - 12);
-        ctx.lineTo(bx1, by + 4);
-      }
-      ctx.stroke();
-      if (grow > 0.7) {
-        tracking(ctx, 'SELASA–KAMIS LEBIH MURAH', (bx0 + bx1) / 2, by + 44, {
-          size: 21, font: F.mono6, track: 4, color: hexA(P.mint, 0.9), align: 'center',
-        });
-      }
+      ctx.globalAlpha = stA;
+      ctx.translate(330, 1478);
+      ctx.rotate(0.012);
+      // a strip of paper taped over the calendar: the cheap days
+      fillRR(ctx, -190, -46, 380, 92, 3, '#EFE3CB');
+      ctx.save(); // tape
+      ctx.globalAlpha *= 0.55;
+      ctx.fillStyle = 'rgba(246,241,230,0.55)';
+      ctx.fillRect(-210, -60, 74, 24);
+      ctx.fillRect(140, -60, 74, 24);
       ctx.restore();
-    }
-
-    /* ----------------------------- incognito ---------------------------- */
-    const inA = a(9.4, 0.7);
-    if (inA > 0.01) {
-      const y = 1580;
-      const label = 'MODE INCOGNITO';
-      const lw = measure(ctx, label, 25, F.mono6, 5) + 5;
-      const w = lw + 82;
-      const x = W / 2 - w / 2;
-      const s = ease.expo(clamp((t - 9.4) / 0.7));
-      ctx.save();
-      ctx.globalAlpha = inA;
-      ctx.translate(0, (1 - s) * 16);
-      fillRR(ctx, x, y - 34, w, 68, 8, 'rgba(12,18,26,0.92)');
-      strokeRR(ctx, x, y - 34, w, 68, 8, hexA(P.bone, 0.18), 1.2);
-      ctx.strokeStyle = hexA(P.bone, 0.5);
-      ctx.lineWidth = 1.8;
-      ctx.beginPath();
-      ctx.arc(x + 36, y, 14, Math.PI * 0.15, Math.PI * 0.9);
-      ctx.stroke();
-      tracking(ctx, label, x + 64, y + 9, {
-        size: 25, font: F.mono6, track: 5, color: hexA(P.bone, 0.55),
+      tracking(ctx, 'SELASA — KAMIS', -164, -12, {
+        size: 17, font: F.mono6, track: 3, color: 'rgba(20,86,68,0.80)',
       });
-      const sp = ease.out(clamp((t - 10.0) / 0.5));
-      ctx.globalAlpha = inA * 0.95;
-      ctx.fillStyle = P.ember;
-      ctx.fillRect(x + 14, y - 2, (w - 28) * sp, 3);
+      txt(ctx, 'PALING MURAH', -164, 32, {
+        size: 30, font: F.head, color: 'rgba(23,19,16,0.86)',
+      });
       ctx.restore();
     }
   },

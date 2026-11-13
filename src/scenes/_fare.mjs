@@ -263,3 +263,302 @@ export function eyebrow(ctx, s, { x = 104, y = 250, a = 1, color = P.dim, rule =
 export const money = (n) => group(n);
 
 export const group = (n) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+/* ========================================================================= *
+ * v2 — the same episode, built as objects.
+ *
+ * The first pass was a data page: flat panels on one ink plate. The reference
+ * film (CPI) works because every scene is a *place* with a light source and a
+ * hero object that could be photographed. These are the rooms and the props
+ * that make that possible without importing a single asset.
+ * ========================================================================= */
+
+/** Night wall: panelled, lit from above, falling to black at the edges. */
+export function nightWall(ctx, {
+  top = '#0A111C', mid = '#070C14', bot = '#04070C',
+  spotX = W * 0.5, spotY = 420, spotA = 0.16, spotColor = '#F5B23C', panels = 5, a = 1,
+} = {}) {
+  ctx.save();
+  ctx.globalAlpha *= a;
+  ctx.fillStyle = linGrad(ctx, 0, -200, 0, H + 200, [[0, top], [0.45, mid], [1, bot]]);
+  ctx.fillRect(-240, -240, W + 480, H + 480);
+
+  // wall panels: vertical seams, brighter where the light lands
+  for (let i = 0; i <= panels; i++) {
+    const x = (W / panels) * i;
+    ctx.fillStyle = 'rgba(190,215,240,0.05)';
+    ctx.fillRect(x, -200, 1.5, H + 400);
+  }
+  ctx.fillStyle = linGrad(ctx, 0, 0, 0, 520, [[0, 'rgba(255,255,255,0.05)'], [1, 'rgba(255,255,255,0)']]);
+  ctx.fillRect(-100, -100, W + 200, 620);
+
+  // the light itself: one soft pool, no visible fixture
+  const g = radGrad(ctx, spotX, spotY, 0, 760, [
+    [0, hexA(spotColor, spotA)], [0.45, hexA(spotColor, spotA * 0.22)], [1, hexA(spotColor, 0)],
+  ]);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = g;
+  ctx.fillRect(-200, -200, W + 400, H + 400);
+  ctx.restore();
+  ctx.restore();
+}
+
+/** A cone of light from above the frame, the way a stage is lit. */
+export function lightCone(ctx, x, y0, y1, half0, half1, { color = '#FFD9A0', a = 0.10 } = {}) {
+  if (a <= 0.002) return;
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const g = linGrad(ctx, 0, y0, 0, y1, [[0, hexA(color, a)], [0.65, hexA(color, a * 0.4)], [1, hexA(color, 0)]]);
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.moveTo(x - half0, y0);
+  ctx.lineTo(x + half0, y0);
+  ctx.lineTo(x + half1, y1);
+  ctx.lineTo(x - half1, y1);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+/** Cabinet housing for the fare board: bevel, recess, screws, glass glare. */
+export function boardHousing(ctx, x, y, w, h, { a = 1, r = 18, fill = '#0E1621' } = {}) {
+  if (a <= 0.002) return;
+  ctx.save();
+  ctx.globalAlpha *= a;
+  // body + drop shadow
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.65)';
+  ctx.shadowBlur = 48;
+  ctx.shadowOffsetY = 22;
+  fillRR(ctx, x, y, w, h, r, fill);
+  ctx.restore();
+  // vertical sheen
+  ctx.save();
+  ctx.beginPath();
+  rr(ctx, x, y, w, h, r);
+  ctx.clip();
+  ctx.fillStyle = linGrad(ctx, 0, y, 0, y + h, [
+    [0, 'rgba(210,230,250,0.12)'], [0.18, 'rgba(210,230,250,0.02)'],
+    [0.8, 'rgba(0,0,0,0.10)'], [1, 'rgba(0,0,0,0.34)'],
+  ]);
+  ctx.fillRect(x, y, w, h);
+  // glass glare: one diagonal streak, the detail that reads as a photograph
+  ctx.globalCompositeOperation = 'lighter';
+  const gl = linGrad(ctx, x + w * 0.1, y, x + w * 0.55, y + h * 0.6, [
+    [0, 'rgba(255,255,255,0.055)'], [0.5, 'rgba(255,255,255,0.02)'], [1, 'rgba(255,255,255,0)'],
+  ]);
+  ctx.fillStyle = gl;
+  ctx.beginPath();
+  ctx.moveTo(x + w * 0.06, y);
+  ctx.lineTo(x + w * 0.4, y);
+  ctx.lineTo(x + w * 0.18, y + h);
+  ctx.lineTo(x - w * 0.1, y + h);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+  // bevel + inner recess line
+  strokeRR(ctx, x, y, w, h, r, 'rgba(214,232,250,0.16)', 2);
+  strokeRR(ctx, x + 12, y + 12, w - 24, h - 24, r - 8, 'rgba(0,0,0,0.55)', 3);
+  strokeRR(ctx, x + 14, y + 14, w - 28, h - 28, r - 9, 'rgba(214,232,250,0.07)', 1.4);
+  // screws
+  [[x + 30, y + 30], [x + w - 30, y + 30], [x + 30, y + h - 30], [x + w - 30, y + h - 30]].forEach(([sx, sy]) => {
+    const sg = radGrad(ctx, sx - 2, sy - 2, 0, 10, [[0, 'rgba(220,235,250,0.42)'], [1, 'rgba(90,110,130,0.12)']]);
+    ctx.beginPath();
+    ctx.arc(sx, sy, 8, 0, TAU);
+    ctx.fillStyle = sg;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.45)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(sx - 4, sy - 2.4);
+    ctx.lineTo(sx + 4, sy + 2.4);
+    ctx.stroke();
+  });
+  ctx.restore();
+}
+
+/** A printed label engraved on the housing. */
+export function engraved(ctx, s, x, y, { size = 22, color = 'rgba(226,238,250,0.5)', track = 5, align = 'left', a = 1 } = {}) {
+  if (a <= 0.002) return;
+  ctx.save();
+  ctx.globalAlpha *= a;
+  tracking(ctx, s, x + 1, y + 1.5, { size, font: F.mono6, track, color: 'rgba(0,0,0,0.6)', align });
+  tracking(ctx, s, x, y, { size, font: F.mono6, track, color, align });
+  ctx.restore();
+}
+
+/** Paper sticker with a torn feel, slapped onto a surface at an angle. */
+export function sticker(ctx, x, y, text, {
+  w = 320, h = 92, rot = -0.06, a = 1, bg = '#E9603F', ink = '#FFF3E4', size = 34, sub = '',
+} = {}) {
+  if (a <= 0.002) return;
+  ctx.save();
+  ctx.globalAlpha *= a;
+  ctx.translate(x, y);
+  ctx.rotate(rot);
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.6)';
+  ctx.shadowBlur = 26;
+  ctx.shadowOffsetY = 10;
+  fillRR(ctx, -w / 2, -h / 2, w, h, 6, bg);
+  ctx.restore();
+  ctx.fillStyle = linGrad(ctx, 0, -h / 2, 0, h / 2, [
+    [0, 'rgba(255,255,255,0.28)'], [0.5, 'rgba(255,255,255,0.02)'], [1, 'rgba(0,0,0,0.20)'],
+  ]);
+  fillRR(ctx, -w / 2, -h / 2, w, h, 6, ctx.fillStyle);
+  txt(ctx, text, 0, sub ? -2 : size * 0.34, {
+    size, font: F.head, color: ink, align: 'center', track: 1,
+  });
+  if (sub) {
+    tracking(ctx, sub, 0, size * 0.34 + 4, {
+      size: 18, font: F.mono6, track: 4, color: hexA(ink, 0.75), align: 'center',
+    });
+  }
+  ctx.restore();
+}
+
+/** A strip of thermal paper with rows printed on it — a machine's own record. */
+export function paperTape(ctx, x, y, w, rows, { a = 1, rot = 0, rowH = 62, pad = 30, head = 'LOG HARGA' } = {}) {
+  if (a <= 0.002) return;
+  const h = pad * 2 + 54 + rows.length * rowH;
+  ctx.save();
+  ctx.globalAlpha *= a;
+  ctx.translate(x + w / 2, y + h / 2);
+  ctx.rotate(rot);
+  ctx.translate(-w / 2, -h / 2);
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.6)';
+  ctx.shadowBlur = 40;
+  ctx.shadowOffsetY = 18;
+  fillRR(ctx, 0, 0, w, h, 4, '#F0E4CC');
+  ctx.restore();
+  ctx.fillStyle = linGrad(ctx, 0, 0, 0, h, [
+    [0, 'rgba(255,255,255,0.28)'], [0.4, 'rgba(255,255,255,0)'], [1, 'rgba(118,92,54,0.20)'],
+  ]);
+  fillRR(ctx, 0, 0, w, h, 4, ctx.fillStyle);
+  // perforation top and bottom
+  for (const yy of [10, h - 10]) {
+    ctx.fillStyle = 'rgba(23,19,16,0.25)';
+    for (let i = 12; i < w - 12; i += 18) ctx.fillRect(i, yy, 8, 2);
+  }
+  tracking(ctx, head, pad, pad + 18, { size: 17, font: F.mono6, track: 4, color: 'rgba(23,19,16,0.5)' });
+  rows.forEach((row, i) => {
+    const ry = pad + 76 + i * rowH;
+    tracking(ctx, row.time, pad, ry, { size: 20, font: F.mono6, track: 3, color: 'rgba(23,19,16,0.55)' });
+    tracking(ctx, row.price, pad + 130, ry, { size: 24, font: F.mono6, track: 2, color: 'rgba(23,19,16,0.88)' });
+    if (row.delta) {
+      const col = row.up ? '#B23A24' : '#1E6B57';
+      tracking(ctx, row.delta, w - pad, ry, { size: 22, font: F.mono6, track: 2, color: col, align: 'right' });
+    }
+  });
+  ctx.restore();
+}
+
+/** Brass dial with a needle — the instrument version of a metric. */
+export function dial(ctx, cx, cy, r, {
+  value = 0.5, label = '', readout = '', unit = '', a = 1, color = '#F5B23C', sweep = 2.4, start = -Math.PI * 0.5 - 1.2,
+} = {}) {
+  if (a <= 0.002) return;
+  ctx.save();
+  ctx.globalAlpha *= a;
+  // body
+  const g = radGrad(ctx, cx, cy - r * 0.3, r * 0.1, r * 1.25, [
+    [0, 'rgba(40,50,64,0.98)'], [0.7, 'rgba(16,22,31,0.98)'], [1, 'rgba(8,12,18,0.98)'],
+  ]);
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, TAU);
+  ctx.fillStyle = g;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(214,232,250,0.16)';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r - 14, 0, TAU);
+  ctx.stroke();
+  // scale ticks
+  for (let i = 0; i <= 24; i++) {
+    const ang = start + (sweep * i) / 24;
+    const major = i % 4 === 0;
+    const r0 = r - (major ? 34 : 22);
+    ctx.strokeStyle = major ? 'rgba(226,238,250,0.55)' : 'rgba(226,238,250,0.22)';
+    ctx.lineWidth = major ? 2.4 : 1.4;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(ang) * r0, cy + Math.sin(ang) * r0);
+    ctx.lineTo(cx + Math.cos(ang) * (r - 12), cy + Math.sin(ang) * (r - 12));
+    ctx.stroke();
+  }
+  // arc of the value
+  ctx.beginPath();
+  ctx.arc(cx, cy, r - 26, start, start + sweep * clamp(value), false);
+  ctx.strokeStyle = hexA(color, 0.85);
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+  // needle
+  const ang = start + sweep * clamp(value);
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(ang);
+  ctx.shadowColor = 'rgba(0,0,0,0.6)';
+  ctx.shadowBlur = 10;
+  fillRR(ctx, -8, -3, r - 40, 6, 3, '#F6F1E6');
+  ctx.restore();
+  ctx.beginPath();
+  ctx.arc(cx, cy, 12, 0, TAU);
+  ctx.fillStyle = '#1B2430';
+  ctx.fill();
+  ctx.strokeStyle = hexA(color, 0.8);
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.restore();
+}
+
+/** Hanging tag: paper, grommet, string to the rail above. */
+export function hangTag(ctx, x, topY, y, { w = 210, h = 118, rot = 0, a = 1, cls = '', price = '', tone = '#F5B23C' } = {}) {
+  if (a <= 0.002) return;
+  ctx.save();
+  ctx.globalAlpha *= a;
+  // string
+  ctx.strokeStyle = 'rgba(236,226,206,0.45)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x + w / 2, topY);
+  ctx.lineTo(x + w / 2 + Math.sin(rot * 8) * 4, y - h * 0.5);
+  ctx.stroke();
+  // tag
+  ctx.translate(x + w / 2, y);
+  ctx.rotate(rot);
+  const hw = w / 2;
+  const hh = h / 2;
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.66)';
+  ctx.shadowBlur = 30;
+  ctx.shadowOffsetY = 14;
+  fillRR(ctx, -hw, -hh, w, h, 8, '#F2E6CE');
+  ctx.restore();
+  ctx.fillStyle = linGrad(ctx, 0, -hh, 0, hh, [
+    [0, 'rgba(255,255,255,0.34)'], [0.45, 'rgba(255,255,255,0)'], [1, 'rgba(116,90,52,0.20)'],
+  ]);
+  fillRR(ctx, -hw, -hh, w, h, 8, ctx.fillStyle);
+  // grommet
+  ctx.beginPath();
+  ctx.arc(0, -hh + 20, 8, 0, TAU);
+  ctx.fillStyle = 'rgba(23,19,16,0.5)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(23,19,16,0.25)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(0, -hh + 20, 14, 0, TAU);
+  ctx.stroke();
+  // print
+  tracking(ctx, `KELAS ${cls}`, 0, -hh + 62, {
+    size: 18, font: F.mono6, track: 3, color: 'rgba(23,19,16,0.55)', align: 'center',
+  });
+  txt(ctx, price, 0, hh - 18, {
+    size: 40, font: F.num, color: tone === '#F5B23C' ? '#B23A24' : 'rgba(23,19,16,0.82)', align: 'center', track: -1,
+  });
+  ctx.restore();
+}
