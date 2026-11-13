@@ -1,0 +1,293 @@
+import { createCanvas } from '@napi-rs/canvas';
+import fs from 'node:fs';
+import path from 'node:path';
+import { spawn } from 'node:child_process';
+import { once } from 'node:events';
+import { ensureFonts, F } from './engine/fonts.mjs';
+import { W, H, FPS, C, M, txt, tracking, linGrad, hexA, fillRR } from './engine/draw.mjs';
+import {
+  initFilm, drawGrain, drawVignette, drawScrim, drawFlash, drawFilm,
+} from './engine/film.mjs';
+import { buildCaption, drawCaption, drawCard } from './engine/caption.mjs';
+import { buildTimeline, sceneAt } from './timeline.mjs';
+import { SCENES, BRAND, SERIES } from './script.mjs';
+import { clamp, lerp, EASE } from './engine/anim.mjs';
+import sceneMap from './scenes/index.mjs';
+import { ffmpegPath } from './engine/ffmpeg.mjs';
+
+const args = process.argv.slice(2);
+const arg = (name, def = null) => {
+  const i = args.indexOf(`--${name}`);
+  return i >= 0 ? args[i + 1] : def;
+};
+const has = (name) => args.includes(`--${name}`);
+
+const timeline = buildTimeline();
+const captionLayouts = new Map();
+// fixed anchor for the caption block: the first line never moves, whatever the
+// number of lines in the sentence.
+const CAPTION_TOP = 1806;
+
+function buildLayouts(ctx) {
+  for (const s of timeline.scenes) {
+    captionLayouts.set(
+      s.id,
+      s.captions.map((g) =>
+        buildCaption(ctx, g, { maxWidth: W - 2 * 88, size: 94, font: F.semi, maxLines: 2 }),
+      ),
+    );
+  }
+}
+
+function drawChapter(ctx, scene, local, idxGlobal) {
+  const p = EASE.outCubic(clamp(local / 0.45));
+  const y = H - 96;
+  const light = scene.theme === 'light';
+  const ink = light ? 'rgba(23,19,16,0.62)' : C.bone;
+  ctx.save();
+  ctx.globalAlpha = (light ? 0.85 : 0.55) * p;
+  txt(ctx, `${scene.index}`, M, y, { size: 26, font: F.num6, color: light ? '#B32E1C' : C.amber, track: 2 });
+  txt(ctx, `—  ${scene.label}`, M + 44, y, { size: 26, font: F.num6, color: ink, track: 4 });
+  ctx.restore();
+
+  // series ticks on the right
+  const n = SCENES.length;
+  const tw = 22;
+  const gap = 8;
+  const total = n * tw + (n - 1) * gap;
+  let x = W - M - total;
+  for (let i = 0; i < n; i++) {
+    ctx.save();
+    ctx.globalAlpha = i === idxGlobal ? 0.95 : (scene.theme === 'light' ? 0.30 : 0.22);
+    fillRR(ctx, x, H - 108, tw, 5, 2.5,
+      i === idxGlobal ? (scene.theme === 'light' ? '#B32E1C' : C.amber) : (scene.theme === 'light' ? 'rgba(23,19,16,0.5)' : C.bone));
+    ctx.restore();
+    x += tw + gap;
+  }
+}
+
+function drawChrome(ctx, scene, local, tGlobal, idxGlobal) {
+  const light = scene.theme === 'light';
+  ctx.save();
+  const gi = ctx.createLinearGradient(0, 0, 0, 300);
+  gi.addColorStop(0, light ? 'rgba(210,190,158,0.55)' : 'rgba(3,4,7,0.55)');
+  gi.addColorStop(1, light ? 'rgba(210,190,158,0)' : 'rgba(3,4,7,0)');
+  ctx.fillStyle = gi;
+  ctx.fillRect(0, 0, W, 300);
+  ctx.restore();
+
+  // brand mark
+  ctx.save();
+  fillRR(ctx, M, 96, 16, 16, 4, light ? '#B32E1C' : C.amber);
+  txt(ctx, BRAND, M + 30, 115, {
+    size: 34, font: F.head, color: light ? 'rgba(23,19,16,0.9)' : C.bone, track: 7, alpha: 0.92,
+  });
+  ctx.restore();
+
+  tracking(ctx, SERIES, W - M, 114, {
+    size: 25, font: F.num6, track: 5, align: 'right',
+    color: light ? 'rgba(23,19,16,0.55)' : hexA(C.bone, 0.55),
+  });
+
+  drawChapter(ctx, scene, local, idxGlobal);
+
+  // progress
+  const prog = clamp(tGlobal / timeline.total);
+  ctx.save();
+  ctx.globalAlpha = light ? 0.16 : 0.2;
+  ctx.fillStyle = light ? '#171310' : C.bone;
+  ctx.fillRect(0, H - 8, W, 8);
+  ctx.globalAlpha = 1;
+  const g = light
+    ? linGrad(ctx, 0, 0, W, 0, [[0, '#8E2216'], [1, '#E2452F']])
+    : linGrad(ctx, 0, 0, W, 0, [[0, C.ember], [0.6, C.amber], [1, C.amberHi]]);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, H - 8, W * prog, 8);
+  ctx.restore();
+}
+
+const BENCH = process.env.BENCH === '1';
+const bench = {};
+const mark = (name, fn) => {
+  if (!BENCH) return fn();
+  const t0 = performance.now();
+  const r = fn();
+  bench[name] = (bench[name] || 0) + (performance.now() - t0);
+  return r;
+};
+
+function drawFrame(ctx, frame) {
+  const t = frame / FPS;
+  const { scene, index, local } = sceneAt(timeline, t);
+  const mod = sceneMap[scene.key];
+  ctx.save();
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = C.ink0;
+  ctx.fillRect(0, 0, W, H);
+  // camera: every scene gets a slow move (push in or pull out, alternating),
+  // so even a still composition breathes like a shot instead of a slide.
+  const bx = Math.sin(t * 0.37) * 1.4 + Math.sin(t * 1.13 + 1.2) * 0.5;
+  const by = Math.cos(t * 0.29) * 1.6 + Math.sin(t * 0.91) * 0.45;
+  const dir = index % 2 === 0 ? 1 : -1;
+  const zp = EASE.smooth(clamp(local / Math.max(0.2, scene.dur)));
+  const zoom = dir * (0.058 * zp - 0.014);
+  const camDx = Math.sin(local * 0.28 + index * 1.7) * 9 + bx;
+  const camDy = Math.cos(local * 0.21 + index) * 7 + by;
+  const cam = { p: zp, dx: camDx * 0.55, dy: camDy * 0.55, zoom: zoom * 0.32 };
+  ctx.save();
+  ctx.translate(W / 2 + camDx, H / 2 + camDy);
+  ctx.scale(1 + zoom, 1 + zoom);
+  ctx.translate(-W / 2, -H / 2);
+  if (mod) {
+    try {
+      mark('scene', () => mod.draw(ctx, local, scene, { t, frame, index, cam }));
+    } catch (err) {
+      // one bad frame must never cost a 15 000-frame render
+      if (!globalThis.__sceneErr) globalThis.__sceneErr = new Set();
+      const key = `${scene.key}:${err.message}`;
+      if (!globalThis.__sceneErr.has(key)) {
+        globalThis.__sceneErr.add(key);
+        console.error(`scene ${scene.key} failed at frame ${frame}: ${err.message}`);
+      }
+    }
+  } else {
+    ctx.fillStyle = C.ink1;
+    ctx.fillRect(0, 0, W, H);
+    txt(ctx, scene.key.toUpperCase(), W / 2, 800, { size: 90, font: F.head, color: C.bone, align: 'center' });
+  }
+  ctx.restore();
+  ctx.restore();
+
+  // captions
+  mark('scrim', () => {
+    if (scene.theme === 'light') {
+      // cream scenes take a cream wash, not a black one: dark ink needs the
+      // paper to stay bright underneath it.
+      const g = ctx.createLinearGradient(0, 1520, 0, 2100);
+      g.addColorStop(0, 'rgba(243,232,211,0)');
+      g.addColorStop(0.55, 'rgba(243,232,211,0.78)');
+      g.addColorStop(1, 'rgba(243,232,211,0.97)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 1520, W, H - 1520);
+    } else {
+      drawScrim(ctx, 1600, 0.7);
+    }
+  });
+  const layouts = captionLayouts.get(scene.id);
+  mark('captions', () => scene.captions.forEach((card, gi) => {
+    // card windows come from the measured alignment: a card opens on its
+    // sentence and closes inside the pause that follows it.
+    const from = card.from ?? card.words[0].start - 0.14;
+    const to = card.to ?? card.words[card.words.length - 1].end + 0.18;
+    if (local < from - 0.02 || local > to + 0.02) return;
+    const a = clamp((local - from) / 0.15) * clamp((to - local) / 0.13);
+    if (a <= 0.002) return;
+    drawCard(ctx, layouts[gi], local - from, {
+      top: CAPTION_TOP,
+      alphaMul: a,
+      ...(scene.theme === 'light'
+        ? { color: '#171310', accent: '#B32E1C', shadow: 0 }
+        : {}),
+    });
+  }));
+
+  mark('chrome', () => drawChrome(ctx, scene, local, t, index));
+
+  // cuts: the incoming scene opens under a short veil of its own paper/ink,
+  // which reads as a clean editorial cut rather than a flash
+  if (index > 0) {
+    const f = Math.max(0, 1 - local / 0.24);
+    if (f > 0) {
+      ctx.save();
+      ctx.globalAlpha = f * f * 0.92;
+      ctx.fillStyle = scene.theme === 'light' ? '#F4ECDC' : '#06090C';
+      ctx.fillRect(0, 0, W, H);
+      ctx.restore();
+    }
+  }
+  mark('film', () => drawFilm(ctx, frame));
+
+  // global fades
+  const fadeIn = clamp(t / 0.5);
+  const fadeOut = clamp((timeline.total - t) / 0.9);
+  const a = Math.min(fadeIn, fadeOut);
+  if (a < 1) {
+    ctx.save();
+    ctx.globalAlpha = 1 - a;
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+    ctx.restore();
+  }
+}
+
+async function main() {
+  await ensureFonts();
+  initFilm({ createCanvas });
+  const canvas = createCanvas(W, H);
+  const ctx = canvas.getContext('2d');
+  buildLayouts(ctx);
+
+  if (has('stills')) {
+    const list = (arg('stills') || '').split(',').map(Number).filter((n) => !Number.isNaN(n));
+    const dir = arg('dir', path.join('out', 'stills'));
+    fs.mkdirSync(dir, { recursive: true });
+    for (const sec of list) {
+      const frame = Math.round(sec * FPS);
+      const t0 = Date.now();
+      drawFrame(ctx, frame);
+      const png = await canvas.encode('png');
+      const file = path.join(dir, `f${String(frame).padStart(6, '0')}_${sec.toFixed(2)}s.png`);
+      fs.writeFileSync(file, png);
+      console.log(`still ${file} (${Date.now() - t0}ms)`);
+    }
+    return;
+  }
+
+  const from = Number(arg('from', 0));
+  const to = Number(arg('to', Math.round(timeline.total * FPS)));
+  const out = arg('out', path.join('out', 'video.mp4'));
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+
+  const ff = spawn(ffmpegPath(), [
+    '-y', '-hide_banner', '-loglevel', 'error',
+    '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', `${W}x${H}`, '-r', String(FPS), '-i', '-',
+    '-an',
+    '-c:v', 'libx264', '-preset', arg('preset', 'medium'), '-crf', arg('crf', '18'),
+    '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-level:v', '5.2',
+    '-g', String(FPS * 2), '-bf', '2',
+    '-x264-params', arg('x264', 'aq-mode=3:aq-strength=1.05:deblock=1,1'),
+    ...(arg('maxrate') ? ['-maxrate', arg('maxrate'), '-bufsize', arg('bufsize', String(Number(arg('maxrate').replace(/M$/, '')) * 2) + 'M')] : []),
+    '-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709',
+    '-movflags', '+faststart',
+    out,
+  ], { stdio: ['pipe', 'inherit', 'inherit'] });
+
+  const done = new Promise((res, rej) => {
+    ff.on('close', (code) => (code === 0 ? res() : rej(new Error(`ffmpeg exited ${code}`))));
+  });
+
+  const start = Date.now();
+  for (let frame = from; frame < to; frame++) {
+    drawFrame(ctx, frame);
+    const buf = mark('data', () => canvas.data());
+    if (!ff.stdin.write(buf)) await once(ff.stdin, 'drain');
+    if (frame % 60 === 0) {
+      const el = (Date.now() - start) / 1000;
+      const fps = (frame - from + 1) / Math.max(el, 0.001);
+      const eta = (to - frame) / Math.max(fps, 0.01);
+      console.log(`frame ${frame}/${to}  ${fps.toFixed(2)} fps  eta ${Math.round(eta)}s`);
+    }
+  }
+  ff.stdin.end();
+  await done;
+  if (BENCH) {
+    const n = to - from;
+    console.log('bench ms/frame:', Object.fromEntries(Object.entries(bench).map(([k, v]) => [k, (v / n).toFixed(1)])));
+  }
+  console.log(`wrote ${out} in ${((Date.now() - start) / 1000).toFixed(1)}s`);
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
