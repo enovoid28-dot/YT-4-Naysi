@@ -127,7 +127,7 @@ export default {
       const sx = 168;
       const sy = 1032;
       const sw = W - 336;
-      const sh = 268;
+      const sh = 206;
       ctx.save();
       ctx.globalAlpha = ease.out(clamp((t - 2.7) / 0.7));
       // baseline + value rails
