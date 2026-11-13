@@ -102,7 +102,7 @@ export default {
     if (stA > 0.01) {
       const s = ease.expo(stA);
       ctx.save();
-      ctx.translate(MX + 150, MTOP + 400);
+      ctx.translate(MX + 268, MTOP + 520);
       ctx.rotate(-0.10);
       ctx.scale(0.86 + 0.14 * s, 0.86 + 0.14 * s);
       ctx.globalAlpha = clamp(stA * 1.6) * 0.92;

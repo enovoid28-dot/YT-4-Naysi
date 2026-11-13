@@ -16,10 +16,10 @@ const CARDS = [
 
 const HH = 200;
 const CWD = 596;
-const HUBX = 872;
-const HUBY = 660;
-const HUBW = 464;
-const HUBH = 400;
+const HUBX = 848;
+const HUBY = 640;
+const HUBW = 492;
+const HUBH = 480;
 
 export default {
   draw(ctx, t, scene, o = {}) {
@@ -76,7 +76,15 @@ export default {
           tracking(ctx, 'H−14', vx, vy + 108, { size: 17, font: F.mono6, track: 3, color: hexA(c.tone, 0.6) });
         } else {
           for (let k = 0; k < 3; k++) {
-            plane(ctx, vx + 26 + k * 54, vy + 66, 0.66, { color: hexA(c.tone, 0.85 - k * 0.18), a: 1 });
+            const ly = vy + 44 + k * 26;
+            ctx.fillStyle = hexA(P.bone, 0.10);
+            ctx.fillRect(vx, ly, 176, 1);
+            ctx.beginPath();
+            ctx.arc(vx + 24 + k * 52, ly, 4, 0, TAU);
+            ctx.fillStyle = hexA(c.tone, 0.8 - k * 0.16);
+            ctx.fill();
+            ctx.fillStyle = hexA(c.tone, 0.22);
+            ctx.fillRect(vx + 24 + k * 52, ly, 176 - 24 - k * 52, 1);
           }
         }
         ctx.restore();
@@ -114,8 +122,9 @@ export default {
       const value = 700000 + 540000 * rise;
       ctx.save();
       ghosts(ctx, { dx: 5, dy: 0, n: 2, spread: 1, alpha: 0.12 }, () => {
-        txt(ctx, `Rp${group(value)}`, HUBX + 32, HUBY + 196, {
-          size: 92, font: F.num, color: P.bone, track: -4,
+        txt(ctx, 'Rp', HUBX + 30, HUBY + 206, { size: 42, font: F.num, color: hexA(P.bone, 0.6) });
+        txt(ctx, group(value), HUBX + 30, HUBY + 268, {
+          size: 76, font: F.num, color: P.bone, track: -3,
         });
       });
       ctx.restore();
@@ -125,13 +134,24 @@ export default {
       for (let k = 0; k < 22; k++) {
         const hgt = 6 + Math.abs(Math.sin(t * 1.6 + k * 0.55)) * 30 * (0.4 + noise1(k * 1.7, 9));
         ctx.fillStyle = hexA(P.amber, 0.10 + 0.26 * (k / 22) * bA);
-        ctx.fillRect(HUBX + 34 + k * 18, HUBY + 300 - hgt, 8, hgt);
+        ctx.fillRect(HUBX + 34 + k * 19, HUBY + 366 - hgt, 8, hgt);
       }
-      tracking(ctx, 'BERGERAK SETIAP MENIT', HUBX + 34, HUBY + HUBH - 40, {
+      tracking(ctx, 'BERGERAK SETIAP MENIT', HUBX + 34, HUBY + HUBH - 34, {
         size: 18, font: F.mono6, track: 4, color: hexA(P.amber, 0.6),
       });
-      tracking(ctx, `+${Math.round((540000 * rise) / 1000)} RB`, HUBX + HUBW - 36, HUBY + HUBH - 40, {
-        size: 20, font: F.mono6, track: 3, color: hexA(P.ember, 0.8), align: 'right',
+      // the change badge sits beside the label, never over the digits
+      ctx.beginPath();
+      const dTx = HUBX + HUBW - 34;
+      const dLabel = `+${Math.round((540000 * rise) / 1000)} RB`;
+      const dW = measure(ctx, dLabel, 24, F.mono6, 3) + 3;
+      ctx.moveTo(dTx - dW - 22, HUBY + 52);
+      ctx.lineTo(dTx - dW - 10, HUBY + 60);
+      ctx.lineTo(dTx - dW - 22, HUBY + 68);
+      ctx.closePath();
+      ctx.fillStyle = P.ember;
+      ctx.fill();
+      tracking(ctx, dLabel, dTx, HUBY + 68, {
+        size: 24, font: F.mono6, track: 3, color: hexA(P.ember, 0.9), align: 'right',
       });
       ctx.restore();
     }
@@ -139,7 +159,7 @@ export default {
     /* ---------------------------- the equation -------------------------- */
     const eqA = a(5.2, 0.8);
     if (eqA > 0.01) {
-      const y = 1400;
+      const y = 1452;
       ctx.save();
       ctx.globalAlpha = eqA;
       ctx.fillStyle = hexA(P.bone, 0.10);

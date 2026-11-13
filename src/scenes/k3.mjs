@@ -119,7 +119,7 @@ export default {
     /* ------------------------------ footer ------------------------------ */
     const fA = a(3.4, 0.7);
     if (fA > 0.01) {
-      const cy = YB + 6;
+      const cy = YB + 96;
       ctx.save();
       ctx.globalAlpha = fA;
       const pulse = 0.5 + 0.5 * Math.sin(t * 5);
@@ -130,7 +130,7 @@ export default {
       tracking(ctx, 'KURSI TERMURAH YANG MASIH ADA', 142, cy + 48, {
         size: 20, font: F.mono6, track: 4, color: hexA(P.amber, 0.85),
       });
-      tracking(ctx, `SISA ${RUNGS[idx].seats - Math.floor(frac * RUNGS[idx].seats)} KURSI · KELAS ${RUNGS[idx].cls}`, W - 132, cy + 48, {
+      tracking(ctx, `BLOK ${RUNGS[idx].seats} KURSI · KELAS ${RUNGS[idx].cls}`, W - 132, cy + 48, {
         size: 20, font: F.mono6, track: 4, color: hexA(P.bone, 0.32), align: 'right',
       });
       ctx.fillStyle = hexA(P.bone, 0.10);

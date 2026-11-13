@@ -203,13 +203,19 @@ export function seatMap(ctx, x, y, { cols = 6, rows = 8, cw = 62, ch = 46, gap =
     const order = ((c * 7 + r * 13) % total) / total; // deterministic fill order
     const on = order < sold;
     if (on) {
-      fillRR(ctx, sx, sy, cw, ch, 8, hexA(accent, 0.14));
-      strokeRR(ctx, sx, sy, cw, ch, 8, hexA(accent, 0.5), 1.4);
-      // seat back
-      ctx.fillStyle = hexA(accent, 0.5);
-      ctx.fillRect(sx + 12, sy + ch * 0.5, cw - 24, 4);
+      // sold: a filled seat with its back rest drawn in
+      fillRR(ctx, sx, sy, cw, ch, 8, hexA(accent, 0.26));
+      strokeRR(ctx, sx, sy, cw, ch, 8, hexA(accent, 0.72), 1.6);
+      ctx.fillStyle = hexA(accent, 0.85);
+      ctx.fillRect(sx + 12, sy + ch * 0.46, cw - 24, 5);
+      ctx.fillStyle = hexA(accent, 0.35);
+      ctx.fillRect(sx + cw * 0.32, sy + ch * 0.62, cw * 0.36, 4);
     } else {
+      // still for sale: an empty outline, and nothing inside it
+      ctx.save();
+      ctx.setLineDash([6, 6]);
       strokeRR(ctx, sx, sy, cw, ch, 8, dim, 1.2);
+      ctx.restore();
     }
   }
   // cabin outline
