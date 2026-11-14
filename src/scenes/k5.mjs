@@ -223,9 +223,9 @@ export default {
     }
 
     /* --------------------------- the sticky note ------------------------ */
-    const nA = a(4.4, 0.6);
+    const nA = a(7.42, 0.6);
     if (nA > 0.01) {
-      const s = ease.expo(clamp((t - 4.4) / 0.6));
+      const s = ease.expo(clamp((t - 7.42) / 0.55));
       ctx.save();
       ctx.translate(1016, 1470);
       ctx.rotate(-0.075);
@@ -251,7 +251,7 @@ export default {
         size: 18, font: F.mono6, track: 4, color: 'rgba(178,58,36,0.80)',
       });
       // struck through
-      const sp = ease.out(clamp((t - 5.5) / 0.5));
+      const sp = ease.out(clamp((t - 7.95) / 0.5));
       if (sp > 0.01) {
         ctx.save();
         ctx.globalAlpha *= sp;
@@ -268,7 +268,7 @@ export default {
     }
 
     /* ------------------------------ the rail ---------------------------- */
-    const stA = a(7.2, 0.6);
+    const stA = a(4.80, 0.6);
     if (stA > 0.01) {
       ctx.save();
       ctx.globalAlpha = stA;

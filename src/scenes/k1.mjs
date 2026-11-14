@@ -61,7 +61,7 @@ export default {
     const bx = (W - bw) / 2;
     const by = 596;
     const drop = a(0.42, 0.62);
-    const flip = clamp((t - 2.05) / 1.0);
+    const flip = clamp((t - 2.98) / 0.78);
 
     // housing
     const hx = bx - 46;
@@ -93,7 +93,7 @@ export default {
 
     splitFlap(ctx, {
       value: '900.000',
-      prev: '684.000',
+      prev: '700.000',
       p: flip,
       x: bx,
       y: by + 16,
@@ -117,13 +117,13 @@ export default {
     ctx.restore();
 
     /* --------------------------- the LED graph -------------------------- */
-    const sp = clamp((t - 2.70) / 1.5);
+    const sp = clamp((t - 3.15) / 1.55);
     if (sp > 0.01) {
       const sx = 150;
       const sy = 1080;
       const sw = W - 300;
       const sh = 128;
-      const sa = ease.out(clamp((t - 2.70) / 0.7));
+      const sa = ease.out(clamp((t - 3.15) / 0.6));
       ctx.save();
       ctx.globalAlpha = sa;
       // recessed glass panel
@@ -150,9 +150,9 @@ export default {
     }
 
     /* ------------------------- the sticker (delta) ---------------------- */
-    const dl = a(2.30, 0.55);
+    const dl = a(3.72, 0.5);
     if (dl > 0.01) {
-      const s = ease.expo(clamp((t - 2.30) / 0.6));
+      const s = ease.expo(clamp((t - 3.72) / 0.55));
       ctx.save();
       ctx.translate(hx + hw - 206, 948);
       ctx.rotate(-0.055);
@@ -164,9 +164,9 @@ export default {
     }
 
     /* --------------------------- paper record --------------------------- */
-    const tp = a(4.85, 0.7);
+    const tp = a(2.52, 0.7);
     if (tp > 0.01) {
-      const s = ease.out(clamp((t - 4.85) / 0.9));
+      const s = ease.out(clamp((t - 2.52) / 0.9));
       ctx.save();
       ctx.translate((1 - s) * 40, (1 - s) * 26);
       paperTape(ctx, 742, 1268, 556, tape, {
@@ -175,7 +175,7 @@ export default {
       ctx.restore();
 
       // the caption on the wall beside the tape
-      const ca = a(5.6, 0.6);
+      const ca = a(5.2, 0.6);
       if (ca > 0.01) {
         ctx.save();
         ctx.globalAlpha = ca;

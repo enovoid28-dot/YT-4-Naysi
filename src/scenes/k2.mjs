@@ -9,7 +9,7 @@ import { barcode } from '../engine/motion.mjs';
 // sell, tags are taken off the rail; when the door shuts the last ones are
 // worth nothing, and the cabin goes back to being an auction lot.
 
-const DOOR = 7.4;
+const DOOR = 5.45;
 
 const tags = [
   { cls: 'Y', price: 'Rp 700', sold: 2.1 },
@@ -161,7 +161,7 @@ export default {
     });
 
     /* ----------------------------- door clock --------------------------- */
-    const clkA = a(0.5, 0.7);
+    const clkA = a(0.5, 0.7) * (1 - ease.out(clamp((t - DOOR - 0.85) / 0.6)));
     if (clkA > 0.01) {
       const left = Math.max(0, DOOR - t);
       const mm = Math.floor(left / 60);
@@ -209,7 +209,7 @@ export default {
       const sway = Math.sin(t * 1.15 + i * 0.9) * 0.022;
       const soldP = tg.sold == null ? 0 : clamp((t - tg.sold) / 0.55);
       const gone = ease.out(soldP);
-      const zeroP = clamp((t - DOOR - 0.15) / 0.55);
+      const zeroP = clamp((t - DOOR - 0.12) / 0.5);
       const price = zeroP > 0.5 ? 'Rp 0' : tg.price;
       const isZero = price === 'Rp 0';
       const appear = ease.out(clamp((t - 0.04 - i * 0.05) / 0.45));
@@ -270,7 +270,7 @@ export default {
     }
 
     /* ------------------------------- stamp ------------------------------ */
-    const st = clamp((t - DOOR - 1.05) / 0.20);
+    const st = clamp((t - 5.62) / 0.20);
     if (st > 0.02) {
       const s = 1 + (1 - ease.out(st)) * 0.30;
       ctx.save();
@@ -287,9 +287,9 @@ export default {
     }
 
     /* --------------------------- the lot card ---------------------------- */
-    const la = a(DOOR + 1.5, 0.7);
+    const la = a(8.95, 0.7);
     if (la > 0.01) {
-      const s = ease.out(clamp((t - DOOR - 1.5) / 0.8));
+      const s = ease.out(clamp((t - 8.95) / 0.8));
       ctx.save();
       ctx.globalAlpha = la;
       ctx.translate((1 - s) * -40, 0);

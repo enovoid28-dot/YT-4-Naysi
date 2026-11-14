@@ -8,10 +8,10 @@ import { P, eyebrow, ease, nightWall, lightCone, engraved, sticker } from './_fa
 // empty first, and the only way left is up.
 
 const RUNGS = [
-  { cls: 'Q', price: '700', at: 2.30 },
-  { cls: 'V', price: '790', at: 3.05 },
-  { cls: 'W', price: '880', at: 3.75 },
-  { cls: 'S', price: '975', at: 4.45 },
+  { cls: 'Q', price: '700', at: 3.80 },
+  { cls: 'V', price: '790', at: 4.35 },
+  { cls: 'W', price: '880', at: 4.90 },
+  { cls: 'S', price: '975', at: 5.45 },
   { cls: 'T', price: '1.070', at: null },
   { cls: 'L', price: '1.170', at: null },
   { cls: 'K', price: '1.270', at: null },
@@ -41,7 +41,7 @@ export default {
     });
 
     /* --------------------------- the staircase -------------------------- */
-    const stA = a(0.02, 0.7);
+    const stA = a(0.02, 0.45);
     if (stA <= 0.01) return;
 
     // a soft pool of light on the floor at the foot of the stairs
@@ -55,7 +55,7 @@ export default {
       const r = RUNGS[i];
       const ty = treadY(i);
       const x = X0 + i * SW;
-      const ap = ease.out(clamp((t - 0.02 - (RUNGS.length - 1 - i) * 0.06) / 0.5));
+      const ap = ease.out(clamp((t - 0.02 - (RUNGS.length - 1 - i) * 0.028) / 0.34));
 
       ctx.save();
       ctx.globalAlpha = stA * ap;
@@ -127,11 +127,8 @@ export default {
         tracking(ctx, `KELAS ${r.cls}`, 0, -20, {
           size: 13, font: F.mono6, track: 3, color: 'rgba(23,19,16,0.52)', align: 'center',
         });
-        txt(ctx, r.price, 0, 26, {
-          size: 34, font: F.num, color: 'rgba(23,19,16,0.88)', align: 'center', track: -1,
-        });
-        tracking(ctx, 'RIBU', 0, 42, {
-          size: 11, font: F.mono6, track: 3, color: 'rgba(23,19,16,0.40)', align: 'center',
+        txt(ctx, r.price, 0, 30, {
+          size: 36, font: F.num, color: 'rgba(23,19,16,0.88)', align: 'center', track: -1,
         });
         ctx.restore();
       }
@@ -165,10 +162,10 @@ export default {
     }
 
     /* ------------------------- the climbing marker ---------------------- */
-    const mkA = a(5.3, 0.6);
+    const mkA = a(6.5, 0.6);
     if (mkA > 0.01) {
       // which step the price is standing on now
-      const stepNow = 4 + Math.round(2 * ease.inOut(clamp((t - 7.5) / 1.1)));
+      const stepNow = 4 + Math.round(2 * ease.inOut(clamp((t - 6.9) / 1.0)));
       const ty = treadY(stepNow);
       const x = X0 + stepNow * SW + DX + 60;
       ctx.save();
@@ -197,9 +194,9 @@ export default {
     }
 
     /* ---------------------------- the sticker --------------------------- */
-    const sa = a(8.9, 0.55);
+    const sa = a(7.0, 0.5);
     if (sa > 0.01) {
-      const s = ease.expo(clamp((t - 8.9) / 0.6));
+      const s = ease.expo(clamp((t - 7.0) / 0.55));
       ctx.save();
       ctx.translate(452, 566);
       ctx.rotate(-0.045);

@@ -12,7 +12,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { SCENES } from '../src/script.mjs';
-import { readWav, voPath } from '../src/timeline.mjs';
+import { readWav, voPath, capCards } from '../src/timeline.mjs';
 
 const FRAME = 0.01;
 const THRESH = 0.02;
@@ -21,7 +21,7 @@ const MIN_GAP = 0.12;
 
 const cleanWord = (w) => w.replace(/\*/g, '');
 const isAccent = (w) => w.startsWith('*') || w.endsWith('*');
-const splitSentences = (cap) => cap.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
+
 const syllables = (w) => {
   const s = cleanWord(w).toLowerCase().replace(/[^a-z]/g, '');
   let n = (s.match(/[aiueo]+/g) || []).length;
@@ -87,33 +87,141 @@ function silences(runs, total) {
  * breaks, so we take the k-1 longest pauses and put them in order. A pause is
  * only accepted if both cards it creates stay on screen long enough to read.
  */
-function chooseBoundaries(gaps, sentences, speechStart, speechEnd) {
-  const need = sentences.length - 1;
-  if (need <= 0) return [];
-  const ranked = [...gaps].sort((a, b) => b.len - a.len);
-  const pick = [];
-  for (const g of ranked) {
-    if (pick.length >= need) break;
-    const bounds = [...pick, g.mid].sort((a, b) => a - b);
-    const edges = [speechStart, ...bounds, speechEnd];
-    let ok = true;
-    for (let i = 0; i < edges.length - 1; i++) if (edges[i + 1] - edges[i] < 1.0) ok = false;
-    if (!ok) continue;
-    pick.push(g.mid);
-  }
-  // not enough clean pauses: fall back to proportional cuts
-  if (pick.length < need) {
-    const span = speechEnd - speechStart;
-    const weights = sentences.map((s) => s.split(/\s+/).reduce((a, w) => a + syllables(w), 0));
-    const totalW = weights.reduce((a, b) => a + b, 0);
-    let acc = 0;
-    pick.length = 0;
-    for (let i = 0; i < need; i++) {
-      acc += weights[i];
-      pick.push(speechStart + (acc / totalW) * span);
+/** Timestamp at which the take has *spoken* `frac` of its voiced time. */
+function voicedTimeToClock(env, th, a, b, frac) {
+  const i0 = Math.max(0, Math.floor(a / FRAME));
+  const i1 = Math.min(env.length, Math.ceil(b / FRAME));
+  let total = 0;
+  for (let i = i0; i < i1; i++) if (env[i] > th) total += FRAME;
+  let acc = 0;
+  for (let i = i0; i < i1; i++) {
+    if (env[i] > th) {
+      acc += FRAME;
+      if (acc >= frac * total) return i * FRAME;
     }
   }
-  return pick.sort((a, b) => a - b);
+  return b;
+}
+
+/**
+ * Card boundaries, anchored on the sentence breaks of the take.
+ *
+ * The script's sentences are the only pauses long enough to trust, so the S-1
+ * longest silences become the sentence anchors. Inside each sentence the cards
+ * are placed by syllable weight over voiced time, snapped to a pause when one
+ * is close. That keeps a card change on a clause break instead of drifting.
+ */
+function chooseBoundaries(gaps, cards, vo, speechStart, speechEnd, env, th) {
+  const cardWords = cards.map((c) => c.split(/\s+/).length);
+  const totalWords = cardWords.reduce((a, b) => a + b, 0);
+  const sentWords = String(vo)
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.split(/\s+/).filter(Boolean).length)
+    .filter(Boolean);
+  const sentSum = sentWords.reduce((a, b) => a + b, 0);
+  const S = sentSum === totalWords && sentWords.length > 1 ? sentWords.length : 1;
+
+  // ---- sentence anchors: predicted from syllable weight, snapped to a pause
+  const anchors = [];
+  if (S > 1) {
+    const sentTexts = String(vo).split(/(?<=[.!?])\s+/).filter(Boolean);
+    const sentWts = sentTexts.map((t) => t.split(/\s+/).reduce((a, w) => a + syllables(w), 0));
+    const totW = sentWts.reduce((a, b) => a + b, 0) || 1;
+    const usedA = new Set();
+    let acc = 0;
+    let prev = speechStart;
+    for (let i = 0; i < S - 1; i++) {
+      acc += sentWts[i] || 0;
+      const target = voicedTimeToClock(env, th, speechStart, speechEnd, acc / totW);
+      let best = null;
+      let bestD = Infinity;
+      gaps.forEach((g, gi) => {
+        if (usedA.has(gi)) return;
+        if (g.mid <= prev + 0.60 || g.mid >= speechEnd - 0.60) return;
+        const d = Math.abs(g.mid - target);
+        if (d < bestD) { bestD = d; best = { gi, mid: g.mid }; }
+      });
+      let cut = target;
+      if (best && bestD <= 0.80) {
+        usedA.add(best.gi);
+        cut = best.mid;
+      }
+      cut = Math.max(prev + 0.60, Math.min(speechEnd - 0.40, cut));
+      anchors.push(cut);
+      prev = cut;
+    }
+  }
+
+  // ---- segments: [start, end) plus the word range they cover
+  const segs = [];
+  let wFrom = 0;
+  let tFrom = speechStart;
+  for (let i = 0; i < S; i++) {
+    const tTo = i < anchors.length ? anchors[i] : speechEnd;
+    const wTo = wFrom + (S > 1 ? sentWords[i] : totalWords);
+    segs.push({ tFrom, tTo, wFrom, wTo });
+    wFrom = wTo;
+    tFrom = tTo;
+  }
+  // any leftover words (rounding) belong to the last segment
+  segs[segs.length - 1].wTo = totalWords;
+
+  // ---- inside each segment, place the card cuts
+  const used = new Set();
+  const bounds = [];
+  let wi = 0;
+  segs.forEach((seg, si) => {
+    const cardsHere = [];
+    let w = seg.wFrom;
+    while (w < seg.wTo) {
+      const n = cardWords[wi + cardsHere.length];
+      cardsHere.push(n);
+      w += n;
+    }
+    const segWords = cardsHere.reduce((a, b) => a + b, 0);
+    // syllable weight per card in this segment
+    const wts = [];
+    let k = seg.wFrom;
+    cardsHere.forEach((n) => {
+      let sum = 0;
+      for (let j = 0; j < n; j++) {
+        const flat = cards[wi + wts.length]?.split(/\s+/)[j];
+        sum += syllables(flat || 'a');
+      }
+      wts.push(sum);
+      k += n;
+    });
+    const tot = wts.reduce((a, b) => a + b, 0) || 1;
+    let acc = 0;
+    let prev = seg.tFrom;
+    for (let c = 0; c < cardsHere.length - 1; c++) {
+      acc += wts[c];
+      const target = voicedTimeToClock(env, th, seg.tFrom, seg.tTo, acc / tot);
+      let best = null;
+      let bestD = Infinity;
+      gaps.forEach((g, gi) => {
+        if (used.has(gi)) return;
+        if (g.mid <= prev + 0.40 || g.mid >= seg.tTo - 0.15) return;
+        const d = Math.abs(g.mid - target);
+        if (d < bestD) { bestD = d; best = { gi, mid: g.mid }; }
+      });
+      let cut = target;
+      if (best && bestD <= 0.55) {
+        used.add(best.gi);
+        cut = best.mid;
+      }
+      cut = Math.max(prev + 0.40, Math.min(seg.tTo - 0.20, cut));
+      bounds.push(cut);
+      prev = cut;
+    }
+    wi += cardsHere.length;
+    // the sentence anchor itself is a boundary
+    if (si < segs.length - 1) {
+      bounds.push(seg.tTo);
+      prev = seg.tTo;
+    }
+  });
+  return bounds.sort((a, b) => a - b);
 }
 
 /**
@@ -170,11 +278,11 @@ for (const sc of SCENES) {
   const th = level(env);
   const runs = voiced(env, th);
   if (!runs.length) throw new Error(`${sc.id}: no speech found`);
-  const sentences = splitSentences(sc.cap);
+  const sentences = capCards(sc.cap);
   const speechStart = runs[0].a;
   const speechEnd = Math.min(wav.duration, runs[runs.length - 1].b);
   const gaps = silences(runs, wav.duration);
-  const bounds = chooseBoundaries(gaps, sentences, speechStart, speechEnd);
+  const bounds = chooseBoundaries(gaps, sentences, sc.vo, speechStart, speechEnd, env, th);
 
   const cards = [];
   let from = speechStart;
@@ -196,6 +304,15 @@ for (const sc of SCENES) {
   console.log(
     `${sc.id}  speech ${speechStart.toFixed(2)}–${speechEnd.toFixed(2)}  ${cards.length} cards  ${lens} s`,
   );
+  cards.forEach((c, i) => {
+    const head = c.slice(0, 3).map((w) => w.text).join(' ');
+    const tail = c.slice(-2).map((w) => w.text).join(' ');
+    console.log(
+      `    ${String(i + 1).padStart(2)}. ${c[0].start.toFixed(2)}–${c[c.length - 1].end.toFixed(2)}  ` +
+      `${c.length}w  ${(c.length / Math.max(0.2, c[c.length - 1].end - c[0].start)).toFixed(2)} w/s  ` +
+      `${head} … ${tail}`,
+    );
+  });
 }
 
 fs.mkdirSync(path.join(process.cwd(), 'assets', 'audio'), { recursive: true });

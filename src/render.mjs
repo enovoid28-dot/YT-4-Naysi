@@ -209,7 +209,7 @@ function drawFrame(ctx, frame) {
 
   // global fades
   const fadeIn = clamp(t / 0.5);
-  const fadeOut = clamp((timeline.total - t) / 0.9);
+  const fadeOut = clamp((timeline.total - t) / 0.5);
   const a = Math.min(fadeIn, fadeOut);
   if (a < 1) {
     ctx.save();

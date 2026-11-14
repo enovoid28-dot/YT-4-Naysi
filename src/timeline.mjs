@@ -44,11 +44,15 @@ function readAlign() {
   }
 }
 
-const splitSentences = (cap) =>
-  cap
-    .split(/(?<=[.!?])\s+/)
-    .map((s) => s.trim())
-    .filter(Boolean);
+/**
+ * A caption is either a sentence string or an explicit array of cards (v2).
+ * An array is the honest form: one entry per card, word-for-word the same text
+ * the voice says, so subtitle timing can never drift from the take.
+ */
+export const capCards = (cap) => {
+  const list = Array.isArray(cap) ? cap : String(cap).split(/(?<=[.!?])\s+/);
+  return list.map((s) => String(s).trim()).filter(Boolean);
+};
 
 const cleanWord = (w) => w.replace(/\*/g, '');
 const isAccent = (w) => w.startsWith('*') || w.endsWith('*');
@@ -86,10 +90,10 @@ export function buildTimeline() {
     const file = voPath(sc.id);
     if (!fs.existsSync(file)) throw new Error(`missing VO: ${path.relative(process.cwd(), file)}`);
     const audioDur = readWav(file).duration;
-    const voOffset = i === 0 ? 0.95 : 0.22;
+    const voOffset = i === 0 ? 0.60 : 0.22;
     const dur = voOffset + audioDur + sc.pad;
 
-    const sentences = splitSentences(sc.cap);
+    const sentences = capCards(sc.cap);
     const gap = 0.26;
     const tail = 0.12;
     const speak = audioDur - gap * (sentences.length - 1) - tail;
@@ -119,7 +123,7 @@ export function buildTimeline() {
           words: ws,
           from: ci === 0 ? voOffset + Math.max(0, aligned.onset) - 0.12 : ws[0].start,
           to: last
-            ? Math.min(dur - 0.02, speechEnd + 0.55)
+            ? Math.min(dur - 0.25, speechEnd + 1.9)
             : ws[ws.length - 1].end - 0.02,
         });
       });

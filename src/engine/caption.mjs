@@ -42,7 +42,17 @@ export function buildCaption(ctx, group, { maxWidth, size = 78, font = F.semi, m
     const space = ctx.measureText(' ').width * 1.45;
     const widest = Math.max(...group.words.map((w) => ctx.measureText(w.text).width));
     if (widest > maxWidth) continue; // this size cannot hold a single word
-    const lines = wrapWords(ctx, group.words, space, maxWidth);
+    let lines = wrapWords(ctx, group.words, space, maxWidth);
+    // A two-line caption whose last line is a single word reads as a mistake, so
+    // the wrapper used to shrink the type until the whole line fitted instead.
+    // Re-wrap on a narrower measure first: same size, balanced break.
+    const widowed = (ls) => ls.length > 1 && ls[ls.length - 1].words.length === 1;
+    if (widowed(lines)) {
+      for (const f of [0.78, 0.68, 0.58, 0.5]) {
+        const alt = wrapWords(ctx, group.words, space, maxWidth * f);
+        if (alt.length >= 2 && alt.length <= maxLines && !widowed(alt)) { lines = alt; break; }
+      }
+    }
     const cand = { size: s, font, lines, space };
     smallest = cand;
     const widow = lines.length > 1 && lines[lines.length - 1].words.length === 1;

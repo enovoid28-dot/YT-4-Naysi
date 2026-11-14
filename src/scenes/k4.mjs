@@ -224,20 +224,20 @@ export default {
       ctx.fillRect(68, 882, 40, 3);
     }
 
-    const m2 = a(0.55, 0.7);
+    const m2 = a(4.35, 0.7);
     if (m2 > 0.01) {
       ctx.save();
       ctx.translate(0, (1 - m2) * 30);
       clockFace(ctx, 1032, 706, 168, { a: m2, hands: [8, 42] });
       ctx.restore();
       engraved(ctx, 'SISA WAKTU', 972, 930, {
-        size: 19, color: 'rgba(226,240,252,0.44)', track: 4, a: a(1.4, 0.5),
+        size: 19, color: 'rgba(226,240,252,0.44)', track: 4, a: a(4.9, 0.5),
       });
-      ctx.fillStyle = hexA(P.amber, 0.7 * a(1.4, 0.5));
+      ctx.fillStyle = hexA(P.amber, 0.7 * a(4.9, 0.5));
       ctx.fillRect(868, 910, 40, 3);
     }
 
-    const m3 = a(1.05, 0.7);
+    const m3 = a(6.60, 0.7);
     if (m3 > 0.01) {
       ctx.save();
       ctx.globalAlpha = m3;
@@ -273,20 +273,20 @@ export default {
       });
       ctx.restore();
       engraved(ctx, 'HARGA PESAING', 232, 1302, {
-        size: 19, color: 'rgba(226,240,252,0.44)', track: 4, a: a(1.9, 0.5),
+        size: 19, color: 'rgba(226,240,252,0.44)', track: 4, a: a(7.2, 0.5),
       });
-      ctx.fillStyle = hexA(P.amber, 0.7 * a(1.9, 0.5));
+      ctx.fillStyle = hexA(P.amber, 0.7 * a(7.2, 0.5));
       ctx.fillRect(210, 1282, 40, 3);
     }
 
     /* ------------------------------- the card --------------------------- */
-    const cA = a(3.5, 0.7);
+    const cA = a(1.85, 0.7);
     if (cA <= 0.01) return;
     const cx = 668;
     const cy = 1044;
     const cw = 566;
     const ch = 358;
-    const s = ease.out(clamp((t - 3.5) / 0.75));
+    const s = ease.out(clamp((t - 1.85) / 0.75));
 
     ctx.save();
     ctx.globalAlpha = cA;
@@ -370,8 +370,9 @@ export default {
       ctx.restore();
     }
     /* ------------------------------ red thread -------------------------- */
-    const th = clamp((t - 3.9) / 1.1);
-    if (th > 0.01) {
+    // each thread is tied the moment the voice names that reason
+    const TH_START = [2.30, 4.75, 7.10];
+    if (t > TH_START[0]) {
       const ends = [
         [356, 838, cx + 14, cy + 110],
         [984, 812, cx + cw - 26, cy + 46],
@@ -383,7 +384,7 @@ export default {
       ctx.lineWidth = 2.4;
       ctx.lineCap = 'round';
       ends.forEach(([x0, y0, x1, y1], i) => {
-        const p = ease.out(clamp((th - i * 0.12) / 0.75));
+        const p = ease.out(clamp((t - TH_START[i]) / 0.55));
         if (p <= 0.01) return;
         const midX = (x0 + x1) / 2;
         const midY = (y0 + y1) / 2 + 46; // sag

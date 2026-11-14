@@ -8,7 +8,7 @@ import { barcode } from '../engine/motion.mjs';
 // An auction room after hours: the lot board, the gavel still warm, a paddle
 // left on the table. The room has been open since the seats went on sale.
 
-const STRIKE = 6.15;
+const STRIKE = 5.72;
 const BLOCK_X = 700;
 const BLOCK_Y = 1268;
 
@@ -189,7 +189,7 @@ export default {
       ctx.restore();
 
       // swing: lift and wind up, then one strike, then rest
-      const up = clamp((t - 5.0) / 1.0);
+      const up = clamp((t - 4.85) / 0.75);
       const down = clamp((t - STRIKE) / 0.30);
       const lift = (ease.out ? ease.out(up) : up) * (1 - (ease.inCubic ? ease.inCubic(down) : down));
       const bounce = Math.sin(clamp((t - STRIKE - 0.30) / 0.55) * Math.PI) * 0.06 * (t > STRIKE ? 1 : 0);
@@ -269,6 +269,20 @@ export default {
       }
     }
 
+
+    /* ------------------------- closing stamp ---------------------------- */
+    const cs = a(7.05, 0.45);
+    if (cs > 0.01) {
+      const k = 1 + (1 - ease.out(clamp((t - 7.05) / 0.5))) * 0.30;
+      ctx.save();
+      ctx.translate(1052, 636);
+      ctx.rotate(-0.05);
+      ctx.scale(k, k);
+      sticker(ctx, 0, 0, 'TIDAK ADA JAM TUTUP', {
+        w: 520, h: 108, a: cs, sub: 'LELANGNYA TETAP JALAN', size: 38, bg: '#D9503A',
+      });
+      ctx.restore();
+    }
     /* ------------------------------ dust motes --------------------------- */
     for (let i = 0; i < 18; i++) {
       const u = (i * 0.37 + t * 0.012) % 1;
