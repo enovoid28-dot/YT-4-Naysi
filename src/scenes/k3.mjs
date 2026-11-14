@@ -95,15 +95,15 @@ export default {
         ctx.fillStyle = `rgba(200,222,240,${0.02 + 0.03 * noise1(s + i * 5, 4)})`;
         ctx.fillRect(sx, sy, 2, 2);
       }
-      // rung number etched on the riser
-      tracking(ctx, `T ${String(i + 1).padStart(2, '0')}`, x + 12, ty + 36, {
-        size: 13, font: F.mono6, track: 3, color: 'rgba(210,232,250,0.26)',
+      // the rung's code, etched small on its riser
+      tracking(ctx, r.cls, x + 14, ty + 38, {
+        size: 14, font: F.mono6, track: 3, color: 'rgba(210,232,250,0.30)',
       });
 
       /* ----------------------------- the tag ---------------------------- */
       const gone = r.at == null ? 0 : ease.inOut(clamp((t - r.at) / 0.55));
       if (gone < 0.995) {
-        const tx = x + DX * 0.45 + 18;
+        const tx = x + DX * 0.45 + 9;
         const tY = ty - DY - 6;
         ctx.save();
         ctx.globalAlpha *= 1 - gone;

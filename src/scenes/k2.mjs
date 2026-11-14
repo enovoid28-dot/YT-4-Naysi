@@ -275,10 +275,10 @@ export default {
       const s = 1 + (1 - ease.out(st)) * 0.30;
       ctx.save();
       ctx.globalAlpha = 0.92 * clamp(st * 1.6);
-      ctx.translate(W / 2 - 10, 946);
+      ctx.translate(W / 2 - 6, 892);
       ctx.rotate(-0.13);
       ctx.scale(s, s);
-      strokeRR(ctx, -306, -70, 612, 140, 10, hexA(P.ember, 0.85), 5);
+      strokeRR(ctx, -306, -70, 612, 140, 10, hexA(P.ember, 0.90), 5);
       strokeRR(ctx, -294, -58, 588, 116, 8, hexA(P.ember, 0.45), 1.6);
       txt(ctx, 'NILAINYA NOL', 0, 22, {
         size: 78, font: F.head, color: hexA(P.ember, 0.90), align: 'center', track: 2,
