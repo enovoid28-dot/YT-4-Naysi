@@ -24,7 +24,7 @@ export const SCENES = [
       'Hari ini *sembilan* *ratus* *ribu*.',
       'Dan bukan karena maskapai mengawasi pencarianmu.',
     ],
-    pad: 1.75,
+    pad: 0.65
   },
   {
     id: 's2',
@@ -40,7 +40,7 @@ export const SCENES = [
       'Jadi maskapai tidak memasang harga,',
       'Mereka *melelangnya*.',
     ],
-    pad: 1.55,
+    pad: 0.55
   },
   {
     id: 's3',
@@ -56,7 +56,7 @@ export const SCENES = [
       'Dan begitu habis,',
       'Harga *melompat* ke tingkat berikutnya.',
     ],
-    pad: 1.55,
+    pad: 0.60
   },
   {
     id: 's4',
@@ -71,7 +71,7 @@ export const SCENES = [
       'Sisa waktu sebelum berangkat,',
       'Dan *harga* *pesaing*.',
     ],
-    pad: 1.45,
+    pad: 0.50
   },
   {
     id: 's5',
@@ -86,7 +86,7 @@ export const SCENES = [
       'Selasa sampai Kamis biasanya lebih murah.',
       'Mode *incognito* tidak menolong.',
     ],
-    pad: 1.55,
+    pad: 0.55
   },
   {
     id: 's6',
@@ -101,6 +101,6 @@ export const SCENES = [
       'Sejak kursinya dijual,',
       'Dan kamu baru masuk ke ruangannya.',
     ],
-    pad: 2.55,
+    pad: 1.30
   },
 ];
