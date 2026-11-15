@@ -33,7 +33,7 @@ function buildLayouts(ctx) {
     captionLayouts.set(
       s.id,
       s.captions.map((g) =>
-        buildCaption(ctx, g, { maxWidth: W - 2 * 88, size: 94, font: F.semi, maxLines: 2 }),
+        buildCaption(ctx, g, { maxWidth: W - 2 * 88, size: 94, font: F.semi, maxLines: 3 }),
       ),
     );
   }

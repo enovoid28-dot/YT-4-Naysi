@@ -1,106 +1,103 @@
-// Episode 12 — "Tiket pesawat tidak dijual. Ia dilelang." (dynamic pricing)
+// Episode 13 — "Paylater bukan uangmu. Itu uang bulan depanmu." (BNPL)
 //
-// Two spoken sentences per scene == two caption cards per scene, so every card
-// is placed from the audio that was actually recorded, never from a guess.
+// Thesis: a paylater purchase is not a discount and not a payment plan, it is
+// a loan you take to move next month's money into today — with rent, a fee that
+// is quoted per month so it looks small, and a penalty that is quoted per
+// month but charged per day late.
 //
-// Thesis: an airline seat is perishable inventory, so a fare is not a sticker —
-// it is an auction that opens the day the seat goes on sale. The popular
-// "they track my cookies" story is wrong, and the truth is more useful: the
-// three things that move the number are visible to you.
+// Every card below is a verbatim slice of the take, so a caption can never say
+// something the voice did not.
 
-export const SERIES = 'NAYSI · HARGA';
+export const SERIES = 'NAYSI · UANG';
 export const BRAND = 'NAYSI';
 
 export const SCENES = [
   {
     id: 's1',
-    key: 'k1',
-    label: 'HARGA YANG BERGERAK',
+    key: 'n1',
+    label: 'HARGA YANG DIPINJAM',
     index: '01',
     theme: 'dark',
-    vo: 'Kemarin tiket ini tujuh ratus ribu. Hari ini sembilan ratus ribu, dan bukan karena maskapai mengawasi pencarianmu.',
+    vo: 'Sepatu ini satu juta dua ratus ribu. Kamu bayarnya seratus dua puluh ribu, lalu merasa cuma belanja segitu.',
     cap: [
-      'Kemarin tiket ini *tujuh* *ratus* *ribu*.',
-      'Hari ini *sembilan* *ratus* *ribu*.',
-      'Dan bukan karena maskapai mengawasi pencarianmu.',
+      'Sepatu ini *satu* *juta* *dua* *ratus* *ribu*.',
+      'Kamu bayarnya *seratus* *dua* *puluh* *ribu*,',
+      'Lalu merasa cuma belanja segitu.',
     ],
-    pad: 0.65
+    pad: 0.65,
   },
   {
     id: 's2',
-    key: 'k2',
-    label: 'BARANG BASI',
+    key: 'n2',
+    label: 'BUNGA YANG KECIL',
     index: '02',
     theme: 'dark',
-    vo: 'Kursi pesawat itu barang yang cepat basi. Lewat satu menit saja setelah pintu ditutup, nilainya nol. Jadi maskapai tidak memasang harga, mereka melelangnya.',
+    vo: 'Bunganya hampir tiga persen sebulan. Kedengarannya kecil, karena kamu bandingkan dengan satu juta. Bukan dengan setahun: tiga puluh lima persen.',
     cap: [
-      'Kursi pesawat itu barang yang cepat *basi*.',
-      'Lewat satu menit saja setelah pintu ditutup,',
-      'Nilainya *nol*.',
-      'Jadi maskapai tidak memasang harga,',
-      'Mereka *melelangnya*.',
+      'Bunganya hampir *tiga* *persen* sebulan.',
+      'Kedengarannya kecil, karena kamu bandingkan dengan satu juta.',
+      'Bukan dengan setahun:',
+      'Tiga puluh *lima* *persen*.',
     ],
-    pad: 0.55
+    pad: 0.55,
   },
   {
     id: 's3',
-    key: 'k3',
-    label: 'TINGKAT HARGA',
+    key: 'n3',
+    label: 'SATU HARI TERLAMBAT',
     index: '03',
     theme: 'dark',
-    vo: 'Di dalam satu kabin ekonomi ada belasan tingkat harga. Kursi termurah dilepas dulu, dan begitu habis, harga melompat ke tingkat berikutnya.',
+    vo: 'Telat satu hari saja, dendanya lima persen dari seluruh tagihan. Tanpa masa tenggang. Itu bunga dua bulan, dihapus sehari.',
     cap: [
-      'Di dalam satu kabin ekonomi,',
-      'Ada *belasan* *tingkat* *harga*.',
-      'Kursi termurah dilepas dulu,',
-      'Dan begitu habis,',
-      'Harga *melompat* ke tingkat berikutnya.',
+      'Telat *satu* *hari* saja, dendanya lima persen dari seluruh tagihan.',
+      'Tanpa masa tenggang.',
+      'Itu bunga *dua* *bulan*, dihapus sehari.',
     ],
-    pad: 0.60
+    pad: 0.60,
   },
   {
     id: 's4',
-    key: 'k4',
-    label: 'YANG MENGGERAKKAN',
+    key: 'n4',
+    label: 'ANGKA YANG DIPECAH',
     index: '04',
     theme: 'dark',
-    vo: 'Yang menggerakkan angkanya bukan kamu, tapi semua orang yang mencari rute itu, sisa waktu sebelum berangkat, dan harga pesaing.',
+    vo: 'Kenapa tidak terasa? Karena angkanya dipecah. Seratus dua puluh ribu jauh dari satu juta dua ratus, jadi kamu membaca angka pertama, bukan totalnya.',
     cap: [
-      'Yang menggerakkan angkanya bukan kamu,',
-      'Tapi *semua* *orang* yang mencari rute itu,',
-      'Sisa waktu sebelum berangkat,',
-      'Dan *harga* *pesaing*.',
+      'Kenapa tidak terasa?',
+      'Karena angkanya *dipecah*.',
+      'Seratus dua puluh ribu jauh dari satu juta dua ratus,',
+      'Jadi kamu membaca angka pertama, bukan totalnya.',
     ],
-    pad: 0.50
+    pad: 0.50,
   },
   {
     id: 's5',
-    key: 'k5',
-    label: 'JENDELA WAKTU',
+    key: 'n5',
+    label: 'YANG SEDANG TERJADI',
     index: '05',
     theme: 'dark',
-    vo: 'Harga naik makin dekat keberangkatan, paling tajam di dua minggu terakhir. Selasa sampai Kamis biasanya lebih murah. Mode incognito tidak menolong.',
+    vo: 'Dan itu bekerja. Utang paylater di bank naik hampir sepertiga setahun: dua puluh empat triliun, dari dua puluh sembilan juta rekening.',
     cap: [
-      'Harga naik makin dekat keberangkatan,',
-      'Paling tajam di *dua* *minggu* terakhir.',
-      'Selasa sampai Kamis biasanya lebih murah.',
-      'Mode *incognito* tidak menolong.',
+      'Dan itu *bekerja*.',
+      'Utang paylater di bank naik hampir sepertiga setahun:',
+      'Dua puluh *empat* *triliun*,',
+      'Dari dua puluh sembilan juta rekening.',
     ],
-    pad: 0.55
+    pad: 0.55,
   },
   {
     id: 's6',
-    key: 'k6',
-    label: 'YANG BERJALAN TERUS',
+    key: 'n6',
+    label: 'UANG BULAN DEPAN',
     index: '06',
     theme: 'dark',
-    vo: 'Tiket bukan angka yang menunggumu. Itu lelang yang sudah berjalan sejak kursinya dijual, dan kamu baru masuk ke ruangannya.',
+    vo: 'Paylater bukan uangmu. Itu uang bulan depanmu, dipinjam hari ini, dengan sewa. Sebelum mencicil, tanya: ini menghasilkan, atau cuma menua?',
     cap: [
-      'Tiket bukan angka yang menunggumu.',
-      'Itu *lelang* yang sudah berjalan',
-      'Sejak kursinya dijual,',
-      'Dan kamu baru masuk ke ruangannya.',
+      'Paylater bukan *uangmu*.',
+      'Itu uang bulan depanmu, dipinjam hari ini, dengan sewa.',
+      'Sebelum mencicil, tanya:',
+      'Ini menghasilkan, atau cuma *menua*?',
     ],
-    pad: 1.30
+    pad: 1.30,
   },
 ];

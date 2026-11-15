@@ -56,7 +56,7 @@ for (const scene of tl.scenes) {
     if (t0 < prevEnd - 0.001) fail(`${scene.id}.${i + 1} tumpang tindih (${t0.toFixed(2)} < ${prevEnd.toFixed(2)})`);
     if (t1 - t0 < 0.5) fail(`${scene.id}.${i + 1} terlalu singkat (${(t1 - t0).toFixed(2)} s)`);
     prevEnd = t1;
-    const lay = buildCaption(ctx, card, { maxWidth: W - 2 * 88, size: 94, font: F.semi, maxLines: 2 });
+    const lay = buildCaption(ctx, card, { maxWidth: W - 2 * 88, size: 94, font: F.semi, maxLines: 3 });
     if (lay.size < 78) fail(`${scene.id}.${i + 1} huruf mengecil ke ${lay.size}px`);
   });
 }
