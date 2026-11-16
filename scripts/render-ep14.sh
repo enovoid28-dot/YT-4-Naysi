@@ -4,7 +4,7 @@ cd "$(dirname "$0")/.."
 FF=node_modules/@ffmpeg-installer/linux-x64/ffmpeg
 mkdir -p out
 # 13 522 frames at 90 fps, five chunks so a crash never costs the render
-for spec in "0 2700" "2700 5400" "5400 8100" "8100 10800" "10800 13522"; do
+for spec in "0 2700" "2700 5400" "5400 8100" "8100 10800" "10800 13530"; do
   set -- $spec
   node src/render.mjs --from "$1" --to "$2" --preset fast --crf 20 --maxrate 6M --bufsize 12M --out "out/q14_$1.mp4"
 done
