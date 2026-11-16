@@ -18,10 +18,10 @@ export default {
     const c = (i, o = 0) => cue(scene, i, o);
     depot(ctx, { t, glowX: W * 0.5, glowY: 540, glowA: 0.10, horizon: 1300 });
 
-    const baseY = 1010;
-    const maxH = 520;
-    const bw = 116;
-    const gap = 38;
+    const baseY = 1030;
+    const maxH = 570;
+    const bw = 128;
+    const gap = 34;
     const total = YEARS.length * bw + (YEARS.length - 1) * gap;
     const x0 = (W - total) / 2;
 
@@ -43,11 +43,11 @@ export default {
       ]));
       ctx.restore();
       txt(ctx, yr.y, x + bw / 2, baseY + 52, {
-        size: 26, font: F.mono6, color: hexA(K.bone, isLast ? 0.75 : 0.42), align: 'center', track: 2,
+        size: 28, font: F.mono6, color: hexA(K.bone, isLast ? 0.78 : 0.42), align: 'center', track: 2,
       });
     });
 
-    tracking(ctx, 'BAGIAN ONGKIR YANG DITANGGUNG PLATFORM', W / 2, 1130, {
+    tracking(ctx, 'BAGIAN ONGKIR YANG DITANGGUNG PLATFORM', W / 2, 1168, {
       size: 24, font: F.mono6, track: 5, color: hexA(K.bone, 0.45), align: 'center', alpha: a(c(0, 0.5), 0.6),
     });
 

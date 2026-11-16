@@ -16,16 +16,18 @@ export default {
     const gx = 150;
     const gy = 470;
     const gw = W - 300;
-    const gh = 132;
+    const gh = 156;
 
     // the gate on "bersyarat"
-    const gate = a(c(1, 0.05), 0.6);
+    const gate = a(0.12, 0.7);
     if (gate > 0.01) {
       ctx.save();
       ctx.globalAlpha = gate;
-      tracking(ctx, 'SYARAT', gx, gy - 52, { size: 22, font: F.mono6, track: 5, color: hexA(K.amber, 0.85) });
-      fillRR(ctx, gx, gy, gw, gh, 14, 'rgba(246,241,228,0.07)');
-      strokeRR(ctx, gx, gy, gw, gh, 14, hexA(K.bone, 0.20), 2);
+      tracking(ctx, 'SYARAT', gx, gy - 52, {
+        size: 22, font: F.mono6, track: 5, color: hexA(K.amber, 0.85), alpha: a(c(1, 0.05), 0.6),
+      });
+      fillRR(ctx, gx, gy, gw, gh, 14, 'rgba(246,241,228,0.10)');
+      strokeRR(ctx, gx, gy, gw, gh, 14, hexA(K.bone, 0.32), 2);
       ctx.strokeStyle = hexA(K.mint, 0.85);
       ctx.lineWidth = 3;
       ctx.setLineDash([10, 8]);
@@ -33,8 +35,18 @@ export default {
       ctx.moveTo(gx + gw, gy - 34);
       ctx.lineTo(gx + gw, gy + gh + 34);
       ctx.stroke();
+      ctx.setLineDash([]);
+      // ten notches, so the bar reads as money, not as a progress gimmick
+      for (let k = 1; k < 10; k++) {
+        const nx = gx + (gw * k) / 10;
+        ctx.fillStyle = hexA(K.bone, k === 7 ? 0.42 : 0.20);
+        ctx.fillRect(nx - 1, gy + gh - 26, 2, 18);
+      }
       tracking(ctx, 'MIN. 100.000', gx + gw, gy + gh + 66, {
-        size: 24, font: F.mono6, track: 4, color: K.mint, align: 'right',
+        size: 26, font: F.mono6, track: 4, color: K.mint, align: 'right',
+      });
+      tracking(ctx, 'DARI 100.000', gx, gy + gh + 66, {
+        size: 22, font: F.mono6, track: 4, color: hexA(K.bone, 0.3),
       });
       ctx.restore();
     }
@@ -78,9 +90,9 @@ export default {
         a: add, rot: 0.05, tape: false, depth: 0.16, tint: '#B49C7C', mark: '???',
       });
     }
-    box(ctx, W / 2 - 400, 720, 340, 250, { a: a(c(3, 0.15), 0.6), rot: -0.03, tape: false, depth: 0.16, tint: '#CBB69A', mark: 'KAOS' });
+    box(ctx, W / 2 - 400, 720, 340, 250, { a: a(c(2, 0.15), 0.6), rot: -0.03, tape: false, depth: 0.16, tint: '#CBB69A', mark: 'KAOS' });
     txt(ctx, '70.000', W / 2 - 230, 1020, {
-      size: 40, font: F.num6, color: hexA(K.bone, 0.8), align: 'center', alpha: a(c(3, 0.15), 0.6),
+      size: 40, font: F.num6, color: hexA(K.bone, 0.8), align: 'center', alpha: a(c(2, 0.3), 0.6),
     });
     txt(ctx, '30.000', W / 2 + 205, 1020, {
       size: 40, font: F.num6, color: hexA(K.ember, 0.9), align: 'center', alpha: q2,

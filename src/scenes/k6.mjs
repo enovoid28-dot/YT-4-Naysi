@@ -13,16 +13,16 @@ export default {
     const c = (i, o = 0) => cue(scene, i, o);
     depot(ctx, { t, glowX: W * 0.5, glowY: 580, glowA: 0.11, horizon: 1300 });
 
-    const bw = 660;
-    const bh = 460;
+    const bw = 700;
+    const bh = 490;
     const bx = (W - bw) / 2;
-    const by = 430;
+    const by = 400;
 
     const p = ease.expo(clamp((t - 0.05) / 0.7));
     box(ctx, bx, by, bw, bh, { a: 0.4 + 0.6 * p, rot: 0, tape: true, mark: 'BANTAL', depth: 0.22 });
 
     // dimensions, one per word: panjang, lebar, tinggi
-    dim(ctx, bx, by + bh + 76, bx + bw, by + bh + 76, 'PANJANG 60', { a: a(c(2, 0.1), 0.5), size: 24 });
+    dim(ctx, bx, by + bh + 58, bx + bw, by + bh + 58, 'PANJANG 60', { a: a(c(2, 0.1), 0.5), size: 24 });
     dim(ctx, bx - 132, by, bx - 132, by + bh, '', { a: a(c(2, 0.55), 0.5), size: 21 });
     dim(ctx, bx + bw + 128, by + 26, bx + bw + 128, by + bh * 0.9, 'LEBAR 50', { a: a(c(2, 1.0), 0.5), size: 20 });
 
@@ -42,13 +42,13 @@ export default {
     if (f > 0.01) {
       ctx.save();
       ctx.globalAlpha = f;
-      fillRR(ctx, 150, 980, W - 300, 210, 16, 'rgba(159,200,230,0.07)');
-      strokeRR(ctx, 150, 980, W - 300, 210, 16, hexA(K.cyan, 0.35), 2);
-      txt(ctx, '60 × 50 × 40 ÷ 6.000', W / 2, 1052, {
+      fillRR(ctx, 150, 1040, W - 300, 200, 16, 'rgba(159,200,230,0.07)');
+      strokeRR(ctx, 150, 1040, W - 300, 200, 16, hexA(K.cyan, 0.35), 2);
+      txt(ctx, '60 × 50 × 40 ÷ 6.000', W / 2, 1108, {
         size: 42, font: F.mono6, color: hexA(K.bone, 0.8), align: 'center', track: 2,
       });
       const q = a(c(3, 0.15), 0.5);
-      txt(ctx, '= 20 KG', W / 2, 1136, {
+      txt(ctx, '= 20 KG', W / 2, 1188, {
         size: 44, font: F.num, color: K.cyan, align: 'center', track: 1, alpha: q,
       });
       ctx.restore();

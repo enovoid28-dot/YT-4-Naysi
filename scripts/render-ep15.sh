@@ -14,7 +14,6 @@ while [ $START -lt $FR ]; do
   START=$END
   i=$((i+1))
 done
-ls out/q15_*.mp4 | sort -V | sed "s#^#file '#\${PWD}/#" | sed "s#$#file '#" > /dev/null 2>&1 || true
 : > out/concat15.txt
 for f in $(ls out/q15_*.mp4 | sort -t_ -k2 -n); do printf "file '%s'\n" "$PWD/$f" >> out/concat15.txt; done
 "$FF" -y -hide_banner -loglevel error -f concat -safe 0 -i out/concat15.txt -c copy out/video15_silent.mp4

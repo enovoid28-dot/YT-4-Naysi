@@ -67,8 +67,8 @@ export default {
     // the sticker, walking across on cue 2
     const mv = ease.inOut(clamp((t - c(2, 0.05)) / 2.6));
     if (t > c(2, 0)) {
-      const sx = lerp(360, W - 380, mv);
-      const sy = lerp(760, 640, mv) - Math.sin(mv * Math.PI) * 200;
+      const sx = lerp(-260, W - 340, mv);
+      const sy = lerp(700, 836, mv) - Math.sin(mv * Math.PI) * 130;
       const drawSt = (al) => {
         ctx.save();
         ctx.globalAlpha = al;

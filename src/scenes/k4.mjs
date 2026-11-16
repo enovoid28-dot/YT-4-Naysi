@@ -27,6 +27,18 @@ export default {
       size: 20, font: F.mono6, track: 5, color: 'rgba(26,27,30,0.5)',
     });
 
+    // a blank form, so the sheet is never an empty white rectangle
+    ctx.save();
+    ctx.globalAlpha = 0.55;
+    for (let i = 0; i < 5; i++) {
+      const yy = y + 160 + i * 118;
+      ctx.fillStyle = 'rgba(26,27,30,0.08)';
+      ctx.fillRect(x + 44, yy + 46, w - 88, 1.6);
+      ctx.fillStyle = 'rgba(26,27,30,0.05)';
+      ctx.fillRect(x + 44, yy - 20, (w - 88) * 0.34, 12);
+    }
+    ctx.restore();
+
     const rows = [
       { at: 1, l: 'HARGA BAJU', v: '150.000', tone: '#1A1B1E', size: 62 },
       { at: 2, l: 'BIAYA LAYANAN', v: '− 12.000', tone: '#9C3524', size: 54 },

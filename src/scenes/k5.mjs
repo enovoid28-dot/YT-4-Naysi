@@ -54,10 +54,10 @@ export default {
     // the money in transit: a note that leaves the left card on cue 0
     const mv = ease.inOut(clamp((t - c(0, 0.35)) / 1.5));
     if (t > c(0, 0.35) && mv < 1.02) {
-      const nx = lerp(360, W - 330, mv);
-      const ny = 640 - Math.sin(mv * Math.PI) * 170;
+      const nx = lerp(250, W - 400, mv);
+      const ny = 620 - Math.sin(mv * Math.PI) * 300;
       ctx.save();
-      ctx.globalAlpha = 0.95 * (1 - clamp((mv - 0.9) / 0.1));
+      ctx.globalAlpha = 0.95 * (1 - clamp((mv - 0.55) / 0.28));
       ctx.translate(nx, ny);
       ctx.rotate(-0.06 + Math.sin(mv * Math.PI) * 0.16);
       fillRR(ctx, -110, -46, 220, 92, 6, '#D9C9A4');

@@ -36,10 +36,10 @@ export function depot(ctx, { t = 0, glowX = W * 0.5, glowY = 620, glowA = 0.12, 
   ]);
   ctx.fillRect(-240, -240, W + 480, H + 480);
   // concrete seam and a long specular streak on the floor
-  ctx.fillStyle = linGrad(ctx, 0, horizon - 120, 0, horizon + 170, [
-    [0, 'rgba(214,228,240,0)'], [0.45, 'rgba(214,228,240,0.07)'], [1, 'rgba(214,228,240,0)'],
+  ctx.fillStyle = linGrad(ctx, 0, horizon - 210, 0, horizon + 260, [
+    [0, 'rgba(214,228,240,0)'], [0.42, 'rgba(214,228,240,0.055)'], [0.62, 'rgba(214,228,240,0.035)'], [1, 'rgba(214,228,240,0)'],
   ]);
-  ctx.fillRect(0, horizon - 120, W, 290);
+  ctx.fillRect(0, horizon - 210, W, 470);
   for (const [bx, ph, sp] of [[280, 0, 0.085], [1140, 2, 0.07]]) {
     const x = bx + Math.sin(t * sp + ph) * 110;
     ctx.fillStyle = linGrad(ctx, x - 130, 0, x + 130, 0, [
@@ -278,7 +278,7 @@ export function weight(ctx, x, y, w, h, value, { a = 1 } = {}) {
 }
 
 /** courier van, side view, flat but lit */
-export function van(ctx, x, y, w, { a = 1, tilt = 0, motion = 0 } = {}) {
+export function van(ctx, x, y, w, { a = 1, tilt = 0, motion = 0, unMirror = false } = {}) {
   if (a <= 0.002) return;
   const h = w * 0.42;
   ctx.save();
@@ -318,9 +318,21 @@ export function van(ctx, x, y, w, { a = 1, tilt = 0, motion = 0 } = {}) {
   ctx.fillStyle = 'rgba(0,0,0,0.25)';
   ctx.fillRect(x + w * 0.03, y + h * 0.52, w * 0.68, 3);
   fillRR(ctx, x + w * 0.10, y + h * 0.22, w * 0.26, h * 0.26, 6, 'rgba(246,241,228,0.10)');
-  tracking(ctx, 'KIRIM', x + w * 0.23, y + h * 0.40, {
-    size: h * 0.13, font: F.head, track: 5, color: hexA(K.bone, 0.65), align: 'center',
-  });
+  if (unMirror) {
+    // the call site mirrors the whole canvas for the return trip; flip the
+    // lettering back so the logo is never printed backwards
+    ctx.save();
+    ctx.translate(x + w * 0.23, 0);
+    ctx.scale(-1, 1);
+    tracking(ctx, 'KIRIM', 0, y + h * 0.40, {
+      size: h * 0.13, font: F.head, track: 5, color: hexA(K.bone, 0.65), align: 'center',
+    });
+    ctx.restore();
+  } else {
+    tracking(ctx, 'KIRIM', x + w * 0.23, y + h * 0.40, {
+      size: h * 0.13, font: F.head, track: 5, color: hexA(K.bone, 0.65), align: 'center',
+    });
+  }
   // wheels
   for (const wx of [x + w * 0.16, x + w * 0.82]) {
     ctx.fillStyle = K.tire;
