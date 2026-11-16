@@ -1,103 +1,145 @@
-// Episode 13 — "Paylater bukan uangmu. Itu uang bulan depanmu." (BNPL)
+// Episode 14 — "Emas bukan mesin uang. Ia cermin." (harga emas 2026)
 //
-// Thesis: a paylater purchase is not a discount and not a payment plan, it is
-// a loan you take to move next month's money into today — with rent, a fee that
-// is quoted per month so it looks small, and a penalty that is quoted per
-// month but charged per day late.
+// Thesis: everybody quotes the buying price and nobody quotes the selling
+// price. Gold fell ~20% in rupiah this year, and the spread plus the fees mean
+// the buyer at the top was down almost 9% before the price even moved. Gold is
+// insurance, not a savings account — and it is priced by fear.
 //
-// Every card below is a verbatim slice of the take, so a caption can never say
-// something the voice did not.
+// Every card is a verbatim slice of the take.
 
-export const SERIES = 'NAYSI · UANG';
+export const SERIES = 'NAYSI · HARGA';
 export const BRAND = 'NAYSI';
 
 export const SCENES = [
   {
     id: 's1',
-    key: 'n1',
-    label: 'HARGA YANG DIPINJAM',
+    key: 'm1',
+    label: 'HARGA YANG TURUN',
     index: '01',
     theme: 'dark',
-    vo: 'Sepatu ini satu juta dua ratus ribu. Kamu bayarnya seratus dua puluh ribu, lalu merasa cuma belanja segitu.',
+    vo: 'Januari tahun ini, satu gram emas tiga koma satu juta. Hari ini, dua koma lima juta. Yang beli di puncak kehilangan dua puluh persen. Dan itu belum yang paling mahal.',
     cap: [
-      'Sepatu ini *satu* *juta* *dua* *ratus* *ribu*.',
-      'Kamu bayarnya *seratus* *dua* *puluh* *ribu*,',
-      'Lalu merasa cuma belanja segitu.',
+      'Januari tahun ini, satu gram emas *tiga* *koma* *satu* *juta*.',
+      'Hari ini, *dua* *koma* *lima* *juta*.',
+      'Yang beli di puncak kehilangan *dua* *puluh* *persen*.',
+      'Dan itu belum yang paling mahal.',
     ],
-    pad: 0.65,
+    pad: 1.30,
   },
   {
     id: 's2',
-    key: 'n2',
-    label: 'BUNGA YANG KECIL',
+    key: 'm2',
+    label: 'DUA HARGA',
     index: '02',
     theme: 'dark',
-    vo: 'Bunganya hampir tiga persen sebulan. Kedengarannya kecil, karena kamu bandingkan dengan satu juta. Bukan dengan setahun: tiga puluh lima persen.',
+    vo: 'Karena harga emas ada dua: harga saat kamu beli, dan harga saat kamu jual. Hari ini jaraknya dua ratus dua puluh empat ribu per gram. Sebelum harganya bergerak sedikit pun, kamu sudah hampir sembilan persen di belakang.',
     cap: [
-      'Bunganya hampir *tiga* *persen* sebulan.',
-      'Kedengarannya kecil, karena kamu bandingkan dengan satu juta.',
-      'Bukan dengan setahun:',
-      'Tiga puluh *lima* *persen*.',
+      'Karena harga emas ada dua:',
+      'Harga saat kamu beli, dan harga saat kamu jual.',
+      'Hari ini jaraknya dua ratus dua puluh empat ribu per gram.',
+      'Sebelum harganya bergerak sedikit pun,',
+      'Kamu sudah hampir *sembilan* *persen* di belakang.',
     ],
-    pad: 0.55,
+    pad: 1.30,
   },
   {
     id: 's3',
-    key: 'n3',
-    label: 'SATU HARI TERLAMBAT',
+    key: 'm3',
+    label: 'BIAYA DI DEPAN',
     index: '03',
     theme: 'dark',
-    vo: 'Telat satu hari saja, dendanya lima persen dari seluruh tagihan. Tanpa masa tenggang. Itu bunga dua bulan, dihapus sehari.',
+    vo: 'Belum ongkos cetak. Belum pajak saat kamu jual. Belum biaya titip di tabungan emas digital. Semua dibayar di depan, dari uangmu, sebelum emas menghasilkan apa pun. Dan emas tidak membayar bunga. Kalau kamu beli perhiasan, ongkos pembuatannya hilang begitu kamu keluar dari toko.',
     cap: [
-      'Telat *satu* *hari* saja, dendanya lima persen dari seluruh tagihan.',
-      'Tanpa masa tenggang.',
-      'Itu bunga *dua* *bulan*, dihapus sehari.',
+      'Belum ongkos cetak.',
+      'Belum pajak saat kamu jual.',
+      'Belum biaya titip di tabungan emas digital.',
+      'Semua dibayar di depan, dari uangmu, sebelum emas menghasilkan apa pun.',
+      'Dan emas *tidak* *membayar* *bunga*.',
+      'Kalau kamu beli perhiasan, ongkos pembuatannya hilang begitu kamu keluar dari toko.',
     ],
-    pad: 0.60,
+    pad: 1.30,
   },
   {
     id: 's4',
-    key: 'n4',
-    label: 'ANGKA YANG DIPECAH',
+    key: 'm4',
+    label: 'HARGA DARI TAKUT',
     index: '04',
     theme: 'dark',
-    vo: 'Kenapa tidak terasa? Karena angkanya dipecah. Seratus dua puluh ribu jauh dari satu juta dua ratus, jadi kamu membaca angka pertama, bukan totalnya.',
+    vo: 'Lalu kenapa orang tetap beli? Karena emas bukan janji hasil. Ia harga dari rasa takut. Saat perang, saat inflasi, saat bank sentral berhenti percaya pada mata uang negara lain, mereka membeli berton-ton. Tahun lalu, itu yang mengangkat harganya.',
     cap: [
-      'Kenapa tidak terasa?',
-      'Karena angkanya *dipecah*.',
-      'Seratus dua puluh ribu jauh dari satu juta dua ratus,',
-      'Jadi kamu membaca angka pertama, bukan totalnya.',
+      'Lalu kenapa orang tetap beli?',
+      'Karena emas bukan janji hasil.',
+      'Ia *harga* *dari* *rasa* *takut*.',
+      'Saat bank sentral berhenti percaya pada mata uang negara lain, mereka membeli berton-ton.',
+      'Tahun lalu, itu yang mengangkat harganya.',
     ],
-    pad: 0.50,
+    pad: 1.30,
   },
   {
     id: 's5',
-    key: 'n5',
-    label: 'YANG SEDANG TERJADI',
+    key: 'm5',
+    label: 'TAHUN YANG BERUBAH',
     index: '05',
     theme: 'dark',
-    vo: 'Dan itu bekerja. Utang paylater di bank naik hampir sepertiga setahun: dua puluh empat triliun, dari dua puluh sembilan juta rekening.',
+    vo: 'Tahun ini ceritanya berubah. The Fed menaikkan bunga, dolar menguat ke level tertinggi sembilan belas bulan, dan obligasi akhirnya membayar. Emas tidak membayar apa pun. Dan ketika dolar menguat, emas jadi lebih mahal bagi orang di luar Amerika. Uang berpindah, dan harganya turun tiga puluh persen dari puncak dalam dolar.',
     cap: [
-      'Dan itu *bekerja*.',
-      'Utang paylater di bank naik hampir sepertiga setahun:',
-      'Dua puluh *empat* *triliun*,',
-      'Dari dua puluh sembilan juta rekening.',
+      'Tahun ini ceritanya berubah.',
+      'The Fed menaikkan bunga,',
+      'Dolar menguat ke level tertinggi sembilan belas bulan,',
+      'Dan obligasi akhirnya membayar. Emas tidak membayar apa pun.',
+      'Dan ketika dolar menguat, emas jadi lebih mahal bagi orang di luar Amerika.',
+      'Uang berpindah, dan harganya turun *tiga* *puluh* *persen* dari puncak dalam dolar.',
     ],
-    pad: 0.55,
+    pad: 1.30,
   },
   {
     id: 's6',
-    key: 'n6',
-    label: 'UANG BULAN DEPAN',
+    key: 'm6',
+    label: 'RUPIAH YANG TURUN',
     index: '06',
     theme: 'dark',
-    vo: 'Paylater bukan uangmu. Itu uang bulan depanmu, dipinjam hari ini, dengan sewa. Sebelum mencicil, tanya: ini menghasilkan, atau cuma menua?',
+    vo: 'Dan ada satu hal yang sering terlewat. Dalam dolar, emas turun tiga puluh persen. Dalam rupiah, cuma dua puluh. Selisih sepuluh persen itu bukan keajaiban emas. Itu rupiah yang melemah. Kamu tidak sedang untung; kamu cuma diukur dengan uang yang lebih lemah.',
     cap: [
-      'Paylater bukan *uangmu*.',
-      'Itu uang bulan depanmu, dipinjam hari ini, dengan sewa.',
-      'Sebelum mencicil, tanya:',
-      'Ini menghasilkan, atau cuma *menua*?',
+      'Dan ada satu hal yang sering terlewat.',
+      'Dalam dolar, emas turun *tiga* *puluh* *persen*.',
+      'Dalam rupiah, cuma *dua* *puluh*.',
+      'Selisih sepuluh persen itu bukan keajaiban emas.',
+      'Itu rupiah yang melemah.',
+      'Kamu tidak sedang untung; kamu cuma diukur dengan uang yang lebih lemah.',
     ],
     pad: 1.30,
+  },
+  {
+    id: 's8',
+    key: 'm8',
+    label: 'KAPAN IA BEKERJA',
+    index: '07',
+    theme: 'dark',
+    vo: 'Lalu kapan emas benar-benar bekerja? Saat yang lain berhenti. Saat bank tutup, saat mata uang kehilangan kepercayaan, saat orang lebih memilih logam daripada janji. Di hari biasa, ia hanya logam yang diam di brankas dan tidak membayar apa pun.',
+    cap: [
+      'Lalu kapan emas benar-benar bekerja?',
+      'Saat yang lain berhenti.',
+      'Saat bank tutup, saat mata uang kehilangan kepercayaan,',
+      'Saat orang lebih memilih logam daripada janji.',
+      'Di hari biasa, ia hanya logam yang diam di brankas dan tidak membayar apa pun.',
+    ],
+    pad: 1.30,
+  },
+  {
+    id: 's9',
+    key: 'm9',
+    label: 'TIGA ATURAN',
+    index: '08',
+    theme: 'dark',
+    vo: 'Karena itu, tiga aturan. Jangan beli saat semua orang bersemangat, karena di situlah selisihnya paling lebar. Beli sedikit, terus, di harga yang membosankan. Dan jangan taruh semua uangmu di logam yang tidak membayar apa pun. Emas bukan mesin uang. Ia cermin: ia hanya memantulkan seberapa takut dunia hari itu.',
+    cap: [
+      'Karena itu, *tiga* *aturan*.',
+      'Jangan beli saat semua orang bersemangat, karena di situlah selisihnya paling lebar.',
+      'Beli sedikit, terus, di harga yang membosankan.',
+      'Dan jangan taruh semua uangmu di logam yang tidak membayar apa pun.',
+      'Emas bukan mesin uang.',
+      'Ia *cermin*: ia hanya memantulkan seberapa takut dunia hari itu.',
+    ],
+    pad: 3.40,
   },
 ];
