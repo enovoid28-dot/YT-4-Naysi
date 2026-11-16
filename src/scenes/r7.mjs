@@ -19,7 +19,7 @@ export default {
     const ty = 470;
 
     const cols = [
-      { x: 330, v: 0.68, hi: 0.72, lo: 0.63, label: 'USIA 5 — 7', head: 'masih ingat', d: 0.55, color: K.teal },
+      { x: 288, v: 0.68, hi: 0.72, lo: 0.63, label: 'USIA 5 — 7', head: 'masih ingat', d: 0.55, color: K.teal },
       { x: 838, v: 0.35, hi: 0.35, lo: 0.35, label: 'USIA 8 — 9', head: 'tersisa', d: 1.35, color: K.redHi },
     ];
 
@@ -58,8 +58,8 @@ export default {
       // head
       kick(ctx, col.label, col.x - 12, ty - 44, { size: 20, color: K.dim, track: 6 });
       const shown = i === 0 ? '63 — 72%' : '35%';
-      num(ctx, shown, col.x - 16, ty - 92, {
-        size: i === 0 ? 112 : 132, color: i ? K.redHi : K.bone, track: -4, a: clamp(pf * 1.5),
+      num(ctx, shown, col.x - 16, ty - 86, {
+        size: i === 0 ? 88 : 126, color: i ? K.redHi : K.bone, track: -3, a: clamp(pf * 1.5),
       });
       txt(ctx, col.head, col.x - 12, ty + tubeH + 76, { size: 30, font: F.mono, color: K.dim, track: 2 });
 
