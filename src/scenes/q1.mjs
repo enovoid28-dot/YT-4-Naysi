@@ -25,7 +25,7 @@ export default {
     });
 
     // ── the pair of columns
-    const p0 = ease.expo(clamp((t - c(0, 0.05)) / 0.75));
+    const p0 = ease.expo(clamp((t - 0.02) / 0.5));
     const p1 = ease.expo(clamp((t - c(1, 0.10)) / 0.7));
 
     const colY = 470;
