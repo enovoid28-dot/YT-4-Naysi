@@ -214,7 +214,7 @@ function drawFrame(ctx, frame) {
   if (a < 1) {
     ctx.save();
     ctx.globalAlpha = 1 - a;
-    ctx.fillStyle = '#000';
+    ctx.fillStyle = scene.theme === 'light' ? '#F4ECDC' : '#000';
     ctx.fillRect(0, 0, W, H);
     ctx.restore();
   }
