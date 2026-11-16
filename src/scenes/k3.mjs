@@ -1,137 +1,79 @@
-import { W, H, txt, hexA, linGrad, fillRR, strokeRR, tracking, measure } from '../engine/draw.mjs';
+import { W, H, txt, hexA, linGrad, fillRR, strokeRR, tracking } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, TAU } from '../engine/anim.mjs';
-import { K, ease, depot, resi, grainOverlay } from './_kirim.mjs';
+import { clamp, lerp } from '../engine/anim.mjs';
+import { K, ease, depot, cue, vignette } from './_kirim.mjs';
 import { barcode } from '../engine/motion.mjs';
 
 // 03 — MEI 2026
-// Three receipts, one move: the shipping bill leaves the platform's column and
-// appears in the seller's.
+// Three receipts arrive on the three numbers the voice reads, then one grey
+// bar covers what the buyer never sees.
 
-const PLAT = [
-  { at: 0.25, name: 'SHOPEE', line1: '8%', line2: 'dari harga jual', line3: 'maks Rp40.000', c: K.amber },
-  { at: 1.25, name: 'SHOPEE', line1: '9,5%', line2: 'barang besar (>5kg)', line3: 'maks Rp60.000', c: K.amber },
-  { at: 2.25, name: 'TIKTOK SHOP', line1: 'Rp690–4.350', line2: 'per 5 kg · Jakarta', line3: 'sejak 1 Mei 2026', c: K.ember },
+const RECEIPTS = [
+  { card: 1, name: 'SHOPEE · GRATIS ONGKIR XTRA', big: '8%', sub: 'barang biasa · maks Rp40.000', tone: K.amber },
+  { card: 2, name: 'SHOPEE · BARANG BESAR', big: '9,5%', sub: 'di atas 5 kg · maks Rp60.000', tone: K.amber },
+  { card: 3, name: 'TIKTOK SHOP · LOGISTIK', big: 'Rp690–4.350', sub: 'per 5 kg · Jakarta · 1 Mei 2026', tone: K.ember },
 ];
 
 export default {
-  draw(ctx, t) {
-    const a = (s, d = 0.6) => ease.out(clamp((t - s) / d));
-    depot(ctx, { t, glowX: W * 0.5, glowY: 620, glowA: 0.10 });
+  draw(ctx, t, scene) {
+    const a = (s, d = 0.55) => ease.out(clamp((t - s) / d));
+    const c = (i, o = 0) => cue(scene, i, o);
+    depot(ctx, { t, glowX: W * 0.5, glowY: 600, glowA: 0.10, horizon: 1360 });
 
-    tracking(ctx, 'MEI 2026', 104, 208, {
-      size: 24, font: F.mono6, track: 6, color: hexA(K.bone, 0.45), alpha: a(0.02, 0.5),
-    });
-    tracking(ctx, 'BIAYA PINDAH TANGAN', W - 104, 208, {
-      size: 24, font: F.mono6, track: 6, color: hexA(K.ember, 0.62), align: 'right', alpha: a(0.02, 0.5),
+    tracking(ctx, 'MEI 2026 · BIAYA PINDAH TANGAN', W / 2, 250, {
+      size: 24, font: F.mono6, track: 6, color: hexA(K.bone, 0.50), align: 'center', alpha: a(c(0, 0.1), 0.6),
     });
 
-    /* --------------------------- shot A: receipts ------------------------- */
-    if (t < 10.4) {
-      PLAT.forEach((p, i) => {
-        const q = ease.expo(clamp((t - p.at) / 0.7));
-        if (q <= 0.001) return;
-        const y = 380 + i * 300 - (1 - q) * 50;
-        const x = 120 + i * 26;
-        const w = W - 240 - i * 52;
-        const h = 250;
-        ctx.save();
-        ctx.globalAlpha = q;
-        ctx.save();
-        ctx.shadowColor = 'rgba(0,0,0,0.6)';
-        ctx.shadowBlur = 40;
-        ctx.shadowOffsetY = 16;
-        fillRR(ctx, x, y, w, h, 6, K.paper);
-        ctx.restore();
-        ctx.fillStyle = 'rgba(26,27,30,0.06)';
-        for (let px = x + 10; px < x + w - 10; px += 16) ctx.fillRect(px, y + h - 26, 8, 2);
-        // torn top edge
-        ctx.fillStyle = 'rgba(26,27,30,0.10)';
-        for (let px = x + 8; px < x + w - 8; px += 18) ctx.fillRect(px, y, 10, 3);
-        tracking(ctx, p.name, x + 34, y + 54, { size: 20, font: F.mono6, track: 5, color: 'rgba(26,27,30,0.55)' });
-        txt(ctx, 'BIAYA LAYANAN LOGISTIK', x + w - 34, y + 54, {
-          size: 18, font: F.mono6, color: 'rgba(26,27,30,0.42)', align: 'right', track: 2,
-        });
-        txt(ctx, p.line1, x + 34, y + 148, { size: 82, font: F.num, color: p.c === K.amber ? '#8A5A10' : '#9C3524', track: -3 });
-        txt(ctx, p.line2, x + w - 34, y + 130, {
-          size: 24, font: F.mono, color: 'rgba(26,27,30,0.55)', align: 'right',
-        });
-        txt(ctx, p.line3, x + w - 34, y + 166, {
-          size: 24, font: F.mono6, color: 'rgba(26,27,30,0.40)', align: 'right',
-        });
-        barcode(ctx, x + 34, y + h - 92, 260, 46, { color: 'rgba(26,27,30,0.7)', a: 1, seed: i + 3 });
-        ctx.restore();
-      });
-    }
-
-    /* -------------------------- shot B: the seller ------------------------ */
-    if (t >= 10.4) {
-      const p = ease.expo(clamp((t - 10.5) / 0.8));
-      const x = 150;
-      const y = 400;
-      const w = W - 300;
-      const h = 900;
+    RECEIPTS.forEach((r, i) => {
+      const p = ease.expo(clamp((t - c(r.card, 0.08)) / 0.6));
+      if (p <= 0.001) return;
+      const y = 380 + i * 320 - (1 - p) * 70;
+      const x = 130 + i * 30;
+      const w = W - 260 - i * 60;
+      const h = 270;
       ctx.save();
       ctx.globalAlpha = p;
       ctx.save();
       ctx.shadowColor = 'rgba(0,0,0,0.6)';
-      ctx.shadowBlur = 50;
-      ctx.shadowOffsetY = 20;
-      fillRR(ctx, x, y, w, h, 10, K.paper);
+      ctx.shadowBlur = 44;
+      ctx.shadowOffsetY = 18;
+      fillRR(ctx, x, y, w, h, 8, K.paper);
       ctx.restore();
-      tracking(ctx, 'RINCIAN PENDAPATAN PENJUAL', x + 40, y + 62, {
-        size: 20, font: F.mono6, track: 5, color: 'rgba(26,27,30,0.55)',
+      // torn top + printed grain
+      ctx.fillStyle = 'rgba(26,27,30,0.10)';
+      for (let px = x + 8; px < x + w - 8; px += 20) ctx.fillRect(px, y, 11, 3);
+      tracking(ctx, r.name, x + 34, y + 56, { size: 19, font: F.mono6, track: 4, color: 'rgba(26,27,30,0.55)' });
+      txt(ctx, r.big, x + 34, y + 168, {
+        size: r.big.length > 6 ? 78 : 108, font: F.num, color: r.tone === K.amber ? '#8A5A10' : '#9C3524', track: -3,
       });
-      const rows = [
-        { l: 'HARGA JUAL', v: '150.000', at: 11.1, c: 'rgba(26,27,30,0.9)' },
-        { l: 'BIAYA LAYANAN 8%', v: '− 12.000', at: 11.5, c: '#9C3524' },
-        { l: 'BIAYA LOGISTIK', v: '− 5.000', at: 11.9, c: '#9C3524' },
-        { l: 'BIAYA IKLAN', v: '− 8.000', at: 12.3, c: '#9C3524' },
-        { l: 'HARGA POKOK', v: '− 80.000', at: 12.7, c: '#9C3524' },
-      ];
-      rows.forEach((r, i) => {
-        const q = clamp((t - r.at) / 0.35);
-        if (q <= 0) return;
-        const yy = y + 150 + i * 88;
-        ctx.save();
-        ctx.globalAlpha = p * q;
-        txt(ctx, r.l, x + 40, yy, { size: 26, font: F.mono6, color: 'rgba(26,27,30,0.55)', track: 2 });
-        txt(ctx, r.v, x + w - 40, yy, { size: 40, font: F.num6, color: r.c, align: 'right', track: -1 });
-        ctx.fillStyle = 'rgba(26,27,30,0.10)';
-        ctx.fillRect(x + 40, yy + 30, w - 80, 1.4);
-        ctx.restore();
+      txt(ctx, r.sub, x + w - 34, y + 132, {
+        size: 24, font: F.mono, color: 'rgba(26,27,30,0.55)', align: 'right',
       });
-      const q = a(13.5, 0.6);
-      if (q > 0.01) {
-        ctx.save();
-        ctx.globalAlpha = q;
-        ctx.fillStyle = 'rgba(26,27,30,0.14)';
-        ctx.fillRect(x + 40, y + 620, w - 80, 3);
-        txt(ctx, 'SISA UNTUK PENJUAL', x + 40, y + 700, {
-          size: 26, font: F.mono6, color: 'rgba(26,27,30,0.6)', track: 3,
-        });
-        txt(ctx, '45.000', x + w - 40, y + 716, {
-          size: 86, font: F.num, color: '#1A1B1E', align: 'right', track: -3,
-        });
-        ctx.restore();
-      }
+      barcode(ctx, x + 34, y + h - 88, 250, 44, { color: 'rgba(26,27,30,0.7)', a: 1, seed: i + 4 });
       ctx.restore();
+    });
 
-      // the red note: the buyer never saw any of it
-      const nq = a(15.6, 0.6);
-      if (nq > 0.01) {
-        ctx.save();
-        ctx.globalAlpha = nq;
-        ctx.translate(W - 210, 300);
-        ctx.rotate(-0.06);
-        strokeRR(ctx, -190, -46, 380, 92, 8, hexA(K.ember, 0.8), 3);
-        txt(ctx, 'PEMBELI TIDAK LIHAT', 0, 8, {
-          size: 26, font: F.head, color: K.ember, align: 'center', track: 3,
-        });
-        ctx.restore();
-      }
+    // the buyer's blind spot: covers the three receipts on the final line
+    const bl = ease.inOut(clamp((t - c(4, 0.1)) / 0.9));
+    if (bl > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = 0.92 * bl;
+      ctx.fillStyle = 'rgba(5,8,12,0.95)';
+      const top = 380 - 30 + (1 - bl) * 120;
+      ctx.fillRect(0, top, W, 1000);
+      ctx.globalAlpha = bl;
+      tracking(ctx, 'PEMBELI TIDAK MELIHAT SATU BARIS PUN', W / 2, 700, {
+        size: 30, font: F.mono6, track: 5, color: hexA(K.bone, 0.75), align: 'center',
+      });
+      txt(ctx, 'Rp 0', W / 2, 830, {
+        size: 150, font: F.num, color: hexA(K.mint, 0.9), align: 'center', track: -4,
+      });
+      tracking(ctx, 'YANG TERTULIS DI CHECKOUT', W / 2, 900, {
+        size: 22, font: F.mono6, track: 4, color: hexA(K.bone, 0.45), align: 'center',
+      });
+      ctx.restore();
     }
 
-    grainOverlay(ctx, t, { a: 0.05 });
+    vignette(ctx, 0.45);
   },
 };

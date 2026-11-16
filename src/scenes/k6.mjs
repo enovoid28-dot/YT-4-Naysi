@@ -1,80 +1,83 @@
 import { W, H, txt, hexA, linGrad, fillRR, strokeRR, tracking } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, TAU } from '../engine/anim.mjs';
-import { K, ease, depot, box, weight, dim, grainOverlay } from './_kirim.mjs';
+import { clamp, lerp } from '../engine/anim.mjs';
+import { K, ease, depot, box, weight, dim, cue, vignette } from './_kirim.mjs';
 
 // 06 — BERAT VOLUMETRIK
-// A pillow is light and huge. The courier charges the space it takes, not the
-// mass it has. p × l × t ÷ 6.000.
+// The dimensions draw themselves while the voice says them, the division lands
+// with the result, and the last line puts the pillow on the scale.
 
 export default {
-  draw(ctx, t) {
+  draw(ctx, t, scene) {
     const a = (s, d = 0.6) => ease.out(clamp((t - s) / d));
-    depot(ctx, { t, glowX: W * 0.5, glowY: 600, glowA: 0.11 });
+    const c = (i, o = 0) => cue(scene, i, o);
+    depot(ctx, { t, glowX: W * 0.5, glowY: 580, glowA: 0.11, horizon: 1300 });
 
-    tracking(ctx, 'BERAT VOLUMETRIK', 104, 208, {
-      size: 24, font: F.mono6, track: 6, color: hexA(K.bone, 0.45), alpha: a(0.02, 0.5),
-    });
-    tracking(ctx, '÷ 6.000', W - 104, 208, {
-      size: 24, font: F.mono6, track: 6, color: hexA(K.cyan, 0.7), align: 'right', alpha: a(0.02, 0.5),
-    });
+    const bw = 660;
+    const bh = 460;
+    const bx = (W - bw) / 2;
+    const by = 430;
 
-    /* --------------------------- shot A: the box -------------------------- */
-    if (t < 7.6) {
-      const p = ease.expo(clamp((t - 0.1) / 0.9));
-      const bw = 720;
-      const bh = 500;
-      const bx = (W - bw) / 2;
-      const by = 430;
-      box(ctx, bx, by, bw, bh, { a: p, rot: 0, tape: true, mark: 'BANTAL', depth: 0.24 });
-      // dimension lines
-      const dq = a(1.2, 0.7);
-      dim(ctx, bx, by + bh + 70, bx + bw, by + bh + 70, 'PANJANG 60 CM', { a: dq });
-      dim(ctx, bx - 70, by, bx - 70, by + bh, 'TINGGI 40 CM', { a: dq * 0.9 });
-      // side depth
-      dim(ctx, bx + bw + 40, by + 10, bx + bw + 40, by + bh * 0.8, 'LEBAR 50', { a: dq * 0.8, size: 16 });
+    const p = ease.expo(clamp((t - 0.05) / 0.7));
+    box(ctx, bx, by, bw, bh, { a: 0.4 + 0.6 * p, rot: 0, tape: true, mark: 'BANTAL', depth: 0.22 });
 
-      const fq = a(3.4, 0.7);
-      if (fq > 0.01) {
-        ctx.save();
-        ctx.globalAlpha = fq;
-        fillRR(ctx, 150, 1060, W - 300, 170, 12, 'rgba(159,200,230,0.08)');
-        strokeRR(ctx, 150, 1060, W - 300, 170, 12, hexA(K.cyan, 0.4), 1.6);
-        txt(ctx, '60 × 50 × 40 ÷ 6.000', W / 2, 1130, {
-          size: 44, font: F.mono6, color: hexA(K.bone, 0.75), align: 'center', track: 2,
-        });
-        txt(ctx, '= 20 KG', W / 2, 1200, {
-          size: 40, font: F.num, color: K.cyan, align: 'center', track: 1,
-        });
-        ctx.restore();
-      }
+    // dimensions, one per word: panjang, lebar, tinggi
+    dim(ctx, bx, by + bh + 76, bx + bw, by + bh + 76, 'PANJANG 60', { a: a(c(2, 0.1), 0.5), size: 24 });
+    dim(ctx, bx - 132, by, bx - 132, by + bh, '', { a: a(c(2, 0.55), 0.5), size: 21 });
+    dim(ctx, bx + bw + 128, by + 26, bx + bw + 128, by + bh * 0.9, 'LEBAR 50', { a: a(c(2, 1.0), 0.5), size: 20 });
+
+    // the height label sits outside the parcel so it never fights the edge
+    const hl = a(c(2, 0.6), 0.5);
+    if (hl > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = hl;
+      ctx.translate(bx - 156, by + bh / 2);
+      ctx.rotate(-Math.PI / 2);
+      tracking(ctx, 'TINGGI 40', 0, 0, { size: 21, font: F.mono6, track: 3, color: K.cyan, align: 'center' });
+      ctx.restore();
     }
 
-    /* -------------------------- shot B: the scale ------------------------- */
-    if (t >= 7.6) {
-      const p = ease.expo(clamp((t - 7.7) / 0.8));
-      weight(ctx, W / 2 - 380, 560, 760, 380, '0,6', { a: p });
-      box(ctx, W / 2 - 300, 380, 600, 200, { a: p, rot: -0.03, tape: false, depth: 0.2 });
-      txt(ctx, '0,6 KG', W / 2, 1010, {
-        size: 84, font: F.num, color: K.bone, align: 'center', track: -2, alpha: a(8.6, 0.6),
+    // the division
+    const f = a(c(2, 1.4), 0.6);
+    if (f > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = f;
+      fillRR(ctx, 150, 980, W - 300, 210, 16, 'rgba(159,200,230,0.07)');
+      strokeRR(ctx, 150, 980, W - 300, 210, 16, hexA(K.cyan, 0.35), 2);
+      txt(ctx, '60 × 50 × 40 ÷ 6.000', W / 2, 1052, {
+        size: 42, font: F.mono6, color: hexA(K.bone, 0.8), align: 'center', track: 2,
       });
-      tracking(ctx, 'YANG DITIMBANG', W / 2, 1062, {
-        size: 20, font: F.mono6, track: 5, color: hexA(K.bone, 0.4), align: 'center', alpha: a(8.8, 0.6),
+      const q = a(c(3, 0.15), 0.5);
+      txt(ctx, '= 20 KG', W / 2, 1136, {
+        size: 44, font: F.num, color: K.cyan, align: 'center', track: 1, alpha: q,
       });
-      const q = a(10.2, 0.7);
-      if (q > 0.01) {
-        ctx.save();
-        ctx.globalAlpha = q;
-        txt(ctx, '4 KG', W / 2, 1200, {
-          size: 118, font: F.num, color: K.ember, align: 'center', track: -3,
-        });
-        tracking(ctx, 'YANG DITAGIH', W / 2, 1250, {
-          size: 20, font: F.mono6, track: 5, color: hexA(K.ember, 0.75), align: 'center',
-        });
-        ctx.restore();
-      }
+      ctx.restore();
     }
 
-    grainOverlay(ctx, t, { a: 0.05 });
+    // the scale takes over on the last line
+    const s = a(c(3, 0.75), 0.7);
+    if (s > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = s * 0.96;
+      ctx.fillStyle = 'rgba(5,8,12,0.72)';
+      ctx.fillRect(0, 250, W, 1100);
+      ctx.restore();
+      weight(ctx, W / 2 - 400, 420, 800, 400, '0,6', { a: s });
+      box(ctx, W / 2 - 300, 760, 600, 200, { a: s, rot: -0.02, tape: false, depth: 0.16 });
+      const q = a(c(3, 1.5), 0.6);
+      ctx.save();
+      ctx.globalAlpha = q;
+      txt(ctx, 'DITIMBANG 0,6 KG', W / 2 - 190, 1070, {
+        size: 44, font: F.mono6, color: hexA(K.bone, 0.8), align: 'center', track: 2,
+      });
+      txt(ctx, 'DITAGIH 4 KG', W / 2 + 230, 1070, {
+        size: 52, font: F.mono6, color: K.ember, align: 'center', track: 2,
+      });
+      ctx.fillStyle = hexA(K.ember, 0.5);
+      ctx.fillRect(W / 2 - 20, 1020, 4, 90);
+      ctx.restore();
+    }
+
+    vignette(ctx, 0.5);
   },
 };

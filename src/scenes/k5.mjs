@@ -1,134 +1,111 @@
-import { W, H, txt, hexA, linGrad, fillRR, strokeRR, tracking, rr } from '../engine/draw.mjs';
+import { W, H, txt, hexA, linGrad, fillRR, strokeRR, tracking } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, TAU } from '../engine/anim.mjs';
-import { K, ease, depot, contact, grainOverlay } from './_kirim.mjs';
+import { K, ease, depot, cue, vignette, contact } from './_kirim.mjs';
 
 // 05 — YANG BAYAR
-// A hanging price tag that ticks up, and a balance that tips: the shipping bill
-// is not gone, it is on the other side of the same scale.
+// The money does not vanish: it slides from the shipping line into the price
+// tag, then the price ticks up, then the scale tips.
 
 export default {
-  draw(ctx, t) {
-    const a = (s, d = 0.6) => ease.out(clamp((t - s) / d));
-    depot(ctx, { t, glowX: W * 0.5, glowY: 560, glowA: 0.11 });
+  draw(ctx, t, scene) {
+    const a = (s, d = 0.55) => ease.out(clamp((t - s) / d));
+    const c = (i, o = 0) => cue(scene, i, o);
+    depot(ctx, { t, glowX: W * 0.5, glowY: 560, glowA: 0.11, horizon: 1300 });
 
-    tracking(ctx, 'HARGA BARANG', 104, 208, {
-      size: 24, font: F.mono6, track: 6, color: hexA(K.bone, 0.45), alpha: a(0.02, 0.5),
+    // left: the shipping line, emptying
+    const lOut = ease.inOut(clamp((t - c(1, 0)) / 0.9));
+    ctx.save();
+    ctx.globalAlpha = 0.95 * (1 - lOut * 0.55);
+    fillRR(ctx, 110, 470, 520, 300, 12, 'rgba(10,16,23,0.92)');
+    strokeRR(ctx, 110, 470, 520, 300, 12, hexA(K.bone, 0.16), 2);
+    tracking(ctx, 'ONGKIR DI CHECKOUT', 150, 540, { size: 20, font: F.mono6, track: 4, color: hexA(K.bone, 0.5) });
+    txt(ctx, lOut > 0.5 ? '0' : '8.000', 590, 660, {
+      size: 76, font: F.num, color: lOut > 0.5 ? hexA(K.mint, 0.75) : K.bone, align: 'right',
     });
-    tracking(ctx, 'NAIK 5–10%', W - 104, 208, {
-      size: 24, font: F.mono6, track: 6, color: hexA(K.ember, 0.65), align: 'right', alpha: a(0.02, 0.5),
+    ctx.restore();
+
+    // right: the price tag, receiving it
+    const swing = Math.sin(t * 1.2) * 0.012;
+    ctx.save();
+    ctx.translate(W - 330, 470);
+    ctx.rotate(swing);
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+    ctx.shadowBlur = 46;
+    ctx.shadowOffsetY = 18;
+    fillRR(ctx, -270, 0, 540, 360, 12, K.paper);
+    ctx.restore();
+    tracking(ctx, 'HARGA BARANG', 0, 60, { size: 20, font: F.mono6, track: 4, color: 'rgba(26,27,30,0.5)', align: 'center' });
+    const rise = ease.inOut(clamp((t - c(2, 0.25)) / 1.5));
+    const price = 150000 + 15000 * rise;
+    txt(ctx, price.toLocaleString('id-ID'), 0, 220, {
+      size: 118, font: F.num, color: '#1A1B1E', align: 'center', track: -4,
     });
-
-    /* --------------------------- shot A: the tag -------------------------- */
-    if (t < 6.6) {
-      const swing = Math.sin(t * 1.4) * 0.02;
-      const p = ease.expo(clamp((t - 0.1) / 0.8));
-      // string
+    if (rise > 0.02) {
       ctx.save();
-      ctx.globalAlpha = p * 0.8;
-      ctx.strokeStyle = hexA(K.bone, 0.30);
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(W / 2, 250);
-      ctx.lineTo(W / 2 + Math.sin(swing) * 300, 470);
-      ctx.stroke();
+      ctx.globalAlpha = rise;
+      txt(ctx, '+10%', 0, 300, { size: 34, font: F.mono6, color: '#9C3524', align: 'center', track: 4 });
       ctx.restore();
+    }
+    ctx.restore();
+    contact(ctx, W - 330, 860, 280, 30, 0.35);
 
+    // the money in transit: a note that leaves the left card on cue 0
+    const mv = ease.inOut(clamp((t - c(0, 0.35)) / 1.5));
+    if (t > c(0, 0.35) && mv < 1.02) {
+      const nx = lerp(360, W - 330, mv);
+      const ny = 640 - Math.sin(mv * Math.PI) * 170;
       ctx.save();
-      ctx.translate(W / 2, 470);
-      ctx.rotate(swing);
-      ctx.globalAlpha = p;
-      // shadow
-      ctx.save();
-      ctx.shadowColor = 'rgba(0,0,0,0.6)';
-      ctx.shadowBlur = 45;
-      ctx.shadowOffsetY = 18;
-      fillRR(ctx, -330, 0, 660, 420, 14, K.paper);
+      ctx.globalAlpha = 0.95 * (1 - clamp((mv - 0.9) / 0.1));
+      ctx.translate(nx, ny);
+      ctx.rotate(-0.06 + Math.sin(mv * Math.PI) * 0.16);
+      fillRR(ctx, -110, -46, 220, 92, 6, '#D9C9A4');
+      ctx.strokeStyle = 'rgba(90,70,40,0.35)';
+      ctx.lineWidth = 2;
+      strokeRR(ctx, -100, -36, 200, 72, 4, 'rgba(90,70,40,0.35)', 2);
+      txt(ctx, '8.000', 0, 12, { size: 34, font: F.num6, color: 'rgba(80,60,34,0.8)', align: 'center' });
       ctx.restore();
-      // hole + eyelet
-      ctx.fillStyle = '#0B1118';
-      ctx.beginPath();
-      ctx.arc(0, 46, 18, 0, TAU);
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(26,27,30,0.35)';
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.arc(0, 46, 26, 0, TAU);
-      ctx.stroke();
-      tracking(ctx, 'KAOS · UK M', 0, 130, {
-        size: 20, font: F.mono6, track: 5, color: 'rgba(26,27,30,0.5)', align: 'center',
-      });
-      const rise = ease.inOut(clamp((t - 2.4) / 1.6));
-      const price = 150000 + 15000 * rise;
-      txt(ctx, `${Math.round(price).toLocaleString('id-ID')}`, 0, 300, {
-        size: 130, font: F.num, color: '#1A1B1E', align: 'center', track: -5,
-      });
-      txt(ctx, 'Rp', -40, 300, { size: 40, font: F.num, color: 'rgba(26,27,30,0.45)', align: 'right' });
-      if (rise > 0.02) {
-        ctx.save();
-        ctx.globalAlpha = rise;
-        txt(ctx, '+10%', 0, 380, {
-          size: 34, font: F.mono6, color: '#9C3524', align: 'center', track: 3,
-        });
-        ctx.restore();
-      }
-      ctx.restore();
-      contact(ctx, W / 2, 1010, 360, 40, 0.4 * p);
-
-      tracking(ctx, 'ONGKIR PINDAH KE SINI', W / 2, 1120, {
-        size: 24, font: F.mono6, track: 5, color: hexA(K.amber, 0.8), align: 'center', alpha: a(4.2, 0.6),
-      });
     }
 
-    /* -------------------------- shot B: the scale ------------------------- */
-    if (t >= 6.6) {
-      const p = ease.expo(clamp((t - 6.7) / 0.9));
-      const tilt = ease.inOut(clamp((t - 8.2) / 1.4)) * 0.14;
+    // the scale on the final line
+    const sc = a(c(3, 0.15), 0.6);
+    if (sc > 0.01) {
+      const tilt = ease.inOut(clamp((t - c(3, 0.6)) / 1.3)) * 0.13;
       const cx = W / 2;
-      const cy = 760;
+      const cy = 1120;
       ctx.save();
-      ctx.globalAlpha = p;
-      // stand
-      ctx.fillStyle = 'rgba(214,228,240,0.22)';
-      ctx.fillRect(cx - 7, cy, 14, 320);
-      fillRR(ctx, cx - 200, cy + 310, 400, 22, 8, 'rgba(214,228,240,0.20)');
-      // beam
+      ctx.globalAlpha = sc * 0.95;
       ctx.translate(cx, cy);
       ctx.rotate(tilt);
-      ctx.fillStyle = linGrad(ctx, -380, 0, 380, 0, [[0, '#8FA0B0'], [0.5, '#D7E2EC'], [1, '#7C8C9C']]);
-      ctx.fillRect(-380, -9, 760, 18);
-      // pans
+      ctx.fillStyle = linGrad(ctx, -300, 0, 300, 0, [[0, '#8FA0B0'], [0.5, '#D7E2EC'], [1, '#7C8C9C']]);
+      ctx.fillRect(-300, -8, 600, 16);
       for (const s of [-1, 1]) {
-        const px = s * 360;
-        ctx.strokeStyle = hexA(K.bone, 0.32);
+        ctx.strokeStyle = hexA(K.bone, 0.30);
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(px, 0);
-        ctx.lineTo(px - 70, 120);
-        ctx.moveTo(px, 0);
-        ctx.lineTo(px + 70, 120);
+        ctx.moveTo(s * 280, 0);
+        ctx.lineTo(s * 280 - 60, 90);
+        ctx.moveTo(s * 280, 0);
+        ctx.lineTo(s * 280 + 60, 90);
         ctx.stroke();
-        ctx.fillStyle = linGrad(ctx, px - 120, 120, px + 120, 150, [[0, '#9AA9B8'], [1, '#5E6C79']]);
+        ctx.fillStyle = linGrad(ctx, s * 280 - 90, 90, s * 280 + 90, 120, [[0, '#9AA9B8'], [1, '#5E6C79']]);
         ctx.beginPath();
-        ctx.ellipse(px, 128, 120, 22, 0, 0, TAU);
+        ctx.ellipse(s * 280, 96, 92, 16, 0, 0, TAU);
         ctx.fill();
-        // weight block
-        const isSeller = s < 0;
-        fillRR(ctx, px - 76, 60, 152, 62, 6, isSeller ? 'rgba(228,87,63,0.85)' : 'rgba(243,180,74,0.9)');
-        tracking(ctx, isSeller ? 'PENJUAL' : 'PEMBELI', px, 98, {
-          size: 15, font: F.mono6, track: 3, color: '#0B0F14', align: 'center',
+        fillRR(ctx, s * 280 - 62, 40, 124, 46, 5, s < 0 ? 'rgba(228,87,63,0.9)' : 'rgba(243,180,74,0.95)');
+        tracking(ctx, s < 0 ? 'PENJUAL' : 'PEMBELI', s * 280, 70, {
+          size: 14, font: F.mono6, track: 2, color: '#0B0F14', align: 'center',
         });
       }
       ctx.restore();
-
-      tracking(ctx, 'SIAPA YANG MENANGGUNG', cx, 1180, {
-        size: 24, font: F.mono6, track: 5, color: hexA(K.bone, 0.5), align: 'center', alpha: a(7.4, 0.6),
-      });
-      txt(ctx, 'TIDAK ADA YANG GRATIS', cx, 1300, {
-        size: 68, font: F.head, color: K.bone, align: 'center', track: 1, alpha: a(9.6, 0.7),
-      });
+      ctx.save();
+      ctx.globalAlpha = sc;
+      ctx.fillStyle = 'rgba(214,228,240,0.22)';
+      ctx.fillRect(cx - 6, cy, 12, 240);
+      ctx.restore();
     }
 
-    grainOverlay(ctx, t, { a: 0.05 });
+    vignette(ctx, 0.5);
   },
 };

@@ -384,3 +384,20 @@ export function dim(ctx, x1, y1, x2, y2, label, { a = 1, color = K.cyan, flip = 
   });
   ctx.restore();
 }
+
+/** real caption start time for card i, so every beat lands on the spoken word */
+export const cue = (scene, i, off = 0) => {
+  const c = scene && scene.captions && scene.captions[i];
+  return (c ? c.from : 0) + off;
+};
+
+/** soft vignette that keeps attention on the middle of the frame */
+export function vignette(ctx, a = 0.55) {
+  ctx.save();
+  const g = radGrad(ctx, W / 2, H * 0.42, H * 0.30, H * 0.85, [
+    [0, 'rgba(0,0,0,0)'], [1, `rgba(0,0,0,${a})`],
+  ]);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+  ctx.restore();
+}
