@@ -1,210 +1,137 @@
-import { W, H, txt, hexA, linGrad, radGrad, fillRR, strokeRR, measure, tracking, rr } from '../engine/draw.mjs';
+import { W, H, txt, hexA, linGrad, fillRR, strokeRR, tracking, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, TAU, noise1 } from '../engine/anim.mjs';
-import { P, eyebrow, ease, nightWall, lightCone, engraved, sticker } from './_fare.mjs';
+import { clamp, lerp, TAU } from '../engine/anim.mjs';
+import { K, ease, depot, resi, grainOverlay } from './_kirim.mjs';
+import { barcode } from '../engine/motion.mjs';
 
-// 03 — TINGKAT HARGA
-// The cabin's fare buckets, as a staircase of paper tags. The cheapest steps
-// empty first, and the only way left is up.
+// 03 — MEI 2026
+// Three receipts, one move: the shipping bill leaves the platform's column and
+// appears in the seller's.
 
-const RUNGS = [
-  { cls: 'Q', price: '700', at: 3.80 },
-  { cls: 'V', price: '790', at: 4.35 },
-  { cls: 'W', price: '880', at: 4.90 },
-  { cls: 'S', price: '975', at: 5.45 },
-  { cls: 'T', price: '1.070', at: null },
-  { cls: 'L', price: '1.170', at: null },
-  { cls: 'K', price: '1.270', at: null },
-  { cls: 'H', price: '1.390', at: null },
+const PLAT = [
+  { at: 0.25, name: 'SHOPEE', line1: '8%', line2: 'dari harga jual', line3: 'maks Rp40.000', c: K.amber },
+  { at: 1.25, name: 'SHOPEE', line1: '9,5%', line2: 'barang besar (>5kg)', line3: 'maks Rp60.000', c: K.amber },
+  { at: 2.25, name: 'TIKTOK SHOP', line1: 'Rp690–4.350', line2: 'per 5 kg · Jakarta', line3: 'sejak 1 Mei 2026', c: K.ember },
 ];
 
-const SW = 152;      // tread width
-const RISE = 132;    // riser height
-const DX = 46;       // depth going back
-const DY = 46;
-const BASE = 1452;   // y of the lowest tread
-const X0 = 122;
-
-const treadY = (i) => BASE - i * RISE;
-
 export default {
-  draw(ctx, t, scene, o = {}) {
+  draw(ctx, t) {
     const a = (s, d = 0.6) => ease.out(clamp((t - s) / d));
+    depot(ctx, { t, glowX: W * 0.5, glowY: 620, glowA: 0.10 });
 
-    nightWall(ctx, { spotX: W * 0.62, spotY: 620, spotA: 0.14, panels: 5 });
-    lightCone(ctx, W * 0.66, -160, 1560, 150, 620, { color: '#FFD9A0', a: 0.06 });
-
-    eyebrow(ctx, 'SATU KABIN · BANYAK TINGKAT', { a: a(0.05, 0.5), color: 'rgba(246,241,230,0.62)' });
-
-    engraved(ctx, 'TANGGA HARGA · KABIN EKONOMI', 104, 318, {
-      size: 21, color: 'rgba(226,238,250,0.40)', track: 5, a: a(0.14, 0.7),
+    tracking(ctx, 'MEI 2026', 104, 208, {
+      size: 24, font: F.mono6, track: 6, color: hexA(K.bone, 0.45), alpha: a(0.02, 0.5),
+    });
+    tracking(ctx, 'BIAYA PINDAH TANGAN', W - 104, 208, {
+      size: 24, font: F.mono6, track: 6, color: hexA(K.ember, 0.62), align: 'right', alpha: a(0.02, 0.5),
     });
 
-    /* --------------------------- the staircase -------------------------- */
-    const stA = a(0.02, 0.45);
-    if (stA <= 0.01) return;
-
-    // a soft pool of light on the floor at the foot of the stairs
-    const pg = radGrad(ctx, 320, 1500, 20, 460, [
-      [0, 'rgba(255,205,140,0.10)'], [1, 'rgba(255,205,140,0)'],
-    ]);
-    ctx.fillStyle = pg;
-    ctx.fillRect(0, 1180, 900, 420);
-
-    for (let i = RUNGS.length - 1; i >= 0; i--) {
-      const r = RUNGS[i];
-      const ty = treadY(i);
-      const x = X0 + i * SW;
-      const ap = ease.out(clamp((t - 0.02 - (RUNGS.length - 1 - i) * 0.028) / 0.34));
-
-      ctx.save();
-      ctx.globalAlpha = stA * ap;
-      ctx.translate(0, (1 - ap) * 26);
-
-      // riser (front face)
-      fillRR(ctx, x, ty, SW, RISE, 3, linGrad(ctx, 0, ty, 0, ty + RISE, [
-        [0, 'rgba(38,50,62,1)'], [1, 'rgba(14,21,28,1)'],
-      ]));
-      // tread (top face, receding)
-      ctx.beginPath();
-      ctx.moveTo(x, ty);
-      ctx.lineTo(x + SW, ty);
-      ctx.lineTo(x + SW + DX, ty - DY);
-      ctx.lineTo(x + DX, ty - DY);
-      ctx.closePath();
-      ctx.fillStyle = linGrad(ctx, 0, ty - DY, 0, ty, [
-        [0, 'rgba(72,92,110,0.95)'], [1, 'rgba(40,54,68,0.95)'],
-      ]);
-      ctx.fill();
-      // edge highlight
-      ctx.strokeStyle = 'rgba(214,236,255,0.30)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(x, ty);
-      ctx.lineTo(x + SW, ty);
-      ctx.stroke();
-      ctx.strokeStyle = 'rgba(0,0,0,0.45)';
-      ctx.beginPath();
-      ctx.moveTo(x, ty);
-      ctx.lineTo(x, ty + RISE);
-      ctx.stroke();
-      // concrete speckle
-      for (let s = 0; s < 9; s++) {
-        const sx = x + 10 + ((s * 37 + i * 13) % (SW - 20));
-        const sy = ty + 14 + ((s * 53 + i * 7) % (RISE - 30));
-        ctx.fillStyle = `rgba(200,222,240,${0.02 + 0.03 * noise1(s + i * 5, 4)})`;
-        ctx.fillRect(sx, sy, 2, 2);
-      }
-      // the rung's code, etched small on its riser
-      tracking(ctx, r.cls, x + 14, ty + 38, {
-        size: 14, font: F.mono6, track: 3, color: 'rgba(210,232,250,0.30)',
-      });
-
-      /* ----------------------------- the tag ---------------------------- */
-      const gone = r.at == null ? 0 : ease.inOut(clamp((t - r.at) / 0.55));
-      if (gone < 0.995) {
-        const tx = x + DX * 0.45 + 9;
-        const tY = ty - DY - 6;
+    /* --------------------------- shot A: receipts ------------------------- */
+    if (t < 10.4) {
+      PLAT.forEach((p, i) => {
+        const q = ease.expo(clamp((t - p.at) / 0.7));
+        if (q <= 0.001) return;
+        const y = 380 + i * 300 - (1 - q) * 50;
+        const x = 120 + i * 26;
+        const w = W - 240 - i * 52;
+        const h = 250;
         ctx.save();
-        ctx.globalAlpha *= 1 - gone;
-        ctx.translate(tx + 60, tY - 46);
-        ctx.rotate(-gone * 0.5 + Math.sin(t * 1.1 + i) * 0.012);
-        ctx.translate(0, gone * 120);
-        // shadow on the tread
+        ctx.globalAlpha = q;
         ctx.save();
-        ctx.translate(-6, 44);
-        ctx.fillStyle = 'rgba(0,0,0,0.40)';
-        ctx.fillRect(-58, 0, 128, 12);
+        ctx.shadowColor = 'rgba(0,0,0,0.6)';
+        ctx.shadowBlur = 40;
+        ctx.shadowOffsetY = 16;
+        fillRR(ctx, x, y, w, h, 6, K.paper);
         ctx.restore();
-        // paper
-        fillRR(ctx, -60, -46, 120, 92, 3, '#F0E4CC');
-        ctx.fillStyle = linGrad(ctx, 0, -46, 0, 46, [
-          [0, 'rgba(255,255,255,0.35)'], [0.5, 'rgba(255,255,255,0)'], [1, 'rgba(112,86,50,0.22)'],
-        ]);
-        fillRR(ctx, -60, -46, 120, 92, 3, ctx.fillStyle);
-        // the small clip that holds it
-        fillRR(ctx, -8, -52, 16, 10, 3, 'rgba(196,210,224,0.55)');
-        tracking(ctx, `KELAS ${r.cls}`, 0, -20, {
-          size: 13, font: F.mono6, track: 3, color: 'rgba(23,19,16,0.52)', align: 'center',
+        ctx.fillStyle = 'rgba(26,27,30,0.06)';
+        for (let px = x + 10; px < x + w - 10; px += 16) ctx.fillRect(px, y + h - 26, 8, 2);
+        // torn top edge
+        ctx.fillStyle = 'rgba(26,27,30,0.10)';
+        for (let px = x + 8; px < x + w - 8; px += 18) ctx.fillRect(px, y, 10, 3);
+        tracking(ctx, p.name, x + 34, y + 54, { size: 20, font: F.mono6, track: 5, color: 'rgba(26,27,30,0.55)' });
+        txt(ctx, 'BIAYA LAYANAN LOGISTIK', x + w - 34, y + 54, {
+          size: 18, font: F.mono6, color: 'rgba(26,27,30,0.42)', align: 'right', track: 2,
         });
-        txt(ctx, r.price, 0, 30, {
-          size: 36, font: F.num, color: 'rgba(23,19,16,0.88)', align: 'center', track: -1,
+        txt(ctx, p.line1, x + 34, y + 148, { size: 82, font: F.num, color: p.c === K.amber ? '#8A5A10' : '#9C3524', track: -3 });
+        txt(ctx, p.line2, x + w - 34, y + 130, {
+          size: 24, font: F.mono, color: 'rgba(26,27,30,0.55)', align: 'right',
+        });
+        txt(ctx, p.line3, x + w - 34, y + 166, {
+          size: 24, font: F.mono6, color: 'rgba(26,27,30,0.40)', align: 'right',
+        });
+        barcode(ctx, x + 34, y + h - 92, 260, 46, { color: 'rgba(26,27,30,0.7)', a: 1, seed: i + 3 });
+        ctx.restore();
+      });
+    }
+
+    /* -------------------------- shot B: the seller ------------------------ */
+    if (t >= 10.4) {
+      const p = ease.expo(clamp((t - 10.5) / 0.8));
+      const x = 150;
+      const y = 400;
+      const w = W - 300;
+      const h = 900;
+      ctx.save();
+      ctx.globalAlpha = p;
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.6)';
+      ctx.shadowBlur = 50;
+      ctx.shadowOffsetY = 20;
+      fillRR(ctx, x, y, w, h, 10, K.paper);
+      ctx.restore();
+      tracking(ctx, 'RINCIAN PENDAPATAN PENJUAL', x + 40, y + 62, {
+        size: 20, font: F.mono6, track: 5, color: 'rgba(26,27,30,0.55)',
+      });
+      const rows = [
+        { l: 'HARGA JUAL', v: '150.000', at: 11.1, c: 'rgba(26,27,30,0.9)' },
+        { l: 'BIAYA LAYANAN 8%', v: '− 12.000', at: 11.5, c: '#9C3524' },
+        { l: 'BIAYA LOGISTIK', v: '− 5.000', at: 11.9, c: '#9C3524' },
+        { l: 'BIAYA IKLAN', v: '− 8.000', at: 12.3, c: '#9C3524' },
+        { l: 'HARGA POKOK', v: '− 80.000', at: 12.7, c: '#9C3524' },
+      ];
+      rows.forEach((r, i) => {
+        const q = clamp((t - r.at) / 0.35);
+        if (q <= 0) return;
+        const yy = y + 150 + i * 88;
+        ctx.save();
+        ctx.globalAlpha = p * q;
+        txt(ctx, r.l, x + 40, yy, { size: 26, font: F.mono6, color: 'rgba(26,27,30,0.55)', track: 2 });
+        txt(ctx, r.v, x + w - 40, yy, { size: 40, font: F.num6, color: r.c, align: 'right', track: -1 });
+        ctx.fillStyle = 'rgba(26,27,30,0.10)';
+        ctx.fillRect(x + 40, yy + 30, w - 80, 1.4);
+        ctx.restore();
+      });
+      const q = a(13.5, 0.6);
+      if (q > 0.01) {
+        ctx.save();
+        ctx.globalAlpha = q;
+        ctx.fillStyle = 'rgba(26,27,30,0.14)';
+        ctx.fillRect(x + 40, y + 620, w - 80, 3);
+        txt(ctx, 'SISA UNTUK PENJUAL', x + 40, y + 700, {
+          size: 26, font: F.mono6, color: 'rgba(26,27,30,0.6)', track: 3,
+        });
+        txt(ctx, '45.000', x + w - 40, y + 716, {
+          size: 86, font: F.num, color: '#1A1B1E', align: 'right', track: -3,
         });
         ctx.restore();
       }
+      ctx.restore();
 
-      // the empty step keeps a red chalk mark
-      if (r.at != null) {
-        const mk = clamp((t - r.at - 0.30) / 0.35);
-        if (mk > 0.01) {
-          ctx.save();
-          ctx.globalAlpha = mk * 0.9;
-          ctx.strokeStyle = hexA(P.ember, 0.85);
-          ctx.lineWidth = 5;
-          ctx.lineCap = 'round';
-          const mx = x + 52;
-          const my = ty + 46;
-          const e = ease.out(mk);
-          ctx.beginPath();
-          ctx.moveTo(mx, my);
-          ctx.lineTo(mx + 44 * e, my + 44 * e);
-          ctx.moveTo(mx + 44 * e, my);
-          ctx.lineTo(mx, my + 44 * e);
-          ctx.stroke();
-          tracking(ctx, 'HABIS', x + 110, ty + 74, {
-            size: 20, font: F.mono6, track: 5, color: hexA(P.ember, 0.8 * mk),
-          });
-          ctx.restore();
-        }
+      // the red note: the buyer never saw any of it
+      const nq = a(15.6, 0.6);
+      if (nq > 0.01) {
+        ctx.save();
+        ctx.globalAlpha = nq;
+        ctx.translate(W - 210, 300);
+        ctx.rotate(-0.06);
+        strokeRR(ctx, -190, -46, 380, 92, 8, hexA(K.ember, 0.8), 3);
+        txt(ctx, 'PEMBELI TIDAK LIHAT', 0, 8, {
+          size: 26, font: F.head, color: K.ember, align: 'center', track: 3,
+        });
+        ctx.restore();
       }
-
-      ctx.restore();
     }
 
-    /* ------------------------- the climbing marker ---------------------- */
-    const mkA = a(6.5, 0.6);
-    if (mkA > 0.01) {
-      // which step the price is standing on now
-      const stepNow = 4 + Math.round(2 * ease.inOut(clamp((t - 6.9) / 1.0)));
-      const ty = treadY(stepNow);
-      const x = X0 + stepNow * SW + DX + 60;
-      ctx.save();
-      ctx.globalAlpha = mkA;
-      // dashed rail up the side
-      ctx.save();
-      ctx.setLineDash([6, 10]);
-      ctx.strokeStyle = 'rgba(246,241,230,0.18)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(x + 26, BASE + 40);
-      ctx.lineTo(x + 26, ty - 40);
-      ctx.stroke();
-      ctx.restore();
-      // the marker itself
-      ctx.translate(x + 26, ty - 58);
-      fillRR(ctx, -6, 0, 12, 12, 2, hexA(P.amber, 0.9));
-      ctx.beginPath();
-      ctx.moveTo(-6, 0);
-      ctx.lineTo(6, 0);
-      ctx.lineTo(0, -9);
-      ctx.closePath();
-      ctx.fillStyle = hexA(P.amber, 0.9);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    /* ---------------------------- the sticker --------------------------- */
-    const sa = a(7.0, 0.5);
-    if (sa > 0.01) {
-      const s = ease.expo(clamp((t - 7.0) / 0.55));
-      ctx.save();
-      ctx.translate(452, 566);
-      ctx.rotate(-0.045);
-      ctx.scale(0.88 + 0.12 * s, 0.88 + 0.12 * s);
-      sticker(ctx, 0, 0, '±12 TINGKAT', {
-        w: 340, h: 112, a: sa, sub: 'DI SATU KABIN YANG SAMA', size: 36, bg: '#D9503A',
-      });
-      ctx.restore();
-    }
+    grainOverlay(ctx, t, { a: 0.05 });
   },
 };

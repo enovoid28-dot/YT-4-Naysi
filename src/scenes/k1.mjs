@@ -1,195 +1,132 @@
-import { W, H, txt, hexA, linGrad, radGrad, fillRR, strokeRR, measure, tracking, rr } from '../engine/draw.mjs';
+import { W, H, txt, hexA, linGrad, fillRR, strokeRR, tracking, rr, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, TAU, noise1 } from '../engine/anim.mjs';
-import {
-  P, eyebrow, ease, nightWall, lightCone, boardHousing, engraved, sticker, paperTape,
-} from './_fare.mjs';
-import { splitFlap, flapWidth, spark, ghosts, ticks } from '../engine/motion.mjs';
+import { clamp, lerp, TAU } from '../engine/anim.mjs';
+import { K, ease, depot, box, contact, grainOverlay } from './_kirim.mjs';
+import { ghosts } from '../engine/motion.mjs';
 
-// 01 — HARGA YANG BERGERAK
-// A fare board on a night wall, lit from above. The board is a machine, so it
-// gets a housing, screws, glass glare and a paper record of what it just did.
-
-const CW = 160;
-const CH = 224;
-const GAP = 10;
-
-const tape = [
-  { time: '12:04', price: 'Rp 700.000' },
-  { time: '12:07', price: 'Rp 742.000', delta: '+6%', up: true },
-  { time: '12:11', price: 'Rp 815.000', delta: '+10%', up: true },
-  { time: '12:14', price: 'Rp 900.000', delta: '+10%', up: true },
-];
+// 01 — KATA GRATIS
+// The sticker is the object. It says free, it sits on a parcel, and when it
+// lifts there is nothing underneath it but the price you already paid.
 
 export default {
-  draw(ctx, t, scene, o = {}) {
+  draw(ctx, t) {
     const a = (s, d = 0.6) => ease.out(clamp((t - s) / d));
+    depot(ctx, { t, glowX: W * 0.5, glowY: 600, glowA: 0.13 });
 
-    nightWall(ctx, { spotX: W * 0.5, spotY: 500, spotA: 0.15, panels: 4 });
-    lightCone(ctx, W * 0.5, -120, 1120, 120, 660, { color: '#FFD9A0', a: 0.055 });
+    tracking(ctx, 'CHECKOUT · 21:40', 104, 208, {
+      size: 24, font: F.mono6, track: 6, color: hexA(K.bone, 0.45), alpha: a(0.02, 0.5),
+    });
+    tracking(ctx, 'ONGKIR', W - 104, 208, {
+      size: 24, font: F.mono6, track: 6, color: hexA(K.amber, 0.62), align: 'right', alpha: a(0.02, 0.5),
+    });
 
-    /* ------------------------------ header ------------------------------ */
-    const ea = a(0.04, 0.5);
-    eyebrow(ctx, 'HARGA · SATU KURSI', { a: ea, color: 'rgba(246,241,230,0.62)' });
+    const BW = 780;
+    const BH = 520;
+    const bx = (W - BW) / 2;
+    const by = 470;
 
-    // route plate engraved on the wall
-    const rp = a(0.16, 0.7);
-    if (rp > 0.01) {
+    // two parcels behind, out of focus: depth without perspective
+    box(ctx, bx - 210, by + 150, 300, 220, { a: 0.30, rot: -0.05, tape: false, depth: 0.16, tint: '#7C5C34' });
+    box(ctx, bx + BW - 90, by + 110, 260, 200, { a: 0.22, rot: 0.04, tape: false, depth: 0.16, tint: '#6E5130' });
+    // the parcel
+    const land = ease.expo(clamp((t - 0.08) / 0.75));
+    box(ctx, bx, by + (1 - land) * 40, BW, BH, {
+      a: 0.35 + 0.65 * land, rot: -0.012, open: 0, tape: true, mark: 'FRAGILE',
+      label: false, depth: 0.20,
+    });
+
+    // the sticker: GRATIS ONGKIR, a real paper object with its own shadow
+    const peel = clamp((t - 3.05) / 1.15);
+    const sp = ease.inOut(peel);
+    const sx = lerp(bx + BW * 0.5, bx + BW * 0.5 - 150, sp);
+    const sy = lerp(by + BH * 0.66, by + BH * 0.66 - 330, sp);
+    const srot = lerp(-0.03, -0.16, sp);
+    const sw = 620;
+    const sh = 150;
+    const drawSticker = (alpha, ox = 0, oy = 0, rot = srot) => {
       ctx.save();
-      ctx.globalAlpha = rp;
-      const rx = 104;
-      const ry = 318;
-      engraved(ctx, 'CGK', rx, ry, { size: 34, color: 'rgba(246,241,230,0.78)', track: 6 });
-      engraved(ctx, 'DPS', W - 104, ry, { size: 34, color: 'rgba(246,241,230,0.78)', track: 6, align: 'right' });
-      // the route itself: a hairline with tick marks, as if etched into the wall
-      const x0 = rx + 96;
-      const x1 = W - 104 - 96;
-      ctx.fillStyle = 'rgba(246,241,230,0.16)';
-      ctx.fillRect(x0, ry - 10, (x1 - x0) * ease.out(clamp((t - 0.3) / 0.9)), 1.5);
-      for (let i = 0; i <= 8; i++) {
-        const xx = lerp(x0, x1, i / 8);
-        if (xx > lerp(x0, x1, ease.out(clamp((t - 0.3) / 0.9)))) break;
-        ctx.fillStyle = i % 4 === 0 ? 'rgba(246,241,230,0.30)' : 'rgba(246,241,230,0.13)';
-        ctx.fillRect(xx, ry - 18, 1.5, 16);
+      ctx.globalAlpha = alpha;
+      ctx.translate(ox, oy);
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.55)';
+      ctx.shadowBlur = 26 + 30 * sp;
+      ctx.shadowOffsetY = 10 + 18 * sp;
+      fillRR(ctx, sx - sw / 2, sy - sh / 2, sw, sh, 8, K.amber);
+      ctx.restore();
+      ctx.fillStyle = 'rgba(255,255,255,0.22)';
+      ctx.fillRect(sx - sw / 2 + 8, sy - sh / 2 + 7, sw - 16, 6);
+      txt(ctx, 'GRATIS ONGKIR', sx, sy + 14, {
+        size: 62, font: F.head, color: '#231505', align: 'center', track: 4,
+      });
+      txt(ctx, 'MIN. BELANJA 0', sx, sy + 52, {
+        size: 18, font: F.mono6, color: 'rgba(35,21,5,0.55)', align: 'center', track: 4,
+      });
+      ctx.restore();
+    };
+
+    const stA = a(0.75, 0.5);
+    if (stA > 0.01) {
+      if (peel > 0.02 && peel < 0.98) {
+        ghosts(ctx, { dx: 16, dy: 26, n: 2, spread: 1.4, alpha: 0.12 }, () => drawSticker(stA * 0.5));
       }
-      ctx.restore();
-    }
+      drawSticker(stA * (1 - clamp((peel - 0.75) / 0.25)));
 
-    /* ------------------------------- board ------------------------------ */
-    const n = 7;
-    const bw = flapWidth(n, CW, GAP);
-    const bx = (W - bw) / 2;
-    const by = 596;
-    const drop = a(0.42, 0.62);
-    const flip = clamp((t - 2.98) / 0.78);
-
-    // housing
-    const hx = bx - 46;
-    const hw = bw + 92;
-    const hy = 520;
-    const hh = CH + 132;
-    ctx.save();
-    ctx.translate(0, (1 - drop) * -30);
-    boardHousing(ctx, hx, hy, hw, hh, { a: drop });
-    engraved(ctx, 'HARGA PER KURSI · 1 PENUMPANG', hx + 44, hy + 54, {
-      size: 21, color: 'rgba(226,238,250,0.42)', a: drop,
-    });
-    // the LED that says the feed is live
-    const pulse = 0.55 + 0.45 * Math.sin(t * 4.6);
-    ctx.save();
-    ctx.globalAlpha = drop;
-    ctx.beginPath();
-    ctx.arc(hx + hw - 96, hy + 48, 7, 0, TAU);
-    ctx.fillStyle = hexA(P.ember, 0.6 + 0.4 * pulse);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(hx + hw - 96, hy + 48, 7 + 11 * pulse, 0, TAU);
-    ctx.fillStyle = hexA(P.ember, 0.12 * (1 - pulse));
-    ctx.fill();
-    engraved(ctx, 'LIVE', hx + hw - 78, hy + 55, {
-      size: 19, color: hexA(P.ember, 0.9), track: 5, a: 1,
-    });
-    ctx.restore();
-
-    splitFlap(ctx, {
-      value: '900.000',
-      prev: '700.000',
-      p: flip,
-      x: bx,
-      y: by + 16,
-      cellW: CW,
-      cellH: CH,
-      gap: GAP,
-      a: drop,
-      bg: '#0B1420',
-      bgTop: '#16242F',
-      ink: P.bone,
-      staggerS: 0.06,
-    });
-    // a thin shadow inside the recess, so the cells sit behind glass
-    ctx.save();
-    ctx.globalAlpha = drop * 0.55;
-    ctx.fillStyle = linGrad(ctx, 0, by + 16, 0, by + 64, [
-      [0, 'rgba(0,0,0,0.55)'], [1, 'rgba(0,0,0,0)'],
-    ]);
-    ctx.fillRect(bx, by + 16, bw, 48);
-    ctx.restore();
-    ctx.restore();
-
-    /* --------------------------- the LED graph -------------------------- */
-    const sp = clamp((t - 3.15) / 1.55);
-    if (sp > 0.01) {
-      const sx = 150;
-      const sy = 1080;
-      const sw = W - 300;
-      const sh = 128;
-      const sa = ease.out(clamp((t - 3.15) / 0.6));
-      ctx.save();
-      ctx.globalAlpha = sa;
-      // recessed glass panel
-      fillRR(ctx, sx - 40, sy - sh - 58, sw + 80, sh + 118, 12, 'rgba(8,13,20,0.86)');
-      strokeRR(ctx, sx - 40, sy - sh - 58, sw + 80, sh + 118, 12, 'rgba(214,232,250,0.10)', 1.4);
-      engraved(ctx, 'HARGA · 10 MENIT TERAKHIR', sx - 18, sy - sh - 26, {
-        size: 18, color: 'rgba(226,238,250,0.38)', track: 4, a: 1,
-      });
-      const pts = [];
-      const N = 34;
-      for (let i = 0; i < N; i++) {
-        const u = i / (N - 1);
-        const trend = 0.94 - 0.88 * Math.pow(u, 2.3);
-        const jit = (noise1(u * 11, 3) - 0.5) * 0.075;
-        const jump = i > 25 ? -0.2 * ((i - 25) / 8) : 0;
-        pts.push([u, clamp(trend + jit + jump, 0.02, 1)]);
-      }
-      ticks(ctx, sx, sy, sw, { n: 24, color: P.bone, a: 0.14, major: 6 });
-      spark(ctx, pts, {
-        p: sp, x: sx, y: sy, w: sw, h: sh, color: '#FFB861', lw: 3,
-        fill: true, head: true, headColor: '#FFE0B0',
-      });
-      ctx.restore();
-    }
-
-    /* ------------------------- the sticker (delta) ---------------------- */
-    const dl = a(3.72, 0.5);
-    if (dl > 0.01) {
-      const s = ease.expo(clamp((t - 3.72) / 0.55));
-      ctx.save();
-      ctx.translate(hx + hw - 206, 948);
-      ctx.rotate(-0.055);
-      ctx.scale(0.86 + 0.14 * s, 0.86 + 0.14 * s);
-      sticker(ctx, 0, 0, 'NAIK 29%', {
-        w: 330, h: 112, a: dl, sub: 'DALAM 10 MENIT', size: 40, bg: '#D9503A',
-      });
-      ctx.restore();
-    }
-
-    /* --------------------------- paper record --------------------------- */
-    const tp = a(2.52, 0.7);
-    if (tp > 0.01) {
-      const s = ease.out(clamp((t - 2.52) / 0.9));
-      ctx.save();
-      ctx.translate((1 - s) * 40, (1 - s) * 26);
-      paperTape(ctx, 742, 1268, 556, tape, {
-        a: tp, rot: -0.035, head: 'LOG HARGA · HARI INI', rowH: 58, pad: 26,
-      });
-      ctx.restore();
-
-      // the caption on the wall beside the tape
-      const ca = a(5.2, 0.6);
-      if (ca > 0.01) {
+      // the peeled corner curling
+      if (peel > 0.02 && peel < 1) {
         ctx.save();
-        ctx.globalAlpha = ca;
-        const cx = 168;
-        const cy = 1310;
-        ctx.fillStyle = hexA(P.amber, 0.8);
-        ctx.fillRect(cx, cy - 34, 54, 4);
-        tracking(ctx, 'EMPAT KALI', cx, cy, { size: 26, font: F.mono6, track: 5, color: hexA(P.bone, 0.72) });
-        tracking(ctx, 'DALAM 10 MENIT', cx, cy + 40, { size: 26, font: F.mono6, track: 5, color: hexA(P.bone, 0.72) });
-        tracking(ctx, 'TANPA KAMU SENTUH', cx, cy + 92, {
-          size: 18, font: F.mono6, track: 4, color: hexA(P.bone, 0.34),
-        });
+        ctx.globalAlpha = stA * (1 - peel) * 0.9;
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        ctx.beginPath();
+        ctx.moveTo(sx - sw / 2, sy + sh / 2);
+        ctx.lineTo(sx - sw / 2 + 90 * peel, sy + sh / 2);
+        ctx.lineTo(sx - sw / 2, sy + sh / 2 - 70 * peel);
+        ctx.closePath();
+        ctx.fill();
         ctx.restore();
       }
     }
+
+    // what the sticker was hiding: the line item
+    const ra = a(4.35, 0.6);
+    if (ra > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = ra;
+      fillRR(ctx, bx + 40, by + BH * 0.34, BW - 80, 210, 10, 'rgba(4,6,10,0.72)');
+      strokeRR(ctx, bx + 40, by + BH * 0.34, BW - 80, 210, 10, hexA(K.bone, 0.16), 1.5);
+      const rows = [
+        ['ONGKIR', '0'],
+        ['BIAYA LAYANAN', '4.000'],
+        ['BIAYA PENANGANAN', '8.000'],
+      ];
+      rows.forEach((r, i) => {
+        const p = clamp((t - 4.45 - i * 0.28) / 0.4);
+        if (p <= 0.001) return;
+        const y = by + BH * 0.34 + 56 + i * 56;
+        ctx.save();
+        ctx.globalAlpha = ra * p;
+        txt(ctx, r[0], bx + 78, y, { size: 24, font: F.mono6, color: hexA(K.bone, 0.5), track: 3 });
+        txt(ctx, r[1], bx + BW - 78, y, {
+          size: 34, font: F.num6, color: i === 0 ? K.mint : K.ember, align: 'right',
+        });
+        ctx.restore();
+      });
+      ctx.restore();
+    }
+
+    // the honest total, stamped
+    const fa = a(6.6, 0.55);
+    if (fa > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = fa;
+      ctx.translate(W / 2, 1190);
+      ctx.rotate(-0.03);
+      strokeRR(ctx, -420, -70, 840, 140, 10, hexA(K.ember, 0.85), 5);
+      txt(ctx, 'YANG BAYAR: KAMU', 0, 12, {
+        size: 56, font: F.head, color: K.ember, align: 'center', track: 4,
+      });
+      ctx.restore();
+    }
+
+    grainOverlay(ctx, t, { a: 0.05 });
   },
 };
