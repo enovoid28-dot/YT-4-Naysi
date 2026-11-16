@@ -1,13 +1,13 @@
-import q1 from './q1.mjs';
-import q2 from './q2.mjs';
-import q3 from './q3.mjs';
-import q4 from './q4.mjs';
-import q5 from './q5.mjs';
-import q6 from './q6.mjs';
-import q7 from './q7.mjs';
-import q8 from './q8.mjs';
-import q9 from './q9.mjs';
+import r1 from './r1.mjs';
+import r2 from './r2.mjs';
+import r3 from './r3.mjs';
+import r4 from './r4.mjs';
+import r5 from './r5.mjs';
+import r6 from './r6.mjs';
+import r7 from './r7.mjs';
+import r8 from './r8.mjs';
+import r9 from './r9.mjs';
 
-// Episode 17 ("Paylater tidak berbunga. Ia cuma pakai kata lain.") key map.
-// Ep16 kept p1..p9, Ep15 k1..k9; this episode uses q1..q9 — the printed sheet.
-export default { q1, q2, q3, q4, q5, q6, q7, q8, q9 };
+// Episode 18 ("Kamu pernah jadi bayi. Kamu tidak ingat satu hari pun.")
+// key map. Ep17 used q1..q9 (printed sheet), this episode uses r1..r9 (archive).
+export default { r1, r2, r3, r4, r5, r6, r7, r8, r9 };
