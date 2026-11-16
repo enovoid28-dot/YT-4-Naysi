@@ -1,16 +1,17 @@
-import k1 from './k1.mjs';
-import k2 from './k2.mjs';
-import k3 from './k3.mjs';
-import k4 from './k4.mjs';
-import k5 from './k5.mjs';
-import k6 from './k6.mjs';
-import k7 from './k7.mjs';
-import k8 from './k8.mjs';
-import k9 from './k9.mjs';
+import p1 from './p1.mjs';
+import p2 from './p2.mjs';
+import p3 from './p3.mjs';
+import p4 from './p4.mjs';
+import p5 from './p5.mjs';
+import p6 from './p6.mjs';
+import p7 from './p7.mjs';
+import p8 from './p8.mjs';
+import p9 from './p9.mjs';
 
-// Episode 15 ("Gratis ongkir bukan gratis. Ia cuma pindah tempat.") key map:
-// k1 KATA GRATIS · k2 KENAPA DULU MURAH · k3 MEI 2026 · k4 HITUNGAN
-// k5 YANG BAYAR · k6 BERAT VOLUMETRIK · k7 RETUR · k8 SYARATNYA · k9 PINDAH TEMPAT
+// Episode 16 ("Token seratus ribu bukan seratus ribu.") key map:
+// p1 EMPAT POTONG · p2 TIGA BARIS · p3 PAJAK DAERAH · p4 SELISIHNYA
+// p5 GOLONGAN · p6 HARGA ASLI · p7 ARTINYA · p8 YANG TIDUR · p9 SATU METERAN
 //
-// Ep14 kept m1..m9 in its own commit; this map replaces it for the current build.
-export default { k1, k2, k3, k4, k5, k6, k7, k8, k9 };
+// Ep15 kept k1..k9 and Ep14 kept m1..m9 in their own commits; this map is the
+// one the current build uses.
+export default { p1, p2, p3, p4, p5, p6, p7, p8, p9 };
