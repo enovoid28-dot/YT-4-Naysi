@@ -4,7 +4,7 @@
 // with the city behind it, a bed, and one amber alarm clock that never stops
 // counting. Nothing is a diagram; the clock, the light on the wall and the
 // shapes on the bed carry the numbers.
-import { W, H, txt, hexA, fillRR, measure, ledNumber } from '../engine/draw.mjs';
+import { W, H, txt, hexA, fillRR, strokeRR, measure, ledNumber } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, rng, TAU } from '../engine/anim.mjs';
 import { A, cue, cueWord, ease, plate, micro, headline, number, wash, say } from './_langit.mjs';
@@ -454,4 +454,104 @@ export function ribbon(ctx, pts, o = {}) {
   ctx.shadowBlur = glow;
   ctx.stroke();
   ctx.restore();
+}
+
+/* ── legibility kit: the parts that make a picture readable at phone size ─── */
+
+/** Horizontal axis: baseline, ticks, mono labels. `labels` is [[p, text], ...]. */
+export function axisX(ctx, x0, x1, y, labels, o = {}) {
+  const { a = 1, color = 'rgba(255,246,232,0.20)', tick = 9, size = 27, lab = M.faint, up = false } = o;
+  if (a <= 0.01) return;
+  ctx.save();
+  ctx.globalAlpha *= a;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x0, y);
+  ctx.lineTo(x1, y);
+  ctx.stroke();
+  labels.forEach(([p, s]) => {
+    const x = lerp(x0, x1, p);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x, y + (up ? -tick : tick));
+    ctx.stroke();
+    if (s) micro(ctx, s, x, y + (up ? -tick - 16 : tick + 38), { size, color: lab, track: 4, align: 'center', a });
+  });
+  ctx.restore();
+}
+
+/** Vertical axis with right-hand ticks. */
+export function axisY(ctx, x, y0, y1, labels, o = {}) {
+  const { a = 1, color = 'rgba(255,246,232,0.20)', tick = 9, size = 27, lab = M.faint } = o;
+  if (a <= 0.01) return;
+  ctx.save();
+  ctx.globalAlpha *= a;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x, y0);
+  ctx.lineTo(x, y1);
+  ctx.stroke();
+  labels.forEach(([p, s]) => {
+    const y = lerp(y0, y1, p);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + tick, y);
+    ctx.stroke();
+    if (s) micro(ctx, s, x - 18, y + 10, { size, color: lab, track: 3, align: 'right', a });
+  });
+  ctx.restore();
+}
+
+/** A dot, a hair line and a label: the label points at the thing it names. */
+export function leader(ctx, x0, y0, x1, y1, text, o = {}) {
+  const { a = 1, color = M.dim, dot = M.amber, size = 28, align = null, track = 6, dy = 8 } = o;
+  if (a <= 0.01) return;
+  ctx.save();
+  ctx.globalAlpha *= a;
+  ctx.strokeStyle = hexA('#FFFFFF', 0.24);
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x0, y0);
+  ctx.lineTo(x1, y1);
+  ctx.stroke();
+  ctx.fillStyle = dot;
+  ctx.shadowColor = hexA(dot, 0.8);
+  ctx.shadowBlur = 14;
+  ctx.beginPath();
+  ctx.arc(x0, y0, 6, 0, TAU);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  const al = align || (x1 < 700 ? 'right' : 'left');
+  micro(ctx, text, x1 + (al === 'right' ? -12 : 12), y1 + dy, { size, color, track, align: al, a });
+  ctx.restore();
+}
+
+/** A thin outline pill with tracking — used where a full chip would be loud. */
+export function pill(ctx, s, x, y, o = {}) {
+  const { a = 1, color = M.amber, size = 28, align = 'left', track = 6, padX = 24, h = 62 } = o;
+  if (a <= 0.01) return;
+  const w = measure(ctx, s, size, F.mono, track) + track + padX * 2;
+  const x0 = align === 'center' ? x - w / 2 : align === 'right' ? x - w : x;
+  ctx.save();
+  ctx.globalAlpha *= a;
+  fillRR(ctx, x0, y - h * 0.66, w, h, h / 2, 'rgba(8,10,18,0.55)');
+  ctx.strokeStyle = hexA(color, 0.42);
+  ctx.lineWidth = 2;
+  strokeRR(ctx, x0, y - h * 0.66, w, h, h / 2, hexA(color, 0.42), 2);
+  micro(ctx, s, x0 + padX, y + size * 0.35, { size, color, track, a });
+  ctx.restore();
+  return w;
+}
+
+/** Soft round light: one gradient, no edge. */
+export function halo(ctx, x, y, r, color, a = 1) {
+  if (a <= 0.01) return;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, hexA(color, 0.34 * a));
+  g.addColorStop(0.45, hexA(color, 0.10 * a));
+  g.addColorStop(1, hexA(color, 0));
+  ctx.fillStyle = g;
+  ctx.fillRect(x - r, y - r, r * 2, r * 2);
 }

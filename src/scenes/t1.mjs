@@ -20,7 +20,7 @@ export default {
 
     // ── the person, sitting up, back to the room
     const sit = A(t, -0.3, 1.1, ease.out);
-    person(ctx, 1112, 2148, 646, { a: sit, rim: 0.55 });
+    person(ctx, 1104, 2152, 690, { a: sit, rim: 1.0 });
 
     // the duvet comes up over the legs; drawn over the body so the person is
     // unmistakably *in* the bed and not standing in front of it
@@ -102,7 +102,15 @@ export default {
         ctx.stroke();
         ctx.restore();
       }
-      micro(ctx, 'JAM', 112, y + 74, { size: 24, color: M.faint, track: 12, a: rulerA * 0.9 });
+      micro(ctx, 'JAM', x1 + 24, y + 12, { size: 26, color: M.faint, track: 8, a: rulerA * 0.9 });
+      // the hours the ruler is counting, named under every sixth tick
+      [0, 1, 2, 3].forEach((k) => {
+        const i = k * 6;
+        if (i >= n) return;
+        const x = lerp(x0, x1, i / (n - 1));
+        const la = A(t, c[3] + 0.3 + k * 0.25, 0.4, ease.out) * rulerA;
+        micro(ctx, `0${2 + k}`, x, y + 66, { size: 28, color: hexA(M.amber, 0.92), track: 3, align: 'center', a: la });
+      });
       // the ticks that stop being hours and fall out of the ruler
       for (let i = 0; i < n; i += 2) {
         const d = A(t, c[4] + 0.15 + (i / n) * 1.5, 1.3, ease.in);

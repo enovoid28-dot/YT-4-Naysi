@@ -52,11 +52,11 @@ export default {
 
     // ── the open door, swung out to the left
     ctx.save();
-    const dw = 330 * open;
+    const dw = 246 * open;
     const doorG = ctx.createLinearGradient(fx - dw, fy, fx, fy + fh);
-    doorG.addColorStop(0, '#0C1018');
-    doorG.addColorStop(0.7, '#151B27');
-    doorG.addColorStop(1, '#0A0D14');
+    doorG.addColorStop(0, '#232C3E');
+    doorG.addColorStop(0.55, '#161C29');
+    doorG.addColorStop(1, '#0B0E15');
     ctx.fillStyle = doorG;
     ctx.beginPath();
     ctx.moveTo(fx, fy);
@@ -66,8 +66,15 @@ export default {
     ctx.closePath();
     ctx.fill();
     // cold rim on the door edge
-    ctx.strokeStyle = `rgba(180,215,255,${0.35 * open})`;
-    ctx.lineWidth = 3;
+    ctx.strokeStyle = `rgba(190,220,255,${0.55 * open})`;
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    // the gasket line down the inside of the door
+    ctx.strokeStyle = `rgba(120,150,190,${0.30 * open})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(fx - dw + 22, fy + 120);
+    ctx.quadraticCurveTo(fx - dw + 14, fy + fh * 0.5, fx - dw + 30, fy + fh - 96);
     ctx.stroke();
     ctx.restore();
 
@@ -87,28 +94,31 @@ export default {
       const iw = fw - 60;
       const ih = fh - 68;
       const inner = ctx.createLinearGradient(0, iy, 0, iy + ih);
-      inner.addColorStop(0, 'rgba(226,242,255,0.96)');
-      inner.addColorStop(0.12, 'rgba(198,224,255,0.86)');
-      inner.addColorStop(0.55, 'rgba(150,190,240,0.72)');
-      inner.addColorStop(1, 'rgba(28,46,84,0.92)');
+      inner.addColorStop(0, 'rgba(206,228,255,0.95)');
+      inner.addColorStop(0.10, 'rgba(150,184,232,0.80)');
+      inner.addColorStop(0.42, 'rgba(52,76,120,0.92)');
+      inner.addColorStop(1, 'rgba(12,20,36,0.97)');
       ctx.save();
       ctx.globalAlpha *= open;
       fillRR(ctx, ix, iy, iw, ih, 14, inner);
 
       // the lamp strip along the top
-      const lamp = ctx.createLinearGradient(0, iy, 0, iy + 160);
-      lamp.addColorStop(0, 'rgba(255,255,255,0.55)');
+      const lamp = ctx.createLinearGradient(0, iy, 0, iy + 210);
+      lamp.addColorStop(0, 'rgba(255,255,255,0.75)');
       lamp.addColorStop(1, 'rgba(255,255,255,0)');
       ctx.fillStyle = lamp;
-      ctx.fillRect(ix, iy, iw, 160);
+      ctx.fillRect(ix, iy, iw, 210);
 
       // shelves and what is left on them
       const r = rng(63);
       for (let s2 = 0; s2 < 3; s2++) {
         const y = iy + 210 + s2 * 250;
-        ctx.fillStyle = 'rgba(40,64,100,0.45)';
-        ctx.fillRect(ix, y, iw, 10);
-        ctx.fillStyle = 'rgba(255,255,255,0.12)';
+        // the glass shelf, lit along its front edge, with shadow under it
+        ctx.fillStyle = 'rgba(10,18,32,0.55)';
+        ctx.fillRect(ix, y + 10, iw, 26);
+        ctx.fillStyle = 'rgba(180,214,255,0.55)';
+        ctx.fillRect(ix, y, iw, 9);
+        ctx.fillStyle = 'rgba(255,255,255,0.22)';
         ctx.fillRect(ix, y, iw, 3);
       }
       // a carton, a jar, a bottle, a tub — food that is easy at 2 a.m.
@@ -142,14 +152,35 @@ export default {
       const down = [];
       for (let i = 0; i < 12; i++) {
         const p = i / 11;
-        up.push([lerp(60, 520, p), lerp(1500, 700, Math.pow(p, 1.15))]);
-        down.push([lerp(60, 520, p), lerp(760, 1360, Math.pow(p, 1.1))]);
+        up.push([lerp(90, 520, p), lerp(1560, 880, Math.pow(p, 1.15))]);
+        down.push([lerp(90, 520, p), lerp(900, 1480, Math.pow(p, 1.1))]);
       }
-      ribbon(ctx, up, { color: M.amber, lw: 10, glow: 26 });
-      ribbon(ctx, down, { color: M.ice, lw: 10, glow: 22 });
+      ribbon(ctx, up, { color: M.amber, lw: 13, glow: 30 });
+      ribbon(ctx, down, { color: M.ice, lw: 13, glow: 26 });
+      // arrowheads: up for the hungry hormone, down for the full one
+      ctx.fillStyle = M.amber;
+      ctx.shadowColor = hexA(M.amber, 0.8);
+      ctx.shadowBlur = 26;
+      ctx.beginPath();
+      ctx.moveTo(524, 866);
+      ctx.lineTo(496, 916);
+      ctx.lineTo(552, 916);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = M.ice;
+      ctx.shadowColor = hexA(M.ice, 0.7);
+      ctx.beginPath();
+      ctx.moveTo(524, 1494);
+      ctx.lineTo(496, 1444);
+      ctx.lineTo(552, 1444);
+      ctx.closePath();
+      ctx.fill();
+      ctx.shadowBlur = 0;
       const crossP = A(t, c[1] + 1.0, 0.8, ease.out);
-      micro(ctx, 'LAPAR', 528, 690, { size: 24, color: M.amber, track: 9, a: crossP });
-      micro(ctx, 'KENYANG', 528, 1378, { size: 24, color: M.ice, track: 9, a: crossP });
+      micro(ctx, 'HORMON LAPAR', 452, 836, { size: 29, color: M.amber, track: 6, align: 'right', a: crossP });
+      micro(ctx, 'NAIK', 452, 882, { size: 26, color: M.faint, track: 8, align: 'right', a: crossP });
+      micro(ctx, 'HORMON KENYANG', 452, 1474, { size: 29, color: M.ice, track: 6, align: 'right', a: crossP });
+      micro(ctx, 'TURUN', 452, 1520, { size: 26, color: M.faint, track: 8, align: 'right', a: crossP });
       ctx.restore();
     }
 
@@ -158,10 +189,12 @@ export default {
     if (craving > 0.01) {
       ctx.save();
       ctx.globalAlpha *= craving;
-      micro(ctx, 'YANG DICARI', 96, 520, { size: 24, color: M.faint, track: 10 });
-      number(ctx, 'KARBO', 92, 626, { size: 78, color: M.gold, glow: 0.2 });
-      number(ctx, 'LEMAK', 92, 744, { size: 78, color: M.ice, glow: 0.2 });
-      micro(ctx, 'BUKAN SAYUR', 96, 806, { size: 24, color: M.faint, track: 9 });
+      micro(ctx, 'YANG DICARI', 96, 430, { size: 26, color: M.faint, track: 10 });
+      ctx.fillStyle = hexA(M.gold, 0.9);
+      ctx.fillRect(96, 460, 6, 132);
+      number(ctx, 'KARBO', 124, 530, { size: 84, color: M.gold, glow: 0.18 });
+      number(ctx, 'LEMAK', 124, 636, { size: 84, color: M.ice, glow: 0.18 });
+      micro(ctx, 'BUKAN SAYUR', 100, 716, { size: 26, color: M.faint, track: 9 });
       ctx.restore();
     }
 

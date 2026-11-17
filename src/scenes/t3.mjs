@@ -60,6 +60,36 @@ function road(ctx, o = {}) {
     ctx.closePath();
     ctx.fill();
   }
+  // wet sheen down the middle of the asphalt, so the light has something to sit on
+  if (!ghost) {
+    const wet = ctx.createLinearGradient(VX - 260, VY, VX, H);
+    wet.addColorStop(0, 'rgba(120,150,200,0)');
+    wet.addColorStop(0.45, 'rgba(120,150,200,0.05)');
+    wet.addColorStop(1, 'rgba(150,180,230,0.10)');
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(VX - 30, VY);
+    ctx.lineTo(VX + 30, VY);
+    ctx.lineTo(VX + 420, H);
+    ctx.lineTo(VX - 420, H);
+    ctx.closePath();
+    ctx.fillStyle = wet;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // reflective posts along both edges, growing as they come at the viewer
+  for (let i = 0; i < 7; i++) {
+    const p2 = Math.pow((i + 0.4) / 7, 1.7);
+    const y = lerp(VY + 30, H + 40, p2);
+    const s2 = lerp(3, 24, p2);
+    const lx = lerp(VX - 34, -300, p2);
+    const rx = lerp(VX + 34, W + 300, p2);
+    ctx.fillStyle = ghost ? 'rgba(255,240,205,0.09)' : 'rgba(255,238,200,0.5)';
+    ctx.fillRect(lx - s2, y - s2 * 2.4, s2, s2 * 2.4);
+    ctx.fillRect(rx, y - s2 * 2.4, s2, s2 * 2.4);
+  }
+
   ctx.restore();
 }
 
@@ -93,12 +123,19 @@ export default {
     }
 
     // headlight: the only light, low and warm
-    const hg = ctx.createRadialGradient(700, 1560, 60, 700, 1560, 760);
-    hg.addColorStop(0, `rgba(255,214,160,${0.20 * (1 - 0.4 * smear)})`);
-    hg.addColorStop(0.45, `rgba(255,190,120,${0.07 * (1 - 0.4 * smear)})`);
+    const hg = ctx.createRadialGradient(700, 1700, 40, 700, 1700, 900);
+    hg.addColorStop(0, `rgba(255,222,172,${0.32 * (1 - 0.45 * smear)})`);
+    hg.addColorStop(0.4, `rgba(255,194,126,${0.13 * (1 - 0.45 * smear)})`);
     hg.addColorStop(1, 'rgba(255,180,110,0)');
     ctx.fillStyle = hg;
-    ctx.fillRect(0, 900, W, 1000);
+    ctx.fillRect(0, 900, W, 1100);
+    // the city that the road is heading into
+    const city = ctx.createRadialGradient(700, 900, 10, 700, 900, 420);
+    city.addColorStop(0, `rgba(255,196,140,${0.22 * (1 - 0.5 * smear)})`);
+    city.addColorStop(0.45, 'rgba(190,140,190,0.07)');
+    city.addColorStop(1, 'rgba(120,90,160,0)');
+    ctx.fillStyle = city;
+    ctx.fillRect(300, 560, 800, 700);
     ctx.restore();
 
     // ── caption 2: seventeen hours
@@ -108,7 +145,7 @@ export default {
       ctx.globalAlpha *= n17;
       number(ctx, '17', 118, 660, { size: 300, color: M.ink, glow: 0.4 });
       micro(ctx, 'JAM TERJAGA', 124, 726, { size: 30, color: M.amber, track: 9 });
-      micro(ctx, 'TANPA TIDUR', 124, 772, { size: 22, color: M.faint, track: 8 });
+      micro(ctx, 'TANPA TIDUR', 124, 778, { size: 26, color: M.faint, track: 8 });
       ctx.restore();
     }
 
@@ -137,7 +174,7 @@ export default {
       ctx.fillRect(-80, 1120, W + 160, 380);
       number(ctx, '3', 116, 1200, { size: 210, color: M.ink, glow: 0.4 });
       micro(ctx, 'DETIK', 262, 1264, { size: 30, color: M.amber, track: 9 });
-      micro(ctx, 'MATI RASA', 118, 1310, { size: 24, color: M.faint, track: 8 });
+      micro(ctx, 'MATI RASA', 118, 1318, { size: 26, color: M.faint, track: 8 });
       ctx.restore();
     }
   },

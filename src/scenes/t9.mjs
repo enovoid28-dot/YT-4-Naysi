@@ -35,15 +35,17 @@ export default {
     dust(ctx, t, { a: 0.3, seed: 17, y0: 400, y1: 1700 });
 
     // the bed, made, empty
-    bed(ctx, { y: 2050, pillow: true, pillowX: 470, pillowY: 1918, a: A(t, -0.2, 1.0, ease.out) });
+    bed(ctx, { y: 2060, pillow: false, a: A(t, -0.2, 1.0, ease.out) });
 
     // the clock being switched off
     const clkA = A(t, c[0] + 0.05, 0.6, ease.out);
     if (clkA > 0.01) {
       ctx.save();
       ctx.globalAlpha *= clkA;
-      clock(ctx, 820, 1240, 190, '22:00', { color: M.amber, on: Math.max(0, off), halo: off });
-      if (off < 0.5) micro(ctx, 'LAMPU MATI', 826, 1462, { size: 22, color: M.faint, track: 9, a: clkA * off });
+      clock(ctx, 664, 1236, 178, '22:00', { color: M.amber, on: off, halo: off * 0.8 });
+      micro(ctx, off < 0.5 ? 'LAMPU MATI' : 'JAM TIDUR', 670, 1450, {
+        size: 26, color: off < 0.5 ? M.faint : M.amber, track: 9, a: clkA * (0.35 + 0.65 * off),
+      });
       ctx.restore();
     }
 
@@ -52,8 +54,10 @@ export default {
     if (core > 0.01) {
       ctx.save();
       ctx.globalAlpha *= core;
-      micro(ctx, 'BUKAN WAKTU YANG HILANG', 112, 640, { size: 24, color: M.faint, track: 9 });
-      say(ctx, ['TEMPAT OTAK', 'BERES.'], 104, 760, {
+      micro(ctx, 'BUKAN WAKTU YANG HILANG', 112, 812, { size: 26, color: M.faint, track: 9 });
+      ctx.fillStyle = hexA(M.amber, 0.75);
+      ctx.fillRect(112, 838, 96, 5);
+      say(ctx, ['TEMPAT OTAK', 'BERES.'], 104, 930, {
         t, size: 112, at: c[3] + 0.1, stagger: 0.10, color: M.ink, accent: M.amber,
       });
       ctx.restore();
@@ -64,18 +68,41 @@ export default {
     if (ask > 0.01) {
       ctx.save();
       ctx.globalAlpha *= ask;
-      const plateG = ctx.createLinearGradient(0, 760, 0, 1560);
-      plateG.addColorStop(0, 'rgba(8,10,18,0.72)');
-      plateG.addColorStop(1, 'rgba(8,10,18,0.30)');
-      fillRR(ctx, 88, 780, 1264, 700, 34, plateG);
-      ctx.strokeStyle = hexA(M.amber, 0.35);
+      const plateG = ctx.createLinearGradient(0, 836, 0, 1272);
+      plateG.addColorStop(0, 'rgba(6,8,15,0.86)');
+      plateG.addColorStop(1, 'rgba(6,8,15,0.52)');
+      fillRR(ctx, 88, 836, 1264, 432, 30, plateG);
+      ctx.strokeStyle = hexA(M.amber, 0.40);
       ctx.lineWidth = 2;
-      ctx.strokeRect(88, 780, 1264, 700);
-      micro(ctx, 'JAWAB DI KOMENTAR', 140, 890, { size: 26, color: M.amber, track: 10 });
-      say(ctx, ['JAM BERAPA', 'KAMU TIDUR', 'SEMALAM?'], 132, 1010, {
-        t, size: 108, at: wJam - 0.2, stagger: 0.08, color: M.ink, accent: M.gold,
+      ctx.strokeRect(88, 836, 1264, 432);
+      ctx.fillStyle = hexA(M.amber, 0.9);
+      ctx.fillRect(140, 892, 88, 5);
+      micro(ctx, 'MULAI MALAM INI', 140, 952, { size: 27, color: M.amber, track: 9 });
+      say(ctx, ['SATU JAM', 'LEBIH AWAL.'], 132, 1052, {
+        t, size: 116, at: wJam - 0.2, stagger: 0.09, color: M.ink, accent: M.gold,
       });
       ctx.restore();
+
+      // the takeaway, in three pieces, under the card
+      const take = A(t, wJam + 0.35, 0.9, ease.out);
+      if (take > 0.01) {
+        ctx.save();
+        ctx.globalAlpha *= take;
+        ctx.strokeStyle = 'rgba(255,246,232,0.16)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(112, 1404);
+        ctx.lineTo(W - 104, 1404);
+        ctx.stroke();
+        ['7 – 9 JAM', 'JAM SAMA', 'LAYAR MATI'].forEach((s2, i) => {
+          const x = 112 + i * 416;
+          micro(ctx, s2, x, 1478, { size: 30, color: i === 0 ? M.gold : M.dim, track: 6, a: 1 });
+          micro(ctx, ['DURASI', 'RUTIN', 'SEBELUM TIDUR'][i], x, 1522, {
+            size: 23, color: M.faint, track: 6, a: 1,
+          });
+        });
+        ctx.restore();
+      }
     }
   },
 };
