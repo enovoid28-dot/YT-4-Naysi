@@ -142,7 +142,19 @@ export default {
     }
 
     // ── the person standing in the light
-    person(ctx, 1196, 2036, 620, { a: A(t, c[0] + 0.45, 1.2, ease.out) * 0.97, rim: 0.55 });
+    // the floor: a shadow under the cabinet and under the person, so neither floats
+    ctx.save();
+    const fs = ctx.createRadialGradient(fx + fw * 0.5, 2130, 40, fx + fw * 0.5, 2130, 620);
+    fs.addColorStop(0, 'rgba(0,0,0,0.55)');
+    fs.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = fs;
+    ctx.fillRect(fx - 260, 1900, fw + 520, 420);
+    ctx.beginPath();
+    ctx.ellipse(1300, 2118, 172, 50, 0, 0, TAU);
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fill();
+    ctx.restore();
+    person(ctx, 1300, 2126, 880, { a: A(t, c[0] + 0.45, 1.2, ease.out) * 0.97, rim: 1.0 });
 
     // ── the two hormones, crossing on the wall
     if (cross > 0.01) {

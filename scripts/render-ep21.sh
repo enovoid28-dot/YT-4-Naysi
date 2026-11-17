@@ -21,7 +21,12 @@ for f in $(ls out/q21_*.mp4 | sort -t_ -k2 -n); do printf "file '%s'\n" "$PWD/$f
 "$FF" -y -hide_banner -loglevel error -f concat -safe 0 -i out/concat21.txt -c copy out/video21_silent.mp4
 OUT="out/Tidur Enam Jam Itu Utang - Naysi - 1440x2560 90fps.mp4"
 "$FF" -y -hide_banner -loglevel error -i out/video21_silent.mp4 -i assets/audio/mix-ep21.flac \
-  -af volume=-0.2dB \
-  -c:v copy -c:a aac -b:a 192k -ar 48000 -ac 2 -shortest -movflags +faststart "$OUT"
+  -af volume=-0.7dB \
+  -map 0:v:0 -map 1:a:0 \
+  -c:v libx264 -preset fast -crf 21 -maxrate 4200k -bufsize 8M -pix_fmt yuv420p \
+  -profile:v high -level:v 5.2 -g 180 -bf 2 \
+  -x264-params "aq-mode=3:aq-strength=1.05:deblock=1,1" \
+  -colorspace bt709 -color_primaries bt709 -color_trc bt709 \
+  -c:a aac -b:a 192k -ar 48000 -ac 2 -shortest -movflags +faststart "$OUT"
 ls -l "$OUT"
 echo DONE_EP21_RENDER
