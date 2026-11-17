@@ -1,116 +1,100 @@
-import { W, H, txt, hexA, fillRR, measure } from '../engine/draw.mjs';
+import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE, rng, TAU } from '../engine/anim.mjs';
+import { clamp, lerp, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, desk, spot, contact, figureBack, thread, pin, kick, num, rule, typeLabel, leader, footer,
-} from './_arsip.mjs';
+  K, ease, cue, A, stage, clockArc, headline, micro, number, hairline, hudFrame,
+} from './_sinyal.mjs';
 
-// 06 — BAHASA
-// Four words on cards, a thread running from them to a figure seen from behind.
-// Before there were words there was nothing to tie the days together.
-
-const WORDS = ['IBU', 'SAYANG', 'JALAN', 'HANTAR'];
-
-function card(ctx, x, y, w, h, rot, word, a) {
-  ctx.save();
-  ctx.globalAlpha *= a;
-  ctx.translate(x + w / 2, y + h / 2);
-  ctx.rotate(rot);
-  ctx.save();
-  ctx.shadowColor = 'rgba(0,0,0,0.55)';
-  ctx.shadowBlur = 32;
-  ctx.shadowOffsetY = 16;
-  fillRR(ctx, -w / 2, -h / 2, w, h, 3, K.paper);
-  ctx.restore();
-  const g = ctx.createLinearGradient(-w / 2, -h / 2, w / 2, h / 2);
-  g.addColorStop(0, '#F6EDD9');
-  g.addColorStop(1, '#CBBC9C');
-  fillRR(ctx, -w / 2, -h / 2, w, h, 3, g);
-  for (let i = 1; i < 4; i++) {
-    ctx.fillStyle = 'rgba(96,110,132,0.18)';
-    ctx.fillRect(-w / 2 + 24, -h / 2 + (h / 4) * i, w - 48, 1.6);
-  }
-  ctx.fillStyle = 'rgba(150,44,28,0.30)';
-  ctx.fillRect(-w / 2, -h * 0.16, w, 1.6);
-  txt(ctx, word, 0, h * 0.11, { size: h * 0.29, font: F.display, color: 'rgba(34,26,18,0.88)', align: 'center', track: 3 });
-  ctx.restore();
-}
+// 06 — DUA PULUH TUJUH
+// A clock counts up to 27 minutes and stops. Under it, the fragment it was
+// playing: fifteen to thirty seconds, the length of the loop itself.
 
 export default {
-  draw(ctx, t, scene, cam) {
-    const c = (i, o = 0) => cue(scene, i, o);
-    desk(ctx, { lampX: W * 0.7, lampY: 520, key: 'r6' });
-    spot(ctx, W * 0.74, 700, 760, 0.16);
+  draw(ctx, t, scene) {
+    stage(ctx, { beamX: 720, beamY: -340, key: 'r6' });
+    const c = [0, 1, 2, 3].map((i) => cue(scene, i));
 
-    // ── the figure
-    const pf = A(t, c(0, 0.25), 1.2, ease.expo);
-    if (pf > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = pf;
-      spot(ctx, 1010, 720, 460, 0.32 * pf);
-      contact(ctx, 870, 1146, 320, 96, 0.72);
-      figureBack(ctx, 1040, 1176, 2.35, { rim: pf });
-      ctx.restore();
-    }
-
-    // ── the cards
-    const layout = [
-      { x: 120, y: 250, w: 392, h: 244, rot: -0.055 },
-      { x: 96, y: 528, w: 392, h: 244, rot: 0.035 },
-      { x: 300, y: 806, w: 392, h: 244, rot: -0.028 },
-      { x: 86, y: 1084, w: 392, h: 244, rot: 0.048 },
-    ];
-    const starts = [c(0, 0.55), c(0, 0.75), c(1, 0.10), c(1, 0.35)];
-    layout.forEach((L, i) => {
-      const p = A(t, starts[i], 0.7, ease.out);
-      if (p <= 0.01) return;
-      ctx.save();
-      ctx.translate(0, (1 - p) * -44);
-      card(ctx, L.x, L.y, L.w, L.h, L.rot, WORDS[i], p);
-      pin(ctx, L.x + L.w * 0.5, L.y + 4, 0.62);
-      ctx.restore();
+    // caption 1 — usually it does not last
+    headline(ctx, ['BIASANYA', 'TIDAK LAMA.'], 104, 400, {
+      t,
+      size: 112, at: c[0], stagger: 0.09, a: 1 - A(t, c[1], 0.4, ease.out),
     });
 
-    // ── the thread
-    const pt = A(t, c(2, 0.55), 1.5, ease.inOut);
-    if (pt > 0.01) {
-      thread(ctx, [[320, 262], [300, 540], [500, 818], [280, 1096], [620, 1180], [900, 1060], [1038, 900]], {
-        p: pt, a: 0.9, lw: 3.6, sag: 22,
+    // the clock, counting
+    const pin = A(t, c[1] - 0.2, 0.9, ease.expo);
+    if (pin > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = pin;
+      const cx = 720;
+      const cy = 760;
+      const r = 300;
+      const run = A(t, c[1] + 0.1, 3.2, ease.out);
+      clockArc(ctx, cx, cy, r, { p: run * 0.86, color: K.ice, lw: 9, ticks: 12 });
+      // 27:00, ticked up with the arc
+      const mins = Math.floor(run * 27);
+      const secs = Math.floor((run * 27 * 60) % 60);
+      const a1 = A(t, c[1] + 0.2, 0.6);
+      number(ctx, `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`, cx, cy + 40, {
+        size: 132, color: K.ink, align: 'center', track: -0.03, a: a1,
       });
+      micro(ctx, 'RATA-RATA', cx, cy - 60, { size: 22, color: K.ice, align: 'center', track: 10, a: a1 });
+      micro(ctx, 'LALU HILANG', cx, cy + 110, { size: 20, color: K.dim, align: 'center', track: 8, a: A(t, c[1] + 2.4, 0.6) });
+      ctx.restore();
     }
 
-    // ── before there were words
-    const pv = A(t, c(1, 0.9), 0.7, ease.out);
-    if (pv > 0.01) {
+    // caption 3 — the fragment, as a bracket
+    const p3 = A(t, c[2], 0.7, ease.expo);
+    if (p3 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = pv;
-      const x = 640;
-      const y = 330;
-      txt(ctx, 'SEBELUM ADA KATA', x, y, { size: 28, font: F.mono, color: 'rgba(246,237,219,0.70)', track: 5 });
-      txt(ctx, 'TIDAK ADA KALIMAT', x + 4, y + 78, { size: 58, font: F.display, color: K.redHi, track: 0.5 });
-      ctx.strokeStyle = hexA(K.redHi, 0.85);
-      ctx.lineWidth = 5;
+      ctx.globalAlpha = p3;
+      const x = 104;
+      const y = 1180;
+      const w = 1232;
+      // the 27-minute span in miniature
+      const full = 27 * 60;
+      ctx.fillStyle = 'rgba(244,241,232,0.10)';
+      ctx.fillRect(x, y, w, 10);
+      // and inside it, the 15-30 s that actually loop
+      const fx = x + 40;
+      const fw = Math.max(26, (22.5 / full) * w * 14);
+      ctx.fillStyle = K.lime;
+      ctx.shadowColor = hexA(K.lime, 0.8);
+      ctx.shadowBlur = 26;
+      ctx.fillRect(x, y, w * A(t, c[2] + 0.1, 1.2, ease.expo), 10);
+      ctx.shadowBlur = 0;
+      // bracket under the segment
+      const bx = x + w * 0.5 - fw / 2;
+      ctx.strokeStyle = K.ink;
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(x + 2, y + 104);
-      ctx.lineTo(x + 60 + measure(ctx, 'TIDAK ADA KALIMAT', 58, F.display, 0.5), y + 104);
+      ctx.moveTo(bx, y + 46);
+      ctx.lineTo(bx, y + 24);
+      ctx.lineTo(bx + fw, y + 24);
+      ctx.lineTo(bx + fw, y + 46);
+      ctx.stroke();
+      micro(ctx, '15–30 DETIK', bx + fw / 2, y + 90, {
+        size: 24, color: K.ink, align: 'center', track: 6,
+      });
+      micro(ctx, 'YANG DIPUTAR ULANG', bx + fw / 2, y + 130, {
+        size: 19, color: K.lime, align: 'center', track: 4,
+      });
+      micro(ctx, '27 MENIT', x, y - 26, { size: 19, color: 'rgba(244,241,232,0.45)', track: 4 });
+      ctx.restore();
+    }
+
+    // caption 4 — it rarely survives the night
+    const p4 = A(t, c[3], 0.6, ease.out);
+    if (p4 > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = p4 * 0.9;
+      micro(ctx, 'BESOK', 1112, 1180 - 26, { size: 19, color: 'rgba(244,241,232,0.30)', track: 4 });
+      ctx.strokeStyle = hexA(K.ember, 0.55);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(1108, 1140);
+      ctx.lineTo(1192, 1192);
       ctx.stroke();
       ctx.restore();
     }
-
-    // ── what makes the memory long
-    const pz = A(t, c(3, 0.10), 0.8, ease.out);
-    if (pz > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = pz;
-      rule(ctx, 640, 1246, 548, { a: 0.7 });
-      kick(ctx, 'PANJANG MEMORI', 640, 1302, { size: 21, color: K.dim, track: 6 });
-      txt(ctx, 'makin sering ditanya,', 640, 1384, { size: 40, font: F.display, color: K.bone, track: 0.5 });
-      txt(ctx, 'makin panjang.', 640, 1436, { size: 40, font: F.display, color: K.gold, track: 0.5 });
-      ctx.restore();
-    }
-
-    typeLabel(ctx, 'KARTU KATA, USIA 3 TAHUN', 86, 1420, { size: 21, a: A(t, c(2, 1.1), 0.5) });
-
-    footer(ctx, { chapter: 'BAHASA' });
   },
 };

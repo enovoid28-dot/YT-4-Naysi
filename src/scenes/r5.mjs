@@ -1,102 +1,102 @@
-import { W, H, txt, hexA, fillRR, measure } from '../engine/draw.mjs';
+import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE, rng, TAU } from '../engine/anim.mjs';
+import { clamp, lerp, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, desk, spot, contact, cotTop, mobile, kick, num, rule, typeLabel, footer, leader,
-} from './_arsip.mjs';
+  K, ease, cue, A, stage, waveform, headline, micro, number, clockArc, hudFrame, hairline, crossMark,
+} from './_sinyal.mjs';
 
-// 05 — SEPRAI
-// The cot from above, so the proportions stay honest. The mobile turns above
-// the head; two ages sit under it. Then the sheet changes and the memory goes.
-
-const SHEETS = [
-  ['#C7D2C7', '#8B9A90'],
-  ['#D2C6A8', '#8C7C5C'],
-];
+// 05 — SETENGAH
+// The song is cut at the halfway mark. The gap is what stays open: the second
+// half is never played, and the 24-hour clock starts from there.
 
 export default {
-  draw(ctx, t, scene, cam) {
-    const c = (i, o = 0) => cue(scene, i, o);
-    desk(ctx, { lampX: W * 0.48, lampY: 400, key: 'r5' });
-    spot(ctx, W * 0.5, 600, 820, 0.16);
+  draw(ctx, t, scene) {
+    stage(ctx, { beamX: 700, beamY: -300, key: 'r5' });
+    const c = [0, 1, 2, 3].map((i) => cue(scene, i));
 
-    const cw = 1160;
-    const ch = 760;
-    const cx = (W - cw) / 2;
-    const cy = 176;
-
-    const pc = A(t, 0.10, 1.1, ease.expo);
-    if (pc > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = pc;
-      ctx.translate(0, (1 - pc) * 50);
-      contact(ctx, cx + 26, cy + ch - 40, cw - 52, 150, 0.68);
-      cotTop(ctx, cx, cy, cw, ch, { key: 'a', sheet: SHEETS[0] });
-      const swap = A(t, c(3, 0.10), 0.55, ease.inOut);
-      if (swap > 0.01) {
-        ctx.globalAlpha = pc * swap;
-        cotTop(ctx, cx, cy, cw, ch, { key: 'b', sheet: SHEETS[1] });
-        ctx.globalAlpha = pc;
-      }
-      ctx.restore();
-    }
-
-    // ── the mobile, hanging over the head end
-    const pm = A(t, c(1, 0.10), 0.9, ease.out);
-    if (pm > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = pm;
-      mobile(ctx, 600, 66, 470, 268, t, { a: pm, swing: 1 });
-      ctx.restore();
-    }
-
-    typeLabel(ctx, 'TAMPAK ATAS — KASUR, USIA 6 BULAN', cx + 16, cy + ch + 46, { size: 21, a: pc });
-
-    // ── the two ages
-    const ages = [
-      { at: c(1, 0.55), age: '3', ing: '1', x: 116 },
-      { at: c(2, 0.05), age: '6', ing: '2', x: 760 },
-    ];
-    ages.forEach((a) => {
-      const p = A(t, a.at, 0.7, ease.out);
-      if (p <= 0.01) return;
-      ctx.save();
-      ctx.globalAlpha = p;
-      const y = 1236;
-      rule(ctx, a.x, y - 78, 564, { a: 0.75 });
-      kick(ctx, `USIA ${a.age} BULAN`, a.x, y - 28, { size: 21, color: K.dim, track: 6 });
-      txt(ctx, `INGAT ${a.ing}`, a.x - 4, y + 78, { size: 82, font: F.display, color: K.bone, track: -2 });
-      txt(ctx, 'MINGGU', a.x + 10 + measure(ctx, `INGAT ${a.ing}`, 82, F.display, -2), y + 76, {
-        size: 40, font: F.mono, color: K.redHi, track: 7,
-      });
-      ctx.restore();
+    // caption 1 — the cruellest trigger
+    const out1 = 1 - A(t, c[1], 0.4, ease.out);
+    headline(ctx, ['PEMICU', 'PALING KEJAM.'], 104, 420, {
+      t,
+      size: 132, at: c[0], stagger: 0.1, accents: [1, 2], a: out1,
     });
 
-    // ── the condition
-    const pw = A(t, c(3, 0.05), 0.7, ease.out);
-    if (pw > 0.01) {
+    // the waveform, and its cut
+    const p2 = A(t, c[1] - 0.1, 0.8, ease.out);
+    if (p2 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = pw;
-      fillRR(ctx, 104, 1410, 1232, 106, 4, hexA(K.red, 0.14));
-      ctx.strokeStyle = hexA(K.redHi, 0.8);
-      ctx.lineWidth = 2.4;
-      ctx.strokeRect(104, 1410, 1232, 106);
-      txt(ctx, 'SYARATNYA: JANGAN GANTI SEPRAI', 146, 1478, { size: 42, font: F.display, color: K.redHi, track: 2.5 });
-      txt(ctx, '→', W - 168, 1480, { size: 46, font: F.display, color: K.redHi });
+      ctx.globalAlpha = p2;
+      const x = 104;
+      const w = 1232;
+      const h = 380;
+      const y = 660;
+      const cut = 0.5;
+      const px = x + w * cut;
+      // the played half
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(x, y - 40, w * cut, h + 80);
+      ctx.clip();
+      waveform(ctx, x, y, w, h, t, { amp: 1, color: K.lime, bars: 110, glow: 0.6, line: 3.4 });
+      ctx.restore();
+      // the unheard half: a ghost of the same trace
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(px, y - 40, w * (1 - cut), h + 80);
+      ctx.clip();
+      waveform(ctx, x, y, w, h, t * 0.0, { amp: 1, color: 'rgba(244,241,232,0.16)', bars: 110, glow: 0, line: 2, fill: false });
+      ctx.restore();
+      // the cut
+      const pc = A(t, c[1] + 0.55, 0.5, ease.expo);
+      ctx.strokeStyle = K.ember;
+      ctx.lineWidth = 6;
+      ctx.shadowColor = hexA(K.ember, 0.8);
+      ctx.shadowBlur = 30;
+      ctx.beginPath();
+      ctx.moveTo(px, y - 40);
+      ctx.lineTo(px, y - 40 + (h + 80) * pc);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      // the gap widens away from the cut
+      const gap = 26 * pc;
+      ctx.fillStyle = 'rgba(10,8,17,0.9)';
+      ctx.fillRect(px - gap / 2, y - 40, gap, h + 80);
+      // playhead frozen at the cut
+      ctx.fillStyle = K.ink;
+      ctx.beginPath();
+      ctx.arc(px, y - 6, 10, 0, TAU);
+      ctx.fill();
+      micro(ctx, '00:00', x, y + h + 78, { size: 20, color: 'rgba(244,241,232,0.45)' });
+      micro(ctx, 'DIPUTAR', x + 4, y - 56, { size: 20, color: K.lime, track: 6 });
+      micro(ctx, 'TIDAK PERNAH SAMPAI SINI', px + 20, y - 56, { size: 20, color: 'rgba(244,241,232,0.40)', track: 4 });
+      micro(ctx, 'BERHENTI', px - 6, y + h + 78, { size: 20, color: K.ember, align: 'right', track: 6 });
       ctx.restore();
     }
 
-    // ── what the memory is tied to
-    const pl = A(t, c(4, 0.10), 0.7, ease.out);
-    if (pl > 0.01) {
+    // caption 3 — 24 hours
+    const p3 = A(t, c[2], 0.7, ease.expo);
+    if (p3 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = pl;
-      txt(ctx, 'Menempel pada tempat, bukan pada cerita.', 104, 1588, {
-        size: 34, font: F.mono, color: 'rgba(246,237,219,0.6)', track: 0.5,
+      ctx.globalAlpha = p3;
+      clockArc(ctx, 1110, 1240, 210, { p: A(t, c[2] + 0.2, 1.6, ease.out), color: K.ember, lw: 8 });
+      number(ctx, '24', 1110, 1268, { size: 132, color: K.ink, align: 'center' });
+      micro(ctx, 'JAM', 1110, 1320, { size: 24, color: K.ember, align: 'center', track: 10 });
+      micro(ctx, 'PALING SERING KEMBALI', 104, 1180, { size: 24, color: K.ink, track: 5 });
+      hairline(ctx, 104, 1210, 520 * A(t, c[2] + 0.2, 0.8, ease.expo), { color: hexA(K.ember, 0.6), weight: 3 });
+      ctx.restore();
+    }
+
+    // caption 4 — Zeigarnik
+    const p4 = A(t, c[3], 0.7, ease.out);
+    if (p4 > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = p4 * 0.96;
+      micro(ctx, 'EFEK', 104, 1310, { size: 22, color: K.ember, track: 8 });
+      txt(ctx, 'ZEIGARNIK', 104, 1412, { size: 96, font: F.head, color: K.ink, track: 2 });
+      micro(ctx, 'PIKIRAN YANG BELUM SELESAI TIDAK MAU DITUTUP', 108, 1470, {
+        size: 20, color: K.dim, track: 3,
       });
       ctx.restore();
     }
-
-    footer(ctx, { chapter: 'SEPRAI' });
   },
 };

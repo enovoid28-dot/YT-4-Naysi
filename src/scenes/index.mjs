@@ -8,6 +8,7 @@ import r7 from './r7.mjs';
 import r8 from './r8.mjs';
 import r9 from './r9.mjs';
 
-// Episode 18 ("Kamu pernah jadi bayi. Kamu tidak ingat satu hari pun.")
-// key map. Ep17 used q1..q9 (printed sheet), this episode uses r1..r9 (archive).
+// Episode 19 ("Lagu itu nyangkut di kepalamu.")
+// key map. Ep17 used q1..q9 (printed sheet), Ep18 used r1..r9 on the archive kit.
+// Ep19 rebuilds r1..r9 on the SINYAL kit (dark studio, one beam, signal drawing).
 export default { r1, r2, r3, r4, r5, r6, r7, r8, r9 };

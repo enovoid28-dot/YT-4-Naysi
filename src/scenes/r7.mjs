@@ -1,93 +1,115 @@
-import { W, H, txt, hexA, fillRR, measure } from '../engine/draw.mjs';
+import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE, rng, TAU } from '../engine/anim.mjs';
+import { clamp, lerp, TAU, rng } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, desk, spot, contact, tube, kick, num, rule, typeLabel, footer,
-} from './_arsip.mjs';
+  K, ease, cue, A, stage, gumPack, headline, micro, number, hairline, hudFrame,
+} from './_sinyal.mjs';
 
-// 07 — TUJUH TAHUN
-// Two glass tubes, one for each age band, filled to the number the study found.
+// 07 — PERMEN KARET
+// Three minutes on a stopwatch. Every intrusion is a tick. Nine of them land.
+// Then the gum, and the ticks that never arrive: the mouth takes the loop's job.
+
+const NINE = [0.4, 3.1, 8.6, 12.2, 19.4, 26.0, 33.8, 41.2, 48.5];
 
 export default {
-  draw(ctx, t, scene, cam) {
-    const c = (i, o = 0) => cue(scene, i, o);
-    desk(ctx, { lampX: W * 0.5, lampY: 360, key: 'r7' });
-    spot(ctx, W * 0.5, 600, 840, 0.15);
+  draw(ctx, t, scene) {
+    stage(ctx, { beamX: 380, beamY: -220, key: 'r7' });
+    const c = [0, 1, 2, 3, 4].map((i) => cue(scene, i));
 
-    const baseY = 1042;
-    const tubeH = 800;
-    const tubeW = 228;
-
-    // ── the year of the clearing, ghosted
-    const p7 = A(t, 0.12, 1.0, ease.expo);
-    if (p7 > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = p7 * 0.15;
-      num(ctx, '7', W / 2 - 16, 690, { size: 600, color: K.bone, align: 'center', track: -18 });
-      ctx.restore();
-      ctx.save();
-      ctx.globalAlpha = clamp(p7 * 1.4);
-      kick(ctx, 'PEMBERSIHAN BESAR DIMULAI', W / 2, 158, { size: 25, color: K.dim, align: 'center', track: 8 });
-      ctx.restore();
-    }
-
-    const bands = [
-      { x: 300, label: 'USIA 5 — 7', v: 68, range: '63—72%', color: K.teal, at: c(2, 0.10) },
-      { x: 912, label: 'USIA 8 — 9', v: 35, color: K.redHi, at: c(4, 0.10) },
-    ];
-    bands.forEach((b) => {
-      const pg = A(t, b.at, 1.6, ease.out);
-      // the empty glass is on the table from the start of the scene: the study
-      // is being described before its result is poured in
-      const appear = A(t, 0.28, 0.8, ease.expo);
-      if (appear <= 0.01) return;
-      ctx.save();
-      ctx.globalAlpha = appear;
-      contact(ctx, b.x - 50, baseY + 6, tubeW + 100, 96, 0.64);
-      spot(ctx, b.x + tubeW / 2, baseY - tubeH * 0.5, 460, 0.10);
-      tube(ctx, b.x, baseY - tubeH, tubeW, tubeH, pg * (b.v / 100), { color: b.color, ticks: 4, labels: ['25', '50', '75'] });
-      if (b.range) {
-        if (pg > 0.5) {
-          num(ctx, b.range, b.x - 14, baseY + 216, { size: 118, color: b.color, track: -5 });
-        }
-      } else {
-        const shown = Math.round(b.v * clamp(pg * 1.15));
-        if (shown > 0) num(ctx, `${shown}%`, b.x - 10, baseY + 216, { size: 138, color: b.color, track: -4 });
-      }
-      txt(ctx, b.label, b.x + 2, baseY + 296, { size: 32, font: F.mono, color: K.dim, track: 4 });
-      ctx.restore();
+    // caption 1 — it is not willpower
+    headline(ctx, ['BUKAN', 'KEMAUAN.'], 104, 420, {
+      t,
+      size: 128, at: c[0], stagger: 0.1, a: 1 - A(t, c[1], 0.4, ease.out),
     });
 
-    // ── the drop between the two
-    const pd = A(t, c(4, 0.85), 0.8, ease.out);
-    if (pd > 0.01) {
+    // the three minutes, and the nine intrusions
+    const p2 = A(t, c[0] + 0.45, 0.7, ease.out);
+    if (p2 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = pd;
-      const x = 616;
-      const y = 560;
-      ctx.fillStyle = hexA(K.bone, 0.85);
-      ctx.fillRect(x, y, 208, 3);
-      txt(ctx, 'TURUN', x + 104, y - 24, { size: 52, font: F.display, color: K.redHi, align: 'center', track: 3 });
-      kick(ctx, 'DALAM DUA TAHUN', x + 104, y + 48, { size: 19, color: hexA(K.redHi, 0.80), align: 'center', track: 5 });
+      ctx.globalAlpha = p2;
+      const x = 104;
+      const y = 640;
+      const w = 1232;
+      // the track
+      ctx.fillStyle = 'rgba(244,241,232,0.10)';
+      ctx.fillRect(x, y, w, 6);
+      micro(ctx, '0:00', x, y + 52, { size: 19, color: 'rgba(244,241,232,0.45)' });
+      micro(ctx, '3:00', x + w, y + 52, { size: 19, color: 'rgba(244,241,232,0.45)', align: 'right' });
+      micro(ctx, 'DILARANG MEMIKIRKAN LAGUNYA', x, y - 34, { size: 20, color: K.ice, track: 5 });
+      // the sweep
+      const sweep = clamp((t - (c[1] - 0.1)) / 9.0, 0, 1);
+      const sx = x + w * sweep;
+      const grad = ctx.createLinearGradient(x, 0, sx, 0);
+      grad.addColorStop(0, hexA(K.ice, 0.15));
+      grad.addColorStop(1, hexA(K.ice, 0.7));
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, y, Math.max(0, sx - x), 6);
+      ctx.fillStyle = K.ink;
+      ctx.beginPath();
+      ctx.arc(sx, y + 3, 8, 0, TAU);
+      ctx.fill();
+      // the intrusions
+      NINE.forEach((f, i) => {
+        const at = c[1] + 0.2 + f * 0.18;
+        const q = A(t, at, 0.45, ease.back);
+        if (q <= 0.01) return;
+        const tx = x + w * (0.03 + f * 0.0195 * 1.0) + i * 2;
+        ctx.globalAlpha = p2 * q;
+        ctx.fillStyle = K.ember;
+        ctx.fillRect(tx - 2, y - 78 * q, 4, 78 * q);
+        txt(ctx, String(i + 1), tx, y - 96, {
+          size: 22, font: F.mono, color: K.ember, align: 'center',
+        });
+      });
+      ctx.restore();
+
+      const p3 = A(t, c[2], 0.6, ease.expo);
+      if (p3 > 0.01) {
+        ctx.save();
+        ctx.globalAlpha = p3;
+        number(ctx, '9', 96, 1010, { size: 240, color: K.ember });
+        micro(ctx, 'KALI MUNCUL', 116, 1064, { size: 24, color: K.ink, track: 6 });
+        micro(ctx, 'TANPA DIPANGGIL', 116, 1108, { size: 19, color: 'rgba(244,241,232,0.42)', track: 4 });
+        hairline(ctx, 100, 900, 420 * A(t, c[2] + 0.1, 0.7, ease.expo), { color: hexA(K.ember, 0.55), weight: 3 });
+        ctx.restore();
+      }
+    }
+
+    // caption 4 — the gum
+    const p4 = A(t, c[3], 0.8, ease.expo);
+    if (p4 > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = p4;
+      const gx = 104;
+      const gy = 1200;
+      gumPack(ctx, gx, gy, 300, 190, { rot: -0.05 });
+      micro(ctx, 'MENGUNYAH', gx + 360, gy + 60, { size: 24, color: K.lime, track: 8 });
+      number(ctx, '−33%', gx + 360, gy + 200, { size: 140, color: K.lime });
+      micro(ctx, 'SEPERTIGA LEBIH SEDIKIT', gx + 360, gy + 250, { size: 21, color: K.ink, track: 4 });
+      // the intrusions the gum prevented, as hollow ticks
+      for (let i = 0; i < 9; i++) {
+        const q = A(t, c[3] + 0.3 + i * 0.06, 0.4);
+        if (q <= 0.01) continue;
+        const tx = 1040 + (i % 3) * 62;
+        const ty = 1180 + Math.floor(i / 3) * 62;
+        ctx.globalAlpha = p4 * q * 0.5;
+        ctx.strokeStyle = K.lime;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(tx, ty, 16, 0, TAU);
+        ctx.stroke();
+      }
       ctx.restore();
     }
 
-    // ── the source
-    const ps = A(t, c(1, 0.10), 0.8, ease.out);
-    if (ps > 0.01) {
+    // caption 5 — the mouth takes the job
+    const p5 = A(t, c[4], 0.7, ease.out);
+    if (p5 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = ps;
-      rule(ctx, 104, 1424, 1232, { a: 0.5 });
-      typeLabel(ctx, 'BAUER & EMORY, 2014', 104, 1494, { size: 21 });
-      txt(ctx, 'Anak yang sama, diwawancarai dua kali.', 104, 1560, {
-        size: 30, font: F.mono, color: 'rgba(246,237,219,0.58)', track: 0.5,
-      });
-      txt(ctx, 'Persen memori usia 5 — 7 yang masih ada.', 104, 1602, {
-        size: 30, font: F.mono, color: 'rgba(246,237,219,0.58)', track: 0.5,
-      });
+      ctx.globalAlpha = p5;
+      micro(ctx, 'MULUT DIPAKAI', 104, 1420, { size: 26, color: K.ink, track: 6 });
+      micro(ctx, 'MESIN LAGU KEHILANGAN TENAGA', 104, 1470, { size: 20, color: K.ice, track: 4 });
       ctx.restore();
     }
-
-    footer(ctx, { chapter: 'TUJUH TAHUN' });
   },
 };

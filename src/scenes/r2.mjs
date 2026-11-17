@@ -1,154 +1,84 @@
-import { W, H, txt, hexA, fillRR, measure } from '../engine/draw.mjs';
+import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE, rng, TAU } from '../engine/anim.mjs';
+import { clamp, lerp, TAU, rng } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, desk, spot, contact, typeLabel, kick, num, rule, stat, footer, hatch,
-} from './_arsip.mjs';
+  K, ease, cue, A, stage, dotField, number, headline, micro, hairline, hudFrame,
+} from './_sinyal.mjs';
 
-// 02 — TIGA SETENGAH
-// A cloth tape, nought to seven years. The first three and a half are struck
-// out; the tape keeps going anyway.
+// 02 — SEMUA ORANG
+// One hundred dots on the right, one number on the left. The dots fill to 98,
+// then the number keeps moving without the picture changing: the point is that
+// this is not a rare event.
 
-const YEARS = 7;
+const NUM = [
+  { v: '98%', l: 'PERNAH MENGALAMINYA', s: 'SEMUA ORANG, HAMPIR' },
+  { v: '91,7%', l: 'MINIMAL SEKALI SEMINGGU', s: 'SURVEI 12.519 ORANG' },
+  { v: '33,2%', l: 'SETIAP HARI', s: 'SEPERTIGA DARI KITA' },
+];
 
 export default {
-  draw(ctx, t, scene, cam) {
-    const c = (i, o = 0) => cue(scene, i, o);
-    desk(ctx, { lampX: W * 0.46, lampY: 620, key: 'r2' });
-    spot(ctx, W * 0.5, 760, 860, 0.14);
+  draw(ctx, t, scene) {
+    stage(ctx, { beamX: 1150, beamY: -200, key: 'r2' });
 
-    const x0 = 132;
-    const barW = 1176;
-    const per = barW / YEARS;
-    const barY = 700;
-    const barH = 250;
+    const c = [0, 1, 2, 3, 4].map((i) => cue(scene, i));
 
-    // ── the number
-    const pn = A(t, c(0, 0.06), 1.4, ease.out);
-    if (pn > 0.02) {
-      ctx.save();
-      ctx.globalAlpha = clamp(pn * 2.6);
-      num(ctx, (3.5 * pn).toFixed(1).replace('.', ','), 104, 452, { size: 300, color: K.bone, track: -12 });
-      txt(ctx, 'TAHUN', 116 + measure(ctx, '3,5', 300, F.display, -12) + 42, 442, {
-        size: 44, font: F.mono, color: K.dim, track: 9,
-      });
-      kick(ctx, 'USIA MEMORI PERTAMA, RATA-RATA', 112, 544, { size: 22, color: K.dim, track: 6 });
-      ctx.restore();
-    }
-
-    // ── the tape
-    const pa = A(t, 0.06, 1.0, ease.expo);
-    if (pa > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = pa;
-      ctx.translate((1 - pa) * -280, 0);
-      contact(ctx, x0 - 46, barY + barH - 10, barW + 92, 130, 0.64);
-
-      ctx.save();
-      ctx.shadowColor = 'rgba(0,0,0,0.68)';
-      ctx.shadowBlur = 50;
-      ctx.shadowOffsetY = 22;
-      fillRR(ctx, x0, barY, barW, barH, 6, '#E3D5B6');
-      ctx.restore();
-      const tg = ctx.createLinearGradient(x0, barY, x0, barY + barH);
-      tg.addColorStop(0, '#F6ECd2'.replace('d', 'D'));
-      tg.addColorStop(0.35, '#E6D7B7');
-      tg.addColorStop(0.72, '#D2C09B');
-      tg.addColorStop(1, '#A8946F');
-      fillRR(ctx, x0, barY, barW, barH, 6, tg);
-      // woven cloth
-      for (let i = 0; i < 46; i++) {
-        ctx.fillStyle = i % 2 ? 'rgba(255,255,255,0.18)' : 'rgba(120,98,68,0.10)';
-        ctx.fillRect(x0, barY + i * (barH / 46), barW, 1.2);
-      }
-
-      // graduations: every half year, majors every year
-      for (let k = 0; k <= YEARS * 2; k++) {
-        const x = x0 + (k / 2) * per;
-        const major = k % 2 === 0;
-        ctx.fillStyle = major ? 'rgba(28,20,13,0.85)' : 'rgba(28,20,13,0.38)';
-        ctx.fillRect(x - 1.5, barY + barH - (major ? 84 : 46), major ? 3.6 : 2.6, major ? 84 : 46);
-        if (major) {
-          txt(ctx, String(k / 2), x, barY + barH - 104, {
-            size: 50, font: F.mono, color: '#241A12', align: 'center', track: 1,
-          });
-        }
-      }
-      txt(ctx, 'TAHUN', x0 + barW - 40, barY + 66, {
-        size: 26, font: F.mono, color: 'rgba(36,26,18,0.50)', track: 8, align: 'right',
-      });
-
-      // brass ends
-      [x0 - 34, x0 + barW - 2].forEach((ex) => {
-        const eg = ctx.createLinearGradient(ex, 0, ex + 36, 0);
-        eg.addColorStop(0, '#6E5422');
-        eg.addColorStop(0.42, '#E7C783');
-        eg.addColorStop(1, '#5C461C');
-        fillRR(ctx, ex, barY - 10, 36, barH + 20, 8, eg);
-      });
-
-      // ── the years with no archive at all
-      const dz = A(t, c(1, 0.05), 1.2, ease.inOut);
-      if (dz > 0.01) {
-        const deadW = per * 3.5 * dz;
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(x0, barY - 6, deadW, barH + 12);
-        ctx.clip();
-        const dg = ctx.createLinearGradient(x0, barY, x0 + deadW, barY + barH);
-        dg.addColorStop(0, 'rgba(12,9,7,0.80)');
-        dg.addColorStop(1, 'rgba(12,9,7,0.66)');
-        ctx.fillStyle = dg;
-        ctx.fillRect(x0, barY - 6, deadW, barH + 12);
-        // faint cloth texture survives under the dark
-        hatch(ctx, { x: x0, y: barY, w: deadW, h: barH }, (g) => g.rect(x0, barY - 6, deadW, barH + 12), {
-          angle: -0.94, step: 34, lw: 2, color: '#E4866A', a: 0.16,
-        });
-        // the zero that covers the whole stretch
-        ctx.fillStyle = hexA(K.redHi, 0.92 * clamp((dz - 0.2) / 0.6));
-        txt(ctx, '0', x0 + deadW * 0.5, barY + barH * 0.62, {
-          size: barH * 0.86, font: F.display, align: 'center', color: hexA(K.redHi, 0.92 * clamp((dz - 0.2) / 0.6)), track: 0,
-        });
-        ctx.restore();
-      }
-      ctx.restore();
-    }
-
-    // ── the marker
-    const pm = A(t, c(0, 1.15), 0.7, ease.back);
-    if (pm > 0.01) {
-      const mx = x0 + per * 3.5;
-      ctx.save();
-      ctx.globalAlpha = clamp(pm);
-      ctx.fillStyle = K.redHi;
-      ctx.fillRect(mx - 3, barY - 226, 6, barH + 240);
-      ctx.beginPath();
-      ctx.arc(mx, barY - 226, 15 * pm, 0, TAU);
-      ctx.fill();
-      typeLabel(ctx, 'MEMORI PERTAMA', mx + 28, barY - 234, { size: 23, rot: -0.015 });
-      ctx.restore();
-    }
-
-    kick(ctx, 'TIDAK ADA ARSIP', x0 + per * 1.75, barY + barH + 66, {
-      size: 22, color: hexA(K.redHi, 0.92), align: 'center', track: 7, a: A(t, c(1, 0.5), 0.5),
+    // the hundred, filling
+    const lit = 0.02 + 0.96 * A(t, c[1], 1.5, ease.out);
+    dotField(ctx, 760, 520, {
+      a: A(t, c[0] + 0.2, 0.7, ease.out),
+      cols: 10, rows: 10, gap: 62, size: 7.2, lit, color: K.lime,
     });
-    kick(ctx, 'YANG MASIH TERCATAT', x0 + per * 5.3, barY + barH + 66, {
-      size: 22, color: K.dim, align: 'center', track: 7, a: A(t, c(1, 0.5), 0.5),
+    micro(ctx, 'SURVEI · 12.519 ORANG', 760, 1130, {
+      size: 20, color: 'rgba(244,241,232,0.42)', a: A(t, c[1] + 0.5, 0.6),
+    });
+    hudFrame(ctx, 730, 486, 592, 626, { a: A(t, c[0] + 0.15, 0.7) * 0.8 });
+
+    // caption 1 — you are not alone
+    headline(ctx, ['KAMU TIDAK', 'SENDIRIAN.'], 104, 760, {
+      t,
+      size: 108, at: c[0], stagger: 0.1, a: 1 - A(t, c[1], 0.4, ease.out),
     });
 
-    // ── the count in days
-    const pb = A(t, c(3, 0.08), 0.7, ease.out);
-    if (pb > 0.01) {
+    // captions 2-4 — the same picture, three numbers
+    NUM.forEach((n, i) => {
+      const start = c[i + 1];
+      const end = i < 2 ? c[i + 2] : c[4];
+      const pin = A(t, start, 0.5, ease.expo);
+      const pout = 1 - A(t, end, 0.34, ease.out);
+      const a = Math.min(pin, pout);
+      if (a <= 0.01) return;
       ctx.save();
-      ctx.globalAlpha = pb;
-      stat(ctx, 104, 1352, { label: '3,5 TAHUN, DIHITUNG DALAM HARI', value: '1.278', size: 148, w: 600 });
-      kick(ctx, 'HARI TANPA CATATAN', 112, 1432, { size: 22, color: K.redHi, track: 8 });
-      rule(ctx, 760, 1260, 576, { a: 0.6 });
-      kick(ctx, 'YANG BISA KAMU CERITAKAN', 760, 1314, { size: 21, color: K.dim, track: 5 });
-      num(ctx, '0', 752, 1454, { size: 150, color: K.redHi, track: -6 });
+      ctx.globalAlpha = a;
+      const dy = (1 - pin) * 60;
+      number(ctx, n.v, 96, 800 + dy, { size: n.v.length > 4 ? 188 : 250, color: K.lime });
+      micro(ctx, n.l, 104, 880 + dy, { size: 26, color: K.ink, track: 6 });
+      micro(ctx, n.s, 104, 930 + dy, { size: 19, color: 'rgba(244,241,232,0.40)', track: 5 });
+      // the number's own rule
+      const rw = 470 * A(t, start + 0.1, 0.7, ease.expo);
+      hairline(ctx, 104, 745, rw, { color: hexA(K.lime, 0.5), weight: 3 });
+      ctx.restore();
+    });
+
+    // caption 5 — the name of the thing
+    const p5 = A(t, c[4], 0.6, ease.out);
+    if (p5 > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = p5;
+      micro(ctx, 'NAMANYA', 104, 620, { size: 24, color: K.ember, track: 8 });
+      headline(ctx, ['INVOLUNTARY', 'MUSICAL', 'IMAGERY'], 104, 760, {
+      t,
+        size: 96, at: c[4] + 0.1, stagger: 0.1, accents: [0],
+      });
+      // the acronym, held in a chip
+      const pw = 330 * A(t, c[4] + 0.7, 0.7, ease.expo);
+      ctx.fillStyle = hexA(K.lime, 0.14);
+      fillRR(ctx, 104, 1080, pw, 96, 12, hexA(K.lime, 0.12));
+      strokeRR(ctx, 104, 1080, pw, 96, 12, hexA(K.lime, 0.55), 2);
+      txt(ctx, 'INMI', 128, 1152, { size: 62, font: F.head, color: K.lime, track: 12 });
+      txt(ctx, 'BUKAN LAGU NYANGKUT SAJA', 460, 1148, {
+        size: 20, font: F.mono, color: K.dim, track: 4,
+      });
       ctx.restore();
     }
-
-    footer(ctx, { chapter: 'TIGA SETENGAH' });
   },
 };

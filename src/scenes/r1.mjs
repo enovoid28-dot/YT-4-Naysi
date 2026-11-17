@@ -1,95 +1,141 @@
-import { W, H, txt, hexA, fillRR, measure } from '../engine/draw.mjs';
+import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE, rng, TAU } from '../engine/anim.mjs';
+import { clamp, lerp, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, desk, spot, contact, printCard, stampInk, typeLabel, kick, num, rule, pin, thread, stat, footer,
-} from './_arsip.mjs';
+  K, ease, cue, A, stage, vinyl, headline, micro, number, crossMark, hairline,
+} from './_sinyal.mjs';
 
-// 01 — KOSONG
-// One print, large, where the baby should be. The glass carries the shape of a
-// face that was never photographed.
-
-const ART = (g, iw, ih, ox, oy) => {
-  const bg = g.createLinearGradient(ox, oy, ox + iw, oy + ih);
-  bg.addColorStop(0, '#221E19');
-  bg.addColorStop(0.5, '#15120F');
-  bg.addColorStop(1, '#0B0A09');
-  g.fillStyle = bg;
-  g.fillRect(ox, oy, iw, ih);
-  const gl = g.createRadialGradient(ox + iw * 0.32, oy + ih * 0.16, 10, ox + iw * 0.32, oy + ih * 0.16, iw * 0.9);
-  gl.addColorStop(0, 'rgba(255,214,160,0.20)');
-  gl.addColorStop(1, 'rgba(255,214,160,0)');
-  g.fillStyle = gl;
-  g.fillRect(ox, oy, iw, ih);
-  const cx = ox + iw * 0.5;
-  const cy = oy + ih * 0.52;
-  const emb = (al, lw) => {
-    g.strokeStyle = `rgba(244,232,208,${al})`;
-    g.lineWidth = lw;
-    g.beginPath();
-    g.ellipse(cx, cy, iw * 0.155, ih * 0.165, 0, 0, TAU);
-    g.stroke();
-    g.beginPath();
-    g.moveTo(cx - iw * 0.125, cy + ih * 0.40);
-    g.bezierCurveTo(cx - iw * 0.165, cy + ih * 0.19, cx - iw * 0.05, cy + ih * 0.155, cx, cy + ih * 0.16);
-    g.bezierCurveTo(cx + iw * 0.05, cy + ih * 0.155, cx + iw * 0.165, cy + ih * 0.19, cx + iw * 0.125, cy + ih * 0.40);
-    g.stroke();
-  };
-  emb(0.11, 5);
-  emb(0.05, 12);
-  for (let i = 0; i < 2600; i++) {
-    g.fillStyle = `rgba(255,240,214,${Math.random() * 0.018})`;
-    g.fillRect(ox + Math.random() * iw, oy + Math.random() * ih, 1.6, 1.6);
-  }
-};
+// 01 — EMPAT BARIS
+// A record turns in the top corner. The claim arrives word by word, then the
+// "four bars" are counted out, and the last beat is a STOP button with a cross
+// through it: there is no control here.
 
 export default {
-  draw(ctx, t, scene, cam) {
-    const c = (i, o = 0) => cue(scene, i, o);
-    desk(ctx, { lampX: W * 0.4, lampY: 400, key: 'r1' });
-    spot(ctx, W * 0.5, 700, 820, 0.15);
+  draw(ctx, t, scene) {
+    stage(ctx, { beamX: 1010, beamY: -240, key: 'r1' });
 
-    const pw = 940;
-    const ph = 1030;
-    const px = (W - pw) / 2 - 14;
-    const py = 200;
+    const c0 = cue(scene, 0);
+    const c1 = cue(scene, 1);
+    const c2 = cue(scene, 2);
+    const c3 = cue(scene, 3);
+    const c4 = cue(scene, 4);
 
-    const p0 = A(t, 0.10, 1.0, ease.expo);
-    if (p0 > 0.01) {
+    // the disc: in from the top, then turning for the rest of the shot
+    const pIn = A(t, c0 - 0.1, 1.5, ease.expo);
+    vinyl(ctx, lerp(1150, 1040, pIn), lerp(-360, 470, pIn), 400, t, {
+      a: pIn,
+      glow: 0.5 + 0.5 * A(t, c1, 0.8),
+      label: 'NAYSI',
+      sub: 'EP · 19',
+      speed: 0.42,
+    });
+
+    // caption 1 — the claim
+    const out1 = 1 - A(t, c2, 0.42, ease.out);
+    headline(ctx, ['LAGU ITU', 'TIDAK KELUAR'], 104, 1010, {
+      t,
+      size: 120, at: c0, stagger: 0.085, a: out1,
+    });
+    const out1b = 1 - A(t, c2, 0.34, ease.out);
+    headline(ctx, ['DARI KEPALAMU.'], 104, 1160, {
+      t,
+      size: 86, at: c1, stagger: 0.0, a: out1b, color: K.dim,
+    });
+
+    // caption 2 — sama, bukan baru
+    const p2 = A(t, c1 + 0.3, 0.7, ease.out);
+    micro(ctx, 'HARI', 118, 1250, { size: 22, a: p2 * out1b * 0.8 });
+    number(ctx, '03', 118, 1360, { size: 100, a: p2 * out1b, color: K.ember });
+    hairline(ctx, 300, 1310, 200, { a: p2 * out1b * 0.5 });
+    micro(ctx, 'BAGIAN YANG SAMA', 300, 1355, { size: 21, a: p2 * out1b * 0.75, color: K.dim });
+
+    // caption 3 — four bars, counted
+    const p3 = A(t, c2, 0.5, ease.out);
+    const out3 = 1 - A(t, c3, 0.35, ease.out);
+    if (p3 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = p0;
-      contact(ctx, px + 20, py + ph - 40, pw - 40, 130, 0.62);
-      ctx.translate(0, (1 - p0) * 80);
-      printCard(ctx, px, py, pw, ph, { rot: -0.014, border: 28, tape: 1, art: ART, caption: 'USIA 0 — 2' });
+      ctx.globalAlpha = p3 * out3;
+      micro(ctx, 'BUKAN SELURUH LAGUNYA', 104, 1040, { size: 24, color: K.lime });
+      number(ctx, '04', 100, 1300, { size: 250, color: K.ink });
+      micro(ctx, 'BARIS', 380, 1290, { size: 42, color: K.lime, track: 12 });
+      for (let i = 0; i < 4; i++) {
+        const q = A(t, c2 + 0.15 + i * 0.16, 0.5, ease.expo);
+        const x = 480 + i * 92;
+        ctx.fillStyle = hexA(K.lime, 0.12);
+        ctx.fillRect(x, 1372, 76, 8);
+        ctx.fillStyle = K.lime;
+        ctx.fillRect(x, 1372, 76 * q, 8);
+        txt(ctx, String(i + 1).padStart(2, '0'), x, 1412, {
+          size: 19, font: F.mono, color: 'rgba(244,241,232,0.35)', track: 2,
+        });
+      }
       ctx.restore();
     }
 
-    const pt = A(t, c(1, 0.05), 0.8, ease.out);
-    if (pt > 0.01) pin(ctx, px + pw * 0.5, py - 4, 1.05);
-
-    const st = A(t, c(2, 0.05), 0.30, ease.out);
-    if (st > 0.01) {
-      const shake = t < c(2, 0.12) ? Math.sin(t * 95) * 5 * (1 - st) : 0;
+    // caption 4 — the brain is not broken: the loop is
+    const p4 = A(t, c3, 0.6, ease.out);
+    const out4 = 1 - A(t, c4, 0.4, ease.out);
+    if (p4 > 0.01) {
       ctx.save();
-      ctx.translate(shake, 0);
-      stampInk(ctx, 'KOSONG', W * 0.5 - 22, py + ph * 0.44, {
-        size: 136, rot: -0.085, a: st, color: K.red, padX: 36, padY: 28, track: 10,
+      ctx.globalAlpha = p4 * out4;
+      const cx = 760;
+      const cy = 1180;
+      const r = 250;
+      ctx.strokeStyle = 'rgba(244,241,232,0.14)';
+      ctx.lineWidth = 7;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, TAU);
+      ctx.stroke();
+      const head = -Math.PI / 2 + t * 1.15;
+      for (let i = 0; i < 26; i++) {
+        const ang = head - i * 0.055;
+        ctx.strokeStyle = hexA(K.ember, (1 - i / 26) * 0.85);
+        ctx.lineWidth = 7;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, ang - 0.05, ang + 0.02);
+        ctx.stroke();
+      }
+      txt(ctx, 'TIDAK RUSAK', cx, cy + 14, {
+        size: 78, font: F.head, color: K.ink, align: 'center', track: -2,
+      });
+      txt(ctx, 'LINGKARANNYA BELUM SELESAI', cx, cy + 78, {
+        size: 21, font: F.mono, color: K.dim, align: 'center', track: 5,
       });
       ctx.restore();
     }
 
-    typeLabel(ctx, 'FOTO TIDAK PERNAH DIAMBIL', px + 24, py + ph + 62, { size: 21, a: A(t, c(2, 0.3), 0.5) });
-
-    const pv = A(t, c(4, 0.10), 0.7, ease.out);
-    if (pv > 0.01) {
+    // caption 5 — no stop button
+    const p5 = A(t, c4, 0.55, ease.back);
+    if (p5 > 0.01) {
+      const bw = 460;
+      const bh = 168;
+      const bx = (W - bw) / 2;
+      const by = 1090;
+      const sq = 1 + (1 - p5) * 0.06;
       ctx.save();
-      ctx.globalAlpha = pv;
-      stat(ctx, 104, 1508, { label: 'TERCATAT DARI USIA 0 — 2', value: '0', sub: 'dari 730 hari.', color: K.redHi, size: 150, w: 520 });
-      txt(ctx, '730', W - 104, 1436, { size: 84, font: F.display, color: hexA(K.bone, 0.24), align: 'right', track: -3 });
-      kick(ctx, 'HARI YANG ADA', W - 104, 1484, { size: 20, color: 'rgba(246,237,219,0.28)', align: 'right', track: 7 });
+      ctx.globalAlpha = Math.min(1, p5);
+      ctx.translate(bx + bw / 2, by + bh / 2);
+      ctx.scale(sq, sq);
+      ctx.shadowColor = 'rgba(0,0,0,0.5)';
+      ctx.shadowBlur = 40;
+      ctx.shadowOffsetY = 18;
+      fillRR(ctx, -bw / 2, -bh / 2, bw, bh, 26, 'rgba(244,241,232,0.055)');
+      ctx.shadowBlur = 0;
+      strokeRR(ctx, -bw / 2, -bh / 2, bw, bh, 26, 'rgba(244,241,232,0.28)', 2.4);
+      txt(ctx, 'STOP', 0, 24, { size: 78, font: F.head, color: 'rgba(244,241,232,0.86)', align: 'center', track: 10 });
       ctx.restore();
-    }
 
-    footer(ctx, { chapter: 'KOSONG' });
+      const pc = A(t, c4 + 0.35, 0.5, ease.expo);
+      if (pc > 0.01) {
+        crossMark(ctx, W / 2, by + bh / 2, 120 * pc, K.ember, pc, 14);
+        micro(ctx, 'TIDAK ADA TOMBOLNYA', W / 2, 1355, {
+          size: 30, color: K.ember, align: 'center', track: 8, a: pc,
+        });
+        micro(ctx, 'NO STOP', W / 2, 1420, {
+          size: 19, color: 'rgba(244,241,232,0.30)', align: 'center', track: 10, a: pc,
+        });
+      }
+    }
   },
 };
+

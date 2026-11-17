@@ -1,166 +1,171 @@
-// Episode 18 — "Kamu pernah jadi bayi. Kamu tidak ingat satu hari pun."
+// Episode 19 — "Lagu itu nyangkut di kepalamu. Kamu tidak bisa tekan stop."
 //
-// Thesis: the first three years are not missing because time erased them; they
-// were never written in the format that later memory uses. The baby brain is
-// building connections at a million a second, but the part that stamps an event
-// with "when" and "where" — the hippocampus — is not online yet, and without
-// language there is no story to hang the event on. At seven, the pruning starts
-// and a two-thirds share of what a three-year-old remembered is gone.
+// Thesis: an earworm is not a glitch and not a failure of willpower. It is the
+// auditory system running a loop it was given, in a working-memory format that
+// cannot be closed by trying harder. The way out is not suppression; it is
+// finishing the phrase or taking the mouth away from it.
 //
-// Sources: Bauer / Emory (Memory, 2014) — children who described events at 3
-// recalled 63-72% of them at 5-7, but only ~35% at 8-9; the age-7 onset of
-// childhood amnesia. Wang & Peterson (Dev. Psych., 2014) — mean age of earliest
-// memory 3.5 years. Harvard Center on the Developing Child — >1 million neural
-// connections per second in the first years, peak density 50-60% above adult,
-// then pruning. Rovee-Collier mobile conjugate reinforcement — 3-month-olds
-// retain ~1 week, 6-month-olds ~2 weeks, and the memory is context-bound (change
-// the crib liner and it is gone). Loftus & Pickrell (1995) — 25% of 24 adults
-// "remembered" a fabricated mall event.
+// Sources:
+//   Beaman & Williams (2010, British Journal of Psychology) — survey + diary
+//     study; mean episode ~27 minutes in the diary sample; most last under a day;
+//     the fragment that loops is typically 15-30 seconds of music.
+//   Liikkanen (2012) — Finnish survey of 12,519 internet users: 91.7% experience
+//     INMI at least weekly, 33.2% daily; frequency rises with musical engagement.
+//   Williamson et al. (2012) — 91.7% weekly across two populations; onset classes:
+//     music exposure, memory triggers, affect, low-attention states.
+//   Jakubowski et al. (2017) — 83 melodic features compared across 100 earworms
+//     and 100 matched songs: faster tempo, simpler rhythm, common melodic contour.
+//   Hyman et al. (2013, Applied Cognitive Psychology) — a song that keeps playing
+//     right after it stops is more likely to return within 24 hours (Zeigarnik);
+//     verbal tasks suppress it more than visuo-spatial ones.
+//   Beaman, Powell & Rapley (2015, QJEP) — 98 volunteers, 3 minutes of suppression:
+//     about 9 intrusions; chewing gum cut them by roughly a third; articulatory
+//     motor planning competes with the inner voice.
+//   Zatorre / Farrugia — auditory cortex activity during musical imagery, i.e.
+//     the brain hears it without sound arriving. ~98% of people report earworms.
 //
-// Every card is a verbatim slice of the take; numerals live in the artwork.
+// Every card is one spoken sentence, so no card can change mid-sentence.
 
-export const SERIES = 'NAYSI · INGAT';
+export const SERIES = 'NAYSI · PUTAR';
 export const BRAND = 'NAYSI';
 
 export const SCENES = [
   {
     id: 's1',
     key: 'r1',
-    label: 'KOSONG',
+    label: 'EMPAT BARIS',
     index: '01',
     theme: 'dark',
-    vo: 'Coba pikirkan memori paling awal yang kamu ingat. Sekarang mundur lebih jauh. Kosong. Bukan karena kamu lupa. Kamu memang belum bisa menyimpannya. Kamu pernah jadi bayi selama dua tahun penuh, dan tidak ada satu hari pun yang tersisa.',
+    vo: 'Lagu itu tidak keluar dari kepalamu. Sudah tiga hari, dan kamu masih memutar bagian yang sama. Bukan seluruh lagunya. Cuma empat baris. Otakmu tidak rusak. Ia sedang menutup satu lingkaran. Dan kamu tidak punya tombol stop.',
     cap: [
-      'Coba pikirkan memori paling awal yang kamu ingat.',
-      'Sekarang mundur lebih jauh.',
-      '*Kosong*.',
-      'Bukan karena kamu *lupa*.',
-      'Kamu memang *belum* *bisa* menyimpannya.',
-      'Kamu pernah jadi bayi selama *dua* *tahun* penuh, dan tidak ada satu hari pun yang tersisa.',
+      'Lagu itu tidak keluar dari kepalamu.',
+      'Sudah tiga hari, dan kamu masih memutar bagian yang sama.',
+      'Bukan seluruh lagunya. Cuma *empat* *baris*.',
+      'Otakmu tidak rusak. Ia sedang menutup satu lingkaran.',
+      'Dan kamu tidak punya tombol *stop*.',
     ],
     pad: 1.45,
   },
   {
     id: 's2',
     key: 'r2',
-    label: 'TIGA SETENGAH',
+    label: 'SEMUA ORANG',
     index: '02',
     theme: 'dark',
-    vo: 'Rata-rata orang dewasa menyebut memori pertamanya di usia tiga setengah tahun. Di bawah itu, nol. Tiga tahun pertama hidupmu bukan hilang karena waktu. Ia hilang karena tidak pernah ditulis.',
+    vo: 'Kamu tidak sendirian. Hampir semua orang pernah mengalaminya: sembilan puluh delapan persen. Sembilan puluh satu koma tujuh persen mengalaminya minimal sekali seminggu. Sepertiganya, setiap hari. Namanya bukan sekadar lagu nyangkut. Namanya involuntary musical imagery.',
     cap: [
-      'Rata-rata orang dewasa menyebut memori pertamanya di usia *tiga* *setengah* tahun.',
-      'Di bawah itu, *nol*.',
-      'Tiga tahun pertama hidupmu bukan hilang karena *waktu*.',
-      'Ia hilang karena *tidak* *pernah* ditulis.',
+      'Kamu tidak sendirian.',
+      'Hampir semua orang pernah mengalaminya: *sembilan* *puluh* *delapan* persen.',
+      'Sembilan puluh satu koma tujuh persen mengalaminya minimal sekali seminggu.',
+      'Sepertiganya, *setiap* *hari*.',
+      'Namanya bukan sekadar lagu nyangkut. Namanya *involuntary* *musical* *imagery*.',
     ],
     pad: 1.45,
   },
   {
     id: 's3',
     key: 'r3',
-    label: 'DIBANGUN',
+    label: 'TANPA SUARA',
     index: '03',
     theme: 'dark',
-    vo: 'Otak bayi bukan gudang yang rusak. Ia justru sedang dibangun paling cepat. Satu juta sambungan saraf baru setiap detik, di dua tahun pertama. Lalu dipangkas. Yang tidak dipakai, dibuang.',
+    vo: 'Saat kamu mendengar lagu di kepala, otak memprosesnya seperti suara sungguhan. Korteks pendengaran menyala, padahal tidak ada satu pun bunyi yang masuk. Yang bekerja adalah phonological loop: ruang kerja memori untuk bunyi dan kata. Selama loop itu masih bisa memutar, lagu itu akan terus berputar.',
     cap: [
-      'Otak bayi bukan gudang yang *rusak*.',
-      'Ia justru sedang *dibangun* paling cepat.',
-      'Satu juta sambungan saraf baru *setiap* *detik*, di dua tahun pertama.',
-      'Lalu *dipangkas*.',
-      'Yang tidak dipakai, *dibuang*.',
+      'Saat kamu mendengar lagu di kepala, otak memprosesnya seperti suara sungguhan.',
+      'Korteks pendengaran menyala, padahal tidak ada satu pun bunyi yang masuk.',
+      'Yang bekerja adalah *phonological* *loop*: ruang kerja memori untuk bunyi dan kata.',
+      'Selama loop itu masih bisa memutar, lagu itu akan terus berputar.',
     ],
     pad: 1.45,
   },
   {
     id: 's4',
     key: 'r4',
-    label: 'TANPA TANGGAL',
+    label: 'FORMULA',
     index: '04',
     theme: 'dark',
-    vo: 'Yang belum siap adalah hipokampus. Bagian otak yang menempelkan keterangan kapan dan di mana pada setiap kejadian. Ia baru matang sekitar usia tiga sampai empat tahun. Sebelum itu, kejadian lewat tanpa tanggal.',
+    vo: 'Tapi tidak semua lagu bisa nyangkut. Peneliti membandingkan seratus lagu yang nyangkut dengan seratus lagu biasa. Tiga hal menonjol: tempo lebih cepat, dan ritme sederhana. Melodinya juga mudah ditebak naik turunnya. Lagu yang paling mudah ditebak, paling mudah nyangkut.',
     cap: [
-      'Yang belum siap adalah *hipokampus*.',
-      'Bagian otak yang menempelkan keterangan *kapan* dan *di* *mana* pada setiap kejadian.',
-      'Ia baru matang sekitar usia *tiga* sampai *empat* tahun.',
-      'Sebelum itu, kejadian lewat *tanpa* *tanggal*.',
+      'Tapi tidak semua lagu bisa nyangkut.',
+      'Peneliti membandingkan seratus lagu yang nyangkut dengan seratus lagu biasa.',
+      'Tiga hal menonjol: tempo lebih cepat, dan ritme sederhana.',
+      'Melodinya juga mudah ditebak naik turunnya.',
+      'Lagu yang paling mudah ditebak, paling mudah *nyangkut*.',
     ],
     pad: 1.45,
   },
   {
     id: 's5',
     key: 'r5',
-    label: 'SEPRAI',
+    label: 'SETENGAH',
     index: '05',
     theme: 'dark',
-    vo: 'Tapi bayi jelas bisa ingat. Dalam eksperimen klasik, bayi tiga bulan mengingat mainan gantung selama satu minggu. Bayi enam bulan, dua minggu. Satu syarat: jangan ganti seprai. Karena memori bayi menempel pada tempat, bukan pada cerita.',
+    vo: 'Dan ada satu pemicu yang paling kejam. Kamu dengar lagunya setengah, lalu berhenti. Yang setengah, paling sering kembali dalam dua puluh empat jam. Psikolog menyebutnya efek Zeigarnik: pikiran yang belum selesai tidak mau ditutup.',
     cap: [
-      'Tapi bayi jelas *bisa* ingat.',
-      'Dalam eksperimen klasik, bayi tiga bulan mengingat mainan gantung selama *satu* *minggu*.',
-      'Bayi enam bulan, *dua* *minggu*.',
-      'Satu syarat: *jangan* *ganti* *seprai*.',
-      'Karena memori bayi menempel pada *tempat*, bukan pada cerita.',
+      'Dan ada satu pemicu yang paling kejam.',
+      'Kamu dengar lagunya setengah, lalu berhenti.',
+      'Yang setengah, paling sering kembali dalam *dua* *puluh* *empat* jam.',
+      'Psikolog menyebutnya efek Zeigarnik: pikiran yang belum selesai tidak mau ditutup.',
     ],
     pad: 1.45,
   },
   {
     id: 's6',
     key: 'r6',
-    label: 'BAHASA',
+    label: 'DUA PULUH TUJUH',
     index: '06',
     theme: 'dark',
-    vo: 'Dan cerita butuh bahasa. Sebelum bisa bicara, tidak ada yang bisa mengikat kejadian jadi kalimat. Anak yang paling banyak ditanya, terus apa lagi, adalah anak yang memorinya paling panjang.',
+    vo: 'Biasanya ini tidak lama. Rata-rata dua puluh tujuh menit, lalu hilang. Yang diputar cuma potongan pendek: lima belas sampai tiga puluh detik. Jarang yang bertahan sampai besok.',
     cap: [
-      'Dan cerita butuh *bahasa*.',
-      'Sebelum bisa bicara, tidak ada yang bisa mengikat kejadian jadi *kalimat*.',
-      'Anak yang paling banyak ditanya, *terus* *apa* *lagi*,',
-      'adalah anak yang memorinya paling *panjang*.',
+      'Biasanya ini tidak lama.',
+      'Rata-rata *dua* *puluh* *tujuh* menit, lalu hilang.',
+      'Yang diputar cuma potongan pendek: lima belas sampai tiga puluh detik.',
+      'Jarang yang bertahan sampai besok.',
     ],
     pad: 1.45,
   },
   {
     id: 's7',
     key: 'r7',
-    label: 'TUJUH TAHUN',
+    label: 'PERMEN KARET',
     index: '07',
     theme: 'dark',
-    vo: 'Lalu di usia tujuh, pembersihan besar dimulai. Dalam studi yang mengikuti anak-anak sejak umur tiga: di usia lima sampai tujuh, mereka masih ingat enam puluh tiga sampai tujuh puluh dua persen. Di usia delapan sampai sembilan, tinggal tiga puluh lima persen.',
+    vo: 'Dan cara menghentikannya tidak ada hubungannya dengan kemauan. Di satu eksperimen, orang diminta tidak memikirkan lagunya selama tiga menit. Rata-rata, lagu itu muncul sembilan kali. Tapi yang mengunyah permen karet, memutar ulang lagunya sepertiga lebih sedikit. Mulut dipakai, mesin lagu di kepala kehilangan tenaga.',
     cap: [
-      'Lalu di usia *tujuh*, pembersihan besar dimulai.',
-      'Dalam studi yang mengikuti anak-anak sejak umur tiga:',
-      'di usia lima sampai tujuh, mereka masih ingat *enam* *puluh* *tiga*',
-      'sampai *tujuh* *puluh* *dua* persen.',
-      'Di usia delapan sampai sembilan, tinggal *tiga* *puluh* *lima* persen.',
+      'Dan cara menghentikannya tidak ada hubungannya dengan kemauan.',
+      'Di satu eksperimen, orang diminta tidak memikirkan lagunya selama tiga menit.',
+      'Rata-rata, lagu itu muncul *sembilan* kali.',
+      'Tapi yang mengunyah permen karet, memutar ulang lagunya *sepertiga* lebih sedikit.',
+      'Mulut dipakai, mesin lagu di kepala kehilangan tenaga.',
     ],
     pad: 1.45,
   },
   {
     id: 's8',
     key: 'r8',
-    label: 'BUKAN REKAMAN',
+    label: 'MELAWAN',
     index: '08',
     theme: 'dark',
-    vo: 'Dan sisa yang kamu sebut kenangan bukan rekaman. Setiap kali kamu mengingatnya, otak menulis ulang. Dan bisa menambah yang tidak pernah ada. Dalam satu studi, dua puluh lima persen orang dewasa mengaku ingat pernah tersesat di mal. Kejadian itu tidak pernah terjadi.',
+    vo: 'Menahan diri justru menguatkannya. Semakin kamu melarang satu pikiran, semakin sering ia kembali. Yang berhasil justru sebaliknya: selesaikan lagunya sampai habis. Atau pindahkan mulutmu ke pekerjaan lain.',
     cap: [
-      'Dan sisa yang kamu sebut kenangan bukan *rekaman*.',
-      'Setiap kali kamu mengingatnya, otak *menulis* *ulang*.',
-      'Dan bisa menambah yang *tidak* *pernah* ada.',
-      'Dalam satu studi, *dua* *puluh* *lima* persen orang dewasa mengaku ingat pernah tersesat di mal.',
-      'Kejadian itu tidak pernah terjadi.',
+      'Menahan diri justru menguatkannya.',
+      'Semakin kamu melarang satu pikiran, semakin sering ia kembali.',
+      'Yang berhasil justru sebaliknya: *selesaikan* lagunya sampai habis.',
+      'Atau pindahkan mulutmu ke pekerjaan lain.',
     ],
     pad: 1.45,
   },
   {
     id: 's9',
     key: 'r9',
-    label: 'CERITA HILANG',
+    label: 'LINGKARAN',
     index: '09',
     theme: 'dark',
-    vo: 'Jadi bayi yang tidak kamu ingat bukan hilang. Ia masih ada, di caramu takut, caramu tenang, caramu percaya. Yang hilang cuma ceritanya. Coba tulis di komentar: memori paling awal yang kamu ingat, dan umur berapa.',
+    vo: 'Lagu yang nyangkut bukan gangguan. Itu otak yang mencoba menutup lingkaran yang belum selesai. Dan selama belum selesai, ia akan terus memutar. Tulis di komentar: lagu apa yang nyangkut di kepalamu sekarang.',
     cap: [
-      'Jadi bayi yang tidak kamu ingat *bukan* *hilang*.',
-      'Ia masih ada, di caramu takut, caramu tenang, caramu percaya.',
-      'Yang hilang cuma *ceritanya*.',
-      'Coba tulis di komentar: memori paling awal yang kamu ingat, dan umur berapa.',
+      'Lagu yang nyangkut bukan gangguan.',
+      'Itu otak yang mencoba menutup lingkaran yang belum selesai.',
+      'Dan selama belum selesai, ia akan terus memutar.',
+      'Tulis di komentar: lagu apa yang nyangkut di kepalamu *sekarang*.',
     ],
     pad: 2.10,
   },

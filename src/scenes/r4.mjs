@@ -1,121 +1,110 @@
-import { W, H, txt, hexA, fillRR, measure } from '../engine/draw.mjs';
+import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, EASE, rng, TAU } from '../engine/anim.mjs';
+import { clamp, lerp, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, desk, spot, contact, brain, hippocampus, hatch, kick, num, rule,
-  stampInk, typeLabel, leader, pin, footer,
-} from './_arsip.mjs';
+  K, ease, cue, A, stage, pianoRoll, headline, micro, number, hairline, hudFrame,
+} from './_sinyal.mjs';
 
-// 04 — TANPA TANGGAL
-// The same brain, dimmed, one red curl lit inside it. The tag that ought to
-// carry the date is blank, and the stamp says why.
+// 04 — FORMULA
+// A piano roll that will not stop scrolling. Then the three features, as chips
+// that land one at a time: speed, simplicity, a melody you can guess.
+
+const FEAT = [
+  ['TEMPO', 'LEBIH CEPAT', K.lime],
+  ['RITME', 'SEDERHANA', K.ice],
+  ['MELODI', 'MUDAH DITEBAK', K.ember],
+];
 
 export default {
-  draw(ctx, t, scene, cam) {
-    const c = (i, o = 0) => cue(scene, i, o);
-    desk(ctx, { lampX: W * 0.34, lampY: 480, key: 'r4' });
-    spot(ctx, W * 0.42, 560, 800, 0.12);
+  draw(ctx, t, scene) {
+    stage(ctx, { beamX: 1180, beamY: -180, key: 'r4' });
+    const c = [0, 1, 2, 3, 4].map((i) => cue(scene, i));
 
-    const bw = 1060;
-    const bh = 700;
-    const bx = 150;
-    const by = 168;
+    // caption 1 — not every song can do this
+    headline(ctx, ['TIDAK SEMUA', 'LAGU BISA', 'NYANGKUT.'], 104, 400, {
+      t,
+      size: 100, at: c[0], stagger: 0.09, a: 1 - A(t, c[1], 0.4, ease.out),
+    });
 
-    const pb = A(t, 0.08, 1.0, ease.expo);
-    if (pb > 0.01) {
+    // the roll
+    const pr = A(t, c[1] - 0.2, 0.9, ease.expo);
+    if (pr > 0.01) {
       ctx.save();
-      ctx.globalAlpha = pb;
-      contact(ctx, bx + 30, by + bh - 40, bw - 60, 120, 0.6);
-      brain(ctx, bx, by, bw, bh, { key: 'r4' });
-      const veil = ctx.createRadialGradient(W * 0.42, 520, 140, W * 0.42, 520, 720);
-      veil.addColorStop(0, 'rgba(10,8,7,0.06)');
-      veil.addColorStop(1, 'rgba(10,8,7,0.66)');
-      ctx.fillStyle = veil;
-      ctx.fillRect(bx - 20, by - 20, bw + 40, bh + 50);
+      ctx.globalAlpha = pr * 0.95;
+      pianoRoll(ctx, 104, 340, 1232, 500, t, { p: A(t, c[1], 1.4), color: K.ice, scroll: (t * 0.16) % 1 });
       ctx.restore();
     }
 
-    // ── the structure that files the day
-    const ph = A(t, c(0, 0.45), 1.0, ease.out);
-    if (ph > 0.01) {
+    // caption 2 — one hundred against one hundred
+    const p2 = A(t, c[1], 0.6, ease.out);
+    const out2 = 1 - A(t, c[2], 0.35, ease.out);
+    if (p2 > 0.01 && out2 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = clamp(ph * 1.6);
-      ctx.translate(0, (1 - ph) * 16);
-      const hx = bx + bw * 0.62;
-      const hy = by + bh * 0.50;
-      const hw = 236;
-      const hh = 150;
-      const pulse = 0.86 + Math.sin(t * 2.6) * 0.06;
-      hippocampus(ctx, hx - hw / 2, hy - hh / 2, hw, hh, { glowA: ph * pulse });
-      leader(ctx, hx + hw * 0.46, hy + hh * 0.04, 1216, 700, 'HIPOKAMPUS', { size: 24, color: K.bone, align: 'right', a: ph });
+      ctx.globalAlpha = Math.min(p2, out2);
+      number(ctx, '100', 96, 1010, { size: 150, color: K.lime });
+      micro(ctx, 'LAGU YANG NYANGKUT', 100, 1060, { size: 20, color: K.dim, track: 5 });
+      txt(ctx, 'vs', 470, 1000, { size: 60, font: F.mono, color: 'rgba(244,241,232,0.35)' });
+      number(ctx, '100', 620, 1010, { size: 150, color: 'rgba(244,241,232,0.55)' });
+      micro(ctx, 'LAGU BIASA', 624, 1060, { size: 20, color: K.dim, track: 5 });
+      hairline(ctx, 96, 930, 1180 * A(t, c[1] + 0.2, 0.8, ease.expo), { color: 'rgba(244,241,232,0.18)' });
       ctx.restore();
     }
 
-    // ── the blank tag
-    const pt = A(t, c(1, 0.06), 0.75, ease.out);
-    if (pt > 0.01) {
-      const tw = 640;
-      const th = 258;
-      const tx = 140;
-      const ty = 924;
+    // captions 3-5 — the three features, then the verdict
+    const verdict = A(t, c[4], 0.7, ease.expo);
+    FEAT.forEach(([k, v, col], i) => {
+      const start = c[2] + i * 0.42;
+      const p = A(t, start, 0.55, ease.expo);
+      if (p <= 0.01) return;
+      const y = 980 + i * 150;
+      const w = 760 * p;
       ctx.save();
-      ctx.globalAlpha = pt;
-      ctx.translate(0, (1 - pt) * 26);
-      ctx.save();
-      ctx.shadowColor = 'rgba(0,0,0,0.6)';
-      ctx.shadowBlur = 36;
-      ctx.shadowOffsetY = 16;
-      const pg = ctx.createLinearGradient(tx, ty, tx + tw, ty + th);
-      pg.addColorStop(0, '#F5EBD5');
-      pg.addColorStop(1, '#CFC0A0');
-      fillRR(ctx, tx, ty, tw, th, 6, pg);
+      ctx.globalAlpha = p * (1 - verdict);
+      ctx.fillStyle = hexA(col, 0.06);
+      fillRR(ctx, 104, y - 62, w, 108, 10, hexA(col, 0.06));
+      strokeRR(ctx, 104, y - 62, w, 108, 10, hexA(col, 0.38), 1.6);
+      txt(ctx, k, 132, y, { size: 58, font: F.head, color: K.ink, track: 2 });
+      txt(ctx, v, 132 + 300, y, { size: 34, font: F.mono, color: col, track: 6 });
+      micro(ctx, `0${i + 1}`, 830, y, { size: 22, color: 'rgba(244,241,232,0.3)' });
       ctx.restore();
-      ctx.strokeStyle = 'rgba(74,58,40,0.55)';
-      ctx.lineWidth = 2;
-      fillRR(ctx, tx + 12, ty + 12, tw - 24, th - 24, 3, 'rgba(0,0,0,0)');
+    });
+
+    // the contour itself: a line that goes up and down exactly as expected
+    const pc = A(t, c[3], 1.2, ease.inOut);
+    if (pc > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = pc * (1 - verdict);
+      const x0 = 120;
+      const w = 1200;
+      const y0 = 1280;
+      const pts = [];
+      for (let i = 0; i <= 60; i++) {
+        const p = i / 60;
+        pts.push([x0 + p * w * pc, y0 - Math.sin(p * TAU * 1.25) * 90 - Math.sin(p * TAU * 0.35) * 40]);
+      }
+      ctx.strokeStyle = K.ember;
+      ctx.lineWidth = 4;
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = hexA(K.ember, 0.6);
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
       ctx.stroke();
-      txt(ctx, 'KETERANGAN KEJADIAN', tx + 34, ty + 66, { size: 21, font: F.mono, color: 'rgba(56,42,28,0.82)', track: 5 });
-      ['KAPAN', 'DI MANA'].forEach((lab, i) => {
-        const ly = ty + 132 + i * 76;
-        txt(ctx, lab, tx + 34, ly, { size: 27, font: F.mono, color: 'rgba(48,36,24,0.66)', track: 5 });
-        ctx.fillStyle = 'rgba(44,32,22,0.42)';
-        ctx.fillRect(tx + 190, ly - 4, tw - 244, 2);
-        const bl = A(t, c(1, 0.4 + i * 0.18), 0.5);
-        if (bl > 0.01) {
-          ctx.fillStyle = `rgba(40,30,20,${0.09 * bl})`;
-          ctx.fillRect(tx + 202, ly - 12, 130 * bl, 7);
-        }
+      ctx.restore();
+    }
+
+    // caption 5 — the verdict, big
+    if (verdict > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = verdict;
+      headline(ctx, ['MUDAH DITEBAK,', 'MUDAH NYANGKUT.'], 104, 1050, {
+      t,
+        size: 112, at: c[4] + 0.1, stagger: 0.09, accents: [1, 2],
       });
-      pin(ctx, tx + tw - 48, ty + 10, 0.72);
-      ctx.restore();
-    }
-
-    typeLabel(ctx, 'TIDAK ADA YANG MENULISNYA', 140, 1248, { size: 21, a: A(t, c(1, 0.9), 0.5) });
-
-    // ── when the filing starts
-    const pm = A(t, c(2, 0.06), 0.8, ease.out);
-    if (pm > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = pm;
-      rule(ctx, 104, 1400, 520, { a: 0.7 });
-      kick(ctx, 'HIPOKAMPUS MATANG', 104, 1456, { size: 21, color: K.dim, track: 6 });
-      num(ctx, '3 – 4', 96, 1568, { size: 104, color: K.bone, track: -5 });
-      txt(ctx, 'TAHUN', 104 + measure(ctx, '3 – 4', 104, F.display, -5) + 28, 1560, { size: 38, font: F.mono, color: K.dim, track: 7 });
-      ctx.restore();
-    }
-
-    // ── the verdict
-    const ps = A(t, c(3, 0.10), 0.28, ease.out);
-    if (ps > 0.01) {
-      const shake = t < c(3, 0.18) ? Math.sin(t * 92) * 4 * (1 - ps) : 0;
-      ctx.save();
-      ctx.translate(shake, 0);
-      stampInk(ctx, 'TANPA TANGGAL', W / 2 + 30, 1316, {
-        size: 78, rot: -0.045, a: ps, color: K.red, padX: 26, padY: 16, track: 6, align: 'center',
+      micro(ctx, 'YANG BISA DITEBAK OTAK LEBIH CEPAT DISIMPAN', 108, 1280, {
+        size: 20, color: K.dim, track: 3,
       });
       ctx.restore();
     }
-
-    footer(ctx, { chapter: 'TANPA TANGGAL' });
   },
 };
