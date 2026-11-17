@@ -1906,48 +1906,28 @@
   ]
  },
  "s8": {
-  "onset": 0.07,
-  "end": 13.7,
+  "onset": 0.05,
+  "end": 13.57,
   "gaps": [
    {
-    "t": 1.27,
-    "len": 0.13
+    "t": 1.98,
+    "len": 0.87
    },
    {
-    "t": 1.83,
-    "len": 0.15
+    "t": 4.47,
+    "len": 0.22
    },
    {
-    "t": 2.5,
-    "len": 0.71
+    "t": 6.33,
+    "len": 0.77
    },
    {
-    "t": 4.38,
-    "len": 0.13
-   },
-   {
-    "t": 4.86,
-    "len": 0.18
-   },
-   {
-    "t": 6.58,
+    "t": 8.73,
     "len": 0.67
    },
    {
-    "t": 8.99,
-    "len": 0.6
-   },
-   {
-    "t": 11.13,
-    "len": 0.79
-   },
-   {
-    "t": 12.11,
-    "len": 0.14
-   },
-   {
-    "t": 12.6,
-    "len": 0.14
+    "t": 11.09,
+    "len": 0.55
    }
   ],
   "cards": [
@@ -1955,170 +1935,164 @@
     {
      "text": "Menahan",
      "accent": false,
-     "start": 0.07,
-     "end": 0.33
+     "start": 0.05,
+     "end": 0.45
     },
     {
      "text": "diri",
      "accent": false,
-     "start": 0.345,
-     "end": 0.58
+     "start": 0.465,
+     "end": 0.73
     },
     {
-     "text": "justru",
+     "text": "memperkuatnya.",
      "accent": false,
-     "start": 0.595,
-     "end": 0.79
-    },
-    {
-     "text": "menguatkannya.",
-     "accent": false,
-     "start": 0.805,
-     "end": 1.275
+     "start": 0.745,
+     "end": 1.975
     }
    ],
    [
     {
      "text": "Semakin",
      "accent": false,
-     "start": 1.275,
-     "end": 1.68
+     "start": 1.975,
+     "end": 2.9
     },
     {
      "text": "kamu",
      "accent": false,
-     "start": 1.695,
-     "end": 2.08
+     "start": 2.915,
+     "end": 3.12
     },
     {
      "text": "melarang",
      "accent": false,
-     "start": 2.095,
-     "end": 3.38
+     "start": 3.135,
+     "end": 3.52
     },
     {
      "text": "satu",
      "accent": false,
-     "start": 3.395,
-     "end": 3.67
+     "start": 3.535,
+     "end": 4.03
     },
     {
      "text": "pikiran,",
      "accent": false,
-     "start": 3.685,
-     "end": 4.48
+     "start": 4.045,
+     "end": 4.62
     },
     {
      "text": "semakin",
      "accent": false,
-     "start": 4.495,
-     "end": 5.07
+     "start": 4.635,
+     "end": 5.11
     },
     {
      "text": "sering",
      "accent": false,
-     "start": 5.085,
-     "end": 5.5
+     "start": 5.125,
+     "end": 5.38
     },
     {
      "text": "ia",
      "accent": false,
-     "start": 5.515,
-     "end": 5.71
+     "start": 5.395,
+     "end": 5.56
     },
     {
      "text": "kembali.",
      "accent": false,
-     "start": 5.725,
-     "end": 6.585
+     "start": 5.575,
+     "end": 6.335
     }
    ],
    [
     {
      "text": "Yang",
      "accent": false,
-     "start": 6.585,
-     "end": 7.01
+     "start": 6.335,
+     "end": 6.84
     },
     {
      "text": "berhasil",
      "accent": false,
-     "start": 7.025,
-     "end": 7.54
+     "start": 6.855,
+     "end": 7.32
     },
     {
      "text": "justru",
      "accent": false,
-     "start": 7.555,
-     "end": 7.9
+     "start": 7.335,
+     "end": 7.7
     },
     {
      "text": "sebaliknya:",
      "accent": false,
-     "start": 7.915,
-     "end": 8.61
+     "start": 7.715,
+     "end": 9.05
     },
     {
      "text": "selesaikan",
      "accent": true,
-     "start": 8.625,
-     "end": 9.63
+     "start": 9.065,
+     "end": 9.62
     },
     {
      "text": "lagunya",
      "accent": false,
-     "start": 9.645,
-     "end": 10.09
+     "start": 9.635,
+     "end": 10.07
     },
     {
      "text": "sampai",
      "accent": false,
-     "start": 10.105,
-     "end": 10.37
+     "start": 10.085,
+     "end": 10.41
     },
     {
      "text": "habis.",
      "accent": false,
-     "start": 10.385,
-     "end": 11.125
+     "start": 10.425,
+     "end": 11.085
     }
    ],
    [
     {
      "text": "Atau",
      "accent": false,
-     "start": 11.125,
-     "end": 11.72
+     "start": 11.085,
+     "end": 11.62
     },
     {
      "text": "pindahkan",
      "accent": false,
-     "start": 11.735,
-     "end": 12.39
+     "start": 11.635,
+     "end": 12.21
     },
     {
      "text": "mulutmu",
      "accent": false,
-     "start": 12.405,
-     "end": 12.95
+     "start": 12.225,
+     "end": 12.74
     },
     {
      "text": "ke",
      "accent": false,
-     "start": 12.965,
-     "end": 13.23
+     "start": 12.755,
+     "end": 13.06
     },
     {
      "text": "pekerjaan",
      "accent": false,
-     "start": 13.245,
-     "end": 13.6
+     "start": 13.075,
+     "end": 13.43
     },
     {
      "text": "lain.",
      "accent": false,
-     "start": 13.615,
-     "end": 13.7
+     "start": 13.445,
+     "end": 13.57
     }
    ]
   ]

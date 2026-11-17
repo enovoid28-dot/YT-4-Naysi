@@ -145,9 +145,9 @@ export const SCENES = [
     label: 'MELAWAN',
     index: '08',
     theme: 'dark',
-    vo: 'Menahan diri justru menguatkannya. Semakin kamu melarang satu pikiran, semakin sering ia kembali. Yang berhasil justru sebaliknya: selesaikan lagunya sampai habis. Atau pindahkan mulutmu ke pekerjaan lain.',
+    vo: 'Menahan diri memperkuatnya. Semakin kamu melarang satu pikiran, semakin sering ia kembali. Yang berhasil justru sebaliknya: selesaikan lagunya sampai habis. Atau pindahkan mulutmu ke pekerjaan lain.',
     cap: [
-      'Menahan diri justru menguatkannya.',
+      'Menahan diri memperkuatnya.',
       'Semakin kamu melarang satu pikiran, semakin sering ia kembali.',
       'Yang berhasil justru sebaliknya: *selesaikan* lagunya sampai habis.',
       'Atau pindahkan mulutmu ke pekerjaan lain.',
