@@ -26,14 +26,14 @@ const timeline = buildTimeline();
 const captionLayouts = new Map();
 // fixed anchor for the caption block: the first line never moves, whatever the
 // number of lines in the sentence.
-const CAPTION_TOP = 1806;
+const CAPTION_TOP = 1798;
 
 function buildLayouts(ctx) {
   for (const s of timeline.scenes) {
     captionLayouts.set(
       s.id,
       s.captions.map((g) =>
-        buildCaption(ctx, g, { maxWidth: W - 2 * 88, size: 94, font: F.semi, maxLines: 4 }),
+        buildCaption(ctx, g, { maxWidth: W - 2 * 74, size: 104, font: F.semi, maxLines: 4 }),
       ),
     );
   }
@@ -170,7 +170,7 @@ function drawFrame(ctx, frame) {
       ctx.fillStyle = g;
       ctx.fillRect(0, 1520, W, H - 1520);
     } else {
-      drawScrim(ctx, 1600, 0.7);
+      drawScrim(ctx, 1520, 0.80);
     }
   });
   const layouts = captionLayouts.get(scene.id);

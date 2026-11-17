@@ -2,7 +2,7 @@ import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, stage, clockArc, headline, micro, number, hairline, hudFrame,
+  K, ease, cue, cueWord, A, stage, clockArc, headline, micro, number, hairline, hudFrame,
 } from './_sinyal.mjs';
 
 // 06 — DUA PULUH TUJUH
@@ -28,22 +28,24 @@ export default {
       const cx = 720;
       const cy = 760;
       const r = 300;
-      const run = A(t, c[1] + 0.1, 3.2, ease.out);
+      const w27 = cueWord(scene, 1, 'dua');
+      const run = A(t, w27, 2.4, ease.out);
       clockArc(ctx, cx, cy, r, { p: run * 0.86, color: K.ice, lw: 9, ticks: 12 });
       // 27:00, ticked up with the arc
       const mins = Math.floor(run * 27);
       const secs = Math.floor((run * 27 * 60) % 60);
-      const a1 = A(t, c[1] + 0.2, 0.6);
+      const a1 = A(t, w27, 0.5);
       number(ctx, `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`, cx, cy + 40, {
         size: 132, color: K.ink, align: 'center', track: -0.03, a: a1,
       });
       micro(ctx, 'RATA-RATA', cx, cy - 60, { size: 22, color: K.ice, align: 'center', track: 10, a: a1 });
-      micro(ctx, 'LALU HILANG', cx, cy + 110, { size: 20, color: K.dim, align: 'center', track: 8, a: A(t, c[1] + 2.4, 0.6) });
+      micro(ctx, 'LALU HILANG', cx, cy + 110, { size: 20, color: K.dim, align: 'center', track: 8, a: A(t, cueWord(scene, 1, 'hilang') - 0.1, 0.6) });
       ctx.restore();
     }
 
     // caption 3 — the fragment, as a bracket
-    const p3 = A(t, c[2], 0.7, ease.expo);
+    const wFrag = cueWord(scene, 2, 'lima');
+    const p3 = A(t, wFrag - 0.2, 0.7, ease.expo);
     if (p3 > 0.01) {
       ctx.save();
       ctx.globalAlpha = p3;
@@ -60,7 +62,7 @@ export default {
       ctx.fillStyle = K.lime;
       ctx.shadowColor = hexA(K.lime, 0.8);
       ctx.shadowBlur = 26;
-      ctx.fillRect(x, y, w * A(t, c[2] + 0.1, 1.2, ease.expo), 10);
+      ctx.fillRect(x, y, w * A(t, wFrag, 1.0, ease.expo), 10);
       ctx.shadowBlur = 0;
       // bracket under the segment
       const bx = x + w * 0.5 - fw / 2;

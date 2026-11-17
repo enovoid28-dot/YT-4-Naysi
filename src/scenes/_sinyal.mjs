@@ -53,6 +53,23 @@ export const cue = (scene, i, off = 0) => {
 
 export const A = (t, start, dur = 0.6, fn = ease.out) => fn(clamp((t - start) / dur));
 
+/**
+ * The time `needle` is actually spoken inside card `ci`.
+ *
+ * The narration states a number seconds after the card opens ("Hampir semua
+ * orang pernah mengalaminya: sembilan puluh delapan persen."). Cueing the art on
+ * the card start therefore puts the number on screen long before the voice says
+ * it, which reads as out of sync even when the timing is perfect. Everything
+ * that names a number is cued on the word instead.
+ */
+export const cueWord = (scene, ci, needle) => {
+  const card = scene && scene.captions && scene.captions[ci];
+  if (!card || !card.words) return cue(scene, ci);
+  const key = needle.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const hit = card.words.find((w) => w.text.toLowerCase().replace(/[^a-z0-9]/g, '').startsWith(key));
+  return hit ? Math.max(0, hit.start - 0.08) : cue(scene, ci);
+};
+
 /* ── plates ──────────────────────────────────────────────────────────────── */
 const plates = new Map();
 export function plate(key, w, h, fn) {

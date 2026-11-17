@@ -10,7 +10,8 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { buildTimeline, readWav } from '../src/timeline.mjs';
+import { buildTimeline } from '../src/timeline.mjs';
+import { decodeVo, writeFlac } from '../src/audio.mjs';
 
 const SR = 48000;
 const tl = buildTimeline();
@@ -358,14 +359,14 @@ function renderSFX() {
 
 function loadVO() {
   tl.scenes.forEach((sc) => {
-    const wav = readWav(path.join(process.cwd(), 'assets', 'audio', 'vo', `${sc.id}.wav`));
+    const wav = decodeVo(sc.id);
     const start = Math.floor(sc.audioStart * SR);
-    const n = wav.data.length / 4;
+    const n = wav.frames;
     for (let i = 0; i < n; i++) {
       const idx = start + i;
       if (idx < 0 || idx >= N) continue;
-      vo[0][idx] = wav.data.readInt16LE(i * 4) / 32768;
-      vo[1][idx] = wav.data.readInt16LE(i * 4 + 2) / 32768;
+      vo[0][idx] = wav.l(i);
+      vo[1][idx] = wav.r(i);
     }
   });
 }
@@ -460,9 +461,14 @@ function mix() {
   const norm = pk > 0 ? 0.89 / pk : 1;
   for (let ch = 0; ch < 2; ch++) for (let i = 0; i < N; i++) out[ch][i] *= norm;
 
-  const file = path.join(process.cwd(), 'assets', 'audio', 'mix-ep19.wav');
-  write(out, file);
-  console.log(`mix-ep19.wav  ${(N / SR).toFixed(2)}s  peak ${(pk * norm).toFixed(3)}`);
+  const file = path.join(process.cwd(), 'assets', 'audio', 'mix-ep19.flac');
+  const inter = new Float32Array(N * 2);
+  for (let i = 0; i < N; i++) {
+    inter[i * 2] = out[0][i];
+    inter[i * 2 + 1] = out[1][i];
+  }
+  writeFlac(inter, N, file);
+  console.log(`mix-ep19.flac  ${(N / SR).toFixed(2)}s  peak ${(pk * norm).toFixed(3)}`);
 }
 
 loadVO();

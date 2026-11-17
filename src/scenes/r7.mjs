@@ -2,7 +2,7 @@ import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, TAU, rng } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, stage, gumPack, headline, micro, number, hairline, hudFrame,
+  K, ease, cue, cueWord, A, stage, gumPack, headline, micro, number, hairline, hudFrame,
 } from './_sinyal.mjs';
 
 // 07 — PERMEN KARET
@@ -63,20 +63,23 @@ export default {
       });
       ctx.restore();
 
-      const p3 = A(t, c[2], 0.6, ease.expo);
+      const w9 = cueWord(scene, 2, 'sembilan');
+      const p3 = A(t, w9, 0.6, ease.expo);
       if (p3 > 0.01) {
         ctx.save();
         ctx.globalAlpha = p3;
         number(ctx, '9', 96, 1010, { size: 240, color: K.ember });
         micro(ctx, 'KALI MUNCUL', 116, 1064, { size: 24, color: K.ink, track: 6 });
         micro(ctx, 'TANPA DIPANGGIL', 116, 1108, { size: 19, color: 'rgba(244,241,232,0.42)', track: 4 });
-        hairline(ctx, 100, 900, 420 * A(t, c[2] + 0.1, 0.7, ease.expo), { color: hexA(K.ember, 0.55), weight: 3 });
+        hairline(ctx, 100, 900, 420 * A(t, w9, 0.7, ease.expo), { color: hexA(K.ember, 0.55), weight: 3 });
         ctx.restore();
       }
     }
 
     // caption 4 — the gum
-    const p4 = A(t, c[3], 0.8, ease.expo);
+    const wGum = cueWord(scene, 3, 'tapi');
+    const wThird = cueWord(scene, 3, 'sepertiga');
+    const p4 = A(t, wGum, 0.8, ease.expo);
     if (p4 > 0.01) {
       ctx.save();
       ctx.globalAlpha = p4;
@@ -84,11 +87,11 @@ export default {
       const gy = 1200;
       gumPack(ctx, gx, gy, 300, 190, { rot: -0.05 });
       micro(ctx, 'MENGUNYAH', gx + 360, gy + 60, { size: 24, color: K.lime, track: 8 });
-      number(ctx, '−33%', gx + 360, gy + 200, { size: 140, color: K.lime });
-      micro(ctx, 'SEPERTIGA LEBIH SEDIKIT', gx + 360, gy + 250, { size: 21, color: K.ink, track: 4 });
+      number(ctx, '−33%', gx + 360, gy + 200, { size: 140, color: K.lime, a: A(t, wThird, 0.5, ease.expo) });
+      micro(ctx, 'SEPERTIGA LEBIH SEDIKIT', gx + 360, gy + 250, { size: 21, color: K.ink, track: 4, a: A(t, wThird, 0.5) });
       // the intrusions the gum prevented, as hollow ticks
       for (let i = 0; i < 9; i++) {
-        const q = A(t, c[3] + 0.3 + i * 0.06, 0.4);
+        const q = A(t, wThird + 0.15 + i * 0.05, 0.4);
         if (q <= 0.01) continue;
         const tx = 1040 + (i % 3) * 62;
         const ty = 1180 + Math.floor(i / 3) * 62;
@@ -107,8 +110,8 @@ export default {
     if (p5 > 0.01) {
       ctx.save();
       ctx.globalAlpha = p5;
-      micro(ctx, 'MULUT DIPAKAI', 104, 1420, { size: 26, color: K.ink, track: 6 });
-      micro(ctx, 'MESIN LAGU KEHILANGAN TENAGA', 104, 1470, { size: 20, color: K.ice, track: 4 });
+      micro(ctx, 'MULUT DIPAKAI', 104, 1452, { size: 24, color: K.ink, track: 6 });
+      micro(ctx, 'MESIN LAGU KEHILANGAN TENAGA', 104, 1498, { size: 19, color: K.ice, track: 4 });
       ctx.restore();
     }
   },

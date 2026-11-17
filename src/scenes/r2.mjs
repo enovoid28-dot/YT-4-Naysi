@@ -2,7 +2,7 @@ import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, TAU, rng } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, stage, dotField, number, headline, micro, hairline, hudFrame,
+  K, ease, cue, cueWord, A, stage, dotField, number, headline, micro, hairline, hudFrame,
 } from './_sinyal.mjs';
 
 // 02 — SEMUA ORANG
@@ -23,7 +23,8 @@ export default {
     const c = [0, 1, 2, 3, 4].map((i) => cue(scene, i));
 
     // the hundred, filling
-    const lit = 0.02 + 0.96 * A(t, c[1], 1.5, ease.out);
+    const w98 = cueWord(scene, 1, 'sembilan');
+    const lit = 0.02 + 0.96 * A(t, w98 - 0.55, 1.3, ease.out);
     dotField(ctx, 760, 520, {
       a: A(t, c[0] + 0.2, 0.7, ease.out),
       cols: 10, rows: 10, gap: 62, size: 7.2, lit, color: K.lime,
@@ -41,7 +42,7 @@ export default {
 
     // captions 2-4 — the same picture, three numbers
     NUM.forEach((n, i) => {
-      const start = c[i + 1];
+      const start = i === 0 ? w98 : c[i + 1];
       const end = i < 2 ? c[i + 2] : c[4];
       const pin = A(t, start, 0.5, ease.expo);
       const pout = 1 - A(t, end, 0.34, ease.out);

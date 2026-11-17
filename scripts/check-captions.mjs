@@ -7,7 +7,7 @@
  *   1. every caption card is a verbatim slice of the scene's VO text,
  *   2. cards are in order, never overlapping, none shorter than 0.5 s,
  *   3. no card is missing the words the voice says between two cards,
- *   4. caption type stays large enough to read on a phone (>= 78 px at 1440 w).
+ *   4. caption type stays large enough to read on a phone (>= 82 px at 1440 w).
  */
 import { createCanvas } from '@napi-rs/canvas';
 import { ensureFonts, F } from '../src/engine/fonts.mjs';
@@ -56,8 +56,8 @@ for (const scene of tl.scenes) {
     if (t0 < prevEnd - 0.001) fail(`${scene.id}.${i + 1} tumpang tindih (${t0.toFixed(2)} < ${prevEnd.toFixed(2)})`);
     if (t1 - t0 < 0.5) fail(`${scene.id}.${i + 1} terlalu singkat (${(t1 - t0).toFixed(2)} s)`);
     prevEnd = t1;
-    const lay = buildCaption(ctx, card, { maxWidth: W - 2 * 88, size: 94, font: F.semi, maxLines: 4 });
-    if (lay.size < 78) fail(`${scene.id}.${i + 1} huruf mengecil ke ${lay.size}px`);
+    const lay = buildCaption(ctx, card, { maxWidth: W - 2 * 74, size: 104, font: F.semi, maxLines: 4 });
+    if (lay.size < 82) fail(`${scene.id}.${i + 1} huruf mengecil ke ${lay.size}px`);
   });
 }
 

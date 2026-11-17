@@ -12,7 +12,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { SCENES } from '../src/script.mjs';
-import { readWav, voPath, capCards } from '../src/timeline.mjs';
+import { capCards } from '../src/timeline.mjs';
+import { decodeVo } from '../src/audio.mjs';
 
 const FRAME = 0.01;
 const THRESH = 0.02;
@@ -31,14 +32,14 @@ const syllables = (w) => {
 };
 
 function envelope(wav) {
-  const n = wav.data.length / 4;
+  const n = wav.frames;
   const step = Math.max(1, Math.round(wav.sampleRate * FRAME));
   const out = [];
   for (let i = 0; i < n; i += step) {
     let peak = 0;
     const end = Math.min(n, i + step);
     for (let j = i; j < end; j++) {
-      const v = Math.abs(wav.data.readInt16LE(j * 4)) / 32768;
+      const v = Math.max(Math.abs(wav.l(j)), Math.abs(wav.r(j)));
       if (v > peak) peak = v;
     }
     out.push(peak);
@@ -273,7 +274,7 @@ function placeWords(words, a, b, env, th) {
 
 const out = {};
 for (const sc of SCENES) {
-  const wav = readWav(voPath(sc.id));
+  const wav = decodeVo(sc.id);
   const env = envelope(wav);
   const th = level(env);
   const runs = voiced(env, th);

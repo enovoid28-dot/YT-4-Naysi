@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { SCENES } from './script.mjs';
+import { decodeVo } from './audio.mjs';
 import { clamp } from './engine/anim.mjs';
 
 export function readWav(file) {
@@ -87,9 +88,8 @@ export function buildTimeline() {
   let cursor = 0;
   for (let i = 0; i < SCENES.length; i++) {
     const sc = SCENES[i];
-    const file = voPath(sc.id);
-    if (!fs.existsSync(file)) throw new Error(`missing VO: ${path.relative(process.cwd(), file)}`);
-    const audioDur = readWav(file).duration;
+    // the take is decoded from mp3 in memory; there is no wav on disk
+    const audioDur = decodeVo(sc.id).duration;
     const voOffset = i === 0 ? 0.60 : 0.22;
     const dur = voOffset + audioDur + sc.pad;
 

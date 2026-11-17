@@ -18,7 +18,7 @@ done
 for f in $(ls out/q19_*.mp4 | sort -t_ -k2 -n); do printf "file '%s'\n" "$PWD/$f" >> out/concat19.txt; done
 "$FF" -y -hide_banner -loglevel error -f concat -safe 0 -i out/concat19.txt -c copy out/video19_silent.mp4
 OUT="out/Lagu Itu Nyangkut - Naysi - 1440x2560 90fps.mp4"
-"$FF" -y -hide_banner -loglevel error -i out/video19_silent.mp4 -i assets/audio/mix-ep19.wav \
+"$FF" -y -hide_banner -loglevel error -i out/video19_silent.mp4 -i assets/audio/mix-ep19.flac \
   -c:v copy -c:a aac -b:a 192k -ar 48000 -ac 2 -shortest -movflags +faststart "$OUT"
 ls -l "$OUT"
 echo DONE_EP19_RENDER

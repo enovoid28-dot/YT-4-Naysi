@@ -2,7 +2,7 @@ import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, stage, vinyl, headline, micro, number, crossMark, hairline,
+  K, ease, cue, cueWord, A, stage, vinyl, headline, micro, number, crossMark, hairline,
 } from './_sinyal.mjs';
 
 // 01 — EMPAT BARIS
@@ -43,14 +43,15 @@ export default {
     });
 
     // caption 2 — sama, bukan baru
-    const p2 = A(t, c1 + 0.3, 0.7, ease.out);
+    const p2 = A(t, cueWord(scene, 1, 'tiga') - 0.15, 0.7, ease.out);
     micro(ctx, 'HARI', 118, 1250, { size: 22, a: p2 * out1b * 0.8 });
     number(ctx, '03', 118, 1360, { size: 100, a: p2 * out1b, color: K.ember });
     hairline(ctx, 300, 1310, 200, { a: p2 * out1b * 0.5 });
     micro(ctx, 'BAGIAN YANG SAMA', 300, 1355, { size: 21, a: p2 * out1b * 0.75, color: K.dim });
 
     // caption 3 — four bars, counted
-    const p3 = A(t, c2, 0.5, ease.out);
+    const w4 = cueWord(scene, 2, 'cuma');
+    const p3 = A(t, w4, 0.5, ease.out);
     const out3 = 1 - A(t, c3, 0.35, ease.out);
     if (p3 > 0.01) {
       ctx.save();
@@ -59,7 +60,7 @@ export default {
       number(ctx, '04', 100, 1300, { size: 250, color: K.ink });
       micro(ctx, 'BARIS', 380, 1290, { size: 42, color: K.lime, track: 12 });
       for (let i = 0; i < 4; i++) {
-        const q = A(t, c2 + 0.15 + i * 0.16, 0.5, ease.expo);
+        const q = A(t, w4 + 0.30 + i * 0.16, 0.5, ease.expo);
         const x = 480 + i * 92;
         ctx.fillStyle = hexA(K.lime, 0.12);
         ctx.fillRect(x, 1372, 76, 8);
@@ -105,7 +106,8 @@ export default {
     }
 
     // caption 5 — no stop button
-    const p5 = A(t, c4, 0.55, ease.back);
+    const wStop = cueWord(scene, 4, 'tombol');
+    const p5 = A(t, wStop, 0.45, ease.back);
     if (p5 > 0.01) {
       const bw = 460;
       const bh = 168;
@@ -119,13 +121,13 @@ export default {
       ctx.shadowColor = 'rgba(0,0,0,0.5)';
       ctx.shadowBlur = 40;
       ctx.shadowOffsetY = 18;
-      fillRR(ctx, -bw / 2, -bh / 2, bw, bh, 26, 'rgba(244,241,232,0.055)');
+      fillRR(ctx, -bw / 2, -bh / 2, bw, bh, 26, 'rgba(12,10,20,0.92)');
       ctx.shadowBlur = 0;
-      strokeRR(ctx, -bw / 2, -bh / 2, bw, bh, 26, 'rgba(244,241,232,0.28)', 2.4);
+      strokeRR(ctx, -bw / 2, -bh / 2, bw, bh, 26, 'rgba(244,241,232,0.55)', 3);
       txt(ctx, 'STOP', 0, 24, { size: 78, font: F.head, color: 'rgba(244,241,232,0.86)', align: 'center', track: 10 });
       ctx.restore();
 
-      const pc = A(t, c4 + 0.35, 0.5, ease.expo);
+      const pc = A(t, cueWord(scene, 4, 'stop'), 0.35, ease.expo);
       if (pc > 0.01) {
         crossMark(ctx, W / 2, by + bh / 2, 120 * pc, K.ember, pc, 14);
         micro(ctx, 'TIDAK ADA TOMBOLNYA', W / 2, 1355, {

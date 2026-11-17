@@ -2,7 +2,7 @@ import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, stage, waveform, headline, micro, number, clockArc, hudFrame, hairline, crossMark,
+  K, ease, cue, cueWord, A, stage, waveform, headline, micro, number, clockArc, hudFrame, hairline, crossMark,
 } from './_sinyal.mjs';
 
 // 05 — SETENGAH
@@ -74,15 +74,16 @@ export default {
     }
 
     // caption 3 — 24 hours
-    const p3 = A(t, c[2], 0.7, ease.expo);
+    const w24 = cueWord(scene, 2, 'dua');
+    const p3 = A(t, w24 - 0.15, 0.7, ease.expo);
     if (p3 > 0.01) {
       ctx.save();
       ctx.globalAlpha = p3;
-      clockArc(ctx, 1110, 1240, 210, { p: A(t, c[2] + 0.2, 1.6, ease.out), color: K.ember, lw: 8 });
+      clockArc(ctx, 1110, 1240, 210, { p: A(t, w24, 1.4, ease.out), color: K.ember, lw: 8 });
       number(ctx, '24', 1110, 1268, { size: 132, color: K.ink, align: 'center' });
       micro(ctx, 'JAM', 1110, 1320, { size: 24, color: K.ember, align: 'center', track: 10 });
       micro(ctx, 'PALING SERING KEMBALI', 104, 1180, { size: 24, color: K.ink, track: 5 });
-      hairline(ctx, 104, 1210, 520 * A(t, c[2] + 0.2, 0.8, ease.expo), { color: hexA(K.ember, 0.6), weight: 3 });
+      hairline(ctx, 104, 1210, 520 * A(t, w24, 0.8, ease.expo), { color: hexA(K.ember, 0.6), weight: 3 });
       ctx.restore();
     }
 
