@@ -1,222 +1,163 @@
-import { W, H, txt, hexA, fillRR, measure, arcGauge } from '../engine/draw.mjs';
+import { W, H, txt, hexA, fillRR, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, rng, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, desk, contact, cassette, printCard, kick, num, rule, stampInk, typeLabel, pin, thread,
-  hatch,
+  K, ease, cue, A, desk, spot, contact, cassette, printCard, stampInk, kick, num, rule,
+  typeLabel, thread, pin, footer,
 } from './_arsip.mjs';
 
 // 08 — BUKAN REKAMAN
-// Memory is not a tape you replay. It is a tape you re-record every time you
-// play it — and a quarter of adults will swear to an afternoon that never was.
+// A tape, a print of a shopping centre corridor, and a red cross. The memory
+// was never a recording; it was a sentence written over and over.
+
+const MALL = (g, iw, ih, ox, oy) => {
+  const g0 = g.createLinearGradient(ox, oy, ox, oy + ih);
+  g0.addColorStop(0, '#33302D');
+  g0.addColorStop(0.5, '#1B1918');
+  g0.addColorStop(1, '#0B0A09');
+  g.fillStyle = g0;
+  g.fillRect(ox, oy, iw, ih);
+  const cx = ox + iw * 0.5;
+  const cy = oy + ih * 0.48;
+  for (let i = 0; i < 8; i++) {
+    const f = i / 8;
+    const w = iw * (0.05 + f * 0.17);
+    const y = cy - ih * (0.08 + f * 0.26);
+    g.fillStyle = `rgba(255,246,216,${0.08 + f * 0.34})`;
+    g.fillRect(cx - w / 2, y, w, ih * (0.006 + f * 0.010));
+  }
+  for (let i = 0; i < 10; i++) {
+    const f = i / 10;
+    const w = iw * (0.10 + f * 0.46);
+    g.strokeStyle = `rgba(206,202,192,${0.08 + f * 0.10})`;
+    g.lineWidth = 1.6;
+    g.beginPath();
+    g.moveTo(cx - w / 2, oy + ih * (0.94 - f * 0.22));
+    g.lineTo(cx + w / 2, oy + ih * (0.94 - f * 0.22));
+    g.stroke();
+  }
+  [-1, 1].forEach((sgn) => {
+    for (let i = 0; i < 4; i++) {
+      const f = i / 4;
+      const x0 = cx + sgn * iw * (0.52 - f * 0.36);
+      const x1 = cx + sgn * iw * (0.52 - (f + 0.17) * 0.36);
+      const y0 = cy - ih * (0.32 - f * 0.07);
+      const y1 = oy + ih * (0.92 - f * 0.13);
+      g.fillStyle = `rgba(30,32,34,${0.86 - f * 0.3})`;
+      g.fillRect(Math.min(x0, x1), y0, Math.abs(x1 - x0), y1 - y0);
+      g.fillStyle = `rgba(255,228,172,${0.05 + f * 0.18})`;
+      g.fillRect(Math.min(x0, x1) + 4, y0 + 6, Math.abs(x1 - x0) - 8, (y1 - y0) * 0.3);
+    }
+  });
+  const fx = cx + iw * 0.02;
+  const fy = oy + ih * 0.82;
+  g.fillStyle = 'rgba(12,10,9,0.92)';
+  g.beginPath();
+  g.ellipse(fx, fy - ih * 0.105, iw * 0.020, ih * 0.030, 0, 0, TAU);
+  g.fill();
+  g.fillStyle = 'rgba(158,40,27,0.88)';
+  g.beginPath();
+  g.moveTo(fx - iw * 0.030, fy);
+  g.quadraticCurveTo(fx - iw * 0.034, fy - ih * 0.078, fx, fy - ih * 0.082);
+  g.quadraticCurveTo(fx + iw * 0.034, fy - ih * 0.078, fx + iw * 0.030, fy);
+  g.closePath();
+  g.fill();
+  for (let i = 0; i < 2200; i++) {
+    g.fillStyle = `rgba(255,230,190,${Math.random() * 0.018})`;
+    g.fillRect(ox + Math.random() * iw, oy + Math.random() * ih, 1.6, 1.6);
+  }
+};
 
 export default {
   draw(ctx, t, scene, cam) {
     const c = (i, o = 0) => cue(scene, i, o);
-    desk(ctx, { lampX: W * 0.42, lampY: 460, key: 'r8' });
+    desk(ctx, { lampX: W * 0.34, lampY: 440, key: 'r8' });
+    spot(ctx, W * 0.42, 560, 800, 0.13);
 
     // ── the tape
-    const pt = A(t, 0.05, 1.0, ease.back);
-    if (pt > 0.01) {
-      const cw = 860;
-      const ch = cw * 0.63;
-      ctx.save();
-      ctx.globalAlpha = clamp(pt * 1.3);
-      contact(ctx, 120, 300 + ch - 40, cw, 100, 0.55);
-      ctx.translate(0, (1 - pt) * -70);
-      cassette(ctx, 120, 300, cw, { rot: -0.02, label: 'SISI A', sub: 'KENANGAN' });
-
-      // the tape comes out and is spliced back
-      const ps = A(t, c(1, 0.10), 1.2, ease.inOut);
-      if (ps > 0.01) {
-        const x1 = 120 + cw - 20;
-        const y1 = 300 + ch * 0.55;
-        ctx.strokeStyle = 'rgba(26,19,13,0.95)';
-        ctx.lineWidth = 13;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.bezierCurveTo(x1 + 90 * ps, y1 + 80 * ps, x1 + 20 * ps, y1 + 200 * ps, x1 - 30, y1 + 210 * ps);
-        ctx.stroke();
-        // splice
-        if (ps > 0.8) {
-          const psp = (ps - 0.8) / 0.2;
-          ctx.save();
-          ctx.globalAlpha *= psp;
-          ctx.strokeStyle = 'rgba(226,212,178,0.75)';
-          ctx.lineWidth = 17;
-          ctx.beginPath();
-          ctx.moveTo(x1 - 40, y1 + 208);
-          ctx.lineTo(x1 + 10, y1 + 196);
-          ctx.stroke();
-          typeLabel(ctx, 'DISAMBUNG', x1 - 10, y1 + 250, { size: 18, rot: 0.06 });
-          ctx.restore();
-        }
-      }
-      ctx.restore();
-    }
-
-    // ── the ring: a quarter of adults will "remember" the mall
-    const pr = A(t, c(3, 0.05), 1.5, ease.out);
-    if (pr > 0.01) {
-      const cx = 300;
-      const cy = 1200;
-      const R = 132;
-      ctx.save();
-      ctx.globalAlpha = clamp(pr * 1.6);
-      contact(ctx, cx - R, cy - R + 20, R * 2, R * 2, 0.45);
-      // track
-      ctx.strokeStyle = 'rgba(244,235,218,0.14)';
-      ctx.lineWidth = 26;
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, TAU);
-      ctx.stroke();
-      // fill
-      ctx.strokeStyle = K.redHi;
-      ctx.lineWidth = 26;
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, -Math.PI / 2, -Math.PI / 2 + TAU * 0.25 * pr);
-      ctx.stroke();
-      num(ctx, '25%', cx, cy + 26, { size: 84, color: K.bone, align: 'center', track: -3 });
-      ctx.restore();
-      kick(ctx, 'MENGINGAT KEJADIAN YANG TIDAK ADA', 120, cy + R + 84, { size: 18, color: K.dim, track: 4 });
-    }
-
-    // ── the print that proves nothing
-    const pp = A(t, c(3, 0.55), 0.8, ease.back);
-    if (pp > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = clamp(pp * 1.3);
-      printCard(ctx, 604, 1000, 476, 366, {
-        rot: 0.035,
-        tape: 1,
-        art: (g, iw, ih, ox, oy) => {
-          // an ordinary mall corridor: ceiling lights, shopfronts, polished floor
-          const bg = g.createLinearGradient(ox, oy, ox, oy + ih);
-          bg.addColorStop(0, '#4A3E31');
-          bg.addColorStop(0.5, '#2C241C');
-          bg.addColorStop(1, '#141110');
-          g.fillStyle = bg;
-          g.fillRect(ox, oy, iw, ih);
-          // ceiling
-          g.fillStyle = 'rgba(255,236,200,0.10)';
-          g.fillRect(ox, oy, iw, ih * 0.16);
-          for (let i = 0; i < 3; i++) {
-            const lx = ox + iw * (0.18 + i * 0.32);
-            const lg2 = g.createRadialGradient(lx, oy + ih * 0.10, 2, lx, oy + ih * 0.10, iw * 0.16);
-            lg2.addColorStop(0, 'rgba(255,236,196,0.55)');
-            lg2.addColorStop(1, 'rgba(255,236,196,0)');
-            g.fillStyle = lg2;
-            g.fillRect(lx - iw * 0.16, oy, iw * 0.32, ih * 0.24);
-            g.fillStyle = 'rgba(255,246,224,0.85)';
-            g.fillRect(lx - iw * 0.045, oy + ih * 0.085, iw * 0.09, ih * 0.012);
-          }
-          // shopfronts left and right
-          [0.02, 0.66].forEach((u, i) => {
-            g.fillStyle = i ? 'rgba(250,220,170,0.22)' : 'rgba(235,205,160,0.16)';
-            g.fillRect(ox + iw * u, oy + ih * 0.20, iw * 0.32, ih * 0.44);
-            g.strokeStyle = 'rgba(255,240,210,0.20)';
-            g.lineWidth = 2;
-            g.strokeRect(ox + iw * u, oy + ih * 0.20, iw * 0.32, ih * 0.44);
-            for (let k = 1; k < 3; k++) {
-              g.strokeStyle = 'rgba(255,240,210,0.10)';
-              g.beginPath();
-              g.moveTo(ox + iw * u, oy + ih * (0.20 + k * 0.14));
-              g.lineTo(ox + iw * (u + 0.32), oy + ih * (0.20 + k * 0.14));
-              g.stroke();
-            }
-          });
-          // floor
-          const fg = g.createLinearGradient(ox, oy + ih * 0.62, ox, oy + ih);
-          fg.addColorStop(0, '#3A3128');
-          fg.addColorStop(1, '#171412');
-          g.fillStyle = fg;
-          g.fillRect(ox, oy + ih * 0.62, iw, ih * 0.38);
-          // reflection of the lights on the polished floor
-          for (let i = 0; i < 3; i++) {
-            const lx = ox + iw * (0.18 + i * 0.32);
-            const rg2 = g.createLinearGradient(lx, oy + ih * 0.62, lx, oy + ih);
-            rg2.addColorStop(0, 'rgba(255,230,190,0.16)');
-            rg2.addColorStop(1, 'rgba(255,230,190,0)');
-            g.fillStyle = rg2;
-            g.fillRect(lx - iw * 0.05, oy + ih * 0.62, iw * 0.10, ih * 0.38);
-          }
-          // perspective seams
-          g.strokeStyle = 'rgba(255,235,200,0.07)';
-          g.lineWidth = 2;
-          for (let i = -2; i <= 2; i++) {
-            g.beginPath();
-            g.moveTo(ox + iw * 0.5 + i * iw * 0.34, oy + ih);
-            g.lineTo(ox + iw * 0.5 + i * iw * 0.05, oy + ih * 0.62);
-            g.stroke();
-          }
-          // a bench and a plant
-          g.fillStyle = 'rgba(18,14,11,0.95)';
-          g.fillRect(ox + iw * 0.20, oy + ih * 0.66, iw * 0.22, ih * 0.035);
-          g.fillRect(ox + iw * 0.21, oy + ih * 0.69, iw * 0.012, ih * 0.06);
-          g.fillRect(ox + iw * 0.40, oy + ih * 0.69, iw * 0.012, ih * 0.06);
-          g.fillStyle = 'rgba(30,44,32,0.85)';
-          for (let i = 0; i < 7; i++) {
-            g.beginPath();
-            g.ellipse(ox + iw * 0.60 + (i - 3) * iw * 0.016, oy + ih * (0.60 - (i % 3) * 0.03), iw * 0.026, ih * 0.05, (i - 3) * 0.25, 0, TAU);
-            g.fill();
-          }
-          // a woman with a small child, far down the corridor
-          const px = ox + iw * 0.47;
-          const py = oy + ih * 0.55;
-          g.fillStyle = 'rgba(12,10,9,0.92)';
-          g.beginPath();
-          g.arc(px, py, iw * 0.020, 0, TAU);
-          g.fill();
-          g.beginPath();
-          g.moveTo(px - iw * 0.026, py + ih * 0.14);
-          g.lineTo(px - iw * 0.018, py + ih * 0.02);
-          g.lineTo(px + iw * 0.018, py + ih * 0.02);
-          g.lineTo(px + iw * 0.026, py + ih * 0.14);
-          g.closePath();
-          g.fill();
-          g.beginPath();
-          g.arc(px + iw * 0.062, py + ih * 0.075, iw * 0.013, 0, TAU);
-          g.fill();
-          g.fillRect(px + iw * 0.052, py + ih * 0.088, iw * 0.021, ih * 0.055);
-          // grain
-          hatch(g, { x: ox, y: oy, w: iw, h: ih }, (gg) => gg.rect(ox, oy, iw, ih), {
-            angle: -0.7, step: 8, lw: 1, color: '#000', a: 0.16,
-          });
-        },
-      });
-      typeLabel(ctx, 'MAL, USIA 5 — TIDAK PERNAH TERJADI', 620, 1392, { size: 18, rot: 0.01 });
-
-      // the cross
-      const px = A(t, c(4, 0.05), 0.5, ease.out);
-      if (px > 0.01) {
-        ctx.save();
-        ctx.globalAlpha = px;
-        ctx.strokeStyle = hexA(K.redHi, 0.92);
-        ctx.lineWidth = 12;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(656, 1050);
-        ctx.lineTo(656 + 372 * px, 1050 + 268 * px);
-        ctx.moveTo(656 + 372 * px, 1050);
-        ctx.lineTo(656, 1050 + 268 * px);
-        ctx.stroke();
-        ctx.restore();
-      }
-      ctx.restore();
-    }
-
-    // ── the claim
-    const pc = A(t, c(0, 0.15), 0.6, ease.out);
+    const pc = A(t, 0.10, 1.0, ease.expo);
     if (pc > 0.01) {
       ctx.save();
       ctx.globalAlpha = pc;
-      rule(ctx, 1120, 1040, 216, { a: 0.7 });
-      kick(ctx, 'DIREKAM ULANG', 1120, 1100, { size: 19, color: K.dim, track: 6 });
-      txt(ctx, 'setiap', 1120, 1180, { size: 44, font: F.display, color: K.bone });
-      txt(ctx, 'kali kamu', 1120, 1232, { size: 44, font: F.display, color: K.bone });
-      txt(ctx, 'mengingat.', 1120, 1284, { size: 44, font: F.display, color: K.redHi });
+      ctx.translate((1 - pc) * -90, 0);
+      contact(ctx, 110, 640, 800, 160, 0.62);
+      cassette(ctx, 108, 246, 800, { label: 'SISI A', sub: 'KENANGAN USIA 4', rot: -0.02 });
       ctx.restore();
     }
+
+    const pr = A(t, c(1, 0.15), 1.2, ease.out);
+    if (pr > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = pr;
+      thread(ctx, [[300, 690], [470, 748], [660, 700], [840, 752], [980, 690]], { p: pr, a: 0.85, lw: 3.2, sag: 14 });
+      typeLabel(ctx, 'DITULIS ULANG SETIAP KALI DIINGAT', 108, 776, { size: 21 });
+      ctx.restore();
+    }
+
+    // ── the print
+    const pp = A(t, c(2, 0.10), 0.9, ease.out);
+    if (pp > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = pp;
+      ctx.translate(0, (1 - pp) * 30);
+      contact(ctx, 700, 1150, 400, 110, 0.6);
+      printCard(ctx, 660, 690, 640, 490, { rot: 0.026, border: 18, art: MALL, caption: 'MAL, USIA 4' });
+      pin(ctx, 980, 684, 0.7);
+      ctx.restore();
+    }
+
+    // ── the number, and the cross
+    const pn = A(t, c(3, 0.10), 0.8, ease.out);
+    if (pn > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = pn;
+      rule(ctx, 104, 1180, 480, { a: 0.7 });
+      kick(ctx, 'PESERTA YANG "INGAT" KEJADIAN PALSU', 104, 1236, { size: 20, color: K.dim, track: 4.5 });
+      const cx2 = 190;
+      const cy2 = 1330;
+      const r0 = 78;
+      ctx.strokeStyle = 'rgba(246,237,219,0.16)';
+      ctx.lineWidth = 17;
+      ctx.beginPath();
+      ctx.arc(cx2, cy2, r0, 0, TAU);
+      ctx.stroke();
+      ctx.strokeStyle = K.redHi;
+      ctx.lineWidth = 17;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.arc(cx2, cy2, r0, -Math.PI / 2, -Math.PI / 2 + TAU * 0.25 * pn);
+      ctx.stroke();
+      ctx.fillStyle = K.gold;
+      ctx.beginPath();
+      ctx.arc(cx2, cy2, 13, 0, TAU);
+      ctx.fill();
+      num(ctx, '25%', 320, 1396, { size: 132, color: K.redHi, track: -4 });
+      ctx.restore();
+    }
+
+    // ── the verdict
+    const ps = A(t, c(4, 0.10), 0.3, ease.out);
+    if (ps > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = ps;
+      const x = 980;
+      const y = 936;
+      ctx.strokeStyle = hexA(K.redHi, 0.94);
+      ctx.lineWidth = 17;
+      ctx.lineCap = 'round';
+      const L = 148 * ps;
+      ctx.beginPath();
+      ctx.moveTo(x - L, y - L);
+      ctx.lineTo(x + L, y + L);
+      ctx.moveTo(x + L, y - L);
+      ctx.lineTo(x - L, y + L);
+      ctx.stroke();
+      ctx.restore();
+      stampInk(ctx, 'TIDAK PERNAH TERJADI', 110, 1524, {
+        size: 82, rot: -0.03, a: ps, color: K.red, padX: 28, padY: 18, track: 5, align: 'left',
+      });
+    }
+
+    footer(ctx, { chapter: 'BUKAN REKAMAN' });
   },
 };

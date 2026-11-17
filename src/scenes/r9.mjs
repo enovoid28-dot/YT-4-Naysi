@@ -2,153 +2,182 @@ import { W, H, txt, hexA, fillRR, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, rng, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, desk, contact, kick, num, rule, typeLabel, pin, thread, stampInk,
+  K, ease, cue, A, desk, spot, contact, printCard, kick, num, rule, typeLabel, footer,
 } from './_arsip.mjs';
 
 // 09 — CERITA HILANG
-// Three empty frames, one that is lit from inside, and a line on the desk for
-// the viewer to fill in: the first thing you remember, and how old you were.
+// Three empty frames, one lit. What survives is not a film: it is a way of
+// flinching, of settling, of trusting. Then the prompt.
 
-const FRAMES = [
-  { x: 96, y: 300, w: 246, h: 310, rot: -0.02 },
-  { x: 372, y: 262, w: 246, h: 310, rot: 0.015 },
-  { x: 648, y: 300, w: 246, h: 310, rot: -0.01 },
-];
+const LIT = (g, iw, ih, ox, oy) => {
+  const g0 = g.createRadialGradient(ox + iw * 0.44, oy + ih * 0.40, 8, ox + iw * 0.5, oy + ih * 0.5, iw * 0.80);
+  g0.addColorStop(0, '#FDEBC8');
+  g0.addColorStop(0.32, '#D3A567');
+  g0.addColorStop(0.70, '#6A4726');
+  g0.addColorStop(1, '#1A1109');
+  g.fillStyle = g0;
+  g.fillRect(ox, oy, iw, ih);
+  // a figure, from behind, almost lost in the light
+  const cx = ox + iw * 0.52;
+  const hy = oy + ih * 0.42;
+  const hr = ih * 0.17;
+  // shoulders first, then the head over them
+  const bodyG = g.createLinearGradient(cx - iw * 0.15, oy + ih * 0.6, cx + iw * 0.15, oy + ih);
+  bodyG.addColorStop(0, 'rgba(58,38,22,0.72)');
+  bodyG.addColorStop(1, 'rgba(24,15,8,0.86)');
+  g.fillStyle = bodyG;
+  g.beginPath();
+  g.moveTo(cx - iw * 0.17, oy + ih);
+  g.bezierCurveTo(cx - iw * 0.17, oy + ih * 0.74, cx - iw * 0.08, oy + ih * 0.62, cx, oy + ih * 0.62);
+  g.bezierCurveTo(cx + iw * 0.08, oy + ih * 0.62, cx + iw * 0.17, oy + ih * 0.74, cx + iw * 0.17, oy + ih);
+  g.closePath();
+  g.fill();
+  g.fillStyle = 'rgba(40,26,15,0.88)';
+  g.beginPath();
+  g.ellipse(cx, hy, hr, hr * 1.02, 0, 0, TAU);
+  g.fill();
+  // hair
+  g.fillStyle = 'rgba(26,17,9,0.9)';
+  g.beginPath();
+  g.ellipse(cx, hy - hr * 0.22, hr * 1.02, hr * 0.96, 0, 0, TAU);
+  g.fill();
+  g.beginPath();
+  g.moveTo(cx - iw * 0.15, oy + ih);
+  g.bezierCurveTo(cx - iw * 0.15, oy + ih * 0.72, cx - iw * 0.07, oy + ih * 0.60, cx, oy + ih * 0.60);
+  g.bezierCurveTo(cx + iw * 0.07, oy + ih * 0.60, cx + iw * 0.15, oy + ih * 0.72, cx + iw * 0.15, oy + ih);
+  g.closePath();
+  g.fill();
+  // rim light on the shoulders
+  g.strokeStyle = 'rgba(255,226,172,0.55)';
+  g.lineWidth = 3;
+  g.beginPath();
+  g.arc(cx, hy, hr * 1.02, Math.PI * 0.86, Math.PI * 1.62);
+  g.stroke();
+  for (let i = 0; i < 1600; i++) {
+    g.fillStyle = `rgba(255,236,196,${Math.random() * 0.026})`;
+    g.fillRect(ox + Math.random() * iw, oy + Math.random() * ih, 1.6, 1.6);
+  }
+};
 
 export default {
   draw(ctx, t, scene, cam) {
     const c = (i, o = 0) => cue(scene, i, o);
-    desk(ctx, { lampX: W * 0.62, lampY: 520, key: 'r9' });
+    desk(ctx, { lampX: W * 0.5, lampY: 520, key: 'r9' });
+    spot(ctx, W * 0.5, 640, 780, 0.12);
 
-    // ── the empty frames
-    FRAMES.forEach((f, i) => {
-      const a = A(t, c(0, 0.08 + i * 0.16), 0.6, ease.back);
-      if (a <= 0.01) return;
+    const fw = 388;
+    const fh = 462;
+    const gap = 36;
+    const totalW = fw * 3 + gap * 2;
+    const fx0 = (W - totalW) / 2;
+    const fy = 190;
+
+    [{ at: 0.12, cap: 'USIA 1' }, { at: 0.26, cap: 'USIA 2' }, { at: 0.40, cap: 'USIA 3' }].forEach((f, i) => {
+      const p = A(t, f.at, 0.8, ease.expo);
+      if (p <= 0.01) return;
+      const x = fx0 + (fw + gap) * i;
       ctx.save();
-      ctx.globalAlpha = clamp(a * 1.3);
-      ctx.translate(f.x + f.w / 2, f.y + f.h / 2 + (1 - a) * -50);
-      ctx.rotate(f.rot);
-      ctx.translate(-(f.x + f.w / 2), -(f.y + f.h / 2));
-      contact(ctx, f.x + 10, f.y + f.h - 10, f.w - 20, 40, 0.45);
-      // mount board
-      ctx.save();
-      ctx.shadowColor = 'rgba(0,0,0,0.6)';
-      ctx.shadowBlur = 34;
-      ctx.shadowOffsetY = 14;
-      fillRR(ctx, f.x, f.y, f.w, f.h, 3, '#C9BB9E');
-      ctx.restore();
-      const pg = ctx.createLinearGradient(f.x, f.y, f.x + f.w, f.y + f.h);
-      pg.addColorStop(0, '#E6DAC0');
-      pg.addColorStop(1, '#BCAC8E');
-      fillRR(ctx, f.x, f.y, f.w, f.h, 3, pg);
-      // the window
-      fillRR(ctx, f.x + 22, f.y + 22, f.w - 44, f.h - 44, 2, 'rgba(20,15,11,0.92)');
-      ctx.strokeStyle = 'rgba(226,212,186,0.14)';
-      ctx.lineWidth = 1.6;
-      ctx.strokeRect(f.x + 34, f.y + 34, f.w - 68, f.h - 68);
-      kick(ctx, '—', f.x + f.w / 2, f.y + f.h / 2 + 8, {
-        size: 26, color: 'rgba(226,212,186,0.22)', align: 'center',
+      ctx.globalAlpha = p;
+      ctx.translate(0, (1 - p) * -26);
+      contact(ctx, x + 8, fy + fh - 20, fw - 16, 76, 0.55);
+      printCard(ctx, x, fy, fw, fh, {
+        rot: 0,
+        border: 16,
+        art: (g, iw, ih, ox, oy) => {
+          g.fillStyle = '#13100E';
+          g.fillRect(ox, oy, iw, ih);
+          g.strokeStyle = 'rgba(240,226,200,0.10)';
+          g.lineWidth = 2;
+          g.beginPath();
+          g.ellipse(ox + iw / 2, oy + ih * 0.44, iw * 0.16, ih * 0.19, 0, 0, TAU);
+          g.stroke();
+        },
+        caption: f.cap,
       });
       ctx.restore();
     });
 
-    // ── the one that is lit from inside
-    const pl = A(t, c(1, 0.05), 1.4, ease.out);
+    // ── the one that is left
+    const pl = A(t, c(1, 0.20), 1.0, ease.expo);
     if (pl > 0.01) {
-      const fx = 950;
-      const fy = 250;
-      const fw = 390;
-      const fh = 520;
+      const lw = 820;
+      const lh = 420;
+      const lx = (W - lw) / 2;
+      const ly = 726;
       ctx.save();
-      ctx.globalAlpha = clamp(pl * 1.4);
-      ctx.translate(fx + fw / 2, fy + fh / 2 + (1 - pl) * 40);
-      ctx.rotate(-0.012);
-      ctx.translate(-(fx + fw / 2), -(fy + fh / 2));
-      contact(ctx, fx, fy + fh - 10, fw, 50, 0.5);
-      // board
-      ctx.save();
-      ctx.shadowColor = 'rgba(0,0,0,0.65)';
-      ctx.shadowBlur = 44;
-      ctx.shadowOffsetY = 18;
-      fillRR(ctx, fx, fy, fw, fh, 4, '#D3C4A4');
-      ctx.restore();
-      const pg2 = ctx.createLinearGradient(fx, fy, fx + fw, fy + fh);
-      pg2.addColorStop(0, '#EDE1C8');
-      pg2.addColorStop(1, '#C2B294');
-      fillRR(ctx, fx, fy, fw, fh, 4, pg2);
-      fillRR(ctx, fx + 20, fy + 20, fw - 40, fh - 40, 2, '#12100D');
-      // warm light inside the frame, as if someone were standing in it
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(fx + 20, fy + 20, fw - 40, fh - 40);
-      ctx.clip();
-      const gl = ctx.createRadialGradient(fx + fw * 0.5, fy + fh * 0.62, 10, fx + fw * 0.5, fy + fh * 0.62, fw * 0.62);
-      gl.addColorStop(0, `rgba(255,206,150,${0.55 * pl})`);
-      gl.addColorStop(0.45, `rgba(220,150,90,${0.28 * pl})`);
-      gl.addColorStop(1, 'rgba(120,70,40,0)');
-      ctx.fillStyle = gl;
-      ctx.fillRect(fx + 20, fy + 20, fw - 40, fh - 40);
-      // the silhouette of a swaddled baby, in warm outline
-      const bx = fx + fw * 0.5;
-      const by = fy + fh * 0.66;
-      ctx.strokeStyle = `rgba(255,226,186,${0.5 * pl})`;
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.ellipse(bx, by, 74, 86, 0, 0, TAU);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(bx - 62, by + 190);
-      ctx.bezierCurveTo(bx - 86, by + 96, bx - 30, by + 74, bx, by + 78);
-      ctx.bezierCurveTo(bx + 30, by + 74, bx + 86, by + 96, bx + 62, by + 190);
-      ctx.stroke();
-      ctx.restore();
-      ctx.restore();
-      typeLabel(ctx, 'YANG MASIH ADA', fx + 16, fy + fh + 44, { size: 19, a: pl });
-    }
-
-    // ── the line that survives
-    const pt = A(t, c(2, 0.05), 0.6, ease.out);
-    if (pt > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = pt;
-      rule(ctx, 96, 900, 740, { a: 0.7 });
-      kick(ctx, 'YANG TIDAK IKUT HILANG', 96, 958, { size: 20, color: K.dim, track: 6 });
-      txt(ctx, 'cara kamu takut.', 96, 1064, { size: 54, font: F.display, color: K.bone });
-      txt(ctx, 'cara kamu tenang.', 96, 1132, { size: 54, font: F.display, color: K.bone });
-      txt(ctx, 'cara kamu percaya.', 96, 1200, { size: 54, font: F.display, color: K.redHi });
+      ctx.globalAlpha = pl;
+      ctx.translate(0, (1 - pl) * 34);
+      spot(ctx, lx + lw / 2, ly + lh / 2, 580, 0.26 * pl);
+      contact(ctx, lx + 20, ly + lh - 14, lw - 40, 104, 0.62);
+      printCard(ctx, lx, ly, lw, lh, { rot: -0.008, border: 20, art: LIT });
       ctx.restore();
     }
 
-    // ── the comment prompt, typed onto the desk
-    const pq = A(t, c(3, 0.12), 0.8, ease.out);
-    if (pq > 0.01) {
+    // ── what the print holds
+    const labels = [
+      { s: 'TAKUT', at: c(1, 0.85) },
+      { s: 'TENANG', at: c(1, 1.35) },
+      { s: 'PERCAYA', at: c(1, 1.85) },
+    ];
+    const bw = 348;
+    const bstart = (W - (bw * 3 + 44 * 2)) / 2;
+    labels.forEach((L, i) => {
+      const p = A(t, L.at, 0.6, ease.out);
+      if (p <= 0.01) return;
       ctx.save();
-      ctx.globalAlpha = pq;
-      const py = 1288;
-      const pw = 1248;
-      // a strip of paper taped down
-      ctx.save();
-      ctx.shadowColor = 'rgba(0,0,0,0.6)';
-      ctx.shadowBlur = 40;
-      ctx.shadowOffsetY = 16;
-      fillRR(ctx, 96, py, pw, 214, 4, '#DED2B8');
+      ctx.globalAlpha = p;
+      const bx = bstart + i * (bw + 44);
+      const by = 1204;
+      ctx.strokeStyle = hexA(K.gold, 0.7 * p);
+      ctx.lineWidth = 2;
+      ctx.strokeRect(bx, by, bw, 78);
+      txt(ctx, L.s, bx + bw / 2, by + 52, { size: 40, font: F.display, color: K.bone, align: 'center', track: 4 });
       ctx.restore();
-      const pg = ctx.createLinearGradient(96, py, 96 + pw, py + 214);
-      pg.addColorStop(0, '#EFE6D3');
-      pg.addColorStop(1, '#C7B99C');
-      fillRR(ctx, 96, py, pw, 214, 4, pg);
-      kick(ctx, 'TULIS DI KOMENTAR', 128, py + 52, { size: 21, color: 'rgba(40,30,24,0.6)', track: 6 });
-      txt(ctx, 'memori paling awal, umur berapa', 128, py + 118, {
-        size: 40, font: F.display, color: '#221A14',
+    });
+
+    // ── what is actually lost
+    const pz = A(t, c(2, 0.10), 0.7, ease.out);
+    if (pz > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = pz;
+      txt(ctx, 'Yang hilang cuma', W / 2, 1352, {
+        size: 32, font: F.mono, color: 'rgba(246,237,219,0.62)', align: 'center', track: 2,
       });
-      // the blank line and its caret
-      ctx.fillStyle = 'rgba(40,30,24,0.35)';
-      ctx.fillRect(128, py + 160, pw - 64, 2);
-      const blink = (Math.sin(t * 7) > 0) ? 1 : 0.15;
-      const tw = measure(ctx, 'memori paling awal, umur berapa', 40, F.display);
-      ctx.fillStyle = `rgba(196,58,38,${blink})`;
-      ctx.fillRect(132 + tw + 10, py + 88, 3, 36);
       ctx.restore();
     }
+
+    // ── the prompt
+    const pp = A(t, c(3, 0.10), 0.8, ease.out);
+    if (pp > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = pp;
+      const bw2 = 1232;
+      const bh2 = 216;
+      const bx2 = 104;
+      const by2 = 1402;
+      const bg = ctx.createLinearGradient(bx2, by2, bx2, by2 + bh2);
+      bg.addColorStop(0, 'rgba(248,238,214,0.97)');
+      bg.addColorStop(1, 'rgba(214,198,166,0.97)');
+      fillRR(ctx, bx2, by2, bw2, bh2, 5, bg);
+      ctx.strokeStyle = hexA(K.red, 0.85);
+      ctx.lineWidth = 4;
+      ctx.strokeRect(bx2 + 16, by2 + 16, bw2 - 32, bh2 - 32);
+      txt(ctx, 'MEMORI PALING AWAL YANG KAMU INGAT,', bx2 + 58, by2 + 90, {
+        size: 39, font: F.display, color: '#241A12', track: 1.5,
+      });
+      txt(ctx, 'DAN UMUR BERAPA?', bx2 + 58, by2 + 146, {
+        size: 39, font: F.display, color: '#241A12', track: 1.5,
+      });
+      txt(ctx, 'TULIS', bx2 + bw2 - 60, by2 + 74, {
+        size: 22, font: F.mono, color: hexA(K.red, 0.92), align: 'right', track: 5,
+      });
+      txt(ctx, 'DI KOMENTAR', bx2 + bw2 - 60, by2 + 106, {
+        size: 22, font: F.mono, color: hexA(K.red, 0.92), align: 'right', track: 5,
+      });
+      txt(ctx, '↓', bx2 + bw2 - 62, by2 + 176, { size: 44, font: F.display, color: K.red, align: 'right' });
+      ctx.restore();
+    }
+
+    footer(ctx, { chapter: 'CERITA HILANG' });
   },
 };

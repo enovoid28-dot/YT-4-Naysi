@@ -2,94 +2,120 @@ import { W, H, txt, hexA, fillRR, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, rng, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, desk, contact, brainPlate, hippocampus, hatch, kick, num, rule, stampInk, typeLabel,
-  leader, tagCard, pin, thread,
+  K, ease, cue, A, desk, spot, contact, brain, hippocampus, hatch, kick, num, rule,
+  stampInk, typeLabel, leader, pin, footer,
 } from './_arsip.mjs';
 
 // 04 — TANPA TANGGAL
-// The same plate, cut open at the temporal lobe. The one structure that stamps
-// an event with a date is lit in red, and the date tag next to it is blank.
+// The same brain, dimmed, one red curl lit inside it. The tag that ought to
+// carry the date is blank, and the stamp says why.
 
 export default {
   draw(ctx, t, scene, cam) {
     const c = (i, o = 0) => cue(scene, i, o);
-    desk(ctx, { lampX: W * 0.38, lampY: 380, key: 'r4' });
+    desk(ctx, { lampX: W * 0.34, lampY: 480, key: 'r4' });
+    spot(ctx, W * 0.42, 560, 800, 0.12);
 
-    const bw = 1200;
-    const bh = 780;
-    const bx = 96;
-    const by = 230;
+    const bw = 1060;
+    const bh = 700;
+    const bx = 150;
+    const by = 168;
 
-    const pb = A(t, 0.05, 0.9, ease.expo);
-    ctx.save();
-    ctx.globalAlpha = pb;
-    contact(ctx, bx - 20, by + bh - 30, bw + 40, 100, 0.5);
-    ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,0.55)';
-    ctx.shadowBlur = 46;
-    ctx.shadowOffsetY = 20;
-    fillRR(ctx, bx, by, bw, bh, 8, '#0B0908');
-    ctx.restore();
-    ctx.strokeStyle = 'rgba(244,235,218,0.12)';
-    ctx.lineWidth = 1.6;
-    ctx.strokeRect(bx, by, bw, bh);
-    brainPlate(ctx, bx + 20, by + 10, bw - 40, bh - 30, { tone: 0.52, key: 'r4' });
+    const pb = A(t, 0.08, 1.0, ease.expo);
+    if (pb > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = pb;
+      contact(ctx, bx + 30, by + bh - 40, bw - 60, 120, 0.6);
+      brain(ctx, bx, by, bw, bh, { key: 'r4' });
+      const veil = ctx.createRadialGradient(W * 0.42, 520, 140, W * 0.42, 520, 720);
+      veil.addColorStop(0, 'rgba(10,8,7,0.06)');
+      veil.addColorStop(1, 'rgba(10,8,7,0.66)');
+      ctx.fillStyle = veil;
+      ctx.fillRect(bx - 20, by - 20, bw + 40, bh + 50);
+      ctx.restore();
+    }
 
-    // the structure, lit
-    const ph = A(t, c(0, 0.5), 1.4, ease.out);
+    // ── the structure that files the day
+    const ph = A(t, c(0, 0.45), 1.0, ease.out);
     if (ph > 0.01) {
-      const hx = bx + bw * 0.44;
-      const hy = by + bh * 0.52;
       ctx.save();
-      ctx.globalAlpha = clamp(ph * 1.4);
-      ctx.globalCompositeOperation = 'screen';
-      const gl = ctx.createRadialGradient(hx + 60, hy + 20, 10, hx + 60, hy + 20, 250);
-      gl.addColorStop(0, `rgba(220,70,40,${0.34 * ph})`);
-      gl.addColorStop(1, 'rgba(220,70,40,0)');
-      ctx.fillStyle = gl;
-      ctx.fillRect(hx - 260, hy - 220, 620, 480);
+      ctx.globalAlpha = clamp(ph * 1.6);
+      ctx.translate(0, (1 - ph) * 16);
+      const hx = bx + bw * 0.62;
+      const hy = by + bh * 0.50;
+      const hw = 236;
+      const hh = 150;
+      const pulse = 0.86 + Math.sin(t * 2.6) * 0.06;
+      hippocampus(ctx, hx - hw / 2, hy - hh / 2, hw, hh, { glowA: ph * pulse });
+      leader(ctx, hx + hw * 0.46, hy + hh * 0.04, 1216, 700, 'HIPOKAMPUS', { size: 24, color: K.bone, align: 'right', a: ph });
       ctx.restore();
-      hippocampus(ctx, hx, hy, 210, 132, { a: clamp(ph * 1.2), glowA: 0.8 + Math.sin(t * 2.2) * 0.2 });
-      // leader to the name
-      const pl = A(t, c(0, 0.9), 0.7, ease.out);
-      leader(ctx, hx + 200, hy + 40, hx + 330, hy + 150, 'HIPOKAMPUS', {
-        size: 26, color: K.bone, a: pl,
-      });
     }
-    ctx.restore();
 
-    typeLabel(ctx, 'POTONGAN DALAM, USIA 3 TAHUN', bx + 26, by + bh + 46, { size: 20, a: pb });
-
-    // ── the tag that should carry a date
-    const pt = A(t, c(2, 0.05), 0.75, ease.back);
+    // ── the blank tag
+    const pt = A(t, c(1, 0.06), 0.75, ease.out);
     if (pt > 0.01) {
+      const tw = 640;
+      const th = 258;
+      const tx = 140;
+      const ty = 924;
       ctx.save();
-      ctx.globalAlpha = clamp(pt * 1.6);
-      ctx.translate(0, (1 - pt) * 60);
-      tagCard(ctx, 800, 1040, 500, 356, [
-        { k: 'KAPAN', v: '—' },
-        { k: 'DI MANA', v: '—' },
-        { k: 'SIAPA', v: '—' },
-      ], { title: 'KETERANGAN KEJADIAN', rot: 0.010 });
+      ctx.globalAlpha = pt;
+      ctx.translate(0, (1 - pt) * 26);
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.6)';
+      ctx.shadowBlur = 36;
+      ctx.shadowOffsetY = 16;
+      const pg = ctx.createLinearGradient(tx, ty, tx + tw, ty + th);
+      pg.addColorStop(0, '#F5EBD5');
+      pg.addColorStop(1, '#CFC0A0');
+      fillRR(ctx, tx, ty, tw, th, 6, pg);
+      ctx.restore();
+      ctx.strokeStyle = 'rgba(74,58,40,0.55)';
+      ctx.lineWidth = 2;
+      fillRR(ctx, tx + 12, ty + 12, tw - 24, th - 24, 3, 'rgba(0,0,0,0)');
+      ctx.stroke();
+      txt(ctx, 'KETERANGAN KEJADIAN', tx + 34, ty + 66, { size: 21, font: F.mono, color: 'rgba(56,42,28,0.82)', track: 5 });
+      ['KAPAN', 'DI MANA'].forEach((lab, i) => {
+        const ly = ty + 132 + i * 76;
+        txt(ctx, lab, tx + 34, ly, { size: 27, font: F.mono, color: 'rgba(48,36,24,0.66)', track: 5 });
+        ctx.fillStyle = 'rgba(44,32,22,0.42)';
+        ctx.fillRect(tx + 190, ly - 4, tw - 244, 2);
+        const bl = A(t, c(1, 0.4 + i * 0.18), 0.5);
+        if (bl > 0.01) {
+          ctx.fillStyle = `rgba(40,30,20,${0.09 * bl})`;
+          ctx.fillRect(tx + 202, ly - 12, 130 * bl, 7);
+        }
+      });
+      pin(ctx, tx + tw - 48, ty + 10, 0.72);
+      ctx.restore();
+    }
 
-      // the stamp lands under the card, on the desk
-      const pq = A(t, c(3, 0.05), 0.38, ease.out);
-      stampInk(ctx, 'TANPA TANGGAL', 700, 1452, {
-        size: 46, rot: -0.10, a: pq, color: K.red, padX: 24, padY: 16, track: 4,
+    typeLabel(ctx, 'TIDAK ADA YANG MENULISNYA', 140, 1248, { size: 21, a: A(t, c(1, 0.9), 0.5) });
+
+    // ── when the filing starts
+    const pm = A(t, c(2, 0.06), 0.8, ease.out);
+    if (pm > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = pm;
+      rule(ctx, 104, 1400, 520, { a: 0.7 });
+      kick(ctx, 'HIPOKAMPUS MATANG', 104, 1456, { size: 21, color: K.dim, track: 6 });
+      num(ctx, '3 – 4', 96, 1568, { size: 104, color: K.bone, track: -5 });
+      txt(ctx, 'TAHUN', 104 + measure(ctx, '3 – 4', 104, F.display, -5) + 28, 1560, { size: 38, font: F.mono, color: K.dim, track: 7 });
+      ctx.restore();
+    }
+
+    // ── the verdict
+    const ps = A(t, c(3, 0.10), 0.28, ease.out);
+    if (ps > 0.01) {
+      const shake = t < c(3, 0.18) ? Math.sin(t * 92) * 4 * (1 - ps) : 0;
+      ctx.save();
+      ctx.translate(shake, 0);
+      stampInk(ctx, 'TANPA TANGGAL', W / 2 + 30, 1316, {
+        size: 78, rot: -0.045, a: ps, color: K.red, padX: 26, padY: 16, track: 6, align: 'center',
       });
       ctx.restore();
     }
 
-    // ── the anatomy beat
-    const pa = A(t, c(1, 0.05), 0.6, ease.out);
-    if (pa > 0) {
-      ctx.save();
-      ctx.globalAlpha = pa;
-      rule(ctx, 96, 1108, 620);
-      kick(ctx, 'YANG MENEMPELKAN WAKTU KE KEJADIAN', 96, 1166, { size: 20, color: K.dim, track: 5 });
-      txt(ctx, 'belum aktif', 96, 1280, { size: 104, font: F.display, color: K.bone, track: -3 });
-      txt(ctx, 'sampai usia 3 — 4 tahun.', 100, 1344, { size: 34, font: F.mono, color: K.dim, track: 1 });
-      ctx.restore();
-    }
+    footer(ctx, { chapter: 'TANPA TANGGAL' });
   },
 };

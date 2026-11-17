@@ -2,94 +2,101 @@ import { W, H, txt, hexA, fillRR, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, rng, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, desk, contact, crib, mobile, kick, num, rule, stampInk, typeLabel, pin, thread,
-  hatch, leader,
+  K, ease, cue, A, desk, spot, contact, cotTop, mobile, kick, num, rule, typeLabel, footer, leader,
 } from './_arsip.mjs';
 
 // 05 — SEPRAI
-// The cot from the experiment. The baby remembers the mobile for a week — as
-// long as the sheet is the same sheet. Change the liner and the memory is gone.
+// The cot from above, so the proportions stay honest. The mobile turns above
+// the head; two ages sit under it. Then the sheet changes and the memory goes.
+
+const SHEETS = [
+  ['#C7D2C7', '#8B9A90'],
+  ['#D2C6A8', '#8C7C5C'],
+];
 
 export default {
   draw(ctx, t, scene, cam) {
     const c = (i, o = 0) => cue(scene, i, o);
-    desk(ctx, { lampX: W * 0.32, lampY: 520, key: 'r5' });
+    desk(ctx, { lampX: W * 0.48, lampY: 400, key: 'r5' });
+    spot(ctx, W * 0.5, 600, 820, 0.16);
 
-    const swapped = A(t, c(3, 0.05), 0.9, ease.inOut);
+    const cw = 1160;
+    const ch = 760;
+    const cx = (W - cw) / 2;
+    const cy = 176;
 
-    // ── the cot
-    const pc = A(t, 0.05, 0.9, ease.expo);
-    const cx0 = 62;
-    const cy0 = 408;
-    const cw = 1010;
-    const ch = 700;
-    ctx.save();
-    ctx.globalAlpha = pc;
-    ctx.translate((1 - pc) * -120, 0);
-    contact(ctx, cx0 + 20, cy0 + ch - 40, cw - 40, 90, 0.5);
-    crib(ctx, cx0, cy0, cw, ch, { key: 'r5a', blanket: ['#A9BDB4', '#5C7069'] });
-    // the lamp finds the cot
-    ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-    const wl = ctx.createRadialGradient(cx0 + cw * 0.5, cy0 + ch * 0.5, 20, cx0 + cw * 0.5, cy0 + ch * 0.5, cw * 0.62);
-    wl.addColorStop(0, 'rgba(255,198,132,0.20)');
-    wl.addColorStop(1, 'rgba(255,198,132,0)');
-    ctx.fillStyle = wl;
-    ctx.fillRect(cx0 - 60, cy0 - 60, cw + 120, ch + 120);
-    ctx.restore();
-    if (swapped > 0.001) {
+    const pc = A(t, 0.10, 1.1, ease.expo);
+    if (pc > 0.01) {
       ctx.save();
-      ctx.globalAlpha = pc * swapped;
-      crib(ctx, cx0, cy0, cw, ch, { key: 'r5b', blanket: ['#DBB58A', '#8A5730'] });
+      ctx.globalAlpha = pc;
+      ctx.translate(0, (1 - pc) * 50);
+      contact(ctx, cx + 26, cy + ch - 40, cw - 52, 150, 0.68);
+      cotTop(ctx, cx, cy, cw, ch, { key: 'a', sheet: SHEETS[0] });
+      const swap = A(t, c(3, 0.10), 0.55, ease.inOut);
+      if (swap > 0.01) {
+        ctx.globalAlpha = pc * swap;
+        cotTop(ctx, cx, cy, cw, ch, { key: 'b', sheet: SHEETS[1] });
+        ctx.globalAlpha = pc;
+      }
       ctx.restore();
-      const pl = A(t, c(3, 0.55), 0.6, ease.out);
-      typeLabel(ctx, 'SEPRAI DIGANTI', cx0 + 250, cy0 + 96, { size: 20, a: pl, rot: -0.02 });
     }
-    ctx.restore();
 
-    // ── the mobile above the cot
-    const pm = A(t, 0.35, 0.9, ease.out);
+    // ── the mobile, hanging over the head end
+    const pm = A(t, c(1, 0.10), 0.9, ease.out);
     if (pm > 0.01) {
       ctx.save();
       ctx.globalAlpha = pm;
-      mobile(ctx, 330, 150, 470, 270, t, { a: pm, swing: 1 - swapped * 0.9, dim: swapped });
+      mobile(ctx, 600, 66, 470, 268, t, { a: pm, swing: 1 });
       ctx.restore();
     }
 
-    // ── the two measurements
-    const rows = [
-      { y: 1226, age: '3 BULAN', w: '1 MINGGU', d: 0.55 },
-      { y: 1378, age: '6 BULAN', w: '2 MINGGU', d: 0.85 },
+    typeLabel(ctx, 'TAMPAK ATAS — KASUR, USIA 6 BULAN', cx + 16, cy + ch + 46, { size: 21, a: pc });
+
+    // ── the two ages
+    const ages = [
+      { at: c(1, 0.55), age: '3', ing: '1', x: 116 },
+      { at: c(2, 0.05), age: '6', ing: '2', x: 760 },
     ];
-    rows.forEach((r2, i) => {
-      const a = A(t, c(1, r2.d), 0.55, ease.out);
-      if (a <= 0.01) return;
+    ages.forEach((a) => {
+      const p = A(t, a.at, 0.7, ease.out);
+      if (p <= 0.01) return;
       ctx.save();
-      ctx.globalAlpha = a;
-      ctx.translate((1 - a) * 40, 0);
-      rule(ctx, 96, r2.y - 62, 1248, { a: 0.55 });
-      txt(ctx, r2.age, 96, r2.y + 26, { size: 44, font: F.mono, color: K.dim, track: 3 });
-      txt(ctx, 'ingat', 340, r2.y + 24, { size: 30, font: F.mono, color: 'rgba(244,235,218,0.34)', track: 2 });
-      txt(ctx, r2.w, 1168, r2.y + 34, {
-        size: 76, font: F.display, color: i ? K.bone : K.bone2, align: 'right', track: -2,
+      ctx.globalAlpha = p;
+      const y = 1236;
+      rule(ctx, a.x, y - 78, 564, { a: 0.75 });
+      kick(ctx, `USIA ${a.age} BULAN`, a.x, y - 28, { size: 21, color: K.dim, track: 6 });
+      txt(ctx, `INGAT ${a.ing}`, a.x - 4, y + 78, { size: 82, font: F.display, color: K.bone, track: -2 });
+      txt(ctx, 'MINGGU', a.x + 10 + measure(ctx, `INGAT ${a.ing}`, 82, F.display, -2), y + 76, {
+        size: 40, font: F.mono, color: K.redHi, track: 7,
       });
       ctx.restore();
     });
 
-    // ── the rule of the experiment
-    const pr = A(t, c(4, 0.10), 0.6, ease.out);
-    if (pr > 0.01) {
+    // ── the condition
+    const pw = A(t, c(3, 0.05), 0.7, ease.out);
+    if (pw > 0.01) {
       ctx.save();
-      ctx.globalAlpha = pr;
-      const y = 1520;
-      const bx = 96;
-      stampInk(ctx, 'GANTI SEPRAI = HILANG', 720, y - 8, {
-        size: 40, rot: -0.05, a: pr, color: K.red, padX: 22, padY: 14, track: 3,
-      });
-      kick(ctx, 'KONTEKS, BUKAN ISI', bx, y + 6, { size: 19, color: K.dim, track: 6 });
+      ctx.globalAlpha = pw;
+      fillRR(ctx, 104, 1410, 1232, 106, 4, hexA(K.red, 0.14));
+      ctx.strokeStyle = hexA(K.redHi, 0.8);
+      ctx.lineWidth = 2.4;
+      ctx.strokeRect(104, 1410, 1232, 106);
+      txt(ctx, 'SYARATNYA: JANGAN GANTI SEPRAI', 146, 1478, { size: 42, font: F.display, color: K.redHi, track: 2.5 });
+      txt(ctx, '→', W - 168, 1480, { size: 46, font: F.display, color: K.redHi });
       ctx.restore();
     }
 
-    typeLabel(ctx, 'UJI MAINAN GANTUNG — ROVEE-COLLIER', 74, 1174, { size: 20, a: pc });
+    // ── what the memory is tied to
+    const pl = A(t, c(4, 0.10), 0.7, ease.out);
+    if (pl > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = pl;
+      txt(ctx, 'Menempel pada tempat, bukan pada cerita.', 104, 1588, {
+        size: 34, font: F.mono, color: 'rgba(246,237,219,0.6)', track: 0.5,
+      });
+      ctx.restore();
+    }
+
+    footer(ctx, { chapter: 'SEPRAI' });
   },
 };

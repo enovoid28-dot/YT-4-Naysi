@@ -2,110 +2,90 @@ import { W, H, txt, hexA, fillRR, measure } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE, rng, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, desk, contact, tube, kick, num, rule, typeLabel, stampInk, pin, thread,
+  K, ease, cue, A, desk, spot, contact, tube, kick, num, rule, typeLabel, footer,
 } from './_arsip.mjs';
 
 // 07 — TUJUH TAHUN
-// Two measuring tubes, filled to what the study measured: most of it still
-// there at seven, a third of it left at nine. The liquid is the memory.
+// Two glass tubes, one for each age band, filled to the number the study found.
 
 export default {
   draw(ctx, t, scene, cam) {
     const c = (i, o = 0) => cue(scene, i, o);
-    desk(ctx, { lampX: W * 0.5, lampY: 380, key: 'r7' });
+    desk(ctx, { lampX: W * 0.5, lampY: 360, key: 'r7' });
+    spot(ctx, W * 0.5, 600, 840, 0.15);
 
-    const tubeH = 620;
-    const tubeW = 168;
-    const ty = 470;
+    const baseY = 1042;
+    const tubeH = 800;
+    const tubeW = 228;
 
-    const cols = [
-      { x: 288, v: 0.68, hi: 0.72, lo: 0.63, label: 'USIA 5 — 7', head: 'masih ingat', d: 0.55, color: K.teal },
-      { x: 838, v: 0.35, hi: 0.35, lo: 0.35, label: 'USIA 8 — 9', head: 'tersisa', d: 1.35, color: K.redHi },
-    ];
-
-    const pa = A(t, c(1, 0.05), 0.8, ease.expo);
-    cols.forEach((col, i) => {
-      const pf = A(t, c(i === 0 ? 2 : 3, col.d), 1.5, ease.out);
-      const a = pa;
-      if (a <= 0.01) return;
+    // ── the year of the clearing, ghosted
+    const p7 = A(t, 0.12, 1.0, ease.expo);
+    if (p7 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = a;
-      contact(ctx, col.x - 40, ty + tubeH - 30, tubeW + 80, 80, 0.55);
+      ctx.globalAlpha = p7 * 0.15;
+      num(ctx, '7', W / 2 - 16, 690, { size: 600, color: K.bone, align: 'center', track: -18 });
+      ctx.restore();
+      ctx.save();
+      ctx.globalAlpha = clamp(p7 * 1.4);
+      kick(ctx, 'PEMBERSIHAN BESAR DIMULAI', W / 2, 158, { size: 25, color: K.dim, align: 'center', track: 8 });
+      ctx.restore();
+    }
 
-      // glass, empty
-      tube(ctx, col.x, ty, tubeW, tubeH, 0, {
-        a: 1, color: col.color, ticks: 4, labels: ['75%', '50%', '25%'],
-      });
-      // liquid rises on cue
-      if (pf > 0.01) {
-        tube(ctx, col.x, ty, tubeW, tubeH, col.v * pf, {
-          a: Math.min(1, pf * 1.6), color: col.color, ticks: 0,
-        });
+    const bands = [
+      { x: 300, label: 'USIA 5 — 7', v: 68, range: '63—72%', color: K.teal, at: c(2, 0.10) },
+      { x: 912, label: 'USIA 8 — 9', v: 35, color: K.redHi, at: c(4, 0.10) },
+    ];
+    bands.forEach((b) => {
+      const pg = A(t, b.at, 1.6, ease.out);
+      const appear = A(t, b.at - 0.55, 0.6, ease.out);
+      if (appear <= 0.01) return;
+      ctx.save();
+      ctx.globalAlpha = appear;
+      contact(ctx, b.x - 50, baseY + 6, tubeW + 100, 96, 0.64);
+      spot(ctx, b.x + tubeW / 2, baseY - tubeH * 0.5, 460, 0.10);
+      tube(ctx, b.x, baseY - tubeH, tubeW, tubeH, pg * (b.v / 100), { color: b.color, ticks: 4, labels: ['25', '50', '75'] });
+      if (b.range) {
+        if (pg > 0.5) {
+          num(ctx, b.range, b.x - 14, baseY + 216, { size: 118, color: b.color, track: -5 });
+        }
+      } else {
+        const shown = Math.round(b.v * clamp(pg * 1.15));
+        if (shown > 0) num(ctx, `${shown}%`, b.x - 10, baseY + 216, { size: 138, color: b.color, track: -4 });
       }
-      // tick under the meniscus
-      if (pf > 0.85) {
-        const my = ty + tubeH - tubeH * col.v;
-        ctx.save();
-        ctx.globalAlpha = (pf - 0.85) / 0.15;
-        ctx.fillStyle = hexA(K.bone, 0.8);
-        ctx.fillRect(col.x + tubeW + 4, my - 1, 26, 2);
-        txt(ctx, `${Math.round(col.v * 100)}%`, col.x + tubeW + 36, my + 8, {
-          size: 24, font: F.mono, color: K.bone, track: 1,
-        });
-        ctx.restore();
-      }
-
-      // head
-      kick(ctx, col.label, col.x - 12, ty - 44, { size: 20, color: K.dim, track: 6 });
-      const shown = i === 0 ? '63 — 72%' : '35%';
-      num(ctx, shown, col.x - 16, ty - 86, {
-        size: i === 0 ? 88 : 126, color: i ? K.redHi : K.bone, track: -3, a: clamp(pf * 1.5),
-      });
-      txt(ctx, col.head, col.x - 12, ty + tubeH + 76, { size: 30, font: F.mono, color: K.dim, track: 2 });
-
+      txt(ctx, b.label, b.x + 2, baseY + 296, { size: 32, font: F.mono, color: K.dim, track: 4 });
       ctx.restore();
     });
 
-    // ── the divider between the two measurements
-    const pv = A(t, c(3, 0.25), 0.7, ease.out);
-    if (pv > 0.01) {
+    // ── the drop between the two
+    const pd = A(t, c(4, 0.85), 0.8, ease.out);
+    if (pd > 0.01) {
       ctx.save();
-      ctx.globalAlpha = pv;
-      ctx.strokeStyle = 'rgba(244,235,218,0.18)';
-      ctx.lineWidth = 1.6;
-      ctx.beginPath();
-      ctx.moveTo(720, 420);
-      ctx.lineTo(720, 1200);
-      ctx.stroke();
-      // the fall, drawn as an arrow
-      ctx.strokeStyle = hexA(K.redHi, 0.8);
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(700, 560);
-      ctx.bezierCurveTo(760, 700, 780, 900, 800, 1010);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(800, 1010);
-      ctx.lineTo(786, 980);
-      ctx.moveTo(800, 1010);
-      ctx.lineTo(772, 1004);
-      ctx.stroke();
-      txt(ctx, '−33', 736, 800, { size: 40, font: F.mono, color: K.redHi, track: 1 });
-      kick(ctx, 'POIN', 740, 838, { size: 18, color: K.redHi, track: 4 });
+      ctx.globalAlpha = pd;
+      const x = 616;
+      const y = 560;
+      ctx.fillStyle = hexA(K.bone, 0.85);
+      ctx.fillRect(x, y, 208, 3);
+      txt(ctx, 'TURUN', x + 104, y - 24, { size: 52, font: F.display, color: K.redHi, align: 'center', track: 3 });
+      kick(ctx, 'DALAM DUA TAHUN', x + 104, y + 48, { size: 19, color: hexA(K.redHi, 0.80), align: 'center', track: 5 });
       ctx.restore();
     }
 
-    // ── the study line
-    const ps = A(t, c(1, 0.15), 0.6, ease.out);
+    // ── the source
+    const ps = A(t, c(1, 0.10), 0.8, ease.out);
     if (ps > 0.01) {
       ctx.save();
       ctx.globalAlpha = ps;
-      rule(ctx, 120, 1268, 1200);
-      kick(ctx, 'BAUER, EMORY — DILACAK DARI USIA 3', 120, 1330, { size: 20, color: K.dim, track: 5 });
-      txt(ctx, 'Dua dari tiga kenangan, hilang dalam dua tahun.', 120, 1424, {
-        size: 42, font: F.display, color: K.bone,
+      rule(ctx, 104, 1424, 1232, { a: 0.5 });
+      typeLabel(ctx, 'BAUER & EMORY, 2014', 104, 1494, { size: 21 });
+      txt(ctx, 'Anak yang sama, diwawancarai dua kali.', 104, 1560, {
+        size: 30, font: F.mono, color: 'rgba(246,237,219,0.58)', track: 0.5,
+      });
+      txt(ctx, 'Persen memori usia 5 — 7 yang masih ada.', 104, 1602, {
+        size: 30, font: F.mono, color: 'rgba(246,237,219,0.58)', track: 0.5,
       });
       ctx.restore();
     }
+
+    footer(ctx, { chapter: 'TUJUH TAHUN' });
   },
 };

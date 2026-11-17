@@ -84,185 +84,189 @@
      "text": "Sekarang",
      "accent": false,
      "start": 2.85,
-     "end": 3.56
+     "end": 3.63
     },
     {
      "text": "mundur",
      "accent": false,
-     "start": 3.575,
-     "end": 3.76
+     "start": 3.645,
+     "end": 3.91
     },
     {
      "text": "lebih",
      "accent": false,
-     "start": 3.775,
-     "end": 4.05
+     "start": 3.925,
+     "end": 4.29
     },
     {
      "text": "jauh.",
      "accent": false,
-     "start": 4.065,
-     "end": 4.22
-    },
+     "start": 4.305,
+     "end": 4.705
+    }
+   ],
+   [
     {
      "text": "Kosong.",
      "accent": true,
-     "start": 4.235,
-     "end": 4.705
+     "start": 4.705,
+     "end": 5.305
     }
    ],
    [
     {
      "text": "Bukan",
      "accent": false,
-     "start": 4.705,
-     "end": 5
+     "start": 5.305,
+     "end": 6.13
     },
     {
      "text": "karena",
      "accent": false,
-     "start": 5.015,
-     "end": 5.065
+     "start": 6.145,
+     "end": 6.52
     },
     {
      "text": "kamu",
      "accent": false,
-     "start": 5.055,
-     "end": 5.105
+     "start": 6.535,
+     "end": 6.72
     },
     {
      "text": "lupa.",
-     "accent": false,
-     "start": 5.075,
-     "end": 5.125
-    },
-    {
-     "text": "Kamu",
-     "accent": false,
-     "start": 5.125,
-     "end": 5.175
-    },
-    {
-     "text": "memang",
-     "accent": false,
-     "start": 5.145,
-     "end": 5.195
-    },
-    {
-     "text": "belum",
      "accent": true,
-     "start": 5.175,
-     "end": 5.225
-    },
-    {
-     "text": "bisa",
-     "accent": true,
-     "start": 5.205,
-     "end": 5.255
-    },
-    {
-     "text": "menyimpannya.",
-     "accent": false,
-     "start": 5.225,
-     "end": 5.305
+     "start": 6.735,
+     "end": 7.305
     }
    ],
    [
     {
      "text": "Kamu",
      "accent": false,
-     "start": 5.305,
-     "end": 5.96
+     "start": 7.305,
+     "end": 7.8
+    },
+    {
+     "text": "memang",
+     "accent": false,
+     "start": 7.815,
+     "end": 8.03
+    },
+    {
+     "text": "belum",
+     "accent": true,
+     "start": 8.045,
+     "end": 8.29
+    },
+    {
+     "text": "bisa",
+     "accent": true,
+     "start": 8.305,
+     "end": 8.53
+    },
+    {
+     "text": "menyimpannya.",
+     "accent": false,
+     "start": 8.545,
+     "end": 9.585
+    }
+   ],
+   [
+    {
+     "text": "Kamu",
+     "accent": false,
+     "start": 9.585,
+     "end": 10.15
     },
     {
      "text": "pernah",
      "accent": false,
-     "start": 5.975,
-     "end": 6.06
+     "start": 10.165,
+     "end": 10.45
     },
     {
      "text": "jadi",
      "accent": false,
-     "start": 6.075,
-     "end": 6.125
+     "start": 10.465,
+     "end": 10.79
     },
     {
      "text": "bayi",
      "accent": false,
-     "start": 6.125,
-     "end": 6.175
+     "start": 10.805,
+     "end": 10.99
     },
     {
      "text": "selama",
      "accent": false,
-     "start": 6.175,
-     "end": 6.27
+     "start": 11.005,
+     "end": 11.32
     },
     {
      "text": "dua",
      "accent": true,
-     "start": 6.285,
-     "end": 6.335
+     "start": 11.335,
+     "end": 11.51
     },
     {
      "text": "tahun",
      "accent": true,
-     "start": 6.335,
-     "end": 6.385
+     "start": 11.525,
+     "end": 11.81
     },
     {
      "text": "penuh,",
      "accent": false,
-     "start": 6.395,
-     "end": 6.5
+     "start": 11.825,
+     "end": 12.1
     },
     {
      "text": "dan",
      "accent": false,
-     "start": 6.515,
-     "end": 6.565
+     "start": 12.115,
+     "end": 12.75
     },
     {
      "text": "tidak",
      "accent": false,
-     "start": 6.545,
-     "end": 6.61
+     "start": 12.765,
+     "end": 13.05
     },
     {
      "text": "ada",
      "accent": false,
-     "start": 6.625,
-     "end": 6.675
+     "start": 13.065,
+     "end": 13.34
     },
     {
      "text": "satu",
      "accent": false,
-     "start": 6.675,
-     "end": 6.725
+     "start": 13.355,
+     "end": 13.66
     },
     {
      "text": "hari",
      "accent": false,
-     "start": 6.725,
-     "end": 6.775
+     "start": 13.675,
+     "end": 13.99
     },
     {
      "text": "pun",
      "accent": false,
-     "start": 6.775,
-     "end": 6.825
+     "start": 14.005,
+     "end": 14.1
     },
     {
      "text": "yang",
      "accent": false,
-     "start": 6.805,
-     "end": 6.92
+     "start": 14.115,
+     "end": 14.21
     },
     {
      "text": "tersisa.",
      "accent": false,
-     "start": 6.935,
-     "end": 7.305
+     "start": 14.225,
+     "end": 14.72
     }
    ]
   ]
@@ -432,7 +436,7 @@
     },
     {
      "text": "waktu.",
-     "accent": false,
+     "accent": true,
      "start": 9.475,
      "end": 9.775
     }
@@ -660,37 +664,39 @@
      "text": "Lalu",
      "accent": false,
      "start": 9.23,
-     "end": 9.61
+     "end": 9.82
     },
     {
      "text": "dipangkas.",
-     "accent": false,
-     "start": 9.625,
-     "end": 9.84
-    },
+     "accent": true,
+     "start": 9.835,
+     "end": 10.685
+    }
+   ],
+   [
     {
      "text": "Yang",
      "accent": false,
-     "start": 9.855,
-     "end": 10
+     "start": 10.685,
+     "end": 11.03
     },
     {
      "text": "tidak",
      "accent": false,
-     "start": 10.015,
-     "end": 10.16
+     "start": 11.045,
+     "end": 11.49
     },
     {
      "text": "dipakai,",
      "accent": false,
-     "start": 10.175,
-     "end": 10.34
+     "start": 11.505,
+     "end": 12.12
     },
     {
      "text": "dibuang.",
      "accent": true,
-     "start": 10.355,
-     "end": 10.685
+     "start": 12.135,
+     "end": 12.37
     }
    ]
   ]
@@ -1126,19 +1132,19 @@
     },
     {
      "text": "jangan",
-     "accent": false,
+     "accent": true,
      "start": 8.875,
      "end": 9.78
     },
     {
      "text": "ganti",
-     "accent": false,
+     "accent": true,
      "start": 9.795,
      "end": 9.96
     },
     {
      "text": "seprai.",
-     "accent": false,
+     "accent": true,
      "start": 9.975,
      "end": 10.275
     }
