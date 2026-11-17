@@ -1,14 +1,12 @@
-import r1 from './r1.mjs';
-import r2 from './r2.mjs';
-import r3 from './r3.mjs';
-import r4 from './r4.mjs';
-import r5 from './r5.mjs';
-import r6 from './r6.mjs';
-import r7 from './r7.mjs';
-import r8 from './r8.mjs';
-import r9 from './r9.mjs';
+import t1 from './t1.mjs';
+import t2 from './t2.mjs';
+import t3 from './t3.mjs';
+import t4 from './t4.mjs';
+import t5 from './t5.mjs';
+import t6 from './t6.mjs';
+import t7 from './t7.mjs';
+import t8 from './t8.mjs';
+import t9 from './t9.mjs';
 
-// Episode 19 ("Lagu itu nyangkut di kepalamu.")
-// key map. Ep17 used q1..q9 (printed sheet), Ep18 used r1..r9 on the archive kit.
-// Ep19 rebuilds r1..r9 on the SINYAL kit (dark studio, one beam, signal drawing).
-export default { r1, r2, r3, r4, r5, r6, r7, r8, r9 };
+// Episode 21 ("Tidur enam jam itu utang.") — keys t1..t9 on the MALAM kit.
+export default { t1, t2, t3, t4, t5, t6, t7, t8, t9 };

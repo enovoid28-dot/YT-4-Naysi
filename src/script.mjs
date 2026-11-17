@@ -1,129 +1,137 @@
-// Episode 20 — "Langit malam seharusnya terang."
+// Episode 21 — "Tidur enam jam itu utang."
 //
-// Olbers' paradox, told with the sky itself rather than with diagrams: a dome of
-// stars, sight-lines that end on star surfaces, a light-cone with a finite age,
-// a bubble with an edge, space stretching light out of the visible band, and the
-// microwave wall that is left of the first light.
+// Sleep debt, told from inside one bedroom: a clock that only ever counts one
+// way, a debt column that grows across the work week, a brain that files the day
+// only after the lights go out, a blood-sugar curve that bends, two appetite
+// hormones that swap places, a caffeine dose that is still half-there, and the
+// pattern that outlives any single bad night.
 //
 // Sources:
-//   Olbers (1823) — if the universe is infinite and evenly filled with stars,
-//     every line of sight ends on a star surface, so the night sky should be as
-//     bright as the Sun's surface.
-//   Standard cosmology — the dominant resolution is finite age: stars and
-//     galaxies formed a few hundred million years after the Big Bang, so the
-//     light has simply not had time to arrive from everywhere. Expansion adds
-//     dimming but on its own "is by no means enough" to blacken the sky.
-//   Numbers: universe age 13.8 Gyr; observable-universe diameter ~93 Gly;
-//     CMB 2.725 K; Proxima 4.24 ly; sunlight 8 min 20 s; ~2x10^23 stars.
+//   Sleep duration for adults: 7–9 h (AASM / Sleep Research Society consensus).
+//   Dawson & Reid (1997, Nature) — 17 h awake ≈ 0.05 % blood alcohol;
+//     24 h awake ≈ 0.10 %.
+//   Spiegel, Leproult & Van Cauter (1999, Lancet) — 4 h in bed for 6 nights in
+//     healthy young men reduced glucose tolerance towards a prediabetic state.
+//   Spiegel et al. (2004) — sleep restriction raises ghrelin and lowers leptin.
+//   Caffeine half-life ~5 h (range 3–7 h).
+//   Slow-wave sleep replays the day from hippocampus to cortex (Wilson &
+//     McNaughton 1994).
+//   Chronic short sleep (<6 h) is associated with hypertension, diabetes and
+//     weight gain (Cappuccio et al. 2010 meta-analysis) — association, stated as
+//     association.
 //
-// One card = one spoken sentence, so no caption can change mid-sentence.
+// One card = one clause, so no caption can change mid-sentence and each line
+// stays short enough to be read from a phone at arm's length.
 
-export const SERIES = 'NAYSI · LANGIT';
+export const SERIES = 'NAYSI · MALAM';
 export const BRAND = 'NAYSI';
 
 export const SCENES = [
   {
-    id: 's1', key: 'r1', label: 'LANGIT HITAM', index: '01', theme: 'dark',
-    vo: 'Lihat ke atas, di tempat yang gelap. Seharusnya ada cahaya di setiap arah. Karena bintang di alam semesta tidak terhitung jumlahnya. Tapi langit malam tetap hitam. Dan jawabannya bukan karena bintangnya jauh.',
+    id: 's1', key: 't1', label: 'JAM DUA', index: '01', theme: 'dark',
+    vo: 'Jam dua pagi. Kamu masih bangun. Padahal besok pagi kamu harus tetap waras. Tubuhmu tidak menghitung jam. Ia menghitung utang. Dan utang itu tidak hilang hanya karena kamu terbiasa.',
     cap: [
-      'Lihat ke atas, di tempat yang gelap.',
-      'Seharusnya ada cahaya di setiap arah.',
-      'Karena bintang di alam semesta tidak terhitung jumlahnya.',
-      'Tapi langit malam tetap *hitam*.',
-      'Dan jawabannya bukan karena bintangnya *jauh*.',
+      'Jam dua pagi.',
+      'Kamu masih bangun.',
+      'Padahal besok pagi kamu harus tetap waras.',
+      'Tubuhmu tidak menghitung jam.',
+      'Ia menghitung *utang*.',
+      'Dan utang itu tidak hilang hanya karena kamu terbiasa.',
     ],
     pad: 1.45,
   },
   {
-    id: 's2', key: 'r2', label: 'PARADOKS', index: '02', theme: 'dark',
-    vo: 'Ini pertanyaan yang terdengar sederhana. Kalau alam semesta tak terbatas dan bintang tersebar di mana-mana. Setiap garis pandang harus berakhir di sebuah bintang. Artinya seluruh langit seharusnya seterang permukaan matahari. Bahkan malam pun seharusnya terang. Itu paradoks Olbers.',
+    id: 's2', key: 't2', label: 'UTANG', index: '02', theme: 'dark',
+    vo: 'Orang dewasa butuh tujuh sampai sembilan jam. Kalau kamu tidur enam jam, kurangnya dua jam. Lima hari kerja, sepuluh jam hilang. Satu malam penuh yang tidak pernah kamu ambil.',
     cap: [
-      'Ini pertanyaan yang terdengar sederhana.',
-      'Kalau alam semesta tak terbatas dan bintang tersebar di mana-mana.',
-      'Setiap garis pandang harus berakhir di sebuah bintang.',
-      'Artinya seluruh langit seharusnya seterang permukaan matahari.',
-      'Bahkan malam pun seharusnya terang.',
-      'Itu *paradoks Olbers*.',
+      'Orang dewasa butuh *tujuh sampai sembilan* jam.',
+      'Kalau kamu tidur enam jam, kurangnya dua jam.',
+      'Lima hari kerja, *sepuluh jam* hilang.',
+      'Satu malam penuh yang tidak pernah kamu ambil.',
     ],
     pad: 1.45,
   },
   {
-    id: 's3', key: 'r3', label: 'SKALA', index: '03', theme: 'dark',
-    vo: 'Bintang di alam semesta teramati sekitar dua ratus sextillion. Dua diikuti dua puluh tiga angka nol. Cahaya matahari butuh delapan menit untuk sampai ke kita. Bintang terdekat butuh empat tahun.',
+    id: 's3', key: 't3', label: 'FOKUS', index: '03', theme: 'dark',
+    vo: 'Utang itu ditagih lebih cepat dari yang kamu kira. Setelah tujuh belas jam terjaga, fokusmu setara dengan orang berkadar alkohol nol koma nol lima persen. Reaksi melambat. Tiga detik mati rasa. Dan kamu tidak menyadarinya.',
     cap: [
-      'Bintang di alam semesta teramati sekitar *dua ratus sextillion*.',
-      'Dua diikuti *dua puluh tiga* angka nol.',
-      'Cahaya matahari butuh *delapan menit* untuk sampai ke kita.',
-      'Bintang terdekat butuh *empat tahun*.',
+      'Utang itu ditagih lebih cepat dari yang kamu kira.',
+      'Setelah *tujuh belas jam* terjaga,',
+      'fokusmu setara dengan orang berkadar alkohol nol koma nol lima persen.',
+      'Reaksi melambat.',
+      'Tiga detik mati rasa.',
+      'Dan kamu tidak menyadarinya.',
     ],
     pad: 1.45,
   },
   {
-    id: 's4', key: 'r4', label: 'USIA', index: '04', theme: 'dark',
-    vo: 'Alasan pertama: alam semesta belum cukup tua. Usianya tiga belas koma delapan miliar tahun. Cahaya butuh waktu untuk menempuh jarak. Bintang yang lebih jauh dari usia itu, cahayanya belum sampai. Langit hitam karena kita melihat masa lalu yang belum selesai.',
+    id: 's4', key: 't4', label: 'MEMORI', index: '04', theme: 'dark',
+    vo: 'Otak memindahkan ingatan saat tidur. Hipokampus menyerahkan catatan hari itu ke korteks. Tanpa itu, kamu bisa belajar semalaman dan tetap lupa esok hari. Belajar tanpa tidur itu menulis di atas air.',
     cap: [
-      'Alasan pertama: alam semesta belum cukup tua.',
-      'Usianya *tiga belas koma delapan* miliar tahun.',
-      'Cahaya butuh waktu untuk menempuh jarak.',
-      'Bintang yang lebih jauh dari usia itu, cahayanya belum sampai.',
-      'Langit hitam karena kita melihat masa lalu yang belum selesai.',
+      'Otak memindahkan ingatan saat tidur.',
+      'Hipokampus menyerahkan catatan hari itu ke korteks.',
+      'Tanpa itu, kamu bisa belajar semalaman dan tetap lupa esok hari.',
+      'Belajar tanpa tidur itu menulis di atas *air*.',
     ],
     pad: 1.45,
   },
   {
-    id: 's5', key: 'r5', label: 'BATAS', index: '05', theme: 'dark',
-    vo: 'Alasan kedua: ada batas. Alam semesta teramati berdiameter sembilan puluh tiga miliar tahun cahaya. Di luar itu, cahayanya belum sempat tiba. Kegelapan itu bukan kosong. Ia hanya belum sampai.',
+    id: 's5', key: 't5', label: 'GULA', index: '05', theme: 'dark',
+    vo: 'Ada juga yang berubah di darah. Pemuda sehat yang tidur empat jam selama enam malam jadi kurang toleran terhadap gula. Kadarnya naik sampai ke wilayah pradiabetes. Hanya dari kurang tidur.',
     cap: [
-      'Alasan kedua: ada batas.',
-      'Alam semesta teramati berdiameter *sembilan puluh tiga* miliar tahun cahaya.',
-      'Di luar itu, cahayanya belum sempat tiba.',
-      'Kegelapan itu bukan kosong.',
-      'Ia hanya belum sampai.',
+      'Ada juga yang berubah di darah.',
+      'Pemuda sehat yang tidur empat jam selama enam malam',
+      'jadi kurang toleran terhadap gula.',
+      'Kadarnya naik sampai ke wilayah *pradiabetes*.',
+      'Hanya dari kurang tidur.',
     ],
     pad: 1.45,
   },
   {
-    id: 's6', key: 'r6', label: 'MERAH', index: '06', theme: 'dark',
-    vo: 'Ekspansi juga ikut meredupkan cahaya. Ruang meregang, dan cahaya yang melintas kehilangan energi. Panjang gelombangnya memanjang ke arah merah. Tapi itu saja tidak cukup. Alasannya tetap usia: cahaya punya batas waktu.',
+    id: 's6', key: 't6', label: 'LAPAR', index: '06', theme: 'dark',
+    vo: 'Kurang tidur juga mengubah rasa lapar. Hormon lapar naik, hormon kenyang turun. Kamu lebih sering merasa lapar. Yang dicari bukan sayur, tapi karbohidrat dan lemak. Itu sebabnya malam berakhir di kulkas.',
     cap: [
-      'Ekspansi juga ikut meredupkan cahaya.',
-      'Ruang meregang, dan cahaya yang melintas kehilangan energi.',
-      'Panjang gelombangnya memanjang ke arah *merah*.',
-      'Tapi itu saja tidak cukup.',
-      'Alasannya tetap usia: cahaya punya batas waktu.',
+      'Kurang tidur juga mengubah rasa lapar.',
+      'Hormon lapar naik, hormon kenyang turun.',
+      'Kamu lebih sering merasa lapar.',
+      'Yang dicari bukan sayur, tapi karbohidrat dan lemak.',
+      'Itu sebabnya malam berakhir di kulkas.',
     ],
     pad: 1.45,
   },
   {
-    id: 's7', key: 'r7', label: 'SISA CAHAYA', index: '07', theme: 'dark',
-    vo: 'Dan ada buktinya. Sisa cahaya pertama alam semesta masih ada di mana-mana. Suhunya dua koma tujuh kelvin. Kita menyebutnya radiasi latar gelombang mikro kosmik.',
+    id: 's7', key: 't7', label: 'KAFEIN', index: '07', theme: 'dark',
+    vo: 'Lalu ada kopi. Kafein tidak menghapus kantuk. Ia hanya menutup reseptornya. Separuh dosisnya masih ada lima jam kemudian. Kopi jam empat sore masih bekerja saat kamu tidur jam sepuluh.',
     cap: [
-      'Dan ada buktinya.',
-      'Sisa cahaya pertama alam semesta masih ada di mana-mana.',
-      'Suhunya *dua koma tujuh* kelvin.',
-      'Kita menyebutnya radiasi latar gelombang mikro kosmik.',
+      'Lalu ada kopi.',
+      'Kafein tidak menghapus kantuk.',
+      'Ia hanya menutup reseptornya.',
+      'Separuh dosisnya masih ada *lima jam* kemudian.',
+      'Kopi jam empat sore masih bekerja saat kamu tidur jam sepuluh.',
     ],
     pad: 1.45,
   },
   {
-    id: 's8', key: 'r8', label: 'TANGGAL LAHIR', index: '08', theme: 'dark',
-    vo: 'Jadi langit hitam bukan kegagalan. Ia bukti bahwa alam semesta punya awal. Kalau langit terang di semua arah, alam semesta akan tak terbatas dan tanpa awal. Kegelapan malam adalah tanggal lahirnya.',
+    id: 's8', key: 't8', label: 'POLA', index: '08', theme: 'dark',
+    vo: 'Yang berbahaya bukan satu malam, tapi polanya. Tidur di bawah enam jam setiap malam berhubungan dengan tekanan darah tinggi, diabetes, dan berat badan naik. Bukan hukuman. Hanya harga.',
     cap: [
-      'Jadi langit hitam bukan kegagalan.',
-      'Ia bukti bahwa alam semesta punya awal.',
-      'Kalau langit terang di semua arah, alam semesta akan tak terbatas dan tanpa awal.',
-      'Kegelapan malam adalah *tanggal lahirnya*.',
+      'Yang berbahaya bukan satu malam, tapi *polanya*.',
+      'Tidur di bawah enam jam setiap malam',
+      'berhubungan dengan tekanan darah tinggi, diabetes, dan berat badan naik.',
+      'Bukan hukuman.',
+      'Hanya harga.',
     ],
     pad: 1.45,
   },
   {
-    id: 's9', key: 'r9', label: 'LIHAT ATAS', index: '09', theme: 'dark',
-    vo: 'Malam ini, lihat ke atas sebentar. Setiap titik terang di sana sudah melakukan perjalanan ribuan tahun. Beberapa di antaranya mungkin sudah tidak ada. Tulis di komentar: kamu melihat langit dari kota mana?',
+    id: 's9', key: 't9', label: 'MALAM INI', index: '09', theme: 'dark',
+    vo: 'Malam ini tidak perlu sempurna. Bangun di jam yang sama, matikan lampu satu jam lebih awal. Tidur bukan waktu yang hilang. Ia tempat otak membereskan hari. Tulis di komentar: jam berapa kamu tidur semalam?',
     cap: [
-      'Malam ini, lihat ke atas sebentar.',
-      'Setiap titik terang di sana sudah melakukan perjalanan *ribuan tahun*.',
-      'Beberapa di antaranya mungkin sudah tidak ada.',
-      'Tulis di komentar: kamu melihat langit dari kota mana?',
+      'Malam ini tidak perlu sempurna.',
+      'Bangun di jam yang sama, matikan lampu satu jam lebih awal.',
+      'Tidur bukan waktu yang hilang.',
+      'Ia tempat otak membereskan hari.',
+      'Tulis di komentar: jam berapa kamu tidur semalam?',
     ],
     pad: 2.10,
   },

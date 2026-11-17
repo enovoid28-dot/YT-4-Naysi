@@ -291,22 +291,28 @@ for (const sc of SCENES) {
   // card can never flip while the last word of the sentence is still sounding.
   {
     const used = new Set();
+    const nCards = sentences.length;
+    // No caption may be on screen for less than this: a card that flips in
+    // under a second is unreadable even when the voice is perfectly in time.
+    const MIN_CARD = 1.20;
     let prev = speechStart;
     for (let i = 0; i < bounds.length; i++) {
       const b = bounds[i];
+      const remaining = nCards - 1 - i; // cards that still need room after this edge
       let best = null;
       let bestD = Infinity;
       gaps.forEach((g, gi) => {
         if (used.has(gi)) return;
-        if (g.mid <= prev + 0.42 || g.mid >= speechEnd - 0.30) return;
+        if (g.mid - prev < MIN_CARD - 1e-6) return;
+        if (g.mid > speechEnd - MIN_CARD * remaining - 0.10) return;
         const d = Math.abs(g.mid - b);
         if (d < bestD - 1e-6) { bestD = d; best = gi; }
       });
-      if (best !== null && bestD <= 1.35) {
+      if (best !== null && bestD <= 2.20) {
         used.add(best);
         bounds[i] = gaps[best].mid;
       }
-      bounds[i] = Math.max(prev + 0.42, Math.min(speechEnd - 0.25, bounds[i]));
+      bounds[i] = Math.max(prev + MIN_CARD, Math.min(speechEnd - 0.25, bounds[i]));
       prev = bounds[i];
     }
   }
