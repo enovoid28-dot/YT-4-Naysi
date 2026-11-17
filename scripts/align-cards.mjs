@@ -18,7 +18,7 @@ import { decodeVo } from '../src/audio.mjs';
 const FRAME = 0.01;
 const THRESH = 0.02;
 const MERGE = 0.12;
-const MIN_GAP = 0.12;
+const MIN_GAP = 0.09;
 
 const cleanWord = (w) => w.replace(/\*/g, '');
 const isAccent = (w) => w.startsWith('*') || w.endsWith('*');
@@ -284,6 +284,32 @@ for (const sc of SCENES) {
   const speechEnd = Math.min(wav.duration, runs[runs.length - 1].b);
   const gaps = silences(runs, wav.duration);
   const bounds = chooseBoundaries(gaps, sentences, sc.vo, speechStart, speechEnd, env, th);
+
+  // ---- settle: every card edge must land inside a real pause
+  // The prediction above is syllable weight over voiced time; the take's real
+  // silences are what matter. Each edge claims the nearest unused pause, so a
+  // card can never flip while the last word of the sentence is still sounding.
+  {
+    const used = new Set();
+    let prev = speechStart;
+    for (let i = 0; i < bounds.length; i++) {
+      const b = bounds[i];
+      let best = null;
+      let bestD = Infinity;
+      gaps.forEach((g, gi) => {
+        if (used.has(gi)) return;
+        if (g.mid <= prev + 0.42 || g.mid >= speechEnd - 0.30) return;
+        const d = Math.abs(g.mid - b);
+        if (d < bestD - 1e-6) { bestD = d; best = gi; }
+      });
+      if (best !== null && bestD <= 1.35) {
+        used.add(best);
+        bounds[i] = gaps[best].mid;
+      }
+      bounds[i] = Math.max(prev + 0.42, Math.min(speechEnd - 0.25, bounds[i]));
+      prev = bounds[i];
+    }
+  }
 
   const cards = [];
   let from = speechStart;

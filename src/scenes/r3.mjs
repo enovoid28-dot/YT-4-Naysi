@@ -18,7 +18,7 @@ export default {
 
     // caption 1 — the swarm
     const p1 = A(t, c[0], 0.6, ease.out);
-    const out1 = 1 - A(t, c[1], 0.4, ease.out);
+    const out1 = 1 - A(t, c[1], 0.22, ease.out);
     if (p1 > 0.01) {
       const swarm = A(t, wDua - 0.5, 1.4, ease.out);
       const r = rng(77);
@@ -52,12 +52,12 @@ export default {
       micro(ctx, 'DUA DIKUTI DUA PULUH TIGA NOL', 100, 420, { size: 24, color: L.ice, track: 6 });
       const zeros = ZEROS.slice(1);
       zeros.split('').forEach((z, i) => {
-        const q = A(t, c[1] + 0.1 + i * 0.035, 0.35);
+        const q = A(t, c[1] + 0.34 + i * 0.035, 0.35);
         txt(ctx, z, 104 + (i % 12) * 104, 640 + Math.floor(i / 12) * 150, {
           size: 96, font: F.num, color: hexA(L.star, 0.35 + q * 0.6), track: -3,
         });
       });
-      const q = A(t, c[1] + 1.0, 0.6, ease.expo);
+      const q = A(t, c[1] + 1.1, 0.6, ease.expo);
       if (q > 0.01) {
         ctx.globalAlpha = Math.min(p2, out2) * q;
         number(ctx, '10²³', 700, 1120, { size: 150, color: L.gold, align: 'center' });
