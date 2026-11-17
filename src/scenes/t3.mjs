@@ -102,7 +102,7 @@ export default {
     ctx.restore();
 
     // ── caption 2: seventeen hours
-    const n17 = A(t, c[1] + 0.15, 0.7, ease.out) * (1 - A(t, c[2] + 0.4, 0.6, ease.out));
+    const n17 = A(t, c[1] + 0.15, 0.7, ease.out) * (1 - A(t, c[2] - 0.05, 0.35, ease.inOut));
     if (n17 > 0.01) {
       ctx.save();
       ctx.globalAlpha *= n17;
@@ -113,7 +113,7 @@ export default {
     }
 
     // ── caption 3: the same number as a blood-alcohol reading
-    const bac = A(t, wFokus - 0.5, 0.8, ease.out) * (1 - A(t, c[3] + 0.3, 0.6, ease.out));
+    const bac = A(t, c[2] + 0.55, 0.7, ease.out) * (1 - A(t, c[3] + 0.3, 0.6, ease.out));
     if (bac > 0.01) {
       ctx.save();
       ctx.globalAlpha *= bac;
