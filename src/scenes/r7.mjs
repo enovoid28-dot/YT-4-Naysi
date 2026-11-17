@@ -37,7 +37,9 @@ export default {
     ];
     bands.forEach((b) => {
       const pg = A(t, b.at, 1.6, ease.out);
-      const appear = A(t, b.at - 0.55, 0.6, ease.out);
+      // the empty glass is on the table from the start of the scene: the study
+      // is being described before its result is poured in
+      const appear = A(t, 0.28, 0.8, ease.expo);
       if (appear <= 0.01) return;
       ctx.save();
       ctx.globalAlpha = appear;
