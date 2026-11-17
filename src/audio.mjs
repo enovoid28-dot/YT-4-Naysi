@@ -23,7 +23,9 @@ export const VO_FILTER = [
   'aresample=48000',
 ].join(',');
 
-export const voFile = (id) => path.join(process.cwd(), 'voice', 'ep19', `${id}.mp3`);
+// the take folder: episode 20 by default, override with VO_EP (e.g. VO_EP=ep19)
+export const VO_EP = process.env.VO_EP || 'ep20';
+export const voFile = (id) => path.join(process.cwd(), 'voice', VO_EP, `${id}.mp3`);
 
 const cache = new Map();
 

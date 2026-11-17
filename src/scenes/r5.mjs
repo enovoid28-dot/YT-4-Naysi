@@ -1,102 +1,165 @@
-import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
+import { W, H } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, cueWord, A, stage, waveform, headline, micro, number, clockArc, hudFrame, hairline, crossMark,
-} from './_sinyal.mjs';
+  L, A, cue, cueWord, ease, sky, say, micro, number, txt, hexA, TAU, clamp, lerp, rng, wash,
+} from './_langit.mjs';
 
-// 05 — SETENGAH
-// The song is cut at the halfway mark. The gap is what stays open: the second
-// half is never played, and the 24-hour clock starts from there.
+// 05 — BATAS
+// The observable universe is a bubble in a sky with no stars outside it: what we
+// see is everything whose light has had time to arrive. Outside, the dark is not
+// empty — it is a queue.
+
+const B = 90;
 
 export default {
   draw(ctx, t, scene) {
-    stage(ctx, { beamX: 700, beamY: -300, key: 'r5' });
-    const c = [0, 1, 2, 3].map((i) => cue(scene, i));
+    // no plate stars: this scene places every star it wants, inside the edge
+    sky(ctx, { key: 'r5', band: 0.45, stars: false, hills: false });
+    const c = [0, 1, 2, 3, 4].map((i) => cue(scene, i));
+    const wSembilan = cueWord(scene, 1, 'sembilan');
+    const cx = 720;
+    const cy = 860;
+    const R = 560;
 
-    // caption 1 — the cruellest trigger
-    const out1 = 1 - A(t, c[1], 0.4, ease.out);
-    headline(ctx, ['PEMICU', 'PALING KEJAM.'], 104, 420, {
-      t,
-      size: 132, at: c[0], stagger: 0.1, accents: [1, 2], a: out1,
+    const grow = A(t, c[1] + 0.05, 2.0, ease.out);
+    const rr = Math.max(2, R * grow);
+
+    // the dark outside is a queue, not a void: veil it so the eye reads an edge
+    if (grow > 0.05) {
+      ctx.save();
+      const veil = ctx.createRadialGradient(cx, cy, Math.max(2, rr), cx, cy, rr + 520);
+      veil.addColorStop(0, 'rgba(3,5,13,0.00)');
+      veil.addColorStop(0.14, 'rgba(3,5,13,0.62)');
+      veil.addColorStop(1, 'rgba(2,3,9,0.90)');
+      ctx.fillStyle = veil;
+      ctx.fillRect(-B, -B, W + 2 * B, H + 2 * B);
+      ctx.restore();
+    }
+
+    // inside: the sky we actually have
+    if (grow > 0.02) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, rr, 0, TAU);
+      ctx.clip();
+      const r = rng(55);
+      for (let i = 0; i < 340; i++) {
+        const x = cx - R + r() * R * 2;
+        const y = cy - R + r() * R * 2;
+        ctx.fillStyle = `rgba(255,246,227,${0.20 + r() * 0.66})`;
+        ctx.beginPath();
+        ctx.arc(x, y, 0.9 + r() * 2.2, 0, TAU);
+        ctx.fill();
+      }
+      const g = ctx.createRadialGradient(cx, cy, 8, cx, cy, R);
+      g.addColorStop(0, 'rgba(143,216,255,0.14)');
+      g.addColorStop(0.7, 'rgba(120,150,255,0.06)');
+      g.addColorStop(1, 'rgba(143,216,255,0.02)');
+      ctx.fillStyle = g;
+      ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
+      ctx.restore();
+
+      // the edge itself
+      ctx.save();
+      ctx.strokeStyle = hexA(L.ice, 0.55 + 0.12 * Math.sin(t * 1.4));
+      ctx.lineWidth = 2.4;
+      ctx.shadowColor = hexA(L.ice, 0.75);
+      ctx.shadowBlur = 26;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rr, 0, TAU);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // outside the bubble: structure that exists and has not reached us
+    if (grow > 0.2) {
+      const rg = rng(909);
+      ctx.save();
+      ctx.globalAlpha = 0.62 * A(t, c[3] + 0.1, 1.2);
+      for (let i = 0; i < 46; i++) {
+        const ang = rg() * TAU;
+        const d = R + 40 + rg() * 700;
+        const x = cx + Math.cos(ang) * d;
+        const y = cy + Math.sin(ang) * d * 0.86;
+        if (y > 1420 || y < 60 || x < -40 || x > W + 40) continue;
+        ctx.fillStyle = hexA(L.star, 0.12 + rg() * 0.16);
+        ctx.beginPath();
+        ctx.ellipse(x, y, 10 + rg() * 20, 4 + rg() * 8, rg() * TAU, 0, TAU);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // caption 1 — a second reason
+    say(ctx, ['ALASAN', 'KEDUA.'], 104, 320, {
+      t, size: 104, at: c[0], stagger: 0.1, a: 1 - A(t, c[1], 0.45, ease.out),
     });
 
-    // the waveform, and its cut
-    const p2 = A(t, c[1] - 0.1, 0.8, ease.out);
-    if (p2 > 0.01) {
+    // caption 2 — ninety-three billion light years across
+    const p2 = A(t, wSembilan - 0.2, 0.6, ease.expo);
+    const out2 = 1 - A(t, c[2], 0.45, ease.out);
+    if (p2 > 0.01 && out2 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = p2;
-      const x = 104;
-      const w = 1232;
-      const h = 380;
-      const y = 660;
-      const cut = 0.5;
-      const px = x + w * cut;
-      // the played half
-      ctx.save();
+      ctx.globalAlpha = Math.min(p2, out2);
+      micro(ctx, 'DIAMETER ALAM SEMESTA TERAMATI', 106, 1220, { size: 22, color: L.ice, track: 5 });
+      number(ctx, '93', 104, 1380, { size: 168, color: L.star });
+      micro(ctx, 'MILIAR TAHUN CAHAYA', 108, 1430, { size: 28, color: L.warm, track: 6 });
+      // the diameter, drawn across the bubble
+      const q = A(t, c[1] + 1.4, 1.1, ease.inOut);
+      ctx.strokeStyle = hexA(L.gold, 0.45);
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.rect(x, y - 40, w * cut, h + 80);
-      ctx.clip();
-      waveform(ctx, x, y, w, h, t, { amp: 1, color: K.lime, bars: 110, glow: 0.6, line: 3.4 });
-      ctx.restore();
-      // the unheard half: a ghost of the same trace
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(px, y - 40, w * (1 - cut), h + 80);
-      ctx.clip();
-      waveform(ctx, x, y, w, h, t * 0.0, { amp: 1, color: 'rgba(244,241,232,0.16)', bars: 110, glow: 0, line: 2, fill: false });
-      ctx.restore();
-      // the cut
-      const pc = A(t, c[1] + 0.55, 0.5, ease.expo);
-      ctx.strokeStyle = K.ember;
-      ctx.lineWidth = 6;
-      ctx.shadowColor = hexA(K.ember, 0.8);
-      ctx.shadowBlur = 30;
-      ctx.beginPath();
-      ctx.moveTo(px, y - 40);
-      ctx.lineTo(px, y - 40 + (h + 80) * pc);
+      ctx.moveTo(cx - rr, cy);
+      ctx.lineTo(cx - rr + 2 * rr * q, cy);
       ctx.stroke();
-      ctx.shadowBlur = 0;
-      // the gap widens away from the cut
-      const gap = 26 * pc;
-      ctx.fillStyle = 'rgba(10,8,17,0.9)';
-      ctx.fillRect(px - gap / 2, y - 40, gap, h + 80);
-      // playhead frozen at the cut
-      ctx.fillStyle = K.ink;
-      ctx.beginPath();
-      ctx.arc(px, y - 6, 10, 0, TAU);
-      ctx.fill();
-      micro(ctx, '00:00', x, y + h + 78, { size: 20, color: 'rgba(244,241,232,0.45)' });
-      micro(ctx, 'DIPUTAR', x + 4, y - 56, { size: 20, color: K.lime, track: 6 });
-      micro(ctx, 'TIDAK PERNAH SAMPAI SINI', px + 20, y - 56, { size: 20, color: 'rgba(244,241,232,0.40)', track: 4 });
-      micro(ctx, 'BERHENTI', px - 6, y + h + 78, { size: 20, color: K.ember, align: 'right', track: 6 });
       ctx.restore();
     }
 
-    // caption 3 — 24 hours
-    const w24 = cueWord(scene, 2, 'dua');
-    const p3 = A(t, w24 - 0.15, 0.7, ease.expo);
-    if (p3 > 0.01) {
+    // caption 3 — outside, the light has not arrived
+    const p3 = A(t, c[2], 0.6, ease.out);
+    const out3 = 1 - A(t, c[3], 0.45, ease.out);
+    if (p3 > 0.01 && out3 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = p3;
-      clockArc(ctx, 1010, 1250, 250, { p: A(t, w24, 1.4, ease.out), color: K.ember, lw: 10 });
-      number(ctx, '24', 1010, 1288, { size: 168, color: K.ink, align: 'center' });
-      micro(ctx, 'JAM', 1010, 1352, { size: 26, color: K.ember, align: 'center', track: 10 });
-      micro(ctx, 'PALING SERING KEMBALI', 104, 1180, { size: 26, color: K.ink, track: 5 });
-      hairline(ctx, 104, 1210, 520 * A(t, w24, 0.8, ease.expo), { color: hexA(K.ember, 0.6), weight: 3 });
+      ctx.globalAlpha = Math.min(p3, out3);
+      for (let i = 0; i < 10; i++) {
+        const ang = -2.7 + i * 0.60;
+        const q = clamp(A(t, c[2] + 0.1 + i * 0.08, 1.2, ease.out));
+        const d = lerp(R + 640, R + 26, q);
+        const x = cx + Math.cos(ang) * d;
+        const y = cy + Math.sin(ang) * d;
+        ctx.strokeStyle = hexA(L.crimson, 0.30);
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(ang) * (d + 110), cy + Math.sin(ang) * (d + 110));
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.fillStyle = hexA(L.crimson, 0.9 * (1 - q * 0.7));
+        ctx.beginPath();
+        ctx.arc(x, y, 4.2, 0, TAU);
+        ctx.fill();
+      }
+      micro(ctx, 'BELUM TIBA', 720, 1500, { size: 24, color: L.crimson, align: 'center', track: 7 });
       ctx.restore();
     }
 
-    // caption 4 — Zeigarnik
+    // caption 4 — the dark is not empty
     const p4 = A(t, c[3], 0.7, ease.out);
-    if (p4 > 0.01) {
+    const out4 = 1 - A(t, c[4], 0.45, ease.out);
+    if (p4 > 0.01 && out4 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = p4 * 0.96;
-      micro(ctx, 'EFEK', 104, 1310, { size: 22, color: K.ember, track: 8 });
-      txt(ctx, 'ZEIGARNIK', 104, 1412, { size: 96, font: F.head, color: K.ink, track: 2 });
-      micro(ctx, 'PIKIRAN YANG BELUM SELESAI TIDAK MAU DITUTUP', 108, 1470, {
-        size: 20, color: K.dim, track: 3,
-      });
+      ctx.globalAlpha = Math.min(p4, out4);
+      wash(ctx, 280, 560, 0.88);
+      say(ctx, ['BUKAN', 'KOSONG.'], 104, 320, { t, size: 96, at: c[3] + 0.05, stagger: 0.08 });
+      ctx.restore();
+    }
+
+    // caption 5 — only late
+    const p5 = A(t, c[4], 0.6, ease.out);
+    if (p5 > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = p5;
+      wash(ctx, 280, 580, 0.90);
+      say(ctx, ['HANYA', 'BELUM SAMPAI.'], 104, 320, { t, size: 92, at: c[4], stagger: 0.08 });
       ctx.restore();
     }
   },

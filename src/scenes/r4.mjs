@@ -1,109 +1,170 @@
-import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
+import { W, H } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, stage, pianoRoll, headline, micro, number, hairline, hudFrame,
-} from './_sinyal.mjs';
+  L, A, cue, cueWord, ease, sky, say, micro, number, txt, hexA, fillRR, TAU, clamp, lerp, rng, wash,
+} from './_langit.mjs';
 
-// 04 — FORMULA
-// A piano roll that will not stop scrolling. Then the three features, as chips
-// that land one at a time: speed, simplicity, a melody you can guess.
+// 04 — USIA
+// A sphere of arrived light opening out of one point. Everything inside it is
+// the universe we can see; outside it, the light has not had the time. The veil
+// outside the edge does the arguing: the same sky, minus the part that is late.
 
-const FEAT = [
-  ['TEMPO', 'LEBIH CEPAT', K.lime],
-  ['RITME', 'SEDERHANA', K.ice],
-  ['MELODI', 'MUDAH DITEBAK', K.ember],
-];
+const B = 90;
 
 export default {
   draw(ctx, t, scene) {
-    stage(ctx, { beamX: 1180, beamY: -180, key: 'r4' });
+    sky(ctx, { key: 'r4', band: 0.55 });
     const c = [0, 1, 2, 3, 4].map((i) => cue(scene, i));
+    const wUsia = cueWord(scene, 1, 'usianya');
+    const px = 720;
+    const py = 1180;
+    const R = 660;
 
-    // caption 1 — not every song can do this
-    headline(ctx, ['TIDAK SEMUA', 'LAGU BISA', 'NYANGKUT.'], 104, 400, {
-      t,
-      size: 100, at: c[0], stagger: 0.09, a: 1 - A(t, c[1], 0.4, ease.out),
+    // caption 1 — the first reason
+    say(ctx, ['ALASAN', 'PERTAMA.'], 104, 320, {
+      t, size: 104, at: c[0], stagger: 0.1, a: 1 - A(t, c[1], 0.45, ease.out),
     });
 
-    // the roll
-    const pr = A(t, c[1] - 0.2, 0.9, ease.expo);
-    if (pr > 0.01) {
+    const grow = A(t, c[1] + 0.35, 5.0, ease.out);
+    const rr = Math.max(2, R * grow);
+
+    // everything outside the sphere is late: veil it down
+    if (grow > 0.01) {
       ctx.save();
-      ctx.globalAlpha = pr * 0.95;
-      pianoRoll(ctx, 104, 340, 1232, 500, t, { p: A(t, c[1], 1.4), color: K.ice, scroll: (t * 0.16) % 1 });
+      const veil = ctx.createRadialGradient(px, py, rr, px, py, rr + 520);
+      veil.addColorStop(0, 'rgba(3,5,13,0.00)');
+      veil.addColorStop(0.10, 'rgba(3,5,13,0.90)');
+      veil.addColorStop(1, 'rgba(2,3,9,0.97)');
+      ctx.fillStyle = veil;
+      ctx.fillRect(-B, -B, W + 2 * B, H + 2 * B);
       ctx.restore();
     }
 
-    // caption 2 — one hundred against one hundred
-    const p2 = A(t, c[1], 0.6, ease.out);
-    const out2 = 1 - A(t, c[2], 0.35, ease.out);
+    // inside the sphere: the stars that have already reached us
+    if (grow > 0.02) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(px, py, rr, 0, TAU);
+      ctx.clip();
+      const r = rng(31);
+      for (let i = 0; i < 300; i++) {
+        const x = -B + r() * (W + 2 * B);
+        const y = -B + r() * (H + 2 * B);
+        ctx.fillStyle = `rgba(255,248,236,${0.22 + r() * 0.68})`;
+        ctx.beginPath();
+        ctx.arc(x, y, 1 + r() * 2.4, 0, TAU);
+        ctx.fill();
+      }
+      // the light itself, pooling toward the point it left from
+      const g = ctx.createRadialGradient(px, py, 2, px, py, rr);
+      g.addColorStop(0, 'rgba(255,233,184,0.20)');
+      g.addColorStop(0.55, 'rgba(255,201,135,0.07)');
+      g.addColorStop(1, 'rgba(255,201,135,0.00)');
+      ctx.fillStyle = g;
+      ctx.fillRect(px - rr, py - rr, rr * 2, rr * 2);
+      ctx.restore();
+
+      // the edge
+      ctx.save();
+      ctx.strokeStyle = hexA(L.gold, 0.72);
+      ctx.lineWidth = 3;
+      ctx.shadowColor = hexA(L.gold, 0.85);
+      ctx.shadowBlur = 30;
+      ctx.beginPath();
+      ctx.arc(px, py, rr, 0, TAU);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      if (grow > 0.9) {
+        ctx.fillStyle = hexA(L.gold, 0.5 * A(t, c[1] + 4.4, 0.8));
+        for (let i = 0; i < 26; i++) {
+          const ang = (i / 26) * TAU + t * 0.05;
+          ctx.beginPath();
+          ctx.arc(px + Math.cos(ang) * rr, py + Math.sin(ang) * rr, 1.6, 0, TAU);
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+
+    // caption 2 — the age
+    const p2 = A(t, wUsia - 0.15, 0.6, ease.expo);
+    const out2 = 1 - A(t, c[3], 0.5, ease.out);
     if (p2 > 0.01 && out2 > 0.01) {
       ctx.save();
       ctx.globalAlpha = Math.min(p2, out2);
-      number(ctx, '100', 96, 1010, { size: 150, color: K.lime });
-      micro(ctx, 'LAGU YANG NYANGKUT', 100, 1060, { size: 20, color: K.dim, track: 5 });
-      txt(ctx, 'vs', 470, 1000, { size: 60, font: F.mono, color: 'rgba(244,241,232,0.35)' });
-      number(ctx, '100', 620, 1010, { size: 150, color: 'rgba(244,241,232,0.55)' });
-      micro(ctx, 'LAGU BIASA', 624, 1060, { size: 20, color: K.dim, track: 5 });
-      hairline(ctx, 96, 930, 1180 * A(t, c[1] + 0.2, 0.8, ease.expo), { color: 'rgba(244,241,232,0.18)' });
+      number(ctx, '13,8', 720, 300, { size: 148, color: L.star, align: 'center' });
+      micro(ctx, 'MILIAR TAHUN', 720, 372, { size: 26, color: L.warm, align: 'center', track: 11 });
       ctx.restore();
     }
 
-    // captions 3-5 — the three features, then the verdict
-    const verdict = A(t, c[4], 0.7, ease.expo);
-    FEAT.forEach(([k, v, col], i) => {
-      const start = c[2] + i * 0.42;
-      const p = A(t, start, 0.55, ease.expo);
-      if (p <= 0.01) return;
-      const y = 980 + i * 150;
-      const w = 760 * p;
+    // caption 3 — light needs time: the front keeps opening
+    const p3 = A(t, c[2], 0.6, ease.out);
+    const out3 = 1 - A(t, c[3], 0.5, ease.out);
+    if (p3 > 0.01 && out3 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = p * (1 - verdict);
-      ctx.fillStyle = hexA(col, 0.06);
-      fillRR(ctx, 104, y - 62, w, 108, 10, hexA(col, 0.06));
-      strokeRR(ctx, 104, y - 62, w, 108, 10, hexA(col, 0.38), 1.6);
-      txt(ctx, k, 132, y, { size: 58, font: F.head, color: K.ink, track: 2 });
-      txt(ctx, v, 132 + 300, y, { size: 34, font: F.mono, color: col, track: 6 });
-      micro(ctx, `0${i + 1}`, 830, y, { size: 22, color: 'rgba(244,241,232,0.3)' });
-      ctx.restore();
-    });
-
-    // the contour itself: a line that goes up and down exactly as expected
-    const pc = A(t, c[3], 1.2, ease.inOut);
-    if (pc > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = pc * (1 - verdict);
-      const x0 = 120;
-      const w = 1200;
-      const y0 = 1280;
-      const pts = [];
-      for (let i = 0; i <= 60; i++) {
-        const p = i / 60;
-        pts.push([x0 + p * w * pc, y0 - Math.sin(p * TAU * 1.25) * 90 - Math.sin(p * TAU * 0.35) * 40]);
-      }
-      ctx.strokeStyle = K.ember;
-      ctx.lineWidth = 4;
-      ctx.lineJoin = 'round';
-      ctx.shadowColor = hexA(K.ember, 0.6);
-      ctx.shadowBlur = 18;
+      ctx.globalAlpha = Math.min(p3, out3);
+      micro(ctx, 'CAHAYA BUTUH WAKTU', 104, 700, { size: 26, color: L.ice, track: 9 });
+      const q = (t * 0.55) % 1;
+      ctx.strokeStyle = hexA(L.gold, 0.55);
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+      ctx.arc(px, py, rr * (0.25 + q * 0.72), 0, TAU);
       ctx.stroke();
       ctx.restore();
     }
 
-    // caption 5 — the verdict, big
-    if (verdict > 0.01) {
+    // caption 4 — a star beyond the edge, whose light stops there
+    const p4 = A(t, c[3], 0.7, ease.out);
+    const out4 = 1 - A(t, c[4], 0.5, ease.out);
+    if (p4 > 0.01 && out4 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = verdict;
-      headline(ctx, ['MUDAH DITEBAK,', 'MUDAH NYANGKUT.'], 104, 1050, {
-      t,
-        size: 112, at: c[4] + 0.1, stagger: 0.09, accents: [1, 2],
-      });
-      micro(ctx, 'YANG BISA DITEBAK OTAK LEBIH CEPAT DISIMPAN', 108, 1280, {
-        size: 20, color: K.dim, track: 3,
-      });
+      ctx.globalAlpha = Math.min(p4, out4);
+      const sx = 1080;
+      const sy = 300;
+      const edgeX = px + Math.sqrt(Math.max(0, rr * rr - (sy - py) * (sy - py)));
+      const q = A(t, c[3] + 0.2, 1.2, ease.inOut);
+      // light leaving the distant star and stopping at the edge
+      ctx.strokeStyle = hexA(L.star, 0.30);
+      ctx.setLineDash([6, 12]);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(lerp(sx, edgeX, q), lerp(sy, sy, q));
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = hexA(L.star, 0.92);
+      ctx.shadowColor = 'rgba(255,246,227,0.8)';
+      ctx.shadowBlur = 22;
+      ctx.beginPath();
+      ctx.arc(sx, sy, 5, 0, TAU);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      if (q > 0.85) {
+        ctx.strokeStyle = hexA(L.crimson, 0.85);
+        ctx.lineWidth = 3;
+        const s = 11;
+        ctx.beginPath();
+        ctx.moveTo(edgeX - s, sy - s);
+        ctx.lineTo(edgeX + s, sy + s);
+        ctx.moveTo(edgeX + s, sy - s);
+        ctx.lineTo(edgeX - s, sy + s);
+        ctx.stroke();
+      }
+      micro(ctx, 'BELUM SAMPAI', 1052, 258, { size: 21, color: L.crimson, align: 'right', track: 5 });
+      ctx.restore();
+    }
+
+    // caption 5 — the past that has not finished
+    const p5 = A(t, c[4], 0.8, ease.out);
+    if (p5 > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = p5 * 0.95;
+      wash(ctx, 280, 700, 0.90);
+      ctx.restore();
+      ctx.save();
+      ctx.globalAlpha = p5;
+      micro(ctx, 'KITA MELIHAT', 108, 296, { size: 24, color: L.ice, track: 8 });
+      say(ctx, ['MASA LALU', 'YANG BELUM', 'SELESAI.'], 104, 396, { t, size: 92, at: c[4] + 0.05, stagger: 0.08, lineH: 1.0 });
       ctx.restore();
     }
   },

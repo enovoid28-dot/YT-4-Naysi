@@ -1,171 +1,129 @@
-// Episode 19 — "Lagu itu nyangkut di kepalamu. Kamu tidak bisa tekan stop."
+// Episode 20 — "Langit malam seharusnya terang."
 //
-// Thesis: an earworm is not a glitch and not a failure of willpower. It is the
-// auditory system running a loop it was given, in a working-memory format that
-// cannot be closed by trying harder. The way out is not suppression; it is
-// finishing the phrase or taking the mouth away from it.
+// Olbers' paradox, told with the sky itself rather than with diagrams: a dome of
+// stars, sight-lines that end on star surfaces, a light-cone with a finite age,
+// a bubble with an edge, space stretching light out of the visible band, and the
+// microwave wall that is left of the first light.
 //
 // Sources:
-//   Beaman & Williams (2010, British Journal of Psychology) — survey + diary
-//     study; mean episode ~27 minutes in the diary sample; most last under a day;
-//     the fragment that loops is typically 15-30 seconds of music.
-//   Liikkanen (2012) — Finnish survey of 12,519 internet users: 91.7% experience
-//     INMI at least weekly, 33.2% daily; frequency rises with musical engagement.
-//   Williamson et al. (2012) — 91.7% weekly across two populations; onset classes:
-//     music exposure, memory triggers, affect, low-attention states.
-//   Jakubowski et al. (2017) — 83 melodic features compared across 100 earworms
-//     and 100 matched songs: faster tempo, simpler rhythm, common melodic contour.
-//   Hyman et al. (2013, Applied Cognitive Psychology) — a song that keeps playing
-//     right after it stops is more likely to return within 24 hours (Zeigarnik);
-//     verbal tasks suppress it more than visuo-spatial ones.
-//   Beaman, Powell & Rapley (2015, QJEP) — 98 volunteers, 3 minutes of suppression:
-//     about 9 intrusions; chewing gum cut them by roughly a third; articulatory
-//     motor planning competes with the inner voice.
-//   Zatorre / Farrugia — auditory cortex activity during musical imagery, i.e.
-//     the brain hears it without sound arriving. ~98% of people report earworms.
+//   Olbers (1823) — if the universe is infinite and evenly filled with stars,
+//     every line of sight ends on a star surface, so the night sky should be as
+//     bright as the Sun's surface.
+//   Standard cosmology — the dominant resolution is finite age: stars and
+//     galaxies formed a few hundred million years after the Big Bang, so the
+//     light has simply not had time to arrive from everywhere. Expansion adds
+//     dimming but on its own "is by no means enough" to blacken the sky.
+//   Numbers: universe age 13.8 Gyr; observable-universe diameter ~93 Gly;
+//     CMB 2.725 K; Proxima 4.24 ly; sunlight 8 min 20 s; ~2x10^23 stars.
 //
-// Every card is one spoken sentence, so no card can change mid-sentence.
+// One card = one spoken sentence, so no caption can change mid-sentence.
 
-export const SERIES = 'NAYSI · PUTAR';
+export const SERIES = 'NAYSI · LANGIT';
 export const BRAND = 'NAYSI';
 
 export const SCENES = [
   {
-    id: 's1',
-    key: 'r1',
-    label: 'EMPAT BARIS',
-    index: '01',
-    theme: 'dark',
-    vo: 'Lagu itu tidak keluar dari kepalamu. Sudah tiga hari, dan kamu masih memutar bagian yang sama. Bukan seluruh lagunya. Cuma empat baris. Otakmu tidak rusak. Ia sedang menutup satu lingkaran. Dan kamu tidak punya tombol stop.',
+    id: 's1', key: 'r1', label: 'LANGIT HITAM', index: '01', theme: 'dark',
+    vo: 'Lihat ke atas, di tempat yang gelap. Seharusnya ada cahaya di setiap arah. Karena bintang di alam semesta tidak terhitung jumlahnya. Tapi langit malam tetap hitam. Dan jawabannya bukan karena bintangnya jauh.',
     cap: [
-      'Lagu itu tidak keluar dari kepalamu.',
-      'Sudah tiga hari, dan kamu masih memutar bagian yang sama.',
-      'Bukan seluruh lagunya. Cuma *empat* *baris*.',
-      'Otakmu tidak rusak. Ia sedang menutup satu lingkaran.',
-      'Dan kamu tidak punya tombol *stop*.',
+      'Lihat ke atas, di tempat yang gelap.',
+      'Seharusnya ada cahaya di setiap arah.',
+      'Karena bintang di alam semesta tidak terhitung jumlahnya.',
+      'Tapi langit malam tetap *hitam*.',
+      'Dan jawabannya bukan karena bintangnya *jauh*.',
     ],
     pad: 1.45,
   },
   {
-    id: 's2',
-    key: 'r2',
-    label: 'SEMUA ORANG',
-    index: '02',
-    theme: 'dark',
-    vo: 'Kamu tidak sendirian. Hampir semua orang pernah mengalaminya: sembilan puluh delapan persen. Sembilan puluh satu koma tujuh persen mengalaminya minimal sekali seminggu. Sepertiganya, setiap hari. Namanya bukan sekadar lagu nyangkut. Namanya involuntary musical imagery.',
+    id: 's2', key: 'r2', label: 'PARADOKS', index: '02', theme: 'dark',
+    vo: 'Ini pertanyaan yang terdengar sederhana. Kalau alam semesta tak terbatas dan bintang tersebar di mana-mana. Setiap garis pandang harus berakhir di sebuah bintang. Artinya seluruh langit seharusnya seterang permukaan matahari. Bahkan malam pun seharusnya terang. Itu paradoks Olbers.',
     cap: [
-      'Kamu tidak sendirian.',
-      'Hampir semua orang pernah mengalaminya: *sembilan* *puluh* *delapan* persen.',
-      'Sembilan puluh satu koma tujuh persen mengalaminya minimal sekali seminggu.',
-      'Sepertiganya, *setiap* *hari*.',
-      'Namanya bukan sekadar lagu nyangkut. Namanya *involuntary* *musical* *imagery*.',
+      'Ini pertanyaan yang terdengar sederhana.',
+      'Kalau alam semesta tak terbatas dan bintang tersebar di mana-mana.',
+      'Setiap garis pandang harus berakhir di sebuah bintang.',
+      'Artinya seluruh langit seharusnya seterang permukaan matahari.',
+      'Bahkan malam pun seharusnya terang.',
+      'Itu *paradoks Olbers*.',
     ],
     pad: 1.45,
   },
   {
-    id: 's3',
-    key: 'r3',
-    label: 'TANPA SUARA',
-    index: '03',
-    theme: 'dark',
-    vo: 'Saat kamu mendengar lagu di kepala, otak memprosesnya seperti suara sungguhan. Korteks pendengaran menyala, padahal tidak ada satu pun bunyi yang masuk. Yang bekerja adalah phonological loop: ruang kerja memori untuk bunyi dan kata. Selama loop itu masih bisa memutar, lagu itu akan terus berputar.',
+    id: 's3', key: 'r3', label: 'SKALA', index: '03', theme: 'dark',
+    vo: 'Bintang di alam semesta teramati sekitar dua ratus sextillion. Dua diikuti dua puluh tiga angka nol. Cahaya matahari butuh delapan menit untuk sampai ke kita. Bintang terdekat butuh empat tahun.',
     cap: [
-      'Saat kamu mendengar lagu di kepala, otak memprosesnya seperti suara sungguhan.',
-      'Korteks pendengaran menyala, padahal tidak ada satu pun bunyi yang masuk.',
-      'Yang bekerja adalah *phonological* *loop*: ruang kerja memori untuk bunyi dan kata.',
-      'Selama loop itu masih bisa memutar, lagu itu akan terus berputar.',
+      'Bintang di alam semesta teramati sekitar *dua ratus sextillion*.',
+      'Dua diikuti *dua puluh tiga* angka nol.',
+      'Cahaya matahari butuh *delapan menit* untuk sampai ke kita.',
+      'Bintang terdekat butuh *empat tahun*.',
     ],
     pad: 1.45,
   },
   {
-    id: 's4',
-    key: 'r4',
-    label: 'FORMULA',
-    index: '04',
-    theme: 'dark',
-    vo: 'Tapi tidak semua lagu bisa nyangkut. Peneliti membandingkan seratus lagu yang nyangkut dengan seratus lagu biasa. Tiga hal menonjol: tempo lebih cepat, dan ritme sederhana. Melodinya juga mudah ditebak naik turunnya. Lagu yang paling mudah ditebak, paling mudah nyangkut.',
+    id: 's4', key: 'r4', label: 'USIA', index: '04', theme: 'dark',
+    vo: 'Alasan pertama: alam semesta belum cukup tua. Usianya tiga belas koma delapan miliar tahun. Cahaya butuh waktu untuk menempuh jarak. Bintang yang lebih jauh dari usia itu, cahayanya belum sampai. Langit hitam karena kita melihat masa lalu yang belum selesai.',
     cap: [
-      'Tapi tidak semua lagu bisa nyangkut.',
-      'Peneliti membandingkan seratus lagu yang nyangkut dengan seratus lagu biasa.',
-      'Tiga hal menonjol: tempo lebih cepat, dan ritme sederhana.',
-      'Melodinya juga mudah ditebak naik turunnya.',
-      'Lagu yang paling mudah ditebak, paling mudah *nyangkut*.',
+      'Alasan pertama: alam semesta belum cukup tua.',
+      'Usianya *tiga belas koma delapan* miliar tahun.',
+      'Cahaya butuh waktu untuk menempuh jarak.',
+      'Bintang yang lebih jauh dari usia itu, cahayanya belum sampai.',
+      'Langit hitam karena kita melihat masa lalu yang belum selesai.',
     ],
     pad: 1.45,
   },
   {
-    id: 's5',
-    key: 'r5',
-    label: 'SETENGAH',
-    index: '05',
-    theme: 'dark',
-    vo: 'Dan ada satu pemicu yang paling kejam. Kamu dengar lagunya setengah, lalu berhenti. Yang setengah, paling sering kembali dalam dua puluh empat jam. Psikolog menyebutnya efek Zeigarnik: pikiran yang belum selesai tidak mau ditutup.',
+    id: 's5', key: 'r5', label: 'BATAS', index: '05', theme: 'dark',
+    vo: 'Alasan kedua: ada batas. Alam semesta teramati berdiameter sembilan puluh tiga miliar tahun cahaya. Di luar itu, cahayanya belum sempat tiba. Kegelapan itu bukan kosong. Ia hanya belum sampai.',
     cap: [
-      'Dan ada satu pemicu yang paling kejam.',
-      'Kamu dengar lagunya setengah, lalu berhenti.',
-      'Yang setengah, paling sering kembali dalam *dua* *puluh* *empat* jam.',
-      'Psikolog menyebutnya efek Zeigarnik: pikiran yang belum selesai tidak mau ditutup.',
+      'Alasan kedua: ada batas.',
+      'Alam semesta teramati berdiameter *sembilan puluh tiga* miliar tahun cahaya.',
+      'Di luar itu, cahayanya belum sempat tiba.',
+      'Kegelapan itu bukan kosong.',
+      'Ia hanya belum sampai.',
     ],
     pad: 1.45,
   },
   {
-    id: 's6',
-    key: 'r6',
-    label: 'DUA PULUH TUJUH',
-    index: '06',
-    theme: 'dark',
-    vo: 'Biasanya ini tidak lama. Rata-rata dua puluh tujuh menit, lalu hilang. Yang diputar cuma potongan pendek: lima belas sampai tiga puluh detik. Jarang yang bertahan sampai besok.',
+    id: 's6', key: 'r6', label: 'MERAH', index: '06', theme: 'dark',
+    vo: 'Ekspansi juga ikut meredupkan cahaya. Ruang meregang, dan cahaya yang melintas kehilangan energi. Panjang gelombangnya memanjang ke arah merah. Tapi itu saja tidak cukup. Alasannya tetap usia: cahaya punya batas waktu.',
     cap: [
-      'Biasanya ini tidak lama.',
-      'Rata-rata *dua* *puluh* *tujuh* menit, lalu hilang.',
-      'Yang diputar cuma potongan pendek: lima belas sampai tiga puluh detik.',
-      'Jarang yang bertahan sampai besok.',
+      'Ekspansi juga ikut meredupkan cahaya.',
+      'Ruang meregang, dan cahaya yang melintas kehilangan energi.',
+      'Panjang gelombangnya memanjang ke arah *merah*.',
+      'Tapi itu saja tidak cukup.',
+      'Alasannya tetap usia: cahaya punya batas waktu.',
     ],
     pad: 1.45,
   },
   {
-    id: 's7',
-    key: 'r7',
-    label: 'PERMEN KARET',
-    index: '07',
-    theme: 'dark',
-    vo: 'Dan cara menghentikannya tidak ada hubungannya dengan kemauan. Di satu eksperimen, orang diminta tidak memikirkan lagunya selama tiga menit. Rata-rata, lagu itu muncul sembilan kali. Tapi yang mengunyah permen karet, memutar ulang lagunya sepertiga lebih sedikit. Mulut dipakai, mesin lagu di kepala kehilangan tenaga.',
+    id: 's7', key: 'r7', label: 'SISA CAHAYA', index: '07', theme: 'dark',
+    vo: 'Dan ada buktinya. Sisa cahaya pertama alam semesta masih ada di mana-mana. Suhunya dua koma tujuh kelvin. Kita menyebutnya radiasi latar gelombang mikro kosmik.',
     cap: [
-      'Dan cara menghentikannya tidak ada hubungannya dengan kemauan.',
-      'Di satu eksperimen, orang diminta tidak memikirkan lagunya selama tiga menit.',
-      'Rata-rata, lagu itu muncul *sembilan* kali.',
-      'Tapi yang mengunyah permen karet, memutar ulang lagunya *sepertiga* lebih sedikit.',
-      'Mulut dipakai, mesin lagu di kepala kehilangan tenaga.',
+      'Dan ada buktinya.',
+      'Sisa cahaya pertama alam semesta masih ada di mana-mana.',
+      'Suhunya *dua koma tujuh* kelvin.',
+      'Kita menyebutnya radiasi latar gelombang mikro kosmik.',
     ],
     pad: 1.45,
   },
   {
-    id: 's8',
-    key: 'r8',
-    label: 'MELAWAN',
-    index: '08',
-    theme: 'dark',
-    vo: 'Menahan diri memperkuatnya. Semakin kamu melarang satu pikiran, semakin sering ia kembali. Yang berhasil justru sebaliknya: selesaikan lagunya sampai habis. Atau pindahkan mulutmu ke pekerjaan lain.',
+    id: 's8', key: 'r8', label: 'TANGGAL LAHIR', index: '08', theme: 'dark',
+    vo: 'Jadi langit hitam bukan kegagalan. Ia bukti bahwa alam semesta punya awal. Kalau langit terang di semua arah, alam semesta akan tak terbatas dan tanpa awal. Kegelapan malam adalah tanggal lahirnya.',
     cap: [
-      'Menahan diri memperkuatnya.',
-      'Semakin kamu melarang satu pikiran, semakin sering ia kembali.',
-      'Yang berhasil justru sebaliknya: *selesaikan* lagunya sampai habis.',
-      'Atau pindahkan mulutmu ke pekerjaan lain.',
+      'Jadi langit hitam bukan kegagalan.',
+      'Ia bukti bahwa alam semesta punya awal.',
+      'Kalau langit terang di semua arah, alam semesta akan tak terbatas dan tanpa awal.',
+      'Kegelapan malam adalah *tanggal lahirnya*.',
     ],
     pad: 1.45,
   },
   {
-    id: 's9',
-    key: 'r9',
-    label: 'LINGKARAN',
-    index: '09',
-    theme: 'dark',
-    vo: 'Lagu yang nyangkut bukan gangguan. Itu otak yang mencoba menutup lingkaran yang belum selesai. Dan selama belum selesai, ia akan terus memutar. Tulis di komentar: lagu apa yang nyangkut di kepalamu sekarang.',
+    id: 's9', key: 'r9', label: 'LIHAT ATAS', index: '09', theme: 'dark',
+    vo: 'Malam ini, lihat ke atas sebentar. Setiap titik terang di sana sudah melakukan perjalanan ribuan tahun. Beberapa di antaranya mungkin sudah tidak ada. Tulis di komentar: kamu melihat langit dari kota mana?',
     cap: [
-      'Lagu yang nyangkut bukan gangguan.',
-      'Itu otak yang mencoba menutup lingkaran yang belum selesai.',
-      'Dan selama belum selesai, ia akan terus memutar.',
-      'Tulis di komentar: lagu apa yang nyangkut di kepalamu *sekarang*.',
+      'Malam ini, lihat ke atas sebentar.',
+      'Setiap titik terang di sana sudah melakukan perjalanan *ribuan tahun*.',
+      'Beberapa di antaranya mungkin sudah tidak ada.',
+      'Tulis di komentar: kamu melihat langit dari kota mana?',
     ],
     pad: 2.10,
   },

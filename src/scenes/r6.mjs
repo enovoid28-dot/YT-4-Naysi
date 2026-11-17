@@ -1,101 +1,140 @@
-import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
+import { W, H } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, cueWord, A, stage, clockArc, headline, micro, number, hairline, hudFrame,
-} from './_sinyal.mjs';
+  L, A, cue, cueWord, ease, sky, say, micro, number, txt, hexA, TAU, clamp, lerp, rng, stretch,
+} from './_langit.mjs';
 
-// 06 — DUA PULUH TUJUH
-// A clock counts up to 27 minutes and stops. Under it, the fragment it was
-// playing: fifteen to thirty seconds, the length of the loop itself.
+// 06 — MERAH
+// One wave crossing space while space stretches under it: the same photon
+// arrives with a longer wavelength, redder and weaker. The frame lets the wave
+// change colour rather than labelling it.
+
+const B = 90;
 
 export default {
   draw(ctx, t, scene) {
-    stage(ctx, { beamX: 720, beamY: -340, key: 'r6' });
-    const c = [0, 1, 2, 3].map((i) => cue(scene, i));
+    sky(ctx, { key: 'r6', band: 0.3, hills: false, glowY: 1700 });
+    const c = [0, 1, 2, 3, 4].map((i) => cue(scene, i));
+    const baseY = 860;
+    const x0 = 60;
+    const x1 = W - 60;
 
-    // caption 1 — usually it does not last
-    headline(ctx, ['BIASANYA', 'TIDAK LAMA.'], 104, 400, {
-      t,
-      size: 112, at: c[0], stagger: 0.09, a: 1 - A(t, c[1], 0.4, ease.out),
-    });
+    // the wave itself, its wavelength growing left to right as space stretches
+    const p2 = A(t, c[1], 0.5, ease.out);
+    const waveGrow = A(t, c[1] + 0.1, 4.0, ease.inOut);
+    const slope = A(t, c[0] + 0.2, 3.0, ease.inOut);
 
-    // the clock, counting
-    const pin = A(t, c[1] - 0.45, 0.8, ease.expo);
-    if (pin > 0.01) {
+    if (p2 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = pin;
-      const cx = 720;
-      const cy = 830;
-      const r = 350;
-      const w27 = cueWord(scene, 1, 'dua');
-      const run = A(t, w27 - 0.1, 2.2, ease.out);
-      clockArc(ctx, cx, cy, r, { p: run * 0.86, color: K.ice, lw: 9, ticks: 12 });
-      // 27:00, ticked up with the arc
-      const mins = Math.floor(run * 27);
-      const secs = Math.floor((run * 27 * 60) % 60);
-      const a1 = A(t, w27, 0.5);
-      number(ctx, `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`, cx, cy + 52, {
-        size: 150, color: K.ink, align: 'center', track: -0.03, a: a1,
-      });
-      micro(ctx, 'RATA-RATA', cx, cy - 118, { size: 24, color: K.ice, align: 'center', track: 10, a: a1 });
-      micro(ctx, 'LALU HILANG', cx, cy + 132, { size: 20, color: K.dim, align: 'center', track: 8, a: A(t, cueWord(scene, 1, 'hilang') - 0.1, 0.6) });
+      const l0 = lerp(150, 430, waveGrow);
+      const fade = 1 - 0.42 * A(t, c[3], 0.6);
+      ctx.globalAlpha = Math.min(1, p2) * fade;
+      const col = waveGrow < 0.35 ? [255, 246, 227] : waveGrow < 0.62 ? [255, 214, 158] : waveGrow < 0.84 ? [255, 168, 110] : [255, 96, 78];
+      const cs = `${col[0]},${col[1]},${col[2]}`;
+      ctx.strokeStyle = `rgba(${cs},0.94)`;
+      ctx.lineWidth = 6;
+      ctx.lineCap = 'round';
+      ctx.shadowColor = `rgba(${cs},0.55)`;
+      ctx.shadowBlur = 30;
+      ctx.beginPath();
+      for (let x = x0; x <= x1; x += 4) {
+        const k = (x - x0) / (x1 - x0);
+        const len = lerp(l0, l0 * 1.5, k);
+        const amp = lerp(120, 78, k * waveGrow);
+        const y = baseY + Math.sin(((x - x0) / len) * TAU - t * 1.6) * amp * (0.35 + 0.65 * slope);
+        if (x === x0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      // what the wavelength looks like, measured on the wave
+      const bx0 = 390;
+      const bx1 = bx0 + lerp(l0, l0 * 1.5, (bx0 - x0) / (x1 - x0));
+      const by = baseY + 300;
+      ctx.strokeStyle = 'rgba(240,244,255,0.42)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(bx0, by);
+      ctx.lineTo(bx1, by);
+      ctx.moveTo(bx0, by - 18);
+      ctx.lineTo(bx0, by + 18);
+      ctx.moveTo(bx1, by - 18);
+      ctx.lineTo(bx1, by + 18);
+      ctx.stroke();
+      micro(ctx, 'PANJANG GELOMBANG', bx0, by + 56, { size: 21, color: L.dim, track: 5 });
       ctx.restore();
     }
 
-    // caption 3 — the fragment, as a bracket
-    const wFrag = cueWord(scene, 2, 'lima');
-    const p3 = A(t, wFrag - 0.2, 0.7, ease.expo);
+    // caption 1 — expansion dims as well
+    const p1 = A(t, c[0], 0.6, ease.out);
+    const out1 = 1 - A(t, c[1], 0.4, ease.out);
+    if (p1 > 0.01 && out1 > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = Math.min(p1, out1) * 0.8;
+      stretch(ctx, 720, baseY, t, { p: A(t, c[0] + 0.2, 1.4), n: 80, reach: 1100 });
+      ctx.restore();
+      ctx.save();
+      ctx.globalAlpha = Math.min(p1, out1);
+      micro(ctx, 'RUANG MENGEMBANG', 720, 470, { size: 25, color: L.ice, align: 'center', track: 9 });
+      ctx.restore();
+    }
+
+    // caption 3 — the colour has moved to red: nothing else on screen but the wave
+    const p3 = A(t, c[2], 0.6, ease.out);
     if (p3 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = p3;
-      const x = 104;
-      const y = 1260;
-      const w = 1232;
-      // the 27-minute span in miniature
-      const full = 27 * 60;
-      ctx.fillStyle = 'rgba(244,241,232,0.10)';
-      ctx.fillRect(x, y, w, 10);
-      // and inside it, the 15-30 s that actually loop
-      const fx = x + 40;
-      const fw = Math.max(26, (22.5 / full) * w * 14);
-      ctx.fillStyle = K.lime;
-      ctx.shadowColor = hexA(K.lime, 0.8);
-      ctx.shadowBlur = 26;
-      ctx.fillRect(x, y, w * A(t, wFrag, 1.0, ease.expo), 10);
-      ctx.shadowBlur = 0;
-      // bracket under the segment
-      const bx = x + w * 0.5 - fw / 2;
-      ctx.strokeStyle = K.ink;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(bx, y + 46);
-      ctx.lineTo(bx, y + 24);
-      ctx.lineTo(bx + fw, y + 24);
-      ctx.lineTo(bx + fw, y + 46);
-      ctx.stroke();
-      micro(ctx, '15–30 DETIK', bx + fw / 2, y + 90, {
-        size: 24, color: K.ink, align: 'center', track: 6,
-      });
-      micro(ctx, 'YANG DIPUTAR ULANG', bx + fw / 2, y + 130, {
-        size: 19, color: K.lime, align: 'center', track: 4,
-      });
-      micro(ctx, '27 MENIT', x, y - 26, { size: 19, color: 'rgba(244,241,232,0.45)', track: 4 });
+      ctx.globalAlpha = p3 * 0.9 * (1 - 0.7 * A(t, c[3], 0.6));
+      micro(ctx, 'KE ARAH MERAH', 720, baseY + 430, { size: 26, color: L.crimson, align: 'center', track: 11 });
       ctx.restore();
     }
 
-    // caption 4 — it rarely survives the night
-    const p4 = A(t, c[3], 0.6, ease.out);
-    if (p4 > 0.01) {
+    // caption 4 — expansion alone is not enough: the wave is struck through
+    const p4 = A(t, c[3], 0.7, ease.expo);
+    const out4 = 1 - A(t, c[4], 0.5, ease.out);
+    if (p4 > 0.01 && out4 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = p4 * 0.9;
-      micro(ctx, 'BESOK', 1112, 1180 - 26, { size: 19, color: 'rgba(244,241,232,0.30)', track: 4 });
-      ctx.strokeStyle = hexA(K.ember, 0.55);
-      ctx.lineWidth = 2;
+      ctx.globalAlpha = Math.min(p4, out4);
+      const k = A(t, c[3] + 0.15, 0.55, ease.inOut);
+      ctx.strokeStyle = hexA(L.crimson, 0.85 * k);
+      ctx.lineWidth = 13;
+      ctx.lineCap = 'round';
       ctx.beginPath();
-      ctx.moveTo(1108, 1140);
-      ctx.lineTo(1192, 1192);
+      ctx.moveTo(330, baseY - 250);
+      ctx.lineTo(330 + 780 * k, baseY + 230);
       ctx.stroke();
+      micro(ctx, 'EKSPANSI SAJA', 720, baseY + 430, { size: 25, color: L.crimson, align: 'center', track: 8 });
+      ctx.restore();
+    }
+
+    // caption 5 — still age: an hourglass of light cones
+    const p5 = A(t, c[4], 0.8, ease.out);
+    if (p5 > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = p5;
+      const q = A(t, c[4] + 0.25, 1.8, ease.out);
+      const ax = 720;
+      const ay = 1150;
+      ctx.strokeStyle = hexA(L.gold, 0.5 * q);
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      ctx.moveTo(ax - 230 * q, ay - 250);
+      ctx.lineTo(ax, ay);
+      ctx.lineTo(ax + 230 * q, ay - 250);
+      ctx.moveTo(ax - 230 * q, ay + 150);
+      ctx.lineTo(ax, ay);
+      ctx.lineTo(ax + 230 * q, ay + 150);
+      ctx.stroke();
+      // grains of light falling through the neck
+      for (let i = 0; i < 34; i++) {
+        const kk = ((t * 0.30 + i * 0.03) % 1);
+        const yy = ay + 10 + kk * 120;
+        const spread = 10 + kk * 170;
+        ctx.fillStyle = hexA(L.gold, 0.55 * q * (1 - kk * 0.5));
+        ctx.beginPath();
+        ctx.arc(ax + Math.sin(i * 2.1 + t * 0.8) * spread * 0.35, yy, 1.8, 0, TAU);
+        ctx.fill();
+      }
+      micro(ctx, 'BATAS WAKTU', 720, ay + 240, { size: 26, color: L.gold, align: 'center', track: 10 });
       ctx.restore();
     }
   },

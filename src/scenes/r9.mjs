@@ -1,94 +1,130 @@
-import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
+import { W, H } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, TAU } from '../engine/anim.mjs';
 import {
-  K, ease, cue, A, stage, loopRing, headline, micro, number, hairline, hudFrame,
-} from './_sinyal.mjs';
+  L, A, cue, cueWord, ease, sky, say, micro, number, txt, hexA, fillRR, TAU, clamp, lerp, rng, life, person,
+  sightRays,
+} from './_langit.mjs';
 
-// 09 — LINGKARAN
-// The ring finally closes, and the closing is not a warning: it is the system
-// doing its job. Last beat: the question back to the viewer.
+// 09 — LIHAT ATAS
+// Out of the argument and back to the viewer: the light on the retina left its
+// star before there were people, and some of those stars are already gone. The
+// last ask is a place, not a like.
+
+const B = 90;
 
 export default {
   draw(ctx, t, scene) {
-    stage(ctx, { beamX: 720, beamY: -300, key: 'r9' });
+    sky(ctx, { key: 'r9', band: 0.8 });
+    life(ctx, t, { a: 1, meteor: 1.4 });
     const c = [0, 1, 2, 3].map((i) => cue(scene, i));
-    const close = A(t, c[1] + 0.2, 2.2, ease.inOut);
+    const wRibuan = cueWord(scene, 1, 'ribuan');
 
-    // caption 1 — not a fault
-    headline(ctx, ['BUKAN', 'GANGGUAN.'], 104, 420, {
-      t,
-      size: 128, at: c[0], stagger: 0.1, a: 1 - A(t, c[1], 0.45, ease.out),
-    });
+    const px = W * 0.62;
+    const py = 1500;
+    person(ctx, px, py, 215, { a: A(t, 0, 0.7, ease.out) });
 
-    // the ring, closing
-    const p1 = A(t, c[1] - 0.2, 0.8, ease.out);
-    if (p1 > 0.01) {
+    // caption 1 — look up
+    const p1 = A(t, c[0], 0.6, ease.out);
+    const out1 = 1 - A(t, c[1], 0.45, ease.out);
+    if (p1 > 0.01 && out1 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = p1;
-      loopRing(ctx, 720, 900, 300, t, {
-        p: 0.25 + 0.75 * close,
-        gap: lerp(0.26, 0.005, close),
-        color: close > 0.9 ? K.lime : K.ice,
-        lw: 10,
-        speed: 0.55 * (1 - close * 0.8),
-      });
-      // inside the ring: the sentence, then the loop count
-      micro(ctx, 'SISTEM MENUTUP', 720, 850, { size: 22, color: K.ice, align: 'center', track: 9, a: p1 * (1 - close) });
-      micro(ctx, 'SELESAI', 720, 830, { size: 26, color: K.lime, align: 'center', track: 12, a: close });
-      micro(ctx, 'LINGKARAN', 720, 872, { size: 20, color: 'rgba(244,241,232,0.45)', align: 'center', track: 8, a: close });
+      ctx.globalAlpha = Math.min(p1, out1);
+      micro(ctx, 'MALAM INI', 104, 300, { size: 27, color: L.ice, track: 10 });
+      say(ctx, ['LIHAT', 'KE ATAS.'], 104, 370, { t, size: 96, at: c[0] + 0.1, stagger: 0.09 });
       ctx.restore();
     }
 
-    // caption 2-3 — what it is doing
-    const p2 = A(t, c[1] + 0.5, 0.7, ease.out);
-    if (p2 > 0.01) {
+    // caption 2 — the light has been travelling for thousands of years
+    const p2 = A(t, c[1], 0.6, ease.out);
+    const out2 = 1 - A(t, c[2], 0.45, ease.out);
+    if (p2 > 0.01 && out2 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = p2 * (1 - A(t, c[3], 0.4));
-      micro(ctx, 'OTAK MENCOBA MENUTUP', 104, 1250, { size: 20, color: 'rgba(244,241,232,0.45)', track: 5 });
-      headline(ctx, ['YANG BELUM', 'SELESAI.'], 104, 1360, {
-      t,
-        size: 96, at: c[1] + 0.6, stagger: 0.09,
-      });
+      ctx.globalAlpha = Math.min(p2, out2);
+      const sx = 420;
+      const sy = 400;
+      const q = A(t, c[1] + 0.1, 1.6, ease.inOut);
+      // the path of one photon, all the way down to the eye
+      const ex = px - 2;
+      const ey = py - 0.93 * 215;
+      const mg = ctx.createLinearGradient(sx, sy, ex, ey);
+      mg.addColorStop(0, hexA(L.gold, 0.55));
+      mg.addColorStop(1, hexA(L.gold, 0.06));
+      ctx.strokeStyle = mg;
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(lerp(sx, ex, q), lerp(sy, ey, q));
+      ctx.stroke();
+      ctx.fillStyle = L.star;
+      ctx.shadowColor = 'rgba(255,240,210,0.95)';
+      ctx.shadowBlur = 30;
+      ctx.beginPath();
+      ctx.arc(sx, sy, 6.5 + 1.8 * Math.sin(t * 2.2), 0, TAU);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      micro(ctx, 'CAHAYA BERANGKAT', sx + 26, sy - 28, { size: 21, color: L.ice, track: 5 });
+      micro(ctx, 'SAMPAI KE MATA', ex + 20, ey + 6, { size: 21, color: L.dim, track: 5 });
+      number(ctx, 'RIBUAN', 104, 700, { size: 92, color: L.star, a: A(t, wRibuan, 0.5) });
+      micro(ctx, 'TAHUN LALU', 108, 758, { size: 27, color: L.warm, track: 9, a: A(t, wRibuan + 0.3, 0.5) });
       ctx.restore();
     }
 
-    // caption 3 — it will keep playing
-    const p3 = A(t, c[2], 0.7, ease.out);
-    if (p3 > 0.01) {
+    // caption 3 — some of them are already gone
+    const p3 = A(t, c[2], 0.6, ease.out);
+    const out3 = 1 - A(t, c[3], 0.45, ease.out);
+    if (p3 > 0.01 && out3 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = p3 * (1 - A(t, c[3], 0.45));
-      for (let i = 0; i < 3; i++) {
-        const ph = ((t * 0.42 + i * 0.33) % 1);
-        ctx.strokeStyle = hexA(K.lime, (1 - ph) * 0.35);
-        ctx.lineWidth = 3;
+      ctx.globalAlpha = Math.min(p3, out3);
+      const q1 = A(t, c[2] + 0.1, 0.7);
+      const q2 = A(t, c[2] + 1.1, 0.7);
+      [[1030, 360], [1210, 640]].forEach(([x, y], i) => {
+        const q = i === 0 ? q1 : q2;
+        ctx.fillStyle = hexA(L.star, 0.95 * q);
         ctx.beginPath();
-        ctx.arc(720, 900, 300 + ph * 130, 0, TAU);
-        ctx.stroke();
-      }
+        ctx.arc(x, y, 7 * (1 - 0.5 * q), 0, TAU);
+        ctx.fill();
+        if (q > 0.35) {
+          const k = Math.min(1, (q - 0.35) / 0.65);
+          ctx.strokeStyle = hexA(L.crimson, 0.8 * k);
+          ctx.lineWidth = 2.4;
+          const s = 14;
+          ctx.beginPath();
+          ctx.moveTo(x - s, y - s);
+          ctx.lineTo(x + s, y + s);
+          ctx.moveTo(x + s, y - s);
+          ctx.lineTo(x - s, y + s);
+          ctx.stroke();
+        }
+      });
+      micro(ctx, 'SUDAH TIDAK ADA', 1210, 712, { size: 21, color: L.crimson, align: 'right', track: 5 });
       ctx.restore();
     }
 
-    // caption 4 — the question
-    const p4 = A(t, c[3] - 0.1, 0.8, ease.expo);
+    // caption 4 — the ask
+    const p4 = A(t, c[3], 0.8, ease.expo);
     if (p4 > 0.01) {
       ctx.save();
       ctx.globalAlpha = p4;
-      ctx.fillStyle = 'rgba(8,7,14,0.78)';
-      fillRR(ctx, 88, 384, 1264, 732, 18, 'rgba(8,7,14,0.78)');
-      hudFrame(ctx, 104, 400, 1232, 700, { a: 0.7, label: 'PERTANYAAN' });
-      micro(ctx, 'TULIS DI KOMENTAR', 148, 520, { size: 24, color: K.lime, track: 9 });
-      headline(ctx, ['LAGU APA', 'YANG NYANGKUT', 'DI KEPALAMU'], 148, 700, {
-      t,
-        size: 112, at: c[3], stagger: 0.1, accents: [8],
-      });
-      const pw = 380 * A(t, c[3] + 0.9, 0.7, ease.expo);
-      ctx.fillStyle = hexA(K.lime, 0.12);
-      fillRR(ctx, 148, 990, pw, 88, 10, hexA(K.lime, 0.12));
-      strokeRR(ctx, 148, 990, pw, 88, 10, hexA(K.lime, 0.5), 2);
-      txt(ctx, 'SEKARANG', 172, 1048, { size: 44, font: F.head, color: K.lime, track: 8 });
-      micro(ctx, 'NAYSI · SINYAL', 148, 1180, { size: 20, color: 'rgba(244,241,232,0.4)', track: 8 });
+      fillRR(ctx, 88, 250, 1264, 380, 18, 'rgba(3,5,13,0.88)');
+      ctx.strokeStyle = hexA(L.gold, 0.34);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(88, 250, 1264, 380, 18);
+      ctx.stroke();
       ctx.restore();
+      ctx.save();
+      ctx.globalAlpha = p4;
+      micro(ctx, 'TULIS DI KOMENTAR', 118, 306, { size: 24, color: L.warm, track: 9 });
+      say(ctx, ['LANGIT DARI', 'KOTA MANA?'], 114, 402, { t, size: 92, at: c[3] + 0.1, stagger: 0.08 });
+      ctx.restore();
+
+      const q = A(t, c[3] + 1.5, 0.8, ease.out);
+      if (q > 0.01) {
+        ctx.save();
+        ctx.globalAlpha = q * 0.95;
+        micro(ctx, 'NAYSI · LANGIT', 720, 1700, { size: 26, color: hexA(L.gold, 0.9), align: 'center', track: 13 });
+        ctx.restore();
+      }
     }
   },
 };

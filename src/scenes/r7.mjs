@@ -1,117 +1,98 @@
-import { W, txt, hexA, fillRR, strokeRR } from '../engine/draw.mjs';
+import { W, H } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, TAU, rng } from '../engine/anim.mjs';
 import {
-  K, ease, cue, cueWord, A, stage, gumPack, headline, micro, number, hairline, hudFrame,
-} from './_sinyal.mjs';
+  L, A, cue, cueWord, ease, sky, say, micro, number, txt, hexA, TAU, clamp, lerp, rng, noiseWall, wash,
+} from './_langit.mjs';
 
-// 07 — PERMEN KARET
-// Three minutes on a stopwatch. Every intrusion is a tick. Nine of them land.
-// Then the gum, and the ticks that never arrive: the mouth takes the loop's job.
+// 07 — SISA CAHAYA
+// The first light of the universe is still everywhere. Switch the sky to its
+// oldest layer and it reads as a receiver: static, 2.7 kelvin, in every direction.
 
-const NINE = [0.4, 3.1, 8.6, 12.2, 19.4, 26.0, 33.8, 41.2, 48.5];
+const B = 90;
 
 export default {
   draw(ctx, t, scene) {
-    stage(ctx, { beamX: 380, beamY: -220, key: 'r7' });
-    const c = [0, 1, 2, 3, 4].map((i) => cue(scene, i));
+    sky(ctx, { key: 'r7', band: 0.18, hills: false, glowY: 1720 });
+    const c = [0, 1, 2, 3].map((i) => cue(scene, i));
+    const wDua = cueWord(scene, 2, 'dua');
 
-    // caption 1 — it is not willpower
-    headline(ctx, ['BUKAN', 'KEMAUAN.'], 104, 420, {
-      t,
-      size: 128, at: c[0], stagger: 0.1, a: 1 - A(t, c[1], 0.4, ease.out),
+    // caption 1 — the proof
+    say(ctx, ['BUKTINYA.'], 104, 320, {
+      t, size: 106, at: c[0], stagger: 0.08, a: 1 - A(t, c[1], 0.45, ease.out),
     });
 
-    // the three minutes, and the nine intrusions
-    const p2 = A(t, c[0] + 0.45, 0.7, ease.out);
+    // caption 2 — the wash of first light, arriving from every side at once
+    const p2 = A(t, c[1], 0.7, ease.out);
+    const cover = A(t, c[1] + 0.2, 2.2, ease.inOut);
     if (p2 > 0.01) {
+      const dim = 1 - 0.45 * A(t, c[3], 0.6);
+      // a warm bloom behind the static: this was visible light once
       ctx.save();
-      ctx.globalAlpha = p2;
-      const x = 104;
-      const y = 640;
-      const w = 1232;
-      // the track
-      ctx.fillStyle = 'rgba(244,241,232,0.10)';
-      ctx.fillRect(x, y, w, 6);
-      micro(ctx, '0:00', x, y + 52, { size: 19, color: 'rgba(244,241,232,0.45)' });
-      micro(ctx, '3:00', x + w, y + 52, { size: 19, color: 'rgba(244,241,232,0.45)', align: 'right' });
-      micro(ctx, 'DILARANG MEMIKIRKAN LAGUNYA', x, y - 34, { size: 20, color: K.ice, track: 5 });
-      // the sweep
-      const sweep = clamp((t - (c[1] - 0.1)) / 9.0, 0, 1);
-      const sx = x + w * sweep;
-      const grad = ctx.createLinearGradient(x, 0, sx, 0);
-      grad.addColorStop(0, hexA(K.ice, 0.15));
-      grad.addColorStop(1, hexA(K.ice, 0.7));
-      ctx.fillStyle = grad;
-      ctx.fillRect(x, y, Math.max(0, sx - x), 6);
-      ctx.fillStyle = K.ink;
-      ctx.beginPath();
-      ctx.arc(sx, y + 3, 8, 0, TAU);
-      ctx.fill();
-      // the intrusions
-      NINE.forEach((f, i) => {
-        const at = c[1] + 0.2 + f * 0.18;
-        const q = A(t, at, 0.45, ease.back);
-        if (q <= 0.01) return;
-        const tx = x + w * (0.03 + f * 0.0195 * 1.0) + i * 2;
-        ctx.globalAlpha = p2 * q;
-        ctx.fillStyle = K.ember;
-        ctx.fillRect(tx - 2, y - 78 * q, 4, 78 * q);
-        txt(ctx, String(i + 1), tx, y - 96, {
-          size: 22, font: F.mono, color: K.ember, align: 'center',
-        });
-      });
+      ctx.globalAlpha = p2 * cover * 0.55;
+      const g = ctx.createRadialGradient(720, 760, 20, 720, 760, 860);
+      g.addColorStop(0, 'rgba(255,214,150,0.26)');
+      g.addColorStop(0.5, 'rgba(120,110,255,0.13)');
+      g.addColorStop(1, 'rgba(60,60,140,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(-B, -B, W + 2 * B, H * 0.92 + B);
       ctx.restore();
 
-      const w9 = cueWord(scene, 2, 'sembilan');
-      const p3 = A(t, w9, 0.6, ease.expo);
-      if (p3 > 0.01) {
-        ctx.save();
-        ctx.globalAlpha = p3;
-        number(ctx, '9', 96, 1010, { size: 240, color: K.ember });
-        micro(ctx, 'KALI MUNCUL', 116, 1064, { size: 24, color: K.ink, track: 6 });
-        micro(ctx, 'TANPA DIPANGGIL', 116, 1108, { size: 19, color: 'rgba(244,241,232,0.42)', track: 4 });
-        hairline(ctx, 100, 900, 420 * A(t, w9, 0.7, ease.expo), { color: hexA(K.ember, 0.55), weight: 3 });
-        ctx.restore();
-      }
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(-B, -B, W + 2 * B, H * (0.16 + 0.76 * cover) + B);
+      ctx.clip();
+      ctx.globalAlpha = p2 * 0.78 * dim;
+      noiseWall(ctx, t, W + 2 * B, H * 0.92 + B, -B, -B, { cell: 10, a: 1 });
+      ctx.restore();
     }
 
-    // caption 4 — the gum
-    const wGum = cueWord(scene, 3, 'tapi');
-    const wThird = cueWord(scene, 3, 'sepertiga');
-    const p4 = A(t, wGum, 0.8, ease.expo);
+    // caption 3 — 2.7 kelvin
+    const p3 = A(t, wDua - 0.2, 0.6, ease.expo);
+    const out3 = 1 - A(t, c[3], 0.5, ease.out);
+    if (p3 > 0.01 && out3 > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = Math.min(p3, out3);
+      wash(ctx, 320, 680, 0.90);
+      number(ctx, '2,7', 720, 560, { size: 176, color: L.ice, align: 'center', a: A(t, wDua, 0.5, ease.expo) });
+      micro(ctx, 'KELVIN', 720, 626, { size: 30, color: L.star, align: 'center', track: 13, a: A(t, wDua + 0.3, 0.5) });
+      ctx.restore();
+      // a cold scale, with the marker almost at zero
+      ctx.save();
+      ctx.globalAlpha = Math.min(p3, out3) * 0.9;
+      const sw = 1040;
+      const sx = 200;
+      const sy = 1010;
+      const g = ctx.createLinearGradient(sx, 0, sx + sw, 0);
+      g.addColorStop(0, 'rgba(80,120,255,0.85)');
+      g.addColorStop(0.45, 'rgba(143,216,255,0.8)');
+      g.addColorStop(1, 'rgba(255,233,184,0.85)');
+      ctx.fillStyle = g;
+      ctx.fillRect(sx, sy, sw, 8);
+      const q = A(t, c[2] + 0.3, 1.4, ease.inOut);
+      const mx = sx + sw * 0.055 * q;
+      ctx.fillStyle = L.star;
+      ctx.shadowColor = hexA(L.ice, 0.9);
+      ctx.shadowBlur = 22;
+      ctx.beginPath();
+      ctx.arc(mx, sy + 4, 11, 0, TAU);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      micro(ctx, '0 K', sx, sy + 56, { size: 21, color: 'rgba(143,216,255,0.8)', track: 4 });
+      micro(ctx, '300 K', sx + sw, sy + 56, { size: 21, color: L.warm, align: 'right', track: 4 });
+      ctx.restore();
+    }
+
+    // caption 4 — the name of it
+    const p4 = A(t, c[3], 0.8, ease.expo);
     if (p4 > 0.01) {
       ctx.save();
       ctx.globalAlpha = p4;
-      const gx = 104;
-      const gy = 1200;
-      gumPack(ctx, gx, gy, 300, 190, { rot: -0.05 });
-      micro(ctx, 'MENGUNYAH', gx + 360, gy + 60, { size: 24, color: K.lime, track: 8 });
-      number(ctx, '−33%', gx + 360, gy + 200, { size: 140, color: K.lime, a: A(t, wThird, 0.5, ease.expo) });
-      micro(ctx, 'SEPERTIGA LEBIH SEDIKIT', gx + 360, gy + 250, { size: 21, color: K.ink, track: 4, a: A(t, wThird, 0.5) });
-      // the intrusions the gum prevented, as hollow ticks
-      for (let i = 0; i < 9; i++) {
-        const q = A(t, wThird + 0.15 + i * 0.05, 0.4);
-        if (q <= 0.01) continue;
-        const tx = 1040 + (i % 3) * 62;
-        const ty = 1180 + Math.floor(i / 3) * 62;
-        ctx.globalAlpha = p4 * q * 0.5;
-        ctx.strokeStyle = K.lime;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(tx, ty, 16, 0, TAU);
-        ctx.stroke();
-      }
+      wash(ctx, 260, 690, 0.94);
       ctx.restore();
-    }
-
-    // caption 5 — the mouth takes the job
-    const p5 = A(t, c[4], 0.7, ease.out);
-    if (p5 > 0.01) {
       ctx.save();
-      ctx.globalAlpha = p5;
-      micro(ctx, 'MULUT DIPAKAI', 104, 1452, { size: 24, color: K.ink, track: 6 });
-      micro(ctx, 'MESIN LAGU KEHILANGAN TENAGA', 104, 1498, { size: 19, color: K.ice, track: 4 });
+      ctx.globalAlpha = p4;
+      micro(ctx, 'NAMA LAIN DARI CAHAYA PERTAMA', 112, 300, { size: 23, color: L.ice, track: 6 });
+      say(ctx, ['LATAR', 'GELOMBANG', 'MIKRO', 'KOSMIK'], 112, 396, { t, size: 94, at: c[3] + 0.1, stagger: 0.07, lineH: 1.0 });
       ctx.restore();
     }
   },
