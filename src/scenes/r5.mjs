@@ -79,10 +79,10 @@ export default {
     if (p3 > 0.01) {
       ctx.save();
       ctx.globalAlpha = p3;
-      clockArc(ctx, 1110, 1240, 210, { p: A(t, w24, 1.4, ease.out), color: K.ember, lw: 8 });
-      number(ctx, '24', 1110, 1268, { size: 132, color: K.ink, align: 'center' });
-      micro(ctx, 'JAM', 1110, 1320, { size: 24, color: K.ember, align: 'center', track: 10 });
-      micro(ctx, 'PALING SERING KEMBALI', 104, 1180, { size: 24, color: K.ink, track: 5 });
+      clockArc(ctx, 1010, 1250, 250, { p: A(t, w24, 1.4, ease.out), color: K.ember, lw: 10 });
+      number(ctx, '24', 1010, 1288, { size: 168, color: K.ink, align: 'center' });
+      micro(ctx, 'JAM', 1010, 1352, { size: 26, color: K.ember, align: 'center', track: 10 });
+      micro(ctx, 'PALING SERING KEMBALI', 104, 1180, { size: 26, color: K.ink, track: 5 });
       hairline(ctx, 104, 1210, 520 * A(t, w24, 0.8, ease.expo), { color: hexA(K.ember, 0.6), weight: 3 });
       ctx.restore();
     }

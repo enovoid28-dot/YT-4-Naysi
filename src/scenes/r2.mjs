@@ -25,17 +25,17 @@ export default {
     // the hundred, filling
     const w98 = cueWord(scene, 1, 'sembilan');
     const lit = 0.02 + 0.96 * A(t, w98 - 0.55, 1.3, ease.out);
-    dotField(ctx, 760, 520, {
+    dotField(ctx, 700, 470, {
       a: A(t, c[0] + 0.2, 0.7, ease.out),
-      cols: 10, rows: 10, gap: 62, size: 7.2, lit, color: K.lime,
+      cols: 10, rows: 10, gap: 72, size: 8.6, lit, color: K.lime,
     });
-    micro(ctx, 'SURVEI · 12.519 ORANG', 760, 1130, {
+    micro(ctx, 'SURVEI · 12.519 ORANG', 700, 1180, {
       size: 20, color: 'rgba(244,241,232,0.42)', a: A(t, c[1] + 0.5, 0.6),
     });
-    hudFrame(ctx, 730, 486, 592, 626, { a: A(t, c[0] + 0.15, 0.7) * 0.8 });
+    hudFrame(ctx, 668, 434, 700, 700, { a: A(t, c[0] + 0.15, 0.7) * 0.8 });
 
     // caption 1 — you are not alone
-    headline(ctx, ['KAMU TIDAK', 'SENDIRIAN.'], 104, 760, {
+    headline(ctx, ['KAMU TIDAK', 'SENDIRIAN.'], 104, 900, {
       t,
       size: 108, at: c[0], stagger: 0.1, a: 1 - A(t, c[1], 0.4, ease.out),
     });
@@ -51,12 +51,12 @@ export default {
       ctx.save();
       ctx.globalAlpha = a;
       const dy = (1 - pin) * 60;
-      number(ctx, n.v, 96, 800 + dy, { size: n.v.length > 4 ? 188 : 250, color: K.lime });
-      micro(ctx, n.l, 104, 880 + dy, { size: 26, color: K.ink, track: 6 });
-      micro(ctx, n.s, 104, 930 + dy, { size: 19, color: 'rgba(244,241,232,0.40)', track: 5 });
+      number(ctx, n.v, 96, 1230 + dy, { size: n.v.length > 4 ? 196 : 260, color: K.lime });
+      micro(ctx, n.l, 104, 1310 + dy, { size: 28, color: K.ink, track: 6 });
+      micro(ctx, n.s, 104, 1362 + dy, { size: 21, color: 'rgba(244,241,232,0.50)', track: 5 });
       // the number's own rule
       const rw = 470 * A(t, start + 0.1, 0.7, ease.expo);
-      hairline(ctx, 104, 745, rw, { color: hexA(K.lime, 0.5), weight: 3 });
+      hairline(ctx, 104, 1178, rw, { color: hexA(K.lime, 0.5), weight: 3 });
       ctx.restore();
     });
 
@@ -65,19 +65,20 @@ export default {
     if (p5 > 0.01) {
       ctx.save();
       ctx.globalAlpha = p5;
-      micro(ctx, 'NAMANYA', 104, 620, { size: 24, color: K.ember, track: 8 });
-      headline(ctx, ['INVOLUNTARY', 'MUSICAL', 'IMAGERY'], 104, 760, {
+      micro(ctx, 'NAMANYA', 104, 700, { size: 24, color: K.ember, track: 8 });
+      headline(ctx, ['INVOLUNTARY', 'MUSICAL', 'IMAGERY'], 104, 840, {
       t,
         size: 96, at: c[4] + 0.1, stagger: 0.1, accents: [0],
       });
       // the acronym, held in a chip
-      const pw = 330 * A(t, c[4] + 0.7, 0.7, ease.expo);
-      ctx.fillStyle = hexA(K.lime, 0.14);
-      fillRR(ctx, 104, 1080, pw, 96, 12, hexA(K.lime, 0.12));
-      strokeRR(ctx, 104, 1080, pw, 96, 12, hexA(K.lime, 0.55), 2);
-      txt(ctx, 'INMI', 128, 1152, { size: 62, font: F.head, color: K.lime, track: 12 });
-      txt(ctx, 'BUKAN LAGU NYANGKUT SAJA', 460, 1148, {
-        size: 20, font: F.mono, color: K.dim, track: 4,
+      const pw = 320 * A(t, c[4] + 0.7, 0.7, ease.expo);
+      fillRR(ctx, 104, 1156, pw, 104, 14, hexA(K.lime, 0.12));
+      strokeRR(ctx, 104, 1156, pw, 104, 14, hexA(K.lime, 0.55), 2.4);
+      txt(ctx, 'INMI', 104 + pw / 2, 1228, {
+        size: 64, font: F.head, color: K.lime, track: 14, align: 'center',
+      });
+      micro(ctx, 'BUKAN SEKADAR LAGU NYANGKUT', 104, 1316, {
+        size: 22, color: K.dim, track: 4, a: A(t, c[4] + 0.9, 0.6),
       });
       ctx.restore();
     }

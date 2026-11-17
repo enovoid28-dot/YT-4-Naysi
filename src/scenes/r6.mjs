@@ -21,25 +21,25 @@ export default {
     });
 
     // the clock, counting
-    const pin = A(t, c[1] - 0.2, 0.9, ease.expo);
+    const pin = A(t, c[1] - 0.45, 0.8, ease.expo);
     if (pin > 0.01) {
       ctx.save();
       ctx.globalAlpha = pin;
       const cx = 720;
-      const cy = 760;
-      const r = 300;
+      const cy = 830;
+      const r = 350;
       const w27 = cueWord(scene, 1, 'dua');
-      const run = A(t, w27, 2.4, ease.out);
+      const run = A(t, w27 - 0.1, 2.2, ease.out);
       clockArc(ctx, cx, cy, r, { p: run * 0.86, color: K.ice, lw: 9, ticks: 12 });
       // 27:00, ticked up with the arc
       const mins = Math.floor(run * 27);
       const secs = Math.floor((run * 27 * 60) % 60);
       const a1 = A(t, w27, 0.5);
-      number(ctx, `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`, cx, cy + 40, {
-        size: 132, color: K.ink, align: 'center', track: -0.03, a: a1,
+      number(ctx, `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`, cx, cy + 52, {
+        size: 150, color: K.ink, align: 'center', track: -0.03, a: a1,
       });
-      micro(ctx, 'RATA-RATA', cx, cy - 60, { size: 22, color: K.ice, align: 'center', track: 10, a: a1 });
-      micro(ctx, 'LALU HILANG', cx, cy + 110, { size: 20, color: K.dim, align: 'center', track: 8, a: A(t, cueWord(scene, 1, 'hilang') - 0.1, 0.6) });
+      micro(ctx, 'RATA-RATA', cx, cy - 118, { size: 24, color: K.ice, align: 'center', track: 10, a: a1 });
+      micro(ctx, 'LALU HILANG', cx, cy + 132, { size: 20, color: K.dim, align: 'center', track: 8, a: A(t, cueWord(scene, 1, 'hilang') - 0.1, 0.6) });
       ctx.restore();
     }
 
@@ -50,7 +50,7 @@ export default {
       ctx.save();
       ctx.globalAlpha = p3;
       const x = 104;
-      const y = 1180;
+      const y = 1260;
       const w = 1232;
       // the 27-minute span in miniature
       const full = 27 * 60;

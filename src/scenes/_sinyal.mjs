@@ -24,8 +24,8 @@ export const K = {
   bg: '#0A0811',
   bg2: '#15111F',
   ink: '#F4F1E8',
-  dim: 'rgba(244,241,232,0.52)',
-  faint: 'rgba(244,241,232,0.20)',
+  dim: 'rgba(244,241,232,0.66)',
+  faint: 'rgba(244,241,232,0.26)',
   lime: '#C8F751',
   limeLo: '#8FB62F',
   ember: '#FF7A45',
@@ -197,7 +197,7 @@ export function camera(ctx, t, scene, { push = 0.05, drift = 10, y = 700 } = {})
 
 /* ── marks ───────────────────────────────────────────────────────────────── */
 export function micro(ctx, s, x, y, o = {}) {
-  const { size = 22, color = K.dim, align = 'left', track = 5, a = 1, font = F.mono } = o;
+  const { size = 24, color = K.dim, align = 'left', track = 5, a = 1, font = F.mono } = o;
   if (a <= 0.01) return;
   txt(ctx, s, x, y, { size, font, color, align, track, alpha: a });
 }
@@ -503,12 +503,13 @@ export function headProfile(ctx, cx, cy, s, o = {}) {
   // the void where the brain sits
   path(ctx);
   const bg = ctx.createLinearGradient(cx - s * 0.5, cy - s * 0.6, cx + s * 0.5, cy + s * 0.6);
-  bg.addColorStop(0, 'rgba(30,26,48,0.92)');
-  bg.addColorStop(1, 'rgba(12,10,20,0.96)');
+  bg.addColorStop(0, 'rgba(56,50,82,0.95)');
+  bg.addColorStop(0.55, 'rgba(30,26,48,0.96)');
+  bg.addColorStop(1, 'rgba(16,13,26,0.97)');
   ctx.fillStyle = bg;
   ctx.fill();
-  ctx.strokeStyle = 'rgba(244,241,232,0.30)';
-  ctx.lineWidth = 2.4;
+  ctx.strokeStyle = 'rgba(244,241,232,0.55)';
+  ctx.lineWidth = 3.2;
   ctx.stroke();
 
   // the cortex region, lit
@@ -520,8 +521,8 @@ export function headProfile(ctx, cx, cy, s, o = {}) {
     const gy = cy - 0.10 * s;
     const pulse = 0.85 + Math.sin(t * 2.4) * 0.15;
     ctx.globalCompositeOperation = 'screen';
-    const g2 = ctx.createRadialGradient(gx, gy, 4, gx, gy, s * 0.42 * glowP);
-    g2.addColorStop(0, hexA(color, 0.55 * pulse));
+    const g2 = ctx.createRadialGradient(gx, gy, 4, gx, gy, s * 0.46 * glowP);
+    g2.addColorStop(0, hexA(color, 0.78 * pulse));
     g2.addColorStop(0.45, hexA(color, 0.16 * glowP));
     g2.addColorStop(1, hexA(color, 0));
     ctx.fillStyle = g2;

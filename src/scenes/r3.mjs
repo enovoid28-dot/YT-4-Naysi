@@ -16,7 +16,7 @@ export default {
     const c = [0, 1, 2, 3].map((i) => cue(scene, i));
 
     const pin = A(t, c[0], 1.2, ease.expo);
-    const glow = 0.5 + 0.5 * A(t, c[1] - 0.3, 1.2, ease.out);
+    const glow = 0.72 + 0.28 * A(t, c[1] - 0.3, 1.2, ease.out);
     headProfile(ctx, lerp(360, 430, pin), 900, 720, { a: pin, t, glowP: glow });
 
     // the ear point
