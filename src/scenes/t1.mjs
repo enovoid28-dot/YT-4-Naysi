@@ -1,131 +1,145 @@
-import { W, H } from '../engine/draw.mjs';
+import { W, H, txt, fillRR, rr, measure, tracking, linGrad } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import {
-  M, room, bed, dust, clock, A, cue, ease, micro, number, txt, hexA, fillRR, TAU, clamp, lerp, rng,
-} from './_malam.mjs';
-import { person } from './_langit.mjs';
+import { clamp, lerp, TAU } from '../engine/anim.mjs';
+import { K, ease, cue, sheet, kick, stampInk, num } from './_kertas.mjs';
+import { A, roll, fadeUp, rule, clock, bracket, dot, panel } from './_cetak.mjs';
 
 // 01 — JAM DUA
-// One room, one night, one clock. A person sits up in bed with the duvet still
-// over their legs, and the wall clock runs from two in the morning to six while
-// they watch it. When the voice stops talking about hours and starts talking
-// about debt, something starts rising out of the floor.
+// The clock is the picture: two in the morning, and the four hours that are
+// left are set as four pressed blocks. When the body stops counting hours, the
+// blocks get struck out; what is left is the stamp.
+function drawScene(ctx, t, scene) {
+  sheet(ctx, t, { glowX: 760, glowY: 420, glowA: 0.4 });
+  const c = (i) => cue(scene, i);
+  const t0 = c(0);
 
-export default {
-  draw(ctx, t, scene) {
-    room(ctx, { key: 't1', side: 'right' });
-    dust(ctx, t, { a: 0.30, seed: 5, y0: 420, y1: 1600 });
+  // ── 02.00 ──────────────────────────────────────────────────────────────
+  const pNum = A(t, t0, 0.75, ease.expo);
+  roll(ctx, '02.00', 104, 500, { size: 196, p: pNum, track: -10 });
+  fadeUp(ctx, A(t, t0 + 0.16, 0.5), 14, () => {
+    kick(ctx, 'PAGI', 110, 556, { size: 22, track: 8, color: K.red });
+  });
 
-    const c = [0, 1, 2, 3, 4, 5].map((i) => cue(scene, i));
+  // the clock, hands at two, second hand running fast because nothing good
+  // happens at this hour
+  const pClock = A(t, t0 + 0.1, 0.95, ease.expo);
+  if (pClock > 0) {
+    clock(ctx, 1080, 560, 186, 2, 0, { a: pClock, lw: 5 });
+  }
 
-    // ── the person, sitting up, back to the room
-    const sit = A(t, -0.3, 1.1, ease.out);
-    person(ctx, 1104, 2152, 690, { a: sit, rim: 1.0 });
+  // ── the four hours that are left ───────────────────────────────────────
+  const pBlocks = A(t, c(1) + 0.05, 0.9, ease.out);
+  const bx = 104;
+  const bw = W - 208;
+  const gap = 14;
+  const bh = 152;
+  const by = 806;
+  const cols = ['02', '03', '04', '05'];
+  const cw = (bw - gap * 3) / 4;
 
-    // the duvet comes up over the legs; drawn over the body so the person is
-    // unmistakably *in* the bed and not standing in front of it
-    bed(ctx, { y: 1898, pillow: false, a: A(t, -0.2, 1.0, ease.out) });
+  fadeUp(ctx, A(t, c(1) + 0.05, 0.45), 10, () => {
+    kick(ctx, 'EMPAT JAM', 104, 776, { size: 21, track: 6, color: K.soft });
+  });
 
-    // ── the debt as a tide: a red waterline that comes up out of the floor
-    const tide = 0.70 * A(t, c[4] + 0.15, 2.6, ease.inOut) + 0.30 * A(t, c[5] + 0.2, 3.4, ease.inOut);
-    if (tide > 0.01) {
-      const level = lerp(H + 140, 1652, tide);
-      const g = ctx.createLinearGradient(0, level - 260, 0, level + 220);
-      g.addColorStop(0, 'rgba(255,90,70,0)');
-      g.addColorStop(0.62, `rgba(255,86,66,${0.20 * tide})`);
-      g.addColorStop(1, `rgba(255,70,54,${0.46 * tide})`);
-      ctx.fillStyle = g;
-      ctx.fillRect(-80, level - 260, W + 160, H - level + 300);
-      // the line itself, breathing, so it reads as a level and not a band
+  const p3 = A(t, c(3), 0.55);
+  const p4 = A(t, c(4), 0.5);
+  ctx.save();
+  for (let i = 0; i < 4; i++) {
+    const p = A(t, c(1) + 0.05 + i * 0.07, 0.5, ease.back);
+    if (p <= 0.004) continue;
+    const x = bx + i * (cw + gap);
+    ctx.save();
+    ctx.globalAlpha = clamp(p) * (1 - p3);
+    const yy = by + (1 - clamp(p)) * 28;
+    ctx.fillStyle = K.ink;
+    rr(ctx, x, yy, cw, bh, 2);
+    ctx.fill();
+    txt(ctx, cols[i], x + cw / 2, yy + bh * 0.68, {
+      size: 74, font: F.num, color: K.paper, align: 'center', track: -3,
+    });
+    ctx.restore();
+    if (p3 > 0.004) {
+      // the hours are crossed out: the block empties and the figure stays
       ctx.save();
-      ctx.strokeStyle = `rgba(255,132,104,${0.55 * tide})`;
-      ctx.lineWidth = 4;
-      ctx.shadowColor = 'rgba(255,90,70,0.7)';
-      ctx.shadowBlur = 34;
-      ctx.beginPath();
-      for (let x = -80; x <= W + 80; x += 40) {
-        const y = level + Math.sin(x * 0.006 + t * 0.9) * 9;
-        if (x === -80) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
+      ctx.globalAlpha = clamp(p) * p3;
+      ctx.fillStyle = K.card;
+      rr(ctx, x, yy, cw, bh, 2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(20,17,16,0.5)';
+      ctx.lineWidth = 2.4;
+      rr(ctx, x, yy, cw, bh, 2);
       ctx.stroke();
+      txt(ctx, cols[i], x + cw / 2, yy + bh * 0.68, {
+        size: 74, font: F.num, color: K.ink, align: 'center', track: -3,
+      });
       ctx.restore();
     }
+  }
+  ctx.restore();
 
-    // ── the clock: digits straight on the wall, amber, the only warm thing
-    const digitA = A(t, c[0] + 0.05, 0.5, ease.out)
-      * (1 - 0.62 * A(t, c[3] + 0.15, 1.0, ease.inOut))
-      * (1 - A(t, c[4] + 0.9, 1.2, ease.inOut));
-    let hh = 2;
-    if (t > c[2] + 0.2) hh = Math.min(6, 2 + Math.floor((t - c[2] - 0.2) / 0.42));
-    const alarm = hh >= 6 ? A(t, c[2] + 0.2 + 4 * 0.42, 0.6, ease.out) : 0;
-    const flick = 0.93 + 0.07 * Math.sin(t * 37) * Math.sin(t * 11);
-    if (digitA > 0.01) {
-      const col = alarm > 0.5 ? M.red : M.amber;
-      clock(ctx, 108, 1092, 250, `0${hh}:00`, { a: digitA, color: col, on: flick, halo: 1 });
-      if (alarm > 0.02) {
-        // the morning already waiting behind the night
-        const g = ctx.createLinearGradient(0, 1200, 0, 1900);
-        g.addColorStop(0, `rgba(255,120,90,${0.07 * alarm})`);
-        g.addColorStop(1, 'rgba(255,120,90,0)');
-        ctx.fillStyle = g;
-        ctx.fillRect(-80, 1200, W + 160, 760);
-        micro(ctx, 'PAGI', 112, 1360, { size: 26, color: hexA(M.red, 0.85), track: 12, a: alarm });
-      }
-    }
+  // the hours get struck out once the body stops counting them
+  if (p3 > 0.004) {
+    ctx.save();
+    ctx.globalAlpha *= 1;
+    ctx.strokeStyle = K.red;
+    ctx.lineWidth = 7;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(bx - 6, by + bh * 0.56);
+    ctx.lineTo(lerp(bx - 6, bx + bw + 6, p3), by + bh * 0.56 + 8 * p3);
+    ctx.stroke();
+    ctx.restore();
+  }
 
-    // ── caption 4: the hours, still being counted, one tick at a time
-    const rulerA = A(t, c[3] + 0.10, 0.7, ease.out) * (1 - 0.35 * A(t, c[5] + 0.4, 1.6, ease.inOut));
-    if (rulerA > 0.01) {
-      const n = 22;
-      const x0 = 112;
-      const x1 = 1206;
-      const y = 1412;
-      const lit = Math.floor(A(t, c[3] + 0.2, 2.2, ease.inOut) * n);
-      for (let i = 0; i < n; i++) {
-        const p = A(t, c[3] + 0.12 + i * 0.05, 0.42, ease.out);
-        if (p <= 0.01) continue;
-        const x = lerp(x0, x1, i / (n - 1));
-        const hour = i % 6 === 0;
-        const h = (hour ? 26 : 13) * p;
-        ctx.save();
-        ctx.globalAlpha *= rulerA;
-        ctx.strokeStyle = i <= lit ? hexA(M.amber, hour ? 0.95 : 0.48) : 'rgba(255,246,232,0.15)';
-        ctx.lineWidth = hour ? 4 : 2;
-        if (i <= lit && hour) {
-          ctx.shadowColor = hexA(M.amber, 0.7);
-          ctx.shadowBlur = 20;
-        }
-        ctx.beginPath();
-        ctx.moveTo(x, y - h);
-        ctx.lineTo(x, y + h);
-        ctx.stroke();
-        ctx.restore();
-      }
-      micro(ctx, 'JAM', x1 + 24, y + 12, { size: 26, color: M.faint, track: 8, a: rulerA * 0.9 });
-      // the hours the ruler is counting, named under every sixth tick
-      [0, 1, 2, 3].forEach((k) => {
-        const i = k * 6;
-        if (i >= n) return;
-        const x = lerp(x0, x1, i / (n - 1));
-        const la = A(t, c[3] + 0.3 + k * 0.25, 0.4, ease.out) * rulerA;
-        micro(ctx, `0${2 + k}`, x, y + 66, { size: 28, color: hexA(M.amber, 0.92), track: 3, align: 'center', a: la });
+  fadeUp(ctx, A(t, c(2), 0.5), 12, () => {
+    kick(ctx, 'BANGUN 06.00', W - 104, 776, { size: 21, track: 6, color: K.red, align: 'right' });
+  });
+
+  // the night, as a ruler, under the four hours
+  const pRail = A(t, c(2) + 0.1, 0.8, ease.out);
+  if (pRail > 0.004) {
+    const ry = 1104;
+    ctx.save();
+    ctx.globalAlpha *= clamp(pRail) * 0.9;
+    ctx.fillStyle = 'rgba(20,17,16,0.32)';
+    ctx.fillRect(104, ry, (W - 208) * clamp(pRail), 2);
+    const labels = ['22', '23', '00', '01', '02', '03', '04', '05', '06'];
+    labels.forEach((lab, i) => {
+      const x = 104 + (i / 8) * (W - 208);
+      const hot = i >= 4 && i <= 8;
+      ctx.globalAlpha = clamp(pRail) * (hot ? 0.9 : 0.5);
+      ctx.fillStyle = hot ? K.ink : 'rgba(20,17,16,0.6)';
+      ctx.fillRect(x - 1, ry, 2, i === 8 ? 18 : 11);
+      tracking(ctx, lab, x, ry + 46, {
+        size: 17, font: F.mono6, track: 1,
+        color: hot ? K.ink : 'rgba(20,17,16,0.45)', align: 'center',
       });
-      // the ticks that stop being hours and fall out of the ruler
-      for (let i = 0; i < n; i += 2) {
-        const d = A(t, c[4] + 0.15 + (i / n) * 1.5, 1.3, ease.in);
-        if (d <= 0.01 || d >= 1) continue;
-        const x = lerp(x0, x1, i / (n - 1));
-        ctx.save();
-        ctx.globalAlpha *= (1 - d) * 0.85;
-        ctx.strokeStyle = hexA(M.amber, 0.85);
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(x, y + d * 430);
-        ctx.lineTo(x, y + d * 430 + 20 * (1 - d));
-        ctx.stroke();
-        ctx.restore();
-      }
-    }
-  },
-};
+    });
+    ctx.restore();
+  }
+
+  // ── what the body counts instead ───────────────────────────────────────
+  fadeUp(ctx, A(t, c(4) - 0.1, 0.5), 18, () => {
+    kick(ctx, 'BUKAN JAM, TAPI', 104, 1216, { size: 22, track: 7, color: K.soft });
+  });
+  const pStamp = A(t, c(4) + 0.12, 0.5, ease.back);
+  stampInk(ctx, 'UTANG', 470, 1330, {
+    a: pStamp, size: 92, track: 8, rot: -0.05, color: K.red, pad: 34,
+  });
+
+  // a printed underline that closes the thought
+  const pl = A(t, c(5), 0.8, ease.out);
+  if (pl > 0.004) {
+    ctx.save();
+    ctx.globalAlpha *= 0.9;
+    ctx.strokeStyle = K.ink;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(104, 1432);
+    ctx.lineTo(104 + (W - 208) * pl, 1432);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+export default { draw: drawScene };

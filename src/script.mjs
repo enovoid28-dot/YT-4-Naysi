@@ -28,7 +28,7 @@ export const BRAND = 'NAYSI';
 
 export const SCENES = [
   {
-    id: 's1', key: 't1', label: 'JAM DUA', index: '01', theme: 'dark',
+    id: 's1', key: 't1', label: 'JAM DUA', index: '01', theme: 'light',
     vo: 'Jam dua pagi. Kamu masih bangun. Padahal besok pagi kamu harus tetap waras. Tubuhmu tidak menghitung jam. Ia menghitung utang. Dan utang itu tidak hilang hanya karena kamu terbiasa.',
     cap: [
       'Jam dua pagi.',
@@ -41,7 +41,7 @@ export const SCENES = [
     pad: 1.45,
   },
   {
-    id: 's2', key: 't2', label: 'UTANG', index: '02', theme: 'dark',
+    id: 's2', key: 't2', label: 'UTANG', index: '02', theme: 'light',
     vo: 'Orang dewasa butuh tujuh sampai sembilan jam. Kalau kamu tidur enam jam, kurangnya dua jam. Lima hari kerja, sepuluh jam hilang. Satu malam penuh yang tidak pernah kamu ambil.',
     cap: [
       'Orang dewasa butuh *tujuh sampai sembilan* jam.',
@@ -52,7 +52,7 @@ export const SCENES = [
     pad: 1.45,
   },
   {
-    id: 's3', key: 't3', label: 'FOKUS', index: '03', theme: 'dark',
+    id: 's3', key: 't3', label: 'FOKUS', index: '03', theme: 'light',
     vo: 'Utang itu ditagih lebih cepat dari yang kamu kira. Setelah tujuh belas jam terjaga, fokusmu setara dengan orang berkadar alkohol nol koma nol lima persen. Reaksi melambat. Tiga detik mati rasa. Dan kamu tidak menyadarinya.',
     cap: [
       'Utang itu ditagih lebih cepat dari yang kamu kira.',
@@ -65,7 +65,7 @@ export const SCENES = [
     pad: 1.45,
   },
   {
-    id: 's4', key: 't4', label: 'MEMORI', index: '04', theme: 'dark',
+    id: 's4', key: 't4', label: 'MEMORI', index: '04', theme: 'light',
     vo: 'Otak memindahkan ingatan saat tidur. Hipokampus menyerahkan catatan hari itu ke korteks. Tanpa itu, kamu bisa belajar semalaman dan tetap lupa esok hari. Belajar tanpa tidur itu menulis di atas air.',
     cap: [
       'Otak memindahkan ingatan saat tidur.',
@@ -76,7 +76,7 @@ export const SCENES = [
     pad: 1.45,
   },
   {
-    id: 's5', key: 't5', label: 'GULA', index: '05', theme: 'dark',
+    id: 's5', key: 't5', label: 'GULA', index: '05', theme: 'light',
     vo: 'Ada juga yang berubah di darah. Pemuda sehat yang tidur empat jam selama enam malam jadi kurang toleran terhadap gula. Kadarnya naik sampai ke wilayah pradiabetes. Hanya dari kurang tidur.',
     cap: [
       'Ada juga yang berubah di darah.',
@@ -88,7 +88,7 @@ export const SCENES = [
     pad: 1.45,
   },
   {
-    id: 's6', key: 't6', label: 'LAPAR', index: '06', theme: 'dark',
+    id: 's6', key: 't6', label: 'LAPAR', index: '06', theme: 'light',
     vo: 'Kurang tidur juga mengubah rasa lapar. Hormon lapar naik, hormon kenyang turun. Kamu lebih sering merasa lapar. Yang dicari bukan sayur, tapi karbohidrat dan lemak. Itu sebabnya malam berakhir di kulkas.',
     cap: [
       'Kurang tidur juga mengubah rasa lapar.',
@@ -100,7 +100,7 @@ export const SCENES = [
     pad: 1.45,
   },
   {
-    id: 's7', key: 't7', label: 'KAFEIN', index: '07', theme: 'dark',
+    id: 's7', key: 't7', label: 'KAFEIN', index: '07', theme: 'light',
     vo: 'Lalu ada kopi. Kafein tidak menghapus kantuk. Ia hanya menutup reseptornya. Separuh dosisnya masih ada lima jam kemudian. Kopi jam empat sore masih bekerja saat kamu tidur jam sepuluh.',
     cap: [
       'Lalu ada kopi.',
@@ -112,7 +112,7 @@ export const SCENES = [
     pad: 1.45,
   },
   {
-    id: 's8', key: 't8', label: 'POLA', index: '08', theme: 'dark',
+    id: 's8', key: 't8', label: 'POLA', index: '08', theme: 'light',
     vo: 'Yang berbahaya bukan satu malam, tapi polanya. Tidur di bawah enam jam setiap malam berhubungan dengan tekanan darah tinggi, diabetes, dan berat badan naik. Bukan hukuman. Hanya harga.',
     cap: [
       'Yang berbahaya bukan satu malam, tapi *polanya*.',
@@ -124,7 +124,7 @@ export const SCENES = [
     pad: 1.45,
   },
   {
-    id: 's9', key: 't9', label: 'MALAM INI', index: '09', theme: 'dark',
+    id: 's9', key: 't9', label: 'MALAM INI', index: '09', theme: 'light',
     vo: 'Malam ini tidak perlu sempurna. Bangun di jam yang sama, matikan lampu satu jam lebih awal. Tidur bukan waktu yang hilang. Ia tempat otak membereskan hari. Tulis di komentar: jam berapa kamu tidur semalam?',
     cap: [
       'Malam ini tidak perlu sempurna.',

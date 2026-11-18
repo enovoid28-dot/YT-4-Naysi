@@ -1,221 +1,121 @@
-import { W, H } from '../engine/draw.mjs';
+import { W, H, txt, fillRR, rr, measure, tracking } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import {
-  M, room, micro, number, A, cue, cueWord, ease, hexA, fillRR, ribbon, TAU, clamp, lerp, rng,
-} from './_malam.mjs';
-import { person } from './_langit.mjs';
+import { clamp, lerp, TAU } from '../engine/anim.mjs';
+import { K, ease, cue, sheet, kick, stampInk, paperCard, tape, arrow } from './_kertas.mjs';
+import { A, roll, fadeUp, rule, panel, fridge, hatch } from './_cetak.mjs';
 
 // 06 — LAPAR
-// The kitchen at two in the morning, lit by an open door. Two hormones cross on
-// the wall — the hungry one climbing, the full one falling — and the person
-// standing in the cold light is the result, not the illustration.
+// Two hormones set as two opposing arrows on two pressed cards, then a shopping
+// list where the only crossed-out line is the one that would have helped.
+function drawScene(ctx, t, scene) {
+  sheet(ctx, t, { glowX: 720, glowY: 440, glowA: 0.32 });
+  const c = (i) => cue(scene, i);
 
-export default {
-  draw(ctx, t, scene) {
-    room(ctx, { key: 't6', window: false, warm: 0.32 });
-    const c = [0, 1, 2, 3, 4].map((i) => cue(scene, i));
-    const wKulkas = cueWord(scene, 4, 'kulkas');
-    const open = A(t, c[0] + 0.2, 1.6, ease.inOut);
-    const cross = A(t, c[1] + 0.1, 1.8, ease.inOut);
-    const end = A(t, wKulkas - 0.3, 1.0, ease.out);
+  const cards = [
+    {
+      x: 104, w: 568, kick: 'HORMON LAPAR', sub: 'GHRELIN',
+      word: 'NAIK', color: K.red, up: true, at: c(1),
+    },
+    {
+      x: 768, w: 568, kick: 'HORMON KENYANG', sub: 'LEPTIN',
+      word: 'TURUN', color: K.blue, up: false, at: c(1) + 0.28,
+    },
+  ];
 
-    const fx = 596;
-    const fy = 930;
-    const fw = 700;
-    const fh = 1070;
+  cards.forEach((cd, i) => {
+    const pCard = A(t, c(0) + 0.1 + i * 0.12, 0.65, ease.back);
+    if (pCard <= 0.004) return;
+    ctx.save();
+    ctx.globalAlpha *= clamp(pCard);
+    ctx.translate(0, (1 - clamp(pCard)) * 46);
+    paperCard(ctx, cd.x, 356, cd.w, 468, { rot: i ? -0.008 : 0.008 });
+    kick(ctx, cd.kick, cd.x + 40, 418, { size: 20, track: 5, color: K.soft });
+    tracking(ctx, cd.sub, cd.x + 40, 456, {
+      size: 17, font: F.mono6, track: 4, color: 'rgba(20,17,16,0.28)',
+    });
 
-    // ── the light that gets out
-    if (open > 0.01) {
+    // the arrow is the argument
+    const pa = A(t, cd.at, 0.85, ease.out);
+    const ax = cd.x + 104;
+    if (cd.up) {
+      arrow(ctx, ax, 762, ax, 762 - 250 * clamp(pa), {
+        color: K.red, lw: 16, head: 46, p: 1,
+      });
+    } else {
+      arrow(ctx, ax, 510, ax, 510 + 250 * clamp(pa), {
+        color: K.blue, lw: 16, head: 46, p: 1,
+      });
+    }
+    roll(ctx, cd.word, cd.x + 188, 700, {
+      size: 98, p: A(t, cd.at + 0.15, 0.6, ease.expo),
+      color: cd.color, font: F.head, track: -3,
+    });
+    ctx.restore();
+  });
+
+  // ── the list ───────────────────────────────────────────────────────────
+  const pList = A(t, c(3) - 0.1, 0.6, ease.out);
+  if (pList > 0.004) {
+    ctx.save();
+    ctx.globalAlpha *= clamp(pList);
+    panel(ctx, 104, 900, 1232, 320, { tab: 'YANG DICARI' });
+    const rows = [
+      ['KARBOHIDRAT', true],
+      ['LEMAK', true],
+    ];
+    rows.forEach(([word], i) => {
+      const p = A(t, c(3) + 0.1 + i * 0.12, 0.5, ease.out);
       ctx.save();
-      ctx.globalAlpha *= open;
-      const spill = ctx.createRadialGradient(fx + fw * 0.5, fy + 260, 60, fx + fw * 0.5, fy + 260, 1250);
-      spill.addColorStop(0, 'rgba(196,226,255,0.26)');
-      spill.addColorStop(0.35, 'rgba(150,196,250,0.12)');
-      spill.addColorStop(1, 'rgba(90,140,210,0)');
-      ctx.fillStyle = spill;
-      ctx.fillRect(-200, 200, W + 400, 2100);
-      // pool on the floor
-      const pool = ctx.createEllipse
-        ? ctx.createRadialGradient(fx + fw * 0.4, 2050, 20, fx + fw * 0.4, 2050, 620)
-        : null;
-      if (pool) {
-        pool.addColorStop(0, 'rgba(170,210,255,0.16)');
-        pool.addColorStop(1, 'rgba(120,170,230,0)');
+      ctx.globalAlpha = clamp(pList) * clamp(p);
+      // tick
+      ctx.strokeStyle = K.red;
+      ctx.lineWidth = 6;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(148, 1052 + i * 96);
+      ctx.lineTo(172, 1078 + i * 96);
+      ctx.lineTo(214, 1024 + i * 96);
+      ctx.stroke();
+      txt(ctx, word, 240, 1074 + i * 96, {
+        size: 62, font: F.head, color: K.ink, track: -1.5,
+      });
+      ctx.restore();
+    });
+    // the one that is not on the list
+    const pSay = A(t, c(3) + 0.34, 0.5, ease.out);
+    if (pSay > 0.004) {
+      ctx.save();
+      ctx.globalAlpha = clamp(pList) * clamp(pSay) * 0.42;
+      txt(ctx, 'SAYUR', 880, 1074, { size: 62, font: F.head, color: K.ink, track: -1.5 });
+      ctx.restore();
+      const pX = A(t, c(3) + 0.5, 0.45, ease.out);
+      if (pX > 0.004) {
         ctx.save();
-        ctx.translate(0, 0);
-        ctx.fillStyle = pool;
-        ctx.fillRect(0, 1750, W, 700);
+        ctx.globalAlpha = clamp(pList);
+        ctx.strokeStyle = K.red;
+        ctx.lineWidth = 7;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(866, 1050);
+        ctx.lineTo(lerp(866, 1114, pX), 1050);
+        ctx.stroke();
         ctx.restore();
       }
-      ctx.restore();
     }
-
-    // ── the open door, swung out to the left
-    ctx.save();
-    const dw = 246 * open;
-    const doorG = ctx.createLinearGradient(fx - dw, fy, fx, fy + fh);
-    doorG.addColorStop(0, '#232C3E');
-    doorG.addColorStop(0.55, '#161C29');
-    doorG.addColorStop(1, '#0B0E15');
-    ctx.fillStyle = doorG;
-    ctx.beginPath();
-    ctx.moveTo(fx, fy);
-    ctx.lineTo(fx - dw, fy + 90);
-    ctx.quadraticCurveTo(fx - dw - 26, fy + fh * 0.5, fx - dw * 0.94, fy + fh - 70);
-    ctx.lineTo(fx, fy + fh);
-    ctx.closePath();
-    ctx.fill();
-    // cold rim on the door edge
-    ctx.strokeStyle = `rgba(190,220,255,${0.55 * open})`;
-    ctx.lineWidth = 4;
-    ctx.stroke();
-    // the gasket line down the inside of the door
-    ctx.strokeStyle = `rgba(120,150,190,${0.30 * open})`;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(fx - dw + 22, fy + 120);
-    ctx.quadraticCurveTo(fx - dw + 14, fy + fh * 0.5, fx - dw + 30, fy + fh - 96);
-    ctx.stroke();
     ctx.restore();
+  }
 
-    // ── the cabinet
-    const body = ctx.createLinearGradient(fx, fy, fx + fw, fy + fh);
-    body.addColorStop(0, '#161C2A');
-    body.addColorStop(1, '#090C13');
-    fillRR(ctx, fx, fy, fw, fh, 24, body);
-    ctx.strokeStyle = 'rgba(150,180,230,0.14)';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // ── the inside
-    if (open > 0.01) {
-      const ix = fx + 30;
-      const iy = fy + 34;
-      const iw = fw - 60;
-      const ih = fh - 68;
-      const inner = ctx.createLinearGradient(0, iy, 0, iy + ih);
-      inner.addColorStop(0, 'rgba(206,228,255,0.95)');
-      inner.addColorStop(0.10, 'rgba(150,184,232,0.80)');
-      inner.addColorStop(0.42, 'rgba(52,76,120,0.92)');
-      inner.addColorStop(1, 'rgba(12,20,36,0.97)');
-      ctx.save();
-      ctx.globalAlpha *= open;
-      fillRR(ctx, ix, iy, iw, ih, 14, inner);
-
-      // the lamp strip along the top
-      const lamp = ctx.createLinearGradient(0, iy, 0, iy + 210);
-      lamp.addColorStop(0, 'rgba(255,255,255,0.75)');
-      lamp.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = lamp;
-      ctx.fillRect(ix, iy, iw, 210);
-
-      // shelves and what is left on them
-      const r = rng(63);
-      for (let s2 = 0; s2 < 3; s2++) {
-        const y = iy + 210 + s2 * 250;
-        // the glass shelf, lit along its front edge, with shadow under it
-        ctx.fillStyle = 'rgba(10,18,32,0.55)';
-        ctx.fillRect(ix, y + 10, iw, 26);
-        ctx.fillStyle = 'rgba(180,214,255,0.55)';
-        ctx.fillRect(ix, y, iw, 9);
-        ctx.fillStyle = 'rgba(255,255,255,0.22)';
-        ctx.fillRect(ix, y, iw, 3);
-      }
-      // a carton, a jar, a bottle, a tub — food that is easy at 2 a.m.
-      const milk = ctx.createLinearGradient(ix + 60, iy + 380, ix + 170, iy + 380);
-      milk.addColorStop(0, 'rgba(255,250,240,0.92)');
-      milk.addColorStop(1, 'rgba(214,222,236,0.9)');
-      fillRR(ctx, ix + 56, iy + 210 - 170, 120, 170, 10, milk);
-      ctx.fillStyle = 'rgba(255,170,120,0.75)';
-      fillRR(ctx, ix + 56, iy + 150, 120, 34, 6, 'rgba(255,170,120,0.75)');
-      ctx.fillStyle = 'rgba(255,210,150,0.85)';
-      ctx.beginPath();
-      ctx.arc(ix + 330, iy + 300, 62, 0, TAU);
-      ctx.fill();
-      fillRR(ctx, ix + 470, iy + 220, 74, 210, 20, 'rgba(190,230,255,0.8)');
-      fillRR(ctx, ix + 96, iy + 560, 150, 120, 14, 'rgba(255,235,200,0.75)');
-      ctx.fillStyle = 'rgba(120,180,140,0.7)';
-      ctx.beginPath();
-      ctx.ellipse(ix + 360, iy + 630, 78, 54, 0.2, 0, TAU);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    // ── the person standing in the light
-    // the floor: a shadow under the cabinet and under the person, so neither floats
+  // ── where the night ends ───────────────────────────────────────────────
+  const pF = A(t, c(4), 0.7, ease.back);
+  if (pF > 0.004) {
     ctx.save();
-    const fs = ctx.createRadialGradient(fx + fw * 0.5, 2130, 40, fx + fw * 0.5, 2130, 620);
-    fs.addColorStop(0, 'rgba(0,0,0,0.55)');
-    fs.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = fs;
-    ctx.fillRect(fx - 260, 1900, fw + 520, 420);
-    ctx.beginPath();
-    ctx.ellipse(1300, 2118, 172, 50, 0, 0, TAU);
-    ctx.fillStyle = 'rgba(0,0,0,0.45)';
-    ctx.fill();
+    ctx.globalAlpha *= clamp(pF);
+    fridge(ctx, 1176, 1344, 186, { a: clamp(pF) });
     ctx.restore();
-    person(ctx, 1300, 2126, 880, { a: A(t, c[0] + 0.45, 1.2, ease.out) * 0.97, rim: 1.0 });
+    fadeUp(ctx, A(t, c(4) + 0.25, 0.45), 12, () => {
+      kick(ctx, 'DAPUR', 104, 1400, { size: 20, track: 6, color: K.soft });
+    });
+  }
+}
 
-    // ── the two hormones, crossing on the wall
-    if (cross > 0.01) {
-      ctx.save();
-      ctx.globalAlpha *= cross * 0.95;
-      const up = [];
-      const down = [];
-      for (let i = 0; i < 12; i++) {
-        const p = i / 11;
-        up.push([lerp(90, 520, p), lerp(1560, 880, Math.pow(p, 1.15))]);
-        down.push([lerp(90, 520, p), lerp(900, 1480, Math.pow(p, 1.1))]);
-      }
-      ribbon(ctx, up, { color: M.amber, lw: 13, glow: 30 });
-      ribbon(ctx, down, { color: M.ice, lw: 13, glow: 26 });
-      // arrowheads: up for the hungry hormone, down for the full one
-      ctx.fillStyle = M.amber;
-      ctx.shadowColor = hexA(M.amber, 0.8);
-      ctx.shadowBlur = 26;
-      ctx.beginPath();
-      ctx.moveTo(524, 866);
-      ctx.lineTo(496, 916);
-      ctx.lineTo(552, 916);
-      ctx.closePath();
-      ctx.fill();
-      ctx.fillStyle = M.ice;
-      ctx.shadowColor = hexA(M.ice, 0.7);
-      ctx.beginPath();
-      ctx.moveTo(524, 1494);
-      ctx.lineTo(496, 1444);
-      ctx.lineTo(552, 1444);
-      ctx.closePath();
-      ctx.fill();
-      ctx.shadowBlur = 0;
-      const crossP = A(t, c[1] + 1.0, 0.8, ease.out);
-      micro(ctx, 'HORMON LAPAR', 452, 836, { size: 29, color: M.amber, track: 6, align: 'right', a: crossP });
-      micro(ctx, 'NAIK', 452, 882, { size: 26, color: M.faint, track: 8, align: 'right', a: crossP });
-      micro(ctx, 'HORMON KENYANG', 452, 1474, { size: 29, color: M.ice, track: 6, align: 'right', a: crossP });
-      micro(ctx, 'TURUN', 452, 1520, { size: 26, color: M.faint, track: 8, align: 'right', a: crossP });
-      ctx.restore();
-    }
-
-    // ── caption 4: what is actually being looked for
-    const craving = A(t, c[3] + 0.25, 0.8, ease.out) * (1 - A(t, wKulkas - 0.5, 0.7, ease.out));
-    if (craving > 0.01) {
-      ctx.save();
-      ctx.globalAlpha *= craving;
-      micro(ctx, 'YANG DICARI', 96, 430, { size: 26, color: M.faint, track: 10 });
-      ctx.fillStyle = hexA(M.gold, 0.9);
-      ctx.fillRect(96, 460, 6, 132);
-      number(ctx, 'KARBO', 124, 530, { size: 84, color: M.gold, glow: 0.18 });
-      number(ctx, 'LEMAK', 124, 636, { size: 84, color: M.ice, glow: 0.18 });
-      micro(ctx, 'BUKAN SAYUR', 100, 716, { size: 26, color: M.faint, track: 9 });
-      ctx.restore();
-    }
-
-    // ── caption 5: the hour the night ends
-    if (end > 0.01) {
-      ctx.save();
-      ctx.globalAlpha *= end;
-      micro(ctx, '02.14', 96, 1180, { size: 26, color: M.faint, track: 10 });
-      ctx.restore();
-    }
-  },
-};
+export default { draw: drawScene };

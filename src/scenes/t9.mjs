@@ -1,108 +1,150 @@
-import { W, H } from '../engine/draw.mjs';
+import { W, H, txt, fillRR, rr, measure, tracking } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import {
-  M, room, bed, dust, clock, micro, say, A, cue, cueWord, ease, hexA, fillRR, TAU, clamp, lerp, rng,
-} from './_malam.mjs';
+import { clamp, lerp, TAU } from '../engine/anim.mjs';
+import { K, ease, cue, sheet, kick, stampInk, circleMark } from './_kertas.mjs';
+import { A, roll, fadeUp, rule, panel, clock, bracket } from './_cetak.mjs';
 
 // 09 — MALAM INI
-// Back in the room, but the window has already gone the colour of morning and
-// the clock is put to bed before the viewer is. The last thing on screen is the
-// one thing the episode asks for: the hour you actually fell asleep.
+// One instruction and one invitation. Two clocks, an hour apart, and a comment
+// field that is still waiting — nothing here is a rule, so nothing here is
+// stamped "harus".
+function drawScene(ctx, t, scene) {
+  sheet(ctx, t, { glowX: 720, glowY: 460, glowA: 0.42 });
+  const c = (i) => cue(scene, i);
 
-export default {
-  draw(ctx, t, scene) {
-    const c = [0, 1, 2, 3, 4].map((i) => cue(scene, i));
-    const wJam = cueWord(scene, 4, 'jam');
-    const dawn = A(t, c[1] + 0.2, 3.0, ease.inOut);
-    const off = 1 - A(t, c[1] + 0.4, 1.6, ease.inOut);
-
-    room(ctx, { key: 't9', side: 'right', morning: 0.7 });
-
-    // the window warms up while the room stays asleep
-    if (dawn > 0.01) {
-      const g = ctx.createLinearGradient(0, 200, 0, 1200);
-      g.addColorStop(0, `rgba(255,190,140,${0.10 * dawn})`);
-      g.addColorStop(1, `rgba(255,150,110,${0.22 * dawn})`);
-      ctx.fillStyle = g;
-      ctx.fillRect(760, 200, 760, 1000);
-      const s = ctx.createRadialGradient(1240, 900, 40, 1240, 900, 1100);
-      s.addColorStop(0, `rgba(255,178,120,${0.16 * dawn})`);
-      s.addColorStop(1, 'rgba(255,170,110,0)');
-      ctx.fillStyle = s;
-      ctx.fillRect(0, 200, W, 2000);
-    }
-
-    dust(ctx, t, { a: 0.3, seed: 17, y0: 400, y1: 1700 });
-
-    // the bed, made, empty
-    bed(ctx, { y: 2060, pillow: false, a: A(t, -0.2, 1.0, ease.out) });
-
-    // the clock being switched off
-    const clkA = A(t, c[0] + 0.05, 0.6, ease.out);
-    if (clkA > 0.01) {
-      ctx.save();
-      ctx.globalAlpha *= clkA;
-      clock(ctx, 664, 1236, 178, '22:00', { color: M.amber, on: off, halo: off * 0.8 });
-      micro(ctx, off < 0.5 ? 'LAMPU MATI' : 'JAM TIDUR', 670, 1450, {
-        size: 26, color: off < 0.5 ? M.faint : M.amber, track: 9, a: clkA * (0.35 + 0.65 * off),
+  // ── the hour, moved ────────────────────────────────────────────────────
+  const pA = A(t, c(0), 0.9, ease.expo);
+  if (pA > 0.004) {
+    clock(ctx, 380, 580, 152, 11, 0, { a: clamp(pA) * 0.72, lw: 5 });
+    fadeUp(ctx, A(t, c(0) + 0.2, 0.45), 10, () => {
+      tracking(ctx, '23.00', 380, 800, {
+        size: 26, font: F.mono6, track: 2, color: 'rgba(20,17,16,0.42)', align: 'center',
       });
-      ctx.restore();
-    }
+    });
+  }
 
-    // ── caption 3–4: the two lines that are the whole point
-    const core = A(t, c[2] + 0.1, 0.9, ease.out) * (1 - A(t, c[4] + 0.2, 0.9, ease.inOut));
-    if (core > 0.01) {
-      ctx.save();
-      ctx.globalAlpha *= core;
-      micro(ctx, 'BUKAN WAKTU YANG HILANG', 112, 812, { size: 26, color: M.faint, track: 9 });
-      ctx.fillStyle = hexA(M.amber, 0.75);
-      ctx.fillRect(112, 838, 96, 5);
-      say(ctx, ['TEMPAT OTAK', 'BERES.'], 104, 930, {
-        t, size: 112, at: c[3] + 0.1, stagger: 0.10, color: M.ink, accent: M.amber,
+  const pB = A(t, c(1) - 0.1, 0.9, ease.expo);
+  if (pB > 0.004) {
+    clock(ctx, 1064, 580, 152, 10, 0, { a: clamp(pB), lw: 5, sec: (t * 20) % 60 });
+    fadeUp(ctx, A(t, c(1) + 0.1, 0.45), 10, () => {
+      tracking(ctx, '22.00', 1064, 800, {
+        size: 26, font: F.mono6, track: 2, color: K.ink, align: 'center',
       });
-      ctx.restore();
-    }
+    });
+    // hand-drawn ring, the way you would circle it on a printout
+    circleMark(ctx, 1064, 580, 178, 172, A(t, c(1) + 0.35, 0.8, ease.inOut), {
+      color: K.red, lw: 5, rot: -0.12,
+    });
+  }
 
-    // ── caption 5: the question
-    const ask = A(t, wJam - 0.4, 0.9, ease.out);
-    if (ask > 0.01) {
-      ctx.save();
-      ctx.globalAlpha *= ask;
-      const plateG = ctx.createLinearGradient(0, 836, 0, 1272);
-      plateG.addColorStop(0, 'rgba(6,8,15,0.86)');
-      plateG.addColorStop(1, 'rgba(6,8,15,0.52)');
-      fillRR(ctx, 88, 836, 1264, 432, 30, plateG);
-      ctx.strokeStyle = hexA(M.amber, 0.40);
-      ctx.lineWidth = 2;
-      ctx.strokeRect(88, 836, 1264, 432);
-      ctx.fillStyle = hexA(M.amber, 0.9);
-      ctx.fillRect(140, 892, 88, 5);
-      micro(ctx, 'MULAI MALAM INI', 140, 952, { size: 27, color: M.amber, track: 9 });
-      say(ctx, ['SATU JAM', 'LEBIH AWAL.'], 132, 1052, {
-        t, size: 116, at: wJam - 0.2, stagger: 0.09, color: M.ink, accent: M.gold,
+  // the arrow and the hour it saves
+  const pAr = A(t, c(1) + 0.15, 0.7, ease.out);
+  if (pAr > 0.004) {
+    const x0 = 590;
+    const x1 = 846;
+    ctx.save();
+    ctx.globalAlpha *= clamp(pAr);
+    ctx.strokeStyle = K.red;
+    ctx.lineWidth = 7;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(x0, 580);
+    ctx.lineTo(lerp(x0, x1 - 26, clamp(pAr)), 580);
+    ctx.stroke();
+    ctx.fillStyle = K.red;
+    ctx.beginPath();
+    ctx.moveTo(x1, 580);
+    ctx.lineTo(x1 - 34, 562);
+    ctx.lineTo(x1 - 34, 598);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+    fadeUp(ctx, A(t, c(1) + 0.4, 0.45), 8, () => {
+      tracking(ctx, '−1 JAM', 718, 540, {
+        size: 30, font: F.mono6, track: 3, color: K.red, align: 'center',
       });
-      ctx.restore();
+    });
+  }
 
-      // the takeaway, in three pieces, under the card
-      const take = A(t, wJam + 0.35, 0.9, ease.out);
-      if (take > 0.01) {
+  // ── the comment field, still empty ─────────────────────────────────────
+  const pC = A(t, c(2), 0.7, ease.back);
+  if (pC > 0.004) {
+    const bx = 168;
+    const by = 900;
+    const bw = 1104;
+    const bh = 340;
+    ctx.save();
+    ctx.globalAlpha *= clamp(pC);
+    ctx.translate(0, (1 - clamp(pC)) * 40);
+    // bubble with a tail
+    ctx.fillStyle = 'rgba(20,17,16,0.16)';
+    rr(ctx, bx + 10, by + 14, bw, bh, 26);
+    ctx.fill();
+    ctx.fillStyle = K.card;
+    rr(ctx, bx, by, bw, bh, 26);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(bx + 92, by + bh - 2);
+    ctx.lineTo(bx + 86, by + bh + 62);
+    ctx.lineTo(bx + 178, by + bh - 2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = K.ink;
+    ctx.lineWidth = 4;
+    rr(ctx, bx, by, bw, bh, 26);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(bx + 180, by + bh - 2);
+    ctx.lineTo(bx + 86, by + bh + 60);
+    ctx.lineTo(bx + 92, by + bh - 2);
+    ctx.stroke();
+    ctx.restore();
+
+    // the question mark, in red
+    roll(ctx, '?', bx + 104, by + 262, {
+      size: 250, p: A(t, c(2) + 0.12, 0.6, ease.expo), color: K.red, font: F.display,
+      track: -2,
+    });
+
+    // three dots, typing
+    const pd = A(t, c(3), 0.5);
+    if (pd > 0.004) {
+      for (let i = 0; i < 3; i++) {
+        const ph = Math.sin(t * 3.4 - i * 0.7) * 0.5 + 0.5;
         ctx.save();
-        ctx.globalAlpha *= take;
-        ctx.strokeStyle = 'rgba(255,246,232,0.16)';
-        ctx.lineWidth = 2;
+        ctx.globalAlpha = clamp(pd) * (0.35 + 0.65 * ph);
+        ctx.fillStyle = K.ink;
         ctx.beginPath();
-        ctx.moveTo(112, 1404);
-        ctx.lineTo(W - 104, 1404);
-        ctx.stroke();
-        ['7 – 9 JAM', 'JAM SAMA', 'LAYAR MATI'].forEach((s2, i) => {
-          const x = 112 + i * 416;
-          micro(ctx, s2, x, 1478, { size: 30, color: i === 0 ? M.gold : M.dim, track: 6, a: 1 });
-          micro(ctx, ['DURASI', 'RUTIN', 'SEBELUM TIDUR'][i], x, 1522, {
-            size: 23, color: M.faint, track: 6, a: 1,
-          });
-        });
+        ctx.arc(bx + 640 + i * 78, by + 176, 17, 0, TAU);
+        ctx.fill();
         ctx.restore();
       }
     }
-  },
-};
+
+    // a printed cursor
+    const pCur = A(t, c(4), 0.5);
+    if (pCur > 0.004) {
+      ctx.save();
+      ctx.globalAlpha *= clamp(pCur);
+      ctx.fillStyle = K.red;
+      ctx.fillRect(bx + 640, by + 214, 232, 5);
+      ctx.restore();
+    }
+  }
+
+  // ── the last printed line ──────────────────────────────────────────────
+  const pL = A(t, c(3) + 0.2, 0.8, ease.out);
+  if (pL > 0.004) {
+    ctx.save();
+    ctx.globalAlpha *= 0.8;
+    ctx.fillStyle = K.ink;
+    ctx.fillRect(104, 1380, (W - 208) * clamp(pL), 2.4);
+    ctx.restore();
+  }
+  const pS = A(t, c(4) - 0.05, 0.5, ease.back);
+  stampInk(ctx, 'TULIS', 720, 1462, {
+    a: clamp(pS), size: 40, track: 9, rot: -0.04, color: K.red, pad: 28,
+  });
+}
+
+export default { draw: drawScene };
