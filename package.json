@@ -13,7 +13,9 @@
     "remotion:render": "remotion render src/remotion/index.js NaysiShort out/remotion.mp4 --concurrency=2",
     "align": "node scripts/align-cards.mjs",
     "audio:ep22": "VO_EP=ep22 node scripts/audio-ep22.mjs",
-    "render:ep22": "bash scripts/render-ep22.sh"
+    "render:ep22": "bash scripts/render-ep22.sh",
+    "audio:ep23": "VO_EP=ep23 node scripts/audio-ep23.mjs",
+    "render:ep23": "bash scripts/render-ep23.sh"
   },
   "repository": {
     "type": "git",

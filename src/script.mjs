@@ -1,121 +1,89 @@
-// Episode 22 — "Dua puluh tiga menit."
+// Episode 23 — "Kenapa Bulan selalu menghadap kita?"
 //
-// Thesis: the cost of a phone check is not the second you spend on it. It is the
-// twenty-three minutes your attention needs to come back to the depth it was at,
-// and the two other tasks you touch on the way. The film is built like an
-// instrument board: everything is a measurement, because the argument is that
-// this is measurable, not moral.
+// Tidal locking, told as a chain of facts: the same face for a lifetime, the
+// 27.3-day match, the bulge that braked the spin, the wobble that lets us
+// peek at 59%, the far side that is not dark, and the brake the Moon puts
+// on Earth itself. Concise and structured, like CPI: one number per scene,
+// one mechanism per scene, one insight at the end.
 //
 // Sources (Nov 2026):
-//   Mark, Gudith & Klocke (2008), "The Cost of Interrupted Work", CHI '08,
-//     UC Irvine — mean 23 min 15 s to resume an interrupted task; about two
-//     intervening tasks before the original is resumed.
-//   Mark (2023) — sustained attention on a single screen averages ~47 s before
-//     switching; the "8-second attention span" figure is not a research finding.
-//   Mark et al. — interruptions in office work arrive roughly every 3 minutes.
-//   Leroy (2009), "Why is it so hard to do my work?" — attention residue from
-//     unfinished tasks carries into the next one.
-//   We Are Social / Global Digital Reports 2026 — Indonesia averages 3 h 07 m
-//     per day on social media (16th in the world; global average 2 h 39 m);
-//     37 h 20 m online per week overall.
+//   Sidereal rotation = orbit = 27.32 days; same hemisphere faces Earth.
+//   Formed ~4.5 billion years ago, spun faster; Earth's gravity raised a
+//     tidal bulge, torque slowed the spin until it matched the orbit.
+//   Libration (elliptical orbit) lets observers see ~59% of the surface.
+//   Far side first photographed by Luna 3 in 1959; it gets equal sunlight.
+//   Moon recedes ~3.8 cm/year; Earth's day was ~4 h early, now 24 h and
+//     lengthening; mutual lock would take ~50 billion years (Sun first).
 //
-// Copy rules: one card = one clause, numbers spelled the way the voice says
-// them, and no card repeats the word of the visual it sits under.
+// Copy rules: two sentences per scene == two caption cards, so every card is
+// a measured block of audio and can never drift. Numbers spelled the way
+// the voice says them.
 
-export const SERIES = 'NAYSI · FOKUS';
+export const SERIES = 'NAYSI · LANGIT';
 export const BRAND = 'NAYSI';
 
 export const SCENES = [
   {
-    id: 's1', key: 'u1', label: 'SATU CEK', index: '01', theme: 'light',
-    vo: 'Kamu cek HP. Satu detik. Lalu otakmu butuh dua puluh tiga menit untuk kembali ke tempat ia berhenti.',
+    id: 's1', key: 'v1', label: 'WAJAH SAMA', index: '01', theme: 'dark',
+    vo: 'Kamu sudah lihat Bulan seumur hidup. Tapi kamu tidak pernah lihat sisi satunya.',
     cap: [
-      'Kamu cek HP. *Satu* *detik*.',
-      'Lalu otakmu butuh *dua* *puluh* *tiga* *menit*',
-      'untuk kembali ke tempat ia berhenti.',
+      'Kamu sudah lihat *Bulan* seumur hidup.',
+      'Tapi kamu tidak pernah lihat *sisi* *satunya*.',
     ],
     pad: 1.5,
   },
   {
-    id: 's2', key: 'u2', label: 'PENGUKURAN', index: '02', theme: 'light',
-    vo: 'Angka itu bukan kiasan. Dua puluh tiga menit lima belas detik, rata-rata dari penelitian di kantor nyata: berapa lama orang kembali ke tugas setelah dipotong.',
+    id: 's2', key: 'v2', label: '27,3 HARI', index: '02', theme: 'dark',
+    vo: 'Bulan berputar dua puluh tujuh koma tiga hari. Mengelilingi Bumi juga dua puluh tujuh koma tiga hari, sama persis.',
     cap: [
-      'Angka itu bukan kiasan.',
-      '*Dua* *puluh* *tiga* *menit* lima belas detik.',
-      'Rata-rata dari penelitian di kantor nyata.',
-      'Berapa lama orang kembali ke tugas setelah dipotong.',
+      'Bulan berputar *dua* *puluh* *tujuh* *koma* *tiga* *hari*.',
+      'Mengelilingi *Bumi* juga *dua* *puluh* *tujuh* *koma* *tiga* *hari*, *sama* *persis*.',
     ],
     pad: 1.5,
   },
   {
-    id: 's3', key: 'u3', label: 'EMPAT PULUH TUJUH', index: '03', theme: 'light',
-    vo: 'Dan potongannya datang terus. Rata-rata orang bertahan empat puluh tujuh detik di satu layar sebelum pindah. Di kantor, pemotongan datang setiap tiga menit.',
+    id: 's3', key: 'v3', label: 'REM', index: '03', theme: 'dark',
+    vo: 'Dulu Bulan berputar jauh lebih cepat. Gravitasi Bumi menarik tonjolan terdekat, lalu melambat sampai pas.',
     cap: [
-      'Dan potongannya datang terus.',
-      'Rata-rata orang bertahan *empat* *puluh* *tujuh* *detik* di satu layar.',
-      'Di kantor, potongannya datang tiap tiga menit.',
+      'Dulu *Bulan* berputar jauh lebih cepat.',
+      'Gravitasi *Bumi* menarik *tonjolan* terdekat, lalu melambat sampai pas.',
     ],
     pad: 1.5,
   },
   {
-    id: 's4', key: 'u4', label: 'RESIDU', index: '04', theme: 'light',
-    vo: 'Yang hilang bukan cuma waktunya. Sebagian perhatianmu tertinggal di tugas sebelumnya. Psikolog menyebutnya residu perhatian.',
+    id: 's4', key: 'v4', label: 'GOYANG', index: '04', theme: 'dark',
+    vo: 'Tapi tidak kaku. Orbitnya elips, jadi Bulan bergoyang, dan kita bisa intip lima puluh sembilan persen.',
     cap: [
-      'Yang hilang bukan cuma waktunya.',
-      'Sebagian perhatianmu tertinggal di tugas sebelumnya.',
-      'Namanya *residu* *perhatian*.',
+      'Tapi tidak *kaku*.',
+      'Orbitnya *elips*, jadi *Bulan* bergoyang, dan kita bisa intip *lima* *puluh* *sembilan* *persen*.',
     ],
     pad: 1.5,
   },
   {
-    id: 's5', key: 'u5', label: 'TIGA', index: '05', theme: 'light',
-    vo: 'Dan sebelum kembali, orang biasanya menyelipkan dua tugas lain. Jadi bukan satu kali berhenti. Tiga.',
+    id: 's5', key: 'v5', label: '1959', index: '05', theme: 'dark',
+    vo: 'Sisi jauh bukan sisi gelap, ia kena matahari sama saja. Baru difoto tahun seribu sembilan ratus lima puluh sembilan oleh Luna tiga.',
     cap: [
-      'Sebelum kembali, kamu menyelipkan dua tugas lain.',
-      'Jadi bukan satu kali berhenti.',
-      '*Tiga*.',
+      'Sisi jauh bukan *sisi* *gelap*, ia kena *matahari* sama saja.',
+      'Baru difoto tahun *seribu* *sembilan* *ratus* *lima* *puluh* *sembilan* oleh *Luna* *tiga*.',
     ],
     pad: 1.5,
   },
   {
-    id: 's6', key: 'u6', label: 'TAGIHAN', index: '06', theme: 'light',
-    vo: 'Enam kali cek sehari, dua jam lebih hilang cuma untuk kembali ke tempat yang sama. Bukan kerja. Cuma pulang.',
+    id: 's6', key: 'v6', label: 'REM BUMI', index: '06', theme: 'dark',
+    vo: 'Bulan juga mengerem Bumi. Dulu sehari cuma empat jam, sekarang dua puluh empat jam, dan terus memanjang.',
     cap: [
-      'Enam kali cek sehari.',
-      '*Dua* *jam* lebih, cuma untuk kembali ke tempat yang sama.',
-      'Bukan kerja. Cuma pulang.',
+      '*Bulan* juga mengerem *Bumi*.',
+      'Dulu sehari cuma *empat* *jam*, sekarang *dua* *puluh* *empat* *jam*, dan terus memanjang.',
     ],
     pad: 1.5,
   },
   {
-    id: 's7', key: 'u7', label: 'INDONESIA', index: '07', theme: 'light',
-    vo: 'Di Indonesia, rata-rata orang menghabiskan tiga jam tujuh menit sehari di media sosial. Peringkat enam belas dunia. Dan itu belum chat, kerja, dan video.',
+    id: 's7', key: 'v7', label: 'TERKUNCI', index: '07', theme: 'dark',
+    vo: 'Jadi Bulan tidak diam, ia terkunci. Tulis di komentar: kamu lihat Bulan purnama dari mana?',
     cap: [
-      'Indonesia: *tiga* *jam* *tujuh* *menit* sehari di media sosial.',
-      'Peringkat *enam* *belas* dunia.',
-      'Dan itu belum chat, kerja, dan video.',
+      'Jadi *Bulan* tidak diam, ia *terkunci*.',
+      'Tulis di komentar: kamu lihat *Bulan* *purnama* dari mana?',
     ],
-    pad: 1.5,
-  },
-  {
-    id: 's8', key: 'u8', label: 'MITOS', index: '08', theme: 'light',
-    vo: 'Rentang perhatian delapan detik itu mitos. Yang nyata: kita bertahan empat puluh tujuh detik sebelum pindah. Dan solusinya bukan detoks.',
-    cap: [
-      'Rentang perhatian *delapan* *detik* itu mitos.',
-      'Yang nyata: *empat* *puluh* *tujuh* *detik* sebelum pindah.',
-      'Solusinya bukan detoks.',
-    ],
-    pad: 1.5,
-  },
-  {
-    id: 's9', key: 'u9', label: 'SATU HAL', index: '09', theme: 'light',
-    vo: 'Satu hal saja: jauhkan HP dari jangkauan tangan saat kamu butuh fokus. Bukan senyap. Bukan terbalik. Di ruangan lain. Lalu tulis di komentar: berapa kali kamu buka HP hari ini?',
-    cap: [
-      'Jauhkan HP dari jangkauan tangan.',
-      'Bukan senyap. Bukan terbalik.',
-      'Di ruangan lain.',
-      'Tulis di komentar: berapa kali kamu buka HP hari ini?',
-    ],
-    pad: 1.5,
+    pad: 1.8,
   },
 ];
