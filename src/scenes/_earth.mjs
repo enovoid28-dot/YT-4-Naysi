@@ -24,7 +24,7 @@ const hash3 = (x, y, z, s) => {
 
 const smooth = (v) => v * v * (3 - 2 * v);
 
-function noise3(x, y, z, seed) {
+export function noise3(x, y, z, seed) {
   const xi = Math.floor(x);
   const yi = Math.floor(y);
   const zi = Math.floor(z);
@@ -39,7 +39,7 @@ function noise3(x, y, z, seed) {
   return lerp(lerp(x00, x10, ty), lerp(x01, x11, ty), tz);
 }
 
-function fbm3(x, y, z, oct, seed) {
+export function fbm3(x, y, z, oct, seed) {
   let v = 0;
   let amp = 1;
   let tot = 0;

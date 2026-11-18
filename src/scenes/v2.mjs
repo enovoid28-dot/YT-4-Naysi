@@ -1,87 +1,236 @@
-import { W, H, txt, hexA, tracking } from '../engine/draw.mjs';
+import { W, txt, hexA } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
-import { clamp, lerp, TAU } from '../engine/anim.mjs';
-import { S, starfield, limb, orbit, orbitPos } from './_space.mjs';
-import { cue, ease } from './_kertas.mjs';
-import { plane, ghosts, sheen, land } from '../engine/rig.mjs';
+import { clamp, lerp, TAU, EASE } from '../engine/anim.mjs';
+import { plane } from '../engine/rig.mjs';
 import { shotCam } from './_layar.mjs';
+import {
+  HUD, deepSky, moonBall, earthBall, graticule, roll, mono, chip, arcArrow, donut, ringBurst,
+  hudFrame, wordT, sightline, brackets,
+} from './_bulan.mjs';
 
-// 02 — 27,3 HARI (v2 pro)
-// Two glass panels, equals with glow, orbit diagram with rotation arrow.
-function drawScene(ctx, t, scene) {
-  const c = (i, o = 0) => cue(scene, i, o);
-  const a = (s, d = 0.6) => ease.out(clamp((t - s) / d));
+// 02 — 27,3 HARI (v3)
+// Card 0: the Moon spins on its axis (graticule shows the turn) while the
+// period rolls to 27,3. Card 1: pull back to the orbit, oblique view, real
+// Earth at the centre; the Moon goes once around with its near-side marker
+// always on Earth. Twin gauges (PUTAR / ORBIT) fill together → SAMA PERSIS.
+const P = (t, at, d) => clamp((t - at) / d);
+const eo = (p) => EASE.outCubic(clamp(p));
+const io = (p) => EASE.inOutQuad(clamp(p));
+const ELEV = 38 * (Math.PI / 180);
+
+/** travelled part of the orbit, split into the half behind / in front of Earth */
+function strokeArc(ctx, cx, cy, rx, ry, a0, a1, front) {
+  if (Math.abs(a1 - a0) < 0.002) return;
+  const n = Math.max(2, Math.ceil(Math.abs(a1 - a0) / 0.02));
+  ctx.save();
+  ctx.strokeStyle = HUD.amber;
+  ctx.lineWidth = 4;
+  ctx.shadowColor = 'rgba(255,176,58,0.6)';
+  ctx.shadowBlur = 12;
+  ctx.beginPath();
+  let on = false;
+  for (let i = 0; i <= n; i++) {
+    const a = a0 + ((a1 - a0) * i) / n;
+    const isFront = Math.sin(a) >= 0;
+    const x = cx + Math.cos(a) * rx;
+    const y = cy + Math.sin(a) * ry;
+    if (isFront === front) {
+      if (!on) { ctx.moveTo(x, y); on = true; } else ctx.lineTo(x, y);
+    } else on = false;
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawScene(ctx, t, scene, g = {}) {
   const cam = shotCam(t, 1.0);
+  deepSky(ctx, t, cam, { seed: 23, band: 0.7, bandY: 1100 });
 
-  ctx.fillStyle = S.void;
-  ctx.fillRect(-240, -240, W + 480, H + 480);
-  plane(ctx, cam, 0.2, () => starfield(ctx, { t, n: 260, seed: 23, band: 0.6, bandY: 800, bandH: 600 }));
-  sheen(ctx, t, { period: 5.8, a: 0.05 });
+  const t1 = wordT(scene, 1, 0, -0.1); // "Mengelilingi"
+  const pX = io(P(t, t1, 1.1)); // spin close-up → orbit wide
+  const ocx = 720;
+  const ocy = 1010;
+  const R = 500;
+  const rx = R;
+  const ry = R * Math.sin(ELEV);
 
-  const p0 = land(t, 0.05, 0.8);
-  const p1 = land(t, c(1, 0.1), 0.8);
+  // orbit progress: one lap across the second sentence
+  const lapA = t1 + 0.5;
+  const lapB = wordT(scene, 1, 9, 0.2); // "sama"
+  const lap = io(P(t, lapA, lapB - lapA));
+  const th = -Math.PI / 2 - lap * TAU; // start behind Earth, counter-clockwise like the real orbit
+  const mxO = ocx + Math.cos(th) * rx;
+  const myO = ocy + Math.sin(th) * ry;
+  const mrO = 86 + Math.sin(th) * 10; // nearer = bigger (a hint of depth)
 
-  const panel = (x, y, w, h, al, label, sub, glow) => {
-    ctx.save();
-    ctx.globalAlpha = clamp(al);
-    ctx.shadowColor = glow ? S.amber : 'rgba(0,0,0,0.6)';
-    ctx.shadowBlur = glow ? 30 : 18;
-    ctx.fillStyle = 'rgba(20,30,48,0.62)';
-    ctx.strokeStyle = glow ? 'rgba(255,176,58,0.5)' : 'rgba(150,190,240,0.24)';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath(); ctx.roundRect(x, y, w, h, 18); ctx.fill(); ctx.stroke();
-    ctx.shadowBlur = 0;
-    tracking(ctx, label, x + w / 2, y + 64, { size: 20, font: F.mono6, track: 6, color: hexA(S.bone, 0.6), align: 'center' });
-    txt(ctx, '27,3', x + w / 2, y + 300, { size: 190, font: F.display, color: S.bone, align: 'center', track: -8 });
-    tracking(ctx, sub, x + w / 2, y + 360, { size: 20, font: F.mono6, track: 5, color: S.amber, align: 'center' });
-    ctx.restore();
+  // near-side lock: longitude facing camera so lon 0 points at Earth
+  const rotLock = -Math.atan2(-Math.cos(th), -Math.sin(th)) / TAU;
+  // free spin during card 0
+  const spin = io(P(t, 0.3, t1 - 0.3)) * 1.0;
+
+  const mx = lerp(720, mxO, pX);
+  const my = lerp(1060, myO, pX);
+  const mr = lerp(318, mrO, pX);
+  const rot = pX < 1 ? lerp(1 - spin, rotLock, pX) : rotLock;
+  const tilt = lerp(4, ELEV / (Math.PI / 180), pX);
+  const sunV = { x: -0.95, y: 0.12, z: lerp(0.45, 0.05, pX) };
+
+  // Earth (behind or in front of the Moon depending on where it is)
+  // Earth only arrives once the receding Moon has cleared the centre, so the
+  // two never cross mid-move; it grows in with a soft overshoot
+  const pE = Math.max(0, EASE.outBackSoft(clamp((pX - 0.78) / 0.22)));
+  const er = 150;
+  const drawEarth = () => {
+    if (pE <= 0.01) return;
+    earthBall(ctx, ocx, ocy, er * (0.55 + 0.45 * pE), {
+      a: clamp(pE), lon: 105 - t * 4, tilt: 18, sun: { x: -0.95, y: 0.12, z: 0.1 }, cloudLon: t * 1.2,
+    });
   };
+  const moonBehind = Math.sin(th) < 0;
 
   plane(ctx, cam, 0.6, () => {
-    panel(104, 520, 560, 460, p0, 'PUTAR', 'HARI', false);
-    panel(W - 104 - 560, 520, 560, 460, p1, 'ORBIT', 'HARI', true);
-  });
-
-  const pe = land(t, c(1, 0.3), 0.6);
-  ctx.save();
-  ctx.globalAlpha = clamp(pe);
-  ctx.shadowColor = S.amber; ctx.shadowBlur = 28;
-  txt(ctx, '=', W / 2, 760, { size: 160, font: F.display, color: S.amber, align: 'center' });
-  ctx.restore();
-  tracking(ctx, 'SAMA PERSIS', W / 2, 830, { size: 22, font: F.mono6, track: 7, color: S.amber, align: 'center', alpha: a(c(1, 0.3)) });
-
-  // orbit diagram
-  const cx = W / 2, cy = 1320;
-  const rx = 420, ry = 190;
-  plane(ctx, cam, 0.9, () => {
-    orbit(ctx, cx, cy, rx, ry, { a: 0.85 * a(0.2), color: 'rgba(150,190,240,0.30)', lw: 2.5 });
-    limb(ctx, cx, cy, 110, { a: a(0.1), t, glow: 0.8, clouds: 1, dawn: 0.2 });
-    const prog = ease.inOut(clamp((t - c(0)) / 7));
-    const ang = -Math.PI / 2 + prog * TAU;
-    const mp = orbitPos(cx, cy, rx, ry, ang, 0);
-    const drawM = () => {
+    // orbit ellipse: back half, then (after the Moon/Earth) front half
+    const pO = eo(P(t, t1 + 0.25, 0.9));
+    if (pO > 0.01) {
       ctx.save();
-      ctx.beginPath(); ctx.arc(mp.x, mp.y, 56, 0, TAU); ctx.clip();
-      const g = ctx.createRadialGradient(mp.x - 22, mp.y - 22, 6, mp.x, mp.y, 90);
-      g.addColorStop(0, '#F0ECE0'); g.addColorStop(0.6, '#B8B4A8'); g.addColorStop(1, '#4A4844');
-      ctx.fillStyle = g;
-      ctx.fillRect(mp.x - 60, mp.y - 60, 120, 120);
+      ctx.globalAlpha *= pO;
+      ctx.strokeStyle = 'rgba(150,190,240,0.30)';
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      ctx.ellipse(ocx, ocy, rx, ry, 0, Math.PI, TAU);
+      ctx.stroke();
+      // travelled arc (only the stretch behind Earth in this pass)
+      strokeArc(ctx, ocx, ocy, rx, ry, -Math.PI / 2, th, false);
       ctx.restore();
-    };
-    ghosts(ctx, { dx: (mp.x - cx) * 0.05, dy: (mp.y - cy) * 0.05, n: 3, spread: 1, alpha: 0.12 }, drawM);
-    ctx.save(); ctx.globalAlpha = a(0.15); drawM(); ctx.restore();
-    // rotation arrow (one turn per orbit)
-    ctx.save();
-    ctx.strokeStyle = S.amber; ctx.lineWidth = 4;
-    ctx.shadowColor = S.amber; ctx.shadowBlur = 10;
-    ctx.beginPath(); ctx.arc(mp.x, mp.y, 78, ang, ang + TAU * 0.75); ctx.stroke();
-    const ax = mp.x + Math.cos(ang + TAU * 0.75) * 78;
-    const ay = mp.y + Math.sin(ang + TAU * 0.75) * 78;
-    ctx.fillStyle = S.amber;
-    ctx.beginPath(); ctx.arc(ax, ay, 9, 0, TAU); ctx.fill();
-    ctx.restore();
+      // day ticks around the orbit (27 marks)
+      ctx.save();
+      ctx.globalAlpha *= pO * 0.8;
+      for (let i = 0; i < 27; i++) {
+        const a = -Math.PI / 2 - (i / 27.3) * TAU;
+        const x0 = ocx + Math.cos(a) * rx * 1.03;
+        const y0 = ocy + Math.sin(a) * ry * 1.03;
+        const x1 = ocx + Math.cos(a) * rx * (i % 7 === 0 ? 1.075 : 1.05);
+        const y1 = ocy + Math.sin(a) * ry * (i % 7 === 0 ? 1.075 : 1.05);
+        ctx.strokeStyle = i % 7 === 0 ? 'rgba(214,230,248,0.6)' : 'rgba(214,230,248,0.25)';
+        ctx.lineWidth = i % 7 === 0 ? 2.4 : 1.4;
+        ctx.beginPath();
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x1, y1);
+        ctx.stroke();
+        if (i % 7 === 0 && i > 0) {
+          txt(ctx, `H${i}`, ocx + Math.cos(a) * rx * 1.14, ocy + Math.sin(a) * ry * 1.16 + 8, {
+            size: 19, font: F.mono6, color: 'rgba(214,230,248,0.5)', align: 'center', track: 2,
+          });
+        }
+      }
+      ctx.restore();
+    }
+
+    if (!moonBehind) drawEarth();
+    // tether: Earth ↔ the face that always looks back
+    if (pE > 0.05) {
+      sightline(ctx, ocx, ocy, mx, my, t, { a: clamp(pE) * 0.8 });
+    }
+    moonBall(ctx, mx, my, mr, { rot, tilt, sun: sunV, glow: 0.35, shine: 0.05, relief: 1 - 0.3 * pX });
+    // spin graticule (card 0)
+    graticule(ctx, mx, my, mr, { rot, tilt, a: 0.22 * (1 - pX) * eo(P(t, 0.5, 0.6)) });
+    // near-side marker: the point of the Moon facing Earth
+    if (pX > 0.5) {
+      const ex = -Math.cos(th);
+      const ey = Math.sin(th) * Math.sin(ELEV);
+      const ez = -Math.sin(th) * Math.cos(ELEV);
+      const vis = clamp((ez + 0.1) / 0.3) * clamp((pX - 0.5) / 0.5);
+      const px = mx + ex * mr * 0.92;
+      const py = my - ey * mr * 0.92;
+      ctx.save();
+      ctx.globalAlpha *= vis;
+      ctx.fillStyle = HUD.amber;
+      ctx.shadowColor = 'rgba(255,176,58,0.9)';
+      ctx.shadowBlur = 16;
+      ctx.beginPath();
+      ctx.arc(px, py, 9, 0, TAU);
+      ctx.fill();
+      ctx.restore();
+    }
+    if (moonBehind) drawEarth();
+    // front half of the ellipse over everything behind
+    const pO2 = eo(P(t, t1 + 0.25, 0.9));
+    if (pO2 > 0.01) {
+      ctx.save();
+      ctx.globalAlpha *= pO2;
+      ctx.strokeStyle = 'rgba(150,190,240,0.42)';
+      ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      ctx.ellipse(ocx, ocy, rx, ry, 0, 0, Math.PI);
+      ctx.stroke();
+      strokeArc(ctx, ocx, ocy, rx, ry, -Math.PI / 2, th, true);
+      ctx.restore();
+    }
   });
-  tracking(ctx, 'SATU PUTARAN = SATU ORBIT', W / 2, 1620, { size: 20, font: F.mono6, track: 5, color: hexA(S.bone, 0.6), align: 'center', alpha: a(c(1)) });
+
+  // card 0 overlays: spin arrow, axis
+  const a0 = (1 - pX) * eo(P(t, 0.45, 0.6));
+  if (a0 > 0.01) {
+    plane(ctx, cam, 0.85, () => {
+      const sweep = io(P(t, 0.6, 1.4));
+      arcArrow(ctx, mx, my, mr * 1.16, Math.PI * 0.62, Math.PI * 0.62 + sweep * Math.PI * 0.85, {
+        a: a0, lw: 6, head: 24, glowC: 'rgba(255,176,58,0.7)',
+      });
+      ctx.save();
+      ctx.globalAlpha *= a0;
+      ctx.strokeStyle = 'rgba(214,230,248,0.55)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([10, 10]);
+      ctx.beginPath();
+      ctx.moveTo(mx, my - mr * 1.32);
+      ctx.lineTo(mx, my + mr * 1.32);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+      mono(ctx, 'POROS', mx + 16, my - mr * 1.24, { size: 20, color: HUD.text, a: a0 });
+      chip(ctx, 'BERPUTAR PADA POROSNYA', mx, my + mr + 120, P(t, 0.8, 0.5), { a: a0, color: HUD.amber });
+      brackets(ctx, mx - mr * 1.42, my - mr * 1.42, mr * 2.84, mr * 2.84, P(t, 0.2, 0.7), { a: 0.5 * a0 });
+    });
+  }
+
+  // hero: 27,3 HARI (rolls with the spoken number)
+  const r0 = wordT(scene, 0, 2);
+  const r1 = wordT(scene, 0, 7);
+  const val = (tt) => 27.3 * io(P(tt, r0, r1 - r0));
+  const v = val(t);
+  const aH = eo(P(t, scene.captions[0].from, 0.4));
+  if (aH > 0.01) {
+    const w = roll(ctx, v, 104, 440, { size: 210, font: F.display, color: HUD.bone, decimals: 1, a: aH, track: -6, prev: val(t - 1 / 90) });
+    txt(ctx, 'HARI', 104 + w + 18, 440, { size: 64, font: F.display, color: HUD.amber, alpha: aH * eo(P(t, r1 - 0.2, 0.4)) });
+    txt(ctx, pX < 0.5 ? 'SATU KALI PUTAR' : 'SATU KALI PUTAR = SATU KALI ORBIT', 110, 492, {
+      size: 25, font: F.mono6, color: HUD.amber, track: 6, alpha: aH,
+    });
+  }
+
+  // twin gauges top-right: PUTAR and ORBIT fill together (card 1)
+  const aG = eo(P(t, t1 + 0.4, 0.6));
+  if (aG > 0.01) {
+    const gp = lap;
+    const eqT = wordT(scene, 1, 9, -0.05);
+    const eq = eo(P(t, eqT, 0.5));
+    for (const [k, lab] of [[0, 'PUTAR'], [1, 'ORBIT']]) {
+      const gx = 1010 + k * 230;
+      const gy = 340;
+      donut(ctx, gx, gy, 62, 12, [{ v: gp, color: k ? HUD.ice : HUD.amber, glow: true }], 1, { a: aG });
+      txt(ctx, (27.3 * gp).toFixed(1).replace('.', ','), gx, gy + 12, { size: 34, font: F.num, color: HUD.bone, align: 'center', alpha: aG });
+      mono(ctx, lab, gx, gy + 104, { size: 21, color: HUD.text, align: 'center', a: aG, track: 5 });
+      mono(ctx, 'HARI', gx, gy + 132, { size: 17, color: HUD.sub, align: 'center', a: aG, track: 3 });
+    }
+    txt(ctx, '=', 1125, 356, { size: 64, font: F.display, color: HUD.amber, align: 'center', alpha: aG * (0.35 + 0.65 * eq), glowBlur: 30 * eq, glowColor: 'rgba(255,176,58,0.8)' });
+    ringBurst(ctx, 1125, 340, P(t, eqT, 0.8), { r: 170 });
+    chip(ctx, 'SAMA PERSIS', 1125, 530, P(t, eqT + 0.05, 0.5), { color: HUD.amber });
+  }
+  // orbit label
+  const aL = eo(P(t, t1 + 0.9, 0.6));
+  mono(ctx, 'BUMI', ocx, ocy + er + 52, { size: 22, color: HUD.text, align: 'center', a: aL, track: 6 });
+  mono(ctx, 'TITIK = SISI YANG SAMA', ocx, ocy + ry + 150, { size: 20, color: HUD.amber, align: 'center', a: aL * 0.9, track: 4 });
+
+  hudFrame(ctx, t, g.t ?? t, { cam });
 }
 
 export default { draw: drawScene };

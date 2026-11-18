@@ -208,7 +208,8 @@ function drawFrame(ctx, frame) {
   mark('film', () => drawFilm(ctx, frame));
 
   // global fades
-  const fadeIn = clamp(t / 0.5);
+  // open on picture almost at once: the first second decides the swipe
+  const fadeIn = clamp(t / 0.15);
   const fadeOut = clamp((timeline.total - t) / 0.5);
   const a = Math.min(fadeIn, fadeOut);
   if (a < 1) {
