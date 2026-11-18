@@ -1,17 +1,17 @@
 import React from 'react';
 import {AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring} from 'remotion';
 
-// Ep24 — "Suara terkeras dalam sejarah ada di Indonesia." — Remotion Studio preview mirror.
+// Ep25 — "Golongan darah yang cuma dimiliki satu orang." — Remotion Studio preview mirror.
 // Master render stays the canvas pipeline (src/render.mjs, 2K 90fps, 9:16 short).
 
 const SCENES = [
-  {id: 's1', label: 'KRAKATAU', index: '01', start: 0, dur: 11.28, big: '1883', sub: '27 AGUSTUS · PUKUL 10.02', cap: ['Suara terkeras dalam sejarah datang dari Indonesia.', 'Tahun seribu delapan ratus delapan puluh tiga, Krakatau meledak.']},
-  {id: 's2', label: '4.800 KM', index: '02', start: 11.28, dur: 8.82, big: '4.800 KM', sub: 'SAMPAI PULAU RODRIGUES', cap: ['Suaranya terdengar sampai empat ribu delapan ratus kilometer.', 'Hampir sejauh Sabang ke Merauke.']},
-  {id: 's3', label: '170 dB', index: '03', start: 20.10, dur: 8.94, big: '170+ dB', sub: 'DIUKUR 160 KM DARI KRAKATAU', cap: ['Kerasnya lebih dari seratus tujuh puluh desibel.', 'Enam puluh empat kilometer jauhnya, gendang telinga pelaut pecah.']},
-  {id: 's4', label: '3,5 KALI', index: '04', start: 29.04, dur: 8.70, big: '3,5×', sub: 'KELILING BUMI', cap: ['Gelombang tekanannya mengelilingi Bumi tiga setengah kali.', 'Barometer di seluruh dunia mencatatnya tujuh kali.']},
-  {id: 's5', label: 'TSUNAMI', index: '05', start: 37.74, dur: 10.10, big: '36.417', sub: 'JIWA · CATATAN RESMI', cap: ['Tapi yang paling mematikan justru tsunaminya.', 'Ombak tiga puluh meter menewaskan lebih dari tiga puluh enam ribu orang.']},
-  {id: 's6', label: 'LANGIT MERAH', index: '06', start: 47.84, dur: 10.54, big: 'ALARM PALSU', sub: 'NEW YORK · 1883', cap: ['Abunya membuat senja di seluruh dunia merah menyala.', 'Di New York, petugas pemadam sampai dipanggil karena dikira ada kebakaran.']},
-  {id: 's7', label: 'ANAK KRAKATAU', index: '07', start: 58.38, dur: 11.18, big: 'ANAK KRAKATAU', sub: 'MASIH AKTIF', cap: ['Kini di kalderanya tumbuh Anak Krakatau, dan masih aktif.', 'Tulis di komentar: gunung api terdekat dari rumahmu apa?']},
+  {id: 's1', label: 'SATU ORANG', index: '01', start: 0.00, dur: 10.36, big: '1 ORANG', sub: 'PUNYA GOLONGAN DARAH INI', cap: ['Ada golongan darah yang cuma dimiliki satu orang di dunia.', 'Dan itu bukan A, B, AB, atau O.']},
+  {id: 's2', label: 'PENANDA', index: '02', start: 10.36, dur: 12.02, big: '1901', sub: 'KARL LANDSTEINER · SISTEM ABO', cap: ['Golongan darah ditentukan oleh penanda kecil di permukaan sel darah merah.', 'Sistem A, B, O ditemukan tahun seribu sembilan ratus satu.']},
+  {id: 's3', label: '49 SISTEM', index: '03', start: 22.38, dur: 9.50, big: '49 SISTEM', sub: '360+ PENANDA (ANTIGEN)', cap: ['Tapi A, B, O cuma satu dari empat puluh sembilan sistem golongan darah.', 'Penandanya sudah lebih dari tiga ratus enam puluh.']},
+  {id: 's4', label: 'RHESUS', index: '04', start: 31.88, dur: 10.54, big: '< 1%', sub: 'RHESUS NEGATIF DI INDONESIA', cap: ['Yang paling sering dicek selain itu adalah rhesus, positif atau negatif.', 'Di Indonesia, rhesus negatif kurang dari satu persen.']},
+  {id: 's5', label: 'DARAH EMAS', index: '05', start: 42.42, dur: 10.86, big: '< 50', sub: 'DARAH EMAS · RH-NULL', cap: ['Lalu ada darah emas, rhesus nol, tanpa satu pun penanda rhesus.', 'Pemiliknya kurang dari lima puluh orang di seluruh dunia.']},
+  {id: 's6', label: 'GWADA', index: '06', start: 53.28, dur: 12.90, big: 'GWADA −', sub: 'PRANCIS 2025 · SISTEM KE-48', cap: ['Tahun dua ribu dua puluh lima, Prancis mengumumkan golongan darah baru, Gwada negatif.', 'Pemiliknya baru satu perempuan, dan darahnya hanya cocok dengan dirinya sendiri.']},
+  {id: 's7', label: 'GOLONGANMU', index: '07', start: 66.18, dur: 8.82, big: 'PUNYAMU?', sub: 'TULIS DI KOMENTAR', cap: ['Jadi golongan darah bukan cuma huruf dan plus minus.', 'Tulis di komentar: golongan darahmu apa?']},
 ];
 
 const VOID = '#03050A';
@@ -57,7 +57,7 @@ export const NaysiShort = () => {
   const t = frame / fps;
   const scene = SCENES.find((s) => t >= s.start && t < s.start + s.dur) || SCENES[SCENES.length - 1];
   const local = t - scene.start;
-  const prog = t / 72.84;
+  const prog = t / 75.00;
   return (
     <AbsoluteFill>
       <Scene scene={scene} local={local} />

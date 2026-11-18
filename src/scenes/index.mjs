@@ -1,10 +1,10 @@
-import w1 from './w1.mjs';
-import w2 from './w2.mjs';
-import w3 from './w3.mjs';
-import w4 from './w4.mjs';
-import w5 from './w5.mjs';
-import w6 from './w6.mjs';
-import w7 from './w7.mjs';
+import x1 from './x1.mjs';
+import x2 from './x2.mjs';
+import x3 from './x3.mjs';
+import x4 from './x4.mjs';
+import x5 from './x5.mjs';
+import x6 from './x6.mjs';
+import x7 from './x7.mjs';
 
-// Episode 24 ("Suara terkeras dalam sejarah ada di Indonesia") — keys w1..w7 on the KRAKATAU kit.
-export default { w1, w2, w3, w4, w5, w6, w7 };
+// Episode 25 ("Golongan darah yang cuma dimiliki satu orang") — keys x1..x7 on the DARAH kit.
+export default { x1, x2, x3, x4, x5, x6, x7 };

@@ -17,7 +17,9 @@
     "audio:ep23": "VO_EP=ep23 node scripts/audio-ep23.mjs",
     "render:ep23": "bash scripts/render-ep23.sh",
     "audio:ep24": "VO_EP=ep24 node scripts/audio-ep24.mjs",
-    "render:ep24": "bash scripts/render-ep24.sh"
+    "render:ep24": "bash scripts/render-ep24.sh",
+    "audio:ep25": "VO_EP=ep25 node scripts/audio-ep25.mjs",
+    "render:ep25": "bash scripts/render-ep25.sh"
   },
   "repository": {
     "type": "git",
