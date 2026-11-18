@@ -1,14 +1,19 @@
 {
-  "name": "cpi-naysi",
+  "name": "naysi",
   "version": "1.0.0",
-  "description": "CPI explainer \u2014 2K 90fps motion graphics built entirely in code",
+  "description": "NAYSI Shorts — 2K 90fps motion graphics dari kode (canvas + Remotion Studio)",
   "scripts": {
     "vo": "node scripts/prep-vo.mjs",
     "audio": "node scripts/audio.mjs",
     "stills": "node src/render.mjs --stills 3,12,26,38,47,60,75",
     "render": "node src/render.mjs --from 0 --to 7067 --preset superfast --crf 18 --out out/video.mp4",
     "build": "node scripts/build.mjs",
-    "mux": "node scripts/mux.mjs"
+    "mux": "node scripts/mux.mjs",
+    "studio": "remotion studio --port=3000 --host=0.0.0.0",
+    "remotion:render": "remotion render src/remotion/index.js NaysiShort out/remotion.mp4 --concurrency=2",
+    "align": "node scripts/align-cards.mjs",
+    "audio:ep22": "VO_EP=ep22 node scripts/audio-ep22.mjs",
+    "render:ep22": "bash scripts/render-ep22.sh"
   },
   "repository": {
     "type": "git",
@@ -22,14 +27,23 @@
   },
   "homepage": "https://github.com/enovoid28-dot/YT-4-Naysi#readme",
   "dependencies": {
-    "@ffmpeg-installer/ffmpeg": "^1.1.0",
-    "@fontsource/bricolage-grotesque": "^5.3.0",
-    "@fontsource/ibm-plex-mono": "^5.3.0",
-    "@fontsource/inter-tight": "^5.3.0",
-    "@fontsource/plus-jakarta-sans": "^5.3.0",
-    "@napi-rs/canvas": "^1.1.0",
-    "wawoff2": "^2.0.1"
+    "@ffmpeg-installer/ffmpeg": "1.1.0",
+    "@fontsource/bricolage-grotesque": "5.3.0",
+    "@fontsource/ibm-plex-mono": "5.3.0",
+    "@fontsource/inter-tight": "5.3.0",
+    "@fontsource/plus-jakarta-sans": "5.3.0",
+    "@napi-rs/canvas": "1.1.1",
+    "wawoff2": "2.0.1",
+    "remotion": "4.0.544",
+    "@remotion/cli": "4.0.544",
+    "@remotion/renderer": "4.0.544",
+    "@remotion/player": "4.0.544",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   },
   "private": true,
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.544"
+  }
 }
