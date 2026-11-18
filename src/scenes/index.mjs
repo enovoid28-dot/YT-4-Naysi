@@ -1,12 +1,12 @@
-import t1 from './t1.mjs';
-import t2 from './t2.mjs';
-import t3 from './t3.mjs';
-import t4 from './t4.mjs';
-import t5 from './t5.mjs';
-import t6 from './t6.mjs';
-import t7 from './t7.mjs';
-import t8 from './t8.mjs';
-import t9 from './t9.mjs';
+import u1 from './u1.mjs';
+import u2 from './u2.mjs';
+import u3 from './u3.mjs';
+import u4 from './u4.mjs';
+import u5 from './u5.mjs';
+import u6 from './u6.mjs';
+import u7 from './u7.mjs';
+import u8 from './u8.mjs';
+import u9 from './u9.mjs';
 
-// Episode 21 ("Tidur enam jam itu utang.") — keys t1..t9 on the MALAM kit.
-export default { t1, t2, t3, t4, t5, t6, t7, t8, t9 };
+// Episode 22 ("Dua puluh tiga menit.") — keys u1..u9 on the LAYAR kit.
+export default { u1, u2, u3, u4, u5, u6, u7, u8, u9 };
