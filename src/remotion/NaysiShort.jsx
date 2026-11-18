@@ -1,17 +1,17 @@
 import React from 'react';
 import {AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring} from 'remotion';
 
-// Ep23 — "Kenapa Bulan selalu menghadap kita?" — Remotion Studio preview mirror.
+// Ep24 — "Suara terkeras dalam sejarah ada di Indonesia." — Remotion Studio preview mirror.
 // Master render stays the canvas pipeline (src/render.mjs, 2K 90fps, 9:16 short).
 
 const SCENES = [
-  {id: 's1', label: 'WAJAH SAMA', index: '01', start: 0, dur: 7.82, big: '1', sub: 'WAJAH · SELAMANYA', cap: ['Kamu sudah lihat Bulan seumur hidup.', 'Tapi kamu tidak pernah lihat sisi satunya.']},
-  {id: 's2', label: '27,3 HARI', index: '02', start: 7.82, dur: 10.04, big: '27,3', sub: 'PUTAR = ORBIT', cap: ['Bulan berputar dua puluh tujuh koma tiga hari.', 'Mengelilingi Bumi juga dua puluh tujuh koma tiga hari, sama persis.']},
-  {id: 's3', label: 'REM', index: '03', start: 17.86, dur: 11.56, big: 'REM', sub: 'TONJOLAN = PEGANGAN', cap: ['Dulu Bulan berputar jauh lebih cepat.', 'Gravitasi Bumi menarik tonjolan terdekat, lalu melambat sampai pas.']},
-  {id: 's4', label: 'GOYANG', index: '04', start: 29.42, dur: 10.32, big: '59%', sub: 'YANG BISA KITA INTIP', cap: ['Tapi tidak kaku.', 'Orbitnya elips, jadi Bulan bergoyang, dan kita bisa intip lima puluh sembilan persen.']},
-  {id: 's5', label: '1959', index: '05', start: 39.74, dur: 12.32, big: '1959', sub: 'LUNA 3', cap: ['Sisi jauh bukan sisi gelap, ia kena matahari sama saja.', 'Baru difoto tahun seribu sembilan ratus lima puluh sembilan oleh Luna tiga.']},
-  {id: 's6', label: 'REM BUMI', index: '06', start: 52.06, dur: 10.68, big: '24 JAM', sub: 'DULU 4 JAM', cap: ['Bulan juga mengerem Bumi.', 'Dulu sehari cuma empat jam, sekarang dua puluh empat jam, dan terus memanjang.']},
-  {id: 's7', label: 'TERKUNCI', index: '07', start: 62.74, dur: 10.10, big: 'TERKUNCI', sub: 'BUKAN DIAM', cap: ['Jadi Bulan tidak diam, ia terkunci.', 'Tulis di komentar: kamu lihat Bulan purnama dari mana?']},
+  {id: 's1', label: 'KRAKATAU', index: '01', start: 0, dur: 11.28, big: '1883', sub: '27 AGUSTUS · PUKUL 10.02', cap: ['Suara terkeras dalam sejarah datang dari Indonesia.', 'Tahun seribu delapan ratus delapan puluh tiga, Krakatau meledak.']},
+  {id: 's2', label: '4.800 KM', index: '02', start: 11.28, dur: 8.82, big: '4.800 KM', sub: 'SAMPAI PULAU RODRIGUES', cap: ['Suaranya terdengar sampai empat ribu delapan ratus kilometer.', 'Hampir sejauh Sabang ke Merauke.']},
+  {id: 's3', label: '170 dB', index: '03', start: 20.10, dur: 8.94, big: '170+ dB', sub: 'DIUKUR 160 KM DARI KRAKATAU', cap: ['Kerasnya lebih dari seratus tujuh puluh desibel.', 'Enam puluh empat kilometer jauhnya, gendang telinga pelaut pecah.']},
+  {id: 's4', label: '3,5 KALI', index: '04', start: 29.04, dur: 8.70, big: '3,5×', sub: 'KELILING BUMI', cap: ['Gelombang tekanannya mengelilingi Bumi tiga setengah kali.', 'Barometer di seluruh dunia mencatatnya tujuh kali.']},
+  {id: 's5', label: 'TSUNAMI', index: '05', start: 37.74, dur: 10.10, big: '36.417', sub: 'JIWA · CATATAN RESMI', cap: ['Tapi yang paling mematikan justru tsunaminya.', 'Ombak tiga puluh meter menewaskan lebih dari tiga puluh enam ribu orang.']},
+  {id: 's6', label: 'LANGIT MERAH', index: '06', start: 47.84, dur: 10.54, big: 'ALARM PALSU', sub: 'NEW YORK · 1883', cap: ['Abunya membuat senja di seluruh dunia merah menyala.', 'Di New York, petugas pemadam sampai dipanggil karena dikira ada kebakaran.']},
+  {id: 's7', label: 'ANAK KRAKATAU', index: '07', start: 58.38, dur: 11.18, big: 'ANAK KRAKATAU', sub: 'MASIH AKTIF', cap: ['Kini di kalderanya tumbuh Anak Krakatau, dan masih aktif.', 'Tulis di komentar: gunung api terdekat dari rumahmu apa?']},
 ];
 
 const VOID = '#03050A';

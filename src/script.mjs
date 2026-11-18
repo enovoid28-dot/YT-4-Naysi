@@ -1,88 +1,94 @@
-// Episode 23 — "Kenapa Bulan selalu menghadap kita?"
+// Episode 24 — "Suara terkeras dalam sejarah ada di Indonesia."
 //
-// Tidal locking, told as a chain of facts: the same face for a lifetime, the
-// 27.3-day match, the bulge that braked the spin, the wobble that lets us
-// peek at 59%, the far side that is not dark, and the brake the Moon puts
-// on Earth itself. Concise and structured, like CPI: one number per scene,
-// one mechanism per scene, one insight at the end.
+// Krakatau, 27 August 1883, told as a chain of measurements: where the sound
+// was heard, how loud it was, how many times it went round the planet, what
+// actually killed people, what the ash did to skies on the other side of the
+// world, and what is growing in the hole today. One number per scene, one
+// picture per number, a question at the end that every viewer can answer.
 //
 // Sources (Nov 2026):
-//   Sidereal rotation = orbit = 27.32 days; same hemisphere faces Earth.
-//   Formed ~4.5 billion years ago, spun faster; Earth's gravity raised a
-//     tidal bulge, torque slowed the spin until it matched the orbit.
-//   Libration (elliptical orbit) lets observers see ~59% of the surface.
-//   Far side first photographed by Luna 3 in 1959; it gets equal sunlight.
-//   Moon recedes ~3.8 cm/year; Earth's day was ~4 h early, now 24 h and
-//     lengthening; mutual lock would take ~50 billion years (Sun first).
+//   27 Aug 1883, final explosion ~10:02; heard on Rodrigues Island 4,800 km
+//     away as "the roar of heavy guns", and in Perth (3,110 km).
+//   Batavia gasworks gauge, 160 km away: spike > 2.5 inHg (8.5 kPa), off the
+//     scale = more than 172 dB.
+//   Norham Castle, 40 mi (64 km) away: "the ear-drums of over half my crew
+//     have been shattered" (captain's log).
+//   Pressure wave rounded the globe 3.5 times; barographs worldwide recorded
+//     it seven times over five days.
+//   Tsunami over 30 m; official death toll 36,417; 165 villages destroyed.
+//   Red sunsets worldwide; "fire engines were called out in New York,
+//     Poughkeepsie and New Haven to quench the apparent conflagration".
+//   Anak Krakatau emerged from the caldera in 1927; PVMBG Level III (Siaga)
+//     after a 25-hour continuous eruption on 4-6 September 2026.
 //
 // Copy rules: two sentences per scene == two caption cards, so every card is
 // a measured block of audio and can never drift. Numbers spelled the way
 // the voice says them.
 
-export const SERIES = 'NAYSI · LANGIT';
+export const SERIES = 'NAYSI · BUMI';
 export const BRAND = 'NAYSI';
 
 export const SCENES = [
   {
-    id: 's1', key: 'v1', label: 'WAJAH SAMA', index: '01', theme: 'dark',
-    vo: 'Kamu sudah lihat Bulan seumur hidup. Tapi kamu tidak pernah lihat sisi satunya.',
+    id: 's1', key: 'w1', label: 'KRAKATAU', index: '01', theme: 'dark',
+    vo: 'Suara terkeras dalam sejarah datang dari Indonesia. Tahun seribu delapan ratus delapan puluh tiga, Krakatau meledak.',
     cap: [
-      'Kamu sudah lihat *Bulan* seumur hidup.',
-      'Tapi kamu tidak pernah lihat *sisi* *satunya*.',
+      'Suara *terkeras* dalam sejarah datang dari *Indonesia*.',
+      'Tahun *seribu* *delapan* *ratus* *delapan* *puluh* *tiga*, *Krakatau* meledak.',
     ],
-    pad: 1.5,
+    pad: 1.0,
   },
   {
-    id: 's2', key: 'v2', label: '27,3 HARI', index: '02', theme: 'dark',
-    vo: 'Bulan berputar dua puluh tujuh koma tiga hari. Mengelilingi Bumi juga dua puluh tujuh koma tiga hari, sama persis.',
+    id: 's2', key: 'w2', label: '4.800 KM', index: '02', theme: 'dark',
+    vo: 'Suaranya terdengar sampai empat ribu delapan ratus kilometer. Hampir sejauh Sabang ke Merauke.',
     cap: [
-      'Bulan berputar *dua* *puluh* *tujuh* *koma* *tiga* *hari*.',
-      'Mengelilingi *Bumi* juga *dua* *puluh* *tujuh* *koma* *tiga* *hari*, *sama* *persis*.',
+      'Suaranya terdengar sampai *empat* *ribu* *delapan* *ratus* *kilometer*.',
+      'Hampir sejauh *Sabang* ke *Merauke*.',
     ],
-    pad: 1.5,
+    pad: 1.0,
   },
   {
-    id: 's3', key: 'v3', label: 'REM', index: '03', theme: 'dark',
-    vo: 'Dulu Bulan berputar jauh lebih cepat. Gravitasi Bumi menarik tonjolan terdekat, lalu melambat sampai pas.',
+    id: 's3', key: 'w3', label: '170 dB', index: '03', theme: 'dark',
+    vo: 'Kerasnya lebih dari seratus tujuh puluh desibel. Enam puluh empat kilometer jauhnya, gendang telinga pelaut pecah.',
     cap: [
-      'Dulu *Bulan* berputar jauh lebih cepat.',
-      'Gravitasi *Bumi* menarik *tonjolan* terdekat, lalu melambat sampai pas.',
+      'Kerasnya lebih dari *seratus* *tujuh* *puluh* *desibel*.',
+      '*Enam* *puluh* *empat* *kilometer* jauhnya, *gendang* *telinga* pelaut *pecah*.',
     ],
-    pad: 1.5,
+    pad: 1.0,
   },
   {
-    id: 's4', key: 'v4', label: 'GOYANG', index: '04', theme: 'dark',
-    vo: 'Tapi tidak kaku. Orbitnya elips, jadi Bulan bergoyang, dan kita bisa intip lima puluh sembilan persen.',
+    id: 's4', key: 'w4', label: '3,5 KALI', index: '04', theme: 'dark',
+    vo: 'Gelombang tekanannya mengelilingi Bumi tiga setengah kali. Barometer di seluruh dunia mencatatnya tujuh kali.',
     cap: [
-      'Tapi tidak *kaku*.',
-      'Orbitnya *elips*, jadi *Bulan* bergoyang, dan kita bisa intip *lima* *puluh* *sembilan* *persen*.',
+      'Gelombang tekanannya mengelilingi *Bumi* *tiga* *setengah* *kali*.',
+      '*Barometer* di seluruh dunia mencatatnya *tujuh* *kali*.',
     ],
-    pad: 1.5,
+    pad: 1.0,
   },
   {
-    id: 's5', key: 'v5', label: '1959', index: '05', theme: 'dark',
-    vo: 'Sisi jauh bukan sisi gelap, ia kena matahari sama saja. Baru difoto tahun seribu sembilan ratus lima puluh sembilan oleh Luna tiga.',
+    id: 's5', key: 'w5', label: 'TSUNAMI', index: '05', theme: 'dark',
+    vo: 'Tapi yang paling mematikan justru tsunaminya. Ombak tiga puluh meter menewaskan lebih dari tiga puluh enam ribu orang.',
     cap: [
-      'Sisi jauh bukan *sisi* *gelap*, ia kena *matahari* sama saja.',
-      'Baru difoto tahun *seribu* *sembilan* *ratus* *lima* *puluh* *sembilan* oleh *Luna* *tiga*.',
+      'Tapi yang paling mematikan justru *tsunaminya*.',
+      'Ombak *tiga* *puluh* *meter* menewaskan lebih dari *tiga* *puluh* *enam* *ribu* orang.',
     ],
-    pad: 1.5,
+    pad: 1.0,
   },
   {
-    id: 's6', key: 'v6', label: 'REM BUMI', index: '06', theme: 'dark',
-    vo: 'Bulan juga mengerem Bumi. Dulu sehari cuma empat jam, sekarang dua puluh empat jam, dan terus memanjang.',
+    id: 's6', key: 'w6', label: 'LANGIT MERAH', index: '06', theme: 'dark',
+    vo: 'Abunya membuat senja di seluruh dunia merah menyala. Di New York, petugas pemadam sampai dipanggil karena dikira ada kebakaran.',
     cap: [
-      '*Bulan* juga mengerem *Bumi*.',
-      'Dulu sehari cuma *empat* *jam*, sekarang *dua* *puluh* *empat* *jam*, dan terus memanjang.',
+      'Abunya membuat *senja* di seluruh dunia *merah* *menyala*.',
+      'Di *New* *York*, petugas *pemadam* sampai dipanggil karena dikira ada *kebakaran*.',
     ],
-    pad: 1.5,
+    pad: 1.0,
   },
   {
-    id: 's7', key: 'v7', label: 'TERKUNCI', index: '07', theme: 'dark',
-    vo: 'Jadi Bulan tidak diam, ia terkunci. Tulis di komentar: kamu lihat Bulan purnama dari mana?',
+    id: 's7', key: 'w7', label: 'ANAK KRAKATAU', index: '07', theme: 'dark',
+    vo: 'Kini di kalderanya tumbuh Anak Krakatau, dan masih aktif. Tulis di komentar: gunung api terdekat dari rumahmu apa?',
     cap: [
-      'Jadi *Bulan* tidak diam, ia *terkunci*.',
-      'Tulis di komentar: kamu lihat *Bulan* *purnama* dari mana?',
+      'Kini di kalderanya tumbuh *Anak* *Krakatau*, dan masih *aktif*.',
+      'Tulis di komentar: *gunung* *api* terdekat dari rumahmu apa?',
     ],
     pad: 1.8,
   },
