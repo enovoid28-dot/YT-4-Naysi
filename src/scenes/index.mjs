@@ -1,11 +1,11 @@
-import y1 from './y1.mjs';
-import y2 from './y2.mjs';
-import y3 from './y3.mjs';
-import y4 from './y4.mjs';
-import y5 from './y5.mjs';
-import y6 from './y6.mjs';
-import y7 from './y7.mjs';
-import y8 from './y8.mjs';
+import z1 from './z1.mjs';
+import z2 from './z2.mjs';
+import z3 from './z3.mjs';
+import z4 from './z4.mjs';
+import z5 from './z5.mjs';
+import z6 from './z6.mjs';
+import z7 from './z7.mjs';
+import z8 from './z8.mjs';
 
-// Episode 26 ("Tanpa Einstein, GPS di HP-mu nyasar sepuluh kilometer sehari") — keys y1..y8 on the GPS kit.
-export default { y1, y2, y3, y4, y5, y6, y7, y8 };
+// Episode 27 ("Pedas itu bukan rasa") — keys z1..z8 on the chili kit.
+export default { z1, z2, z3, z4, z5, z6, z7, z8 };

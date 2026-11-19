@@ -42,7 +42,10 @@ def clean(word):
 
 
 # loanwords the letter rules would get wrong
-EXCEPT = {'einstein': ['AY', 'N', 'S', 'T', 'AY', 'N']}
+EXCEPT = {
+    'einstein': ['AY', 'N', 'S', 'T', 'AY', 'N'],
+    'scoville': ['S', 'K', 'OW', 'V', 'IH', 'L'],
+}
 
 
 def g2p(word, spelled):

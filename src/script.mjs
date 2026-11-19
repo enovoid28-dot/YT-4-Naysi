@@ -1,104 +1,108 @@
-// Episode 26 — "Tanpa Einstein, GPS di HP-mu nyasar sepuluh kilometer sehari."
+// Episode 27 — "Pedas itu bukan rasa."
 //
-// Relativity you carry in your pocket, told as one chain of numbers: a phone
-// finds itself by timing signals from atomic clocks in orbit; one microsecond
-// of error is three hundred metres; the satellite's speed slows its clock by
-// seven microseconds a day, the weaker gravity up there speeds it up by
-// forty-five; the net thirty-eight microseconds is more than ten kilometres;
-// the 1977 test satellite measured it; today every clock leaves the ground
-// already tuned slow.
+// Why chili burns, told as one chain: the tongue knows five tastes and heat
+// is not one of them; capsaicin sits on the heat sensor that normally fires
+// above forty-three degrees, so the brain reads a burn that is not there;
+// water spreads it, milk protein mops it up; the Scoville scale ranks it;
+// birds feel nothing at all — and that is exactly what the plant wants.
 //
 // Sources (Nov 2026):
-//   R. W. Pogge, "Real-World Relativity: The GPS Navigation System" (Ohio
-//     State University): ~14,000 km/h, ~20,000 km up; special relativity
-//     -7 us/day, general relativity +45 us/day, net +38 us/day; uncorrected,
-//     errors would accumulate at about 10 km per day.
-//   38 us x c = 11.4 km of range ("lebih dari sepuluh kilometer").
-//   N. Ashby, "Relativity in the Global Positioning System", Living Reviews
-//     in Relativity 6 (2003): NTS-2, launched 23 June 1977, first caesium
-//     clock in orbit; some doubted the effect, so a frequency synthesizer
-//     was built in; ~20 days uncorrected, measured +442.5 vs predicted
-//     +446.5 parts in 10^12 (about 1 %). Satellite clocks are set before
-//     launch to 10.22999999543 MHz instead of 10.23 MHz.
+//   M. J. Caterina, D. Julius et al., "The capsaicin receptor: a
+//     heat-activated ion channel in the pain pathway", Nature 389 (1997):
+//     TRPV1 opens for capsaicin and for heat above ~43 °C, on pain-sensing
+//     neurons; Nobel Prize in Physiology or Medicine 2021 (Julius,
+//     Patapoutian). Pungency is not one of the five basic tastes.
+//   Nasrawi & Pangborn (1990); Nolden, Lenart & Hayes (2019): milk beats
+//     water, skim and whole milk alike — casein binds capsaicin; capsaicin
+//     is fat-soluble, water spreads it.
+//   W. Scoville, 1912 (dilution test). Cabai rawit / bird's eye chili
+//     50,000-100,000 SHU; Pepper X 2,693,000 SHU average (Guinness World
+//     Records, 2023), Carolina Reaper 1,641,183.
+//   S.-E. Jordt & D. Julius, "Molecular basis for species-specific
+//     sensitivity to 'hot' chili peppers", Cell 108 (2002): bird TRPV1 does
+//     not respond to capsaicin. J. J. Tewksbury & G. P. Nabhan, "Directed
+//     deterrence by capsaicin in chillies", Nature 412 (2001): rodents
+//     destroy the seeds and are repelled, birds pass them intact.
 //
-// Copy rules: two sentences per scene == two caption cards, so every card is
-// a measured block of audio and can never drift. Numbers spelled the way
-// the voice says them.
+// Copy rules: one caption card per sentence (the last scene splits its long
+// sentence at the comma), so every card is a measured block of audio and can
+// never drift. Numbers spelled the way the voice says them.
 
-export const SERIES = 'NAYSI · FISIKA';
+export const SERIES = 'NAYSI · RASA';
 export const BRAND = 'NAYSI';
 
 export const SCENES = [
   {
-    id: 's1', key: 'y1', label: 'NYASAR', index: '01', theme: 'dark',
-    vo: 'Tanpa teori Einstein, GPS di HP-mu bisa nyasar sepuluh kilometer setiap hari. Masalahnya bukan sinyal, tapi waktu.',
+    id: 's1', key: 'z1', label: 'BUKAN RASA', index: '01', theme: 'dark',
+    vo: 'Pedas itu sebenarnya bukan rasa. Lidahmu sedang mengirim sinyal yang sama seperti saat terbakar.',
     cap: [
-      'Tanpa teori Einstein, GPS di HP-mu bisa nyasar sepuluh kilometer setiap hari.',
-      'Masalahnya bukan sinyal, tapi waktu.',
+      'Pedas itu sebenarnya bukan rasa.',
+      'Lidahmu sedang mengirim sinyal yang sama seperti saat terbakar.',
     ],
     lead: 0.36,
     pad: 0.55,
   },
   {
-    id: 's2', key: 'y2', label: 'JAM ATOM', index: '02', theme: 'dark',
-    vo: 'Satelit GPS membawa jam atom dan terus memancarkan waktunya. HP-mu menghitung jarak dari lama perjalanan sinyal itu.',
+    id: 's2', key: 'z2', label: 'LIMA RASA', index: '02', theme: 'dark',
+    vo: 'Lidah hanya mengenal lima rasa: manis, asam, asin, pahit, dan gurih. Pedas tidak termasuk, karena yang bekerja justru saraf nyeri.',
     cap: [
-      'Satelit GPS membawa jam atom dan terus memancarkan waktunya.',
-      'HP-mu menghitung jarak dari lama perjalanan sinyal itu.',
+      'Lidah hanya mengenal lima rasa: manis, asam, asin, pahit, dan gurih.',
+      'Pedas tidak termasuk, karena yang bekerja justru saraf nyeri.',
     ],
     pad: 0.55,
   },
   {
-    id: 's3', key: 'y3', label: '300 METER', index: '03', theme: 'dark',
-    vo: 'Sinyal itu melaju secepat cahaya. Jadi selisih satu mikrodetik saja, posisimu meleset tiga ratus meter.',
+    id: 's3', key: 'z3', label: 'SENSOR PANAS', index: '03', theme: 'dark',
+    vo: 'Zat kapsaisin di cabai menempel pada sensor panas di lidahmu. Sensor ini biasanya baru menyala saat suhu di atas empat puluh tiga derajat.',
     cap: [
-      'Sinyal itu melaju secepat cahaya.',
-      'Jadi selisih satu mikrodetik saja, posisimu meleset tiga ratus meter.',
+      'Zat kapsaisin di cabai menempel pada sensor panas di lidahmu.',
+      'Sensor ini biasanya baru menyala saat suhu di atas empat puluh tiga derajat.',
     ],
     pad: 0.55,
   },
   {
-    id: 's4', key: 'y4', label: 'KECEPATAN', index: '04', theme: 'dark',
-    vo: 'Satelitnya melesat hampir empat belas ribu kilometer per jam. Menurut relativitas khusus, jamnya melambat tujuh mikrodetik per hari.',
+    id: 's4', key: 'z4', label: 'TERTIPU', index: '04', theme: 'dark',
+    vo: 'Jadi otakmu mengira mulutmu benar-benar terbakar. Makanya wajah memerah, keringat keluar, dan mata berair.',
     cap: [
-      'Satelitnya melesat hampir empat belas ribu kilometer per jam.',
-      'Menurut relativitas khusus, jamnya melambat tujuh mikrodetik per hari.',
+      'Jadi otakmu mengira mulutmu benar-benar terbakar.',
+      'Makanya wajah memerah, keringat keluar, dan mata berair.',
     ],
     pad: 0.55,
   },
   {
-    id: 's5', key: 'y5', label: 'GRAVITASI', index: '05', theme: 'dark',
-    vo: 'Tapi di ketinggian dua puluh ribu kilometer, gravitasi lebih lemah. Menurut relativitas umum, waktu di sana justru berjalan lebih cepat, empat puluh lima mikrodetik per hari.',
+    id: 's5', key: 'z5', label: 'SUSU', index: '05', theme: 'dark',
+    vo: 'Minum air justru menyebarkan kapsaisin, karena zat ini larut dalam lemak. Susu lebih ampuh: protein kaseinnya mengikat kapsaisin dan membilasnya.',
     cap: [
-      'Tapi di ketinggian dua puluh ribu kilometer, gravitasi lebih lemah.',
-      'Menurut relativitas umum, waktu di sana justru berjalan lebih cepat, empat puluh lima mikrodetik per hari.',
+      'Minum air justru menyebarkan kapsaisin, karena zat ini larut dalam lemak.',
+      'Susu lebih ampuh: protein kaseinnya mengikat kapsaisin dan membilasnya.',
     ],
     pad: 0.55,
   },
   {
-    id: 's6', key: 'y6', label: '38 MIKRODETIK', index: '06', theme: 'dark',
-    vo: 'Hasilnya, jam satelit maju tiga puluh delapan mikrodetik setiap hari. Dikali kecepatan cahaya, itu lebih dari sepuluh kilometer.',
+    id: 's6', key: 'z6', label: 'SKALA SCOVILLE', index: '06', theme: 'dark',
+    vo: 'Tingkat pedas diukur dengan skala Scoville sejak tahun seribu sembilan ratus dua belas. Cabai rawit sekitar lima puluh sampai seratus ribu, cabai terpedas di dunia dua koma tujuh juta.',
     cap: [
-      'Hasilnya, jam satelit maju tiga puluh delapan mikrodetik setiap hari.',
-      'Dikali kecepatan cahaya, itu lebih dari sepuluh kilometer.',
+      'Tingkat pedas diukur dengan skala Scoville sejak tahun seribu sembilan ratus dua belas.',
+      'Cabai rawit sekitar lima puluh sampai seratus ribu, cabai terpedas di dunia dua koma tujuh juta.',
     ],
     pad: 0.55,
   },
   {
-    id: 's7', key: 'y7', label: 'UJI 1977', index: '07', theme: 'dark',
-    vo: 'Tahun seribu sembilan ratus tujuh puluh tujuh, masih ada yang ragu. Lalu satelit uji mengukurnya, hasilnya nyaris persis hitungan Einstein.',
+    id: 's7', key: 'z7', label: 'BURUNG', index: '07', theme: 'dark',
+    vo: 'Anehnya, burung sama sekali tidak merasakan pedas. Sensor panas mereka tidak bereaksi pada kapsaisin.',
     cap: [
-      'Tahun seribu sembilan ratus tujuh puluh tujuh, masih ada yang ragu.',
-      'Lalu satelit uji mengukurnya, hasilnya nyaris persis hitungan Einstein.',
+      'Anehnya, burung sama sekali tidak merasakan pedas.',
+      'Sensor panas mereka tidak bereaksi pada kapsaisin.',
     ],
     pad: 0.55,
   },
   {
-    id: 's8', key: 'y8', label: 'DISETEL', index: '08', theme: 'dark',
-    vo: 'Kini jam satelit sengaja disetel lebih lambat sebelum diluncurkan. Pernah nyasar gara-gara GPS? Tulis di komentar.',
+    id: 's8', key: 'z8', label: 'STRATEGI CABAI', index: '08', theme: 'dark',
+    vo: 'Itu strategi cabai: mamalia mengunyah bijinya, burung menelannya utuh lalu menyebarkannya. Level pedasmu berapa? Tulis di komentar.',
     cap: [
-      'Kini jam satelit sengaja disetel lebih lambat sebelum diluncurkan.',
-      'Pernah nyasar gara-gara GPS? Tulis di komentar.',
+      'Itu strategi cabai: mamalia mengunyah bijinya,',
+      'burung menelannya utuh lalu menyebarkannya.',
+      'Level pedasmu berapa? Tulis di komentar.',
     ],
     pad: 1.8,
   },
