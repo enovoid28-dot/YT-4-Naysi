@@ -47,6 +47,7 @@ EXCEPT = {
     'einstein': ['AY', 'N', 'S', 'T', 'AY', 'N'],
     'scoville': ['S', 'K', 'OW', 'V', 'IH', 'L'],
     'greenland': ['G', 'R', 'IY', 'N', 'L', 'AH', 'N', 'D'],
+    'mercator': ['M', 'AH', 'R', 'K', 'AA', 'T', 'OW', 'R'],
 }
 
 

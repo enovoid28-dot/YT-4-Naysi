@@ -1,120 +1,121 @@
-// Episode 28 — "Hiu lebih tua dari pohon."
+// Episode 29 — "Indonesia lebih lebar dari Amerika Serikat."
 //
-// Deep time told through one animal: the oldest shark evidence (scales,
-// ~450 million years) against the first trees (~385 million years); the
-// whole of Earth's history squeezed into one day; five mass extinctions
-// survived; a fossil record made almost only of teeth; a living shark born in
-// the age of the VOC — and the turn at the end: after 450 million years,
-// overfishing, with Indonesia as the largest shark catcher on Earth.
+// Why the map on every classroom wall makes Indonesia look small: Mercator's
+// 1569 sailing chart stretches the world away from the equator (area x4 at
+// 60 degrees), so Greenland rivals Africa (really 14x smaller) and Europe is
+// drawn at more than twice its size, while Indonesia, on the equator, is
+// drawn almost true. Moved at true size, Sabang-Merauke runs from Ireland past
+// the Caspian Sea; its width beats the United States coast to coast; and on
+// 4 September 2026 the UN General Assembly backed equal-area maps 164 to 1,
+// the one "no" being the United States.
 //
 // Sources (Nov 2026):
-//   Natural History Museum (London), shark evolution timeline: earliest
-//     shark-like scales from Late Ordovician rocks, ~450 million years
-//     (Colorado); undisputed scales ~420 million years. Sharks survived all
-//     five mass extinctions. NHM, "What can shark teeth tell us?": teeth
-//     replaced like a conveyor belt, some species go through ~30,000.
-//   W. E. Stein et al., Current Biology 30 (2020) / Stein et al., Nature 446
-//     (2007): Archaeopteris and Wattieza (Gilboa and Cairo, New York),
-//     the earliest trees and forests, ~385-386 million years.
-//   J. Nielsen et al., "Eye lens radiocarbon reveals centuries of longevity
-//     in the Greenland shark", Science 353 (2016): largest animal
-//     392 ± 120 years, longest-lived vertebrate known.
-//   N. K. Dulvy et al., "Overfishing drives over one-third of all sharks and
-//     rays toward a global extinction crisis", Current Biology 31 (2021):
-//     37.5 % threatened, overfishing the universal threat.
-//   TRAFFIC (2019), "An overview of major shark traders, catchers and
-//     species": Indonesia the top shark catcher 2007-2017, mean 110,737 t/yr.
-//   Earth 4.54 billion years; Homo sapiens ~300,000 years: on a 24-hour
-//     clock sharks arrive at 21:37, trees at 21:58, us 5.7 s before midnight.
+//   Mercator, "Nova et Aucta Orbis Terrae Descriptio" (1569); Mercator scale
+//     factor sec(lat), area factor sec^2(lat): x2.00 at 45 deg, x2.42 at 50,
+//     x4.00 at 60, x10.5 at 72 (Greenland).
+//   Areas: Africa 30.37 million km2, Greenland 2.17 million km2 (UN 2017
+//     figures as quoted by Visual Capitalist, Jan 2026) -> about 14x.
+//   Indonesia: 6 N - 11 S, 95 E - 141 E, ~5,120 km east-west (CIA / standard
+//     references); our Natural Earth 1:50m geometry: 5,175 km between the
+//     extreme points, Sabang-Merauke 5,248 km great-circle.
+//   Contiguous United States: ~2,800 mi (4,500 km) coast to coast; Natural
+//     Earth: 124.7 W - 67.0 E, 4,544 km along 45 N, 4,322 km great-circle.
+//   True-size move (rotation on the sphere, no Mercator rescale): Sabang set on
+//     west Ireland (9.7 W, 52.8 N) puts Merauke at 59.3 E, 40.1 N
+//     (Turkmenistan, east of the Caspian Sea).
+//   UN General Assembly, "Correct the Map: rebalancing global cartographic
+//     representation ... particularly Africa", A/RES/80/307 (draft A/80/L.104),
+//     adopted 4 Sept 2026: 164 in favour, 1 against (United States),
+//     6 abstentions; non-binding; encourages Equal Earth and other equal-area
+//     projections (Šavrič, Patterson & Jenny 2018).
 //
 // Copy rules: one caption card per sentence, long sentences split at the
-// comma, so every card is a measured block of audio and can never drift.
-// Numbers spelled the way the voice says them.
+// comma, numbers spelled the way the voice says them.
 
-export const SERIES = 'NAYSI · PURBA';
+export const SERIES = 'NAYSI · ATLAS';
 export const BRAND = 'NAYSI';
 
-// finishing pass for this episode: printed-paper look, no glow, no RGB split
-export const STYLE = { look: 'print' };
+// finishing pass for this episode: atlas sheets dealt onto a dark chart table
+export const STYLE = { look: 'atlas', scrimY: 1786, scrimA: 0.55 };
 
 export const SCENES = [
   {
-    id: 's1', key: 'a1', label: 'LEBIH TUA', index: '01', theme: 'dark',
-    vo: 'Hiu itu lebih tua dari pohon. Saat hiu pertama berenang di laut, daratan masih gundul, cuma ada lumut.',
+    id: 's1', key: 'g1', label: 'LEBIH LEBAR', index: '01', theme: 'dark',
+    vo: 'Indonesia itu lebih lebar dari Amerika Serikat. Tapi di peta dunia yang kita lihat sejak SD, Indonesia terlihat kecil.',
     cap: [
-      'Hiu itu lebih tua dari pohon.',
-      'Saat hiu pertama berenang di laut, daratan masih gundul, cuma ada lumut.',
+      'Indonesia itu lebih lebar dari Amerika Serikat.',
+      'Tapi di peta dunia yang kita lihat sejak SD, Indonesia terlihat kecil.',
     ],
     lead: 0.36,
     pad: 0.42,
   },
   {
-    id: 's2', key: 'a2', label: 'BUKTI FOSIL', index: '02', theme: 'dark',
-    vo: 'Bukti hiu tertua: sisik berumur sekitar empat ratus lima puluh juta tahun. Pohon pertama baru muncul sekitar tiga ratus delapan puluh lima juta tahun lalu. Selisihnya enam puluh lima juta tahun.',
+    id: 's2', key: 'g2', label: 'MERCATOR', index: '02', theme: 'dark',
+    vo: 'Penyebabnya proyeksi Mercator, peta buatan tahun seribu lima ratus enam puluh sembilan untuk para pelaut. Bumi yang bulat dibentangkan jadi persegi panjang. Makin jauh dari khatulistiwa, wilayah makin digelembungkan.',
     cap: [
-      'Bukti hiu tertua: sisik berumur sekitar empat ratus lima puluh juta tahun.',
-      'Pohon pertama baru muncul sekitar tiga ratus delapan puluh lima juta tahun lalu.',
-      'Selisihnya enam puluh lima juta tahun.',
+      'Penyebabnya proyeksi Mercator,',
+      'peta buatan tahun seribu lima ratus enam puluh sembilan untuk para pelaut.',
+      'Bumi yang bulat dibentangkan jadi persegi panjang.',
+      'Makin jauh dari khatulistiwa, wilayah makin digelembungkan.',
     ],
     pad: 0.42,
   },
   {
-    id: 's3', key: 'a3', label: 'JAM BUMI', index: '03', theme: 'dark',
-    vo: 'Kalau sejarah bumi dipadatkan jadi dua puluh empat jam, hiu muncul jam sembilan lewat tiga puluh tujuh malam. Pohon, jam sepuluh kurang dua menit. Manusia? Baru muncul di enam detik terakhir.',
+    id: 's3', key: 'g3', label: 'DISTORSI', index: '03', theme: 'dark',
+    vo: 'Di garis lintang enam puluh derajat, luasnya sudah empat kali lipat. Greenland terlihat sebesar Afrika, padahal Afrika empat belas kali lebih luas.',
     cap: [
-      'Kalau sejarah bumi dipadatkan jadi dua puluh empat jam,',
-      'hiu muncul jam sembilan lewat tiga puluh tujuh malam.',
-      'Pohon, jam sepuluh kurang dua menit.',
-      'Manusia? Baru muncul di enam detik terakhir.',
+      'Di garis lintang enam puluh derajat, luasnya sudah empat kali lipat.',
+      'Greenland terlihat sebesar Afrika,',
+      'padahal Afrika empat belas kali lebih luas.',
     ],
     pad: 0.42,
   },
   {
-    id: 's4', key: 'a4', label: 'LIMA KEPUNAHAN', index: '04', theme: 'dark',
-    vo: 'Sejak itu, hiu selamat dari lima kepunahan massal. Termasuk hantaman asteroid yang memusnahkan dinosaurus, enam puluh enam juta tahun lalu.',
+    id: 's4', key: 'g4', label: 'KHATULISTIWA', index: '04', theme: 'dark',
+    vo: 'Indonesia ada tepat di khatulistiwa, jadi ukurannya hampir tidak digelembungkan. Sementara Eropa tampil lebih dari dua kali luas aslinya.',
     cap: [
-      'Sejak itu, hiu selamat dari lima kepunahan massal.',
-      'Termasuk hantaman asteroid yang memusnahkan dinosaurus,',
-      'enam puluh enam juta tahun lalu.',
+      'Indonesia ada tepat di khatulistiwa,',
+      'jadi ukurannya hampir tidak digelembungkan.',
+      'Sementara Eropa tampil lebih dari dua kali luas aslinya.',
     ],
     pad: 0.42,
   },
   {
-    id: 's5', key: 'a5', label: 'FOSIL GIGI', index: '05', theme: 'dark',
-    vo: 'Anehnya, fosil hiu hampir selalu berupa gigi. Kerangkanya tulang rawan, mudah hancur. Giginya terus berganti seperti ban berjalan. Ada yang sampai tiga puluh ribu gigi seumur hidup.',
+    id: 's5', key: 'g5', label: 'UKURAN ASLI', index: '05', theme: 'dark',
+    vo: 'Sekarang pindahkan Indonesia ke Eropa dengan ukuran aslinya. Dari Sabang sampai Merauke, ia membentang dari Irlandia sampai melewati Laut Kaspia.',
     cap: [
-      'Anehnya, fosil hiu hampir selalu berupa gigi.',
-      'Kerangkanya tulang rawan, mudah hancur.',
-      'Giginya terus berganti seperti ban berjalan.',
-      'Ada yang sampai tiga puluh ribu gigi seumur hidup.',
+      'Sekarang pindahkan Indonesia ke Eropa dengan ukuran aslinya.',
+      'Dari Sabang sampai Merauke,',
+      'ia membentang dari Irlandia sampai melewati Laut Kaspia.',
     ],
     pad: 0.42,
   },
   {
-    id: 's6', key: 'a6', label: 'HIU GREENLAND', index: '06', theme: 'dark',
-    vo: 'Hiu Greenland bahkan bisa hidup berabad-abad. Yang tertua diperkirakan berumur sekitar empat ratus tahun, lahir di zaman VOC.',
+    id: 's6', key: 'g6', label: 'AMERIKA', index: '06', theme: 'dark',
+    vo: 'Lebarnya sekitar lima ribu seratus kilometer. Amerika Serikat dari pantai ke pantai cuma sekitar empat ribu lima ratus.',
     cap: [
-      'Hiu Greenland bahkan bisa hidup berabad-abad.',
-      'Yang tertua diperkirakan berumur sekitar empat ratus tahun, lahir di zaman VOC.',
+      'Lebarnya sekitar lima ribu seratus kilometer.',
+      'Amerika Serikat dari pantai ke pantai cuma sekitar empat ribu lima ratus.',
     ],
     pad: 0.42,
   },
   {
-    id: 's7', key: 'a7', label: 'TERANCAM', index: '07', theme: 'dark',
-    vo: 'Tapi setelah empat ratus lima puluh juta tahun bertahan, lebih dari sepertiga jenis hiu dan pari kini terancam punah. Penyebab utamanya: penangkapan berlebihan.',
+    id: 's7', key: 'g7', label: 'PBB', index: '07', theme: 'dark',
+    vo: 'Empat September lalu, PBB mendukung pemakaian peta yang ukurannya sesuai luas asli. Seratus enam puluh empat negara setuju. Yang menolak cuma satu: Amerika Serikat.',
     cap: [
-      'Tapi setelah empat ratus lima puluh juta tahun bertahan,',
-      'lebih dari sepertiga jenis hiu dan pari kini terancam punah.',
-      'Penyebab utamanya: penangkapan berlebihan.',
+      'Empat September lalu,',
+      'PBB mendukung pemakaian peta yang ukurannya sesuai luas asli.',
+      'Seratus enam puluh empat negara setuju.',
+      'Yang menolak cuma satu: Amerika Serikat.',
     ],
     pad: 0.42,
   },
   {
-    id: 's8', key: 'a8', label: 'INDONESIA', index: '08', theme: 'dark',
-    vo: 'Dan negara penangkap hiu terbesar di dunia adalah Indonesia. Menurutmu, hiu perlu dilindungi? Tulis di komentar.',
+    id: 's8', key: 'g8', label: 'PULAUMU', index: '08', theme: 'dark',
+    vo: 'Jadi, Indonesia tidak sekecil yang kamu kira. Kamu tinggal di pulau mana? Tulis di komentar.',
     cap: [
-      'Dan negara penangkap hiu terbesar di dunia adalah Indonesia.',
-      'Menurutmu, hiu perlu dilindungi? Tulis di komentar.',
+      'Jadi, Indonesia tidak sekecil yang kamu kira.',
+      'Kamu tinggal di pulau mana? Tulis di komentar.',
     ],
     pad: 1.8,
   },

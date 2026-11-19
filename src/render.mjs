@@ -9,7 +9,7 @@ import {
   initFilm, drawGrain, drawVignette, drawScrim, drawFlash, drawFilm,
 } from './engine/film.mjs';
 import { buildKaraoke, drawKaraoke } from './engine/karaoke.mjs';
-import { initLook, beginLook, bloom, cutFx, impactFx, shake, foreground, grade, LOOK } from './engine/look.mjs';
+import { initLook, beginLook, bloom, cutFx, impactFx, shake, foreground, grade, hit, LOOK } from './engine/look.mjs';
 import { buildTimeline, sceneAt } from './timeline.mjs';
 import { SCENES, BRAND, SERIES } from './script.mjs';
 import * as SCRIPT from './script.mjs';
@@ -29,7 +29,10 @@ const subLayouts = new Map();
 // the finishing style of the episode: 'glow' (default) or 'print' (episode 28:
 // cyanotype plates, no halation or chromatic split, paper-sheet cuts)
 const STYLE = SCRIPT.STYLE || {};
-const PRINT = STYLE.look === 'print';
+// 'atlas' (episode 29): printed atlas sheets dealt onto a chart table; it
+// shares the print finishing and replaces the plate swap with the deal
+const ATLAS = STYLE.look === 'atlas';
+const PRINT = STYLE.look === 'print' || ATLAS;
 
 function buildLayouts(ctx) {
   for (const s of timeline.scenes) subLayouts.set(s.id, buildKaraoke(ctx, s));
@@ -144,9 +147,13 @@ function paintScene(ctx, scene, index, local, t, frame) {
   const camDy = Math.cos(local * 0.21 + index) * 7 + by;
   const cam = { p: zp, dx: camDx * 0.55, dy: camDy * 0.55, zoom: zoom * 0.32 };
   ctx.save();
-  ctx.translate(W / 2 + camDx, H / 2 + camDy);
-  ctx.scale(1 + zoom, 1 + zoom);
-  ctx.translate(-W / 2, -H / 2);
+  // (atlas: the table camera is applied once to the finished picture, see
+  // atlasCamPost, so every layer here draws on whole pixels)
+  if (!ATLAS) {
+    ctx.translate(W / 2 + camDx, H / 2 + camDy);
+    ctx.scale(1 + zoom, 1 + zoom);
+    ctx.translate(-W / 2, -H / 2);
+  }
   if (mod) {
     try {
       mark('scene', () => mod.draw(ctx, local, scene, { t, frame, index, cam }));
@@ -167,6 +174,75 @@ function paintScene(ctx, scene, index, local, t, frame) {
   ctx.restore();
   ctx.restore();
   return cam;
+}
+
+/* ------------- atlas: one table camera, sheets dealt onto the stack ------------ */
+
+/** the camera over the chart table: continuous across cuts, so the table,
+ *  the stack and both sheets of a cut always share one move. It is applied
+ *  to the finished picture in one resampling pass (with the knock of a
+ *  landing sheet folded in), instead of resampling every layer. */
+let camBuf = null;
+function atlasCamPost(ctx, t) {
+  if (!camBuf) camBuf = createCanvas(W, H);
+  let dx = Math.sin(t * 0.13 + 0.4) * 7 + Math.sin(t * 0.37) * 1.4 + Math.sin(t * 1.13 + 1.2) * 0.5;
+  let dy = Math.cos(t * 0.11) * 6 + Math.cos(t * 0.29) * 1.6 + Math.sin(t * 0.91) * 0.45;
+  let z = 1.012 + 0.008 * Math.sin(t * 0.07 + 1.1);
+  const k = clamp(LOOK.impact);
+  if (k > 0.05) {
+    const amp = 12 * k;
+    dx += Math.sin(t * 97.3) * amp;
+    dy += Math.cos(t * 83.1) * amp * 0.8;
+    z += 0.02 * k;
+  }
+  // never let the moved picture uncover the frame edge
+  z = Math.max(z, 1 + (2 * (Math.abs(dx) + 3)) / W, 1 + (2 * (Math.abs(dy) + 3)) / H);
+  const b = camBuf.getContext('2d');
+  b.globalCompositeOperation = 'copy';
+  b.drawImage(ctx.canvas, 0, 0);
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalCompositeOperation = 'copy';
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'low';
+  ctx.drawImage(camBuf, W / 2 - (W * z) / 2 + dx, H / 2 - (H * z) / 2 + dy, W * z, H * z);
+  ctx.restore();
+}
+
+const DEAL = 0.5;
+
+function drawMod(scene, ctx, local, o) {
+  const mod = sceneMap[scene.key];
+  if (!mod) return;
+  try {
+    mod.draw(ctx, local, scene, o);
+  } catch (err) {
+    if (!globalThis.__sceneErr) globalThis.__sceneErr = new Set();
+    const key = `${scene.key}:${err.message}`;
+    if (!globalThis.__sceneErr.has(key)) {
+      globalThis.__sceneErr.add(key);
+      console.error(`scene ${scene.key} failed: ${err.message}`);
+    }
+  }
+}
+
+/** the cut: the outgoing sheet stays on the table and is nudged into the
+ *  stack as the next sheet is dealt over it from the right */
+function atlasDeal(ctx, index, local, t, frame) {
+  const prev = timeline.scenes[index - 1];
+  const cur = timeline.scenes[index];
+  const u = clamp(local / DEAL);
+  const e = EASE.outQuint(u);
+  const nudge = EASE.smooth(clamp((u - 0.42) / 0.5));
+  ctx.save();
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = C.ink0;
+  ctx.fillRect(0, 0, W, H);
+  const base = { t, frame, cam: { p: 0, dx: 0, dy: 0, zoom: 0 } };
+  drawMod(prev, ctx, prev.dur + local, { ...base, index: index - 1, layer: 'bg' });
+  drawMod(prev, ctx, prev.dur + local, { ...base, index: index - 1, layer: 'card', nudge });
+  drawMod(cur, ctx, local, { ...base, index, layer: 'card', deal: 1 - e });
+  ctx.restore();
 }
 
 /* ------------------- print cuts: the next plate slides in ------------------ */
@@ -247,16 +323,20 @@ function drawFrame(ctx, frame) {
   const t = frame / FPS;
   const { scene, index, local } = sceneAt(timeline, t);
   beginLook();
-  const cam = paintScene(ctx, scene, index, local, t, frame);
+  const dealing = ATLAS && index > 0 && local < DEAL;
+  const cam = dealing ? mark('scene', () => atlasDeal(ctx, index, local, t, frame)) : paintScene(ctx, scene, index, local, t, frame);
   const tail = scene.dur - local;
   const last = index === timeline.scenes.length - 1;
 
   if (PRINT) {
     // printed plates: the cut is a sheet sliding over the last one; accents
     // only kick the camera; a light grade, no halation, no RGB split
-    if (index > 0 && local < SWAP) mark('cut', () => plateSwap(ctx, index, local, t, frame));
-    mark('shake', () => shake(ctx, t));
-    mark('grade', () => grade(ctx, { warm: 0.07, cool: 0.04 }));
+    if (!ATLAS && index > 0 && local < SWAP) mark('cut', () => plateSwap(ctx, index, local, t, frame));
+    // the sheet lands: a small knock through the table
+    if (ATLAS && index > 0) hit(local, DEAL * 0.62, 0.32, 0.22);
+    if (ATLAS) mark('shake', () => atlasCamPost(ctx, t));
+    else mark('shake', () => shake(ctx, t));
+    mark('grade', () => grade(ctx, ATLAS ? { warm: 0.06, cool: 0 } : { warm: 0.07, cool: 0.04 }));
   } else {
     // the finishing pass on the picture only (captions and chrome stay crisp):
     // foreground depth, split-tone grade, halation, accent hits, the cut kit
@@ -273,7 +353,7 @@ function drawFrame(ctx, frame) {
 
   // captions: karaoke cards low in the frame over a soft scrim, under the
   // chrome and the film pass like the rest of the picture
-  mark('scrim', () => drawScrim(ctx, 1520, 0.8));
+  mark('scrim', () => drawScrim(ctx, STYLE.scrimY ?? 1520, STYLE.scrimA ?? 0.8));
   mark('captions', () => drawKaraoke(ctx, subLayouts.get(scene.id), local));
 
   mark('chrome', () => drawChrome(ctx, scene, local, t, index));
@@ -293,7 +373,8 @@ function drawFrame(ctx, frame) {
 
   // global fades
   // open on picture almost at once: the first second decides the swipe
-  const fadeIn = clamp(t / 0.15);
+  // (an atlas sheet is already on the table at frame 0: no fade at all)
+  const fadeIn = ATLAS ? 1 : clamp(t / 0.15);
   const fadeOut = clamp((timeline.total - t) / 0.5);
   const a = Math.min(fadeIn, fadeOut);
   if (a < 1) {

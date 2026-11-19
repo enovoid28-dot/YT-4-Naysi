@@ -1,11 +1,12 @@
-import a1 from './a1.mjs';
-import a2 from './a2.mjs';
-import a3 from './a3.mjs';
-import a4 from './a4.mjs';
-import a5 from './a5.mjs';
-import a6 from './a6.mjs';
-import a7 from './a7.mjs';
-import a8 from './a8.mjs';
+import * as g1 from './g1.mjs';
+import * as g2 from './g2.mjs';
+import * as g3 from './g3.mjs';
+import * as g4 from './g4.mjs';
+import * as g5 from './g5.mjs';
+import * as g6 from './g6.mjs';
+import * as g7 from './g7.mjs';
+import * as g8 from './g8.mjs';
 
-// Episode 28 ("Hiu lebih tua dari pohon") — keys a1..a8 on the cyanotype kit.
-export default { a1, a2, a3, a4, a5, a6, a7, a8 };
+// Episode 29 ("Indonesia lebih lebar dari Amerika Serikat") — keys g1..g8 on
+// the atlas kit (src/scenes/_atlas.mjs).
+export default { g1, g2, g3, g4, g5, g6, g7, g8 };

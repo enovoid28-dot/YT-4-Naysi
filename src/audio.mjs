@@ -26,7 +26,7 @@ export const VO_FILTER = [
 ].join(',');
 
 // the take folder: episode 28 by default, override with VO_EP (e.g. VO_EP=ep22)
-export const VO_EP = process.env.VO_EP || 'ep28';
+export const VO_EP = process.env.VO_EP || 'ep29';
 export const voFile = (id) => {
   const flac = path.join(process.cwd(), 'voice', VO_EP, `${id}.flac`);
   return fs.existsSync(flac) ? flac : path.join(process.cwd(), 'voice', VO_EP, `${id}.mp3`);
