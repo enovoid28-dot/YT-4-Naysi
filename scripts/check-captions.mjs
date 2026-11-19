@@ -33,7 +33,7 @@ const fail = (msg) => {
 
 // words the voice spells phonetically for the TTS while the caption shows the
 // real spelling (one token for one token, so timings stay honest)
-const SPOKEN_AS = { leje: 'léger' };
+const SPOKEN_AS = { leje: 'léger', henig: 'hänig' };
 
 for (const sc of SCENES) {
   const vo = norm(sc.vo).map((w) => SPOKEN_AS[w] || w).join(' ');

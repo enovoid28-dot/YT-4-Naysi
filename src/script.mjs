@@ -1,185 +1,126 @@
-// Episode 30 — "Jejak bom nuklir di dalam gigimu."
+// Episode 31 — "Peta lidah yang kamu hafal di sekolah itu salah."
 //
-// The bomb pulse: cosmic rays make a trickle of carbon-14 that every living
-// thing absorbs; the 5,730-year half-life is far too slow to date modern
-// objects, but the 500+ atmospheric nuclear tests of 1945-1980 doubled the
-// atmospheric C-14 (peak 1963, ~2x natural), and the post-treaty decline drew
-// a sharp time signature into everything that grew since. Forensics reads it:
-// a Venetian cubist canvas attributed to Fernand Léger, "1913", whose cotton
-// was harvested in 1959; elephant ivory dated against the 1989 global ban;
-// tooth enamel, locked from childhood, gives a birth year within ~1.5 years
-// and identified victims of the 2004 Indian Ocean tsunami; our own cells keep
-// their birth C-14 (gut 5 days, fat ~10%/yr, over half of heart cells from
-// birth). The Suess effect — fossil carbon with no C-14 — is now diluting the
-// bomb signature back toward pre-1950 values, switching the clock off.
+// The classroom tongue map (sweet tip, salty/sour sides, bitter back) is a
+// century-old misreading: Hänig's 1901 psychophysics measured only slight
+// threshold differences around the tongue's edge; Boring's 1942 textbook
+// redraw of that data turned the dips into exclusive zones, and schoolbooks
+// copied it for generations. Collings (1974, Percept. Psychophys.) re-tested
+// and closed the case: every region detects every basic taste. Real anatomy:
+// 2,000-10,000 taste buds, 50-100 cells each, renewed every ~10-14 days, each
+// bud reading all tastes. The map even missed umami (Ikeda 1908, kombu
+// glutamate; T1R1+T1R3 receptor confirmed ~2002), while cats lack sweet
+// detection entirely (Tas1r2 pseudogene, Li et al. 2005 PLoS Genetics) and a
+// sixth taste, oleogustus (fat, NEFA), was proposed in 2015 (Running, Craig &
+// Mattes, Chem. Senses 40:507).
 //
-// Sources (verified Nov 2026): UNSCEAR / CTBTO test counts (528 atmospheric
-// 1945-1980, last atmospheric 1980, PTBT 1963); bomb pulse ~200 pMC NH peak
-// 1963, decline ~4%/yr; Caforio et al. 2014 Eur. Phys. J. Plus 129:6 (INFN
-// Florence AMS, Léger-attributed canvas post-1959); Uno et al. 2013 PNAS
-// 110(29) (ivory vs 1989 CITES ban); Spalding et al. 2005 Nature 437:333
-// (enamel birth dating 1.3±1.0 yr, tsunami IDs); Spalding 2008 Cell / Bergmann
-// 2009 Science (fat ~10%/yr, cardiomyocyte renewal); Hua et al. 2022
-// Radiocarbon 64(4) & SUERC (post-2020 <100 pMC, Suess effect).
+// Sources (verified Nov 2026): Hänig, "Zur Psychophysik des Geschmackssinnes"
+// (1901); Boring, "Sensation and Perception in the History of Experimental
+// Psychology" (1942); Collings (1974); Ikeda (1908) & receptor confirmation
+// ~2002; Li et al. (2005) PLoS Genetics 1:e3; Running et al. (2015) Chemical
+// Senses 40(7):507-516; taste-bud counts/turnover standard histology.
 //
 // Copy rules: one caption card per sentence, long sentences split at the
 // comma, numbers spelled the way the voice says them.
 
-export const SERIES = 'NAYSI · FORENSIK';
+export const SERIES = 'NAYSI · BIOLOGI';
 export const BRAND = 'NAYSI';
 
-// finishing pass for this episode: lab dossiers on a dark cutting-mat desk
-export const STYLE = { look: 'dossier', scrimY: 1786, scrimA: 0.55 };
+// finishing pass for this episode: school-textbook pages corrected in red pen
+export const STYLE = { look: 'textbook', scrimY: 1786, scrimA: 0.55 };
 
 export const SCENES = [
   {
-    id: 's1', key: 'd1', label: 'JEJAK BOM', index: '01', theme: 'dark',
-    vo: 'Di lapisan terkeras gigimu, tersimpan jejak bom nuklir Perang Dingin. Jejak yang sama kini membongkar lukisan palsu miliaran rupiah. Ini cerita jam atom di tubuh kita.',
+    id: 's1', key: 'b1', label: 'PETA SALAH', index: '01', theme: 'dark',
+    vo: 'Manis di ujung, asin di samping, pahit di belakang. Peta lidah yang kamu hafal di sekolah itu salah total. Dan salahnya sudah bertahan seabad.',
     cap: [
-      'Di lapisan terkeras gigimu,',
-      'tersimpan jejak bom nuklir Perang Dingin.',
-      'Jejak yang sama kini membongkar lukisan palsu miliaran rupiah.',
-      'Ini cerita jam atom di tubuh kita.',
+      'Manis di ujung, asin di samping, pahit di belakang.',
+      'Peta lidah yang kamu hafal di sekolah itu salah total.',
+      'Dan salahnya sudah bertahan seabad.',
     ],
     lead: 0.4,
-    pad: 0.6,
+    pad: 0.5,
   },
   {
-    id: 's2', key: 'd2', label: 'SINAR KOSMIK', index: '02', theme: 'dark',
-    vo: 'Semuanya dimulai dari luar angkasa. Sinar kosmik membombardir atmosfer, melahirkan karbon radioaktif yang menyerap ke tumbuhan, lalu ke setiap rantai makanan. Termasuk ke tubuhmu, tanpa berhenti.',
+    id: 's2', key: 'b2', label: '1901', index: '02', theme: 'dark',
+    vo: 'Semua berawal dari makalah Jerman tahun seribu sembilan ratus satu. Henig mengukur ambang rasa di titik-titik lidah: semua rasa terasa di mana-mana, selisihnya tipis.',
     cap: [
-      'Semuanya dimulai dari luar angkasa.',
-      'Sinar kosmik membombardir atmosfer,',
-      'melahirkan karbon radioaktif yang menyerap ke tumbuhan,',
-      'lalu ke setiap rantai makanan.',
-      'Termasuk ke tubuhmu, tanpa berhenti.',
+      'Semua berawal dari makalah Jerman',
+      'tahun seribu sembilan ratus satu.',
+      'Hänig mengukur ambang rasa di titik-titik lidah:',
+      'semua rasa terasa di mana-mana, selisihnya tipis.',
     ],
-    pad: 0.6,
+    pad: 0.5,
   },
   {
-    id: 's3', key: 'd3', label: 'WAKTU PARUH', index: '03', theme: 'dark',
-    vo: 'Karbon ini meluruh dengan waktu paruh lima ribu tujuh ratus tiga puluh tahun. Sempurna untuk mumi purba, tapi hampir buta untuk benda modern berusia puluhan tahun.',
+    id: 's3', key: 'b3', label: '1942', index: '03', theme: 'dark',
+    vo: 'Tapi tahun seribu sembilan ratus empat puluh dua, data itu digambar ulang jadi zona-zona tegas. Buku pelajaran menyalinnya, dan mitosnya masuk kelas sampai sekarang.',
     cap: [
-      'Karbon ini meluruh dengan waktu paruh',
-      'lima ribu tujuh ratus tiga puluh tahun.',
-      'Sempurna untuk mumi purba,',
-      'tapi hampir buta untuk benda modern berusia puluhan tahun.',
+      'Tapi tahun seribu sembilan ratus empat puluh dua,',
+      'data itu digambar ulang jadi zona-zona tegas.',
+      'Buku pelajaran menyalinnya,',
+      'dan mitosnya masuk kelas sampai sekarang.',
     ],
-    pad: 0.6,
+    pad: 0.5,
   },
   {
-    id: 's4', key: 'd4', label: 'UJI ATMOSFER', index: '04', theme: 'dark',
-    vo: 'Lalu manusia menambahkannya sendiri. Selama tiga puluh lima tahun sejak seribu sembilan ratus empat puluh lima, lebih dari lima ratus ledakan nuklir atmosfer menggandakan karbon radioaktif di udara.',
+    id: 's4', key: 'b4', label: '1974', index: '04', theme: 'dark',
+    vo: 'Uji ulang tahun seribu sembilan ratus tujuh puluh empat menutup kasusnya. Setiap regio lidah mendeteksi semua rasa dasar. Peta zona itu tidak pernah nyata.',
     cap: [
-      'Lalu manusia menambahkannya sendiri.',
-      'Selama tiga puluh lima tahun sejak',
-      'seribu sembilan ratus empat puluh lima,',
-      'lebih dari lima ratus ledakan nuklir atmosfer',
-      'menggandakan karbon radioaktif di udara.',
+      'Uji ulang tahun seribu sembilan ratus tujuh puluh empat',
+      'menutup kasusnya.',
+      'Setiap regio lidah mendeteksi semua rasa dasar.',
+      'Peta zona itu tidak pernah nyata.',
     ],
-    pad: 0.6,
+    pad: 0.5,
   },
   {
-    id: 's5', key: 'd5', label: 'PUNCAK', index: '05', theme: 'dark',
-    vo: 'Puncaknya seribu sembilan ratus enam puluh tiga: kadarnya nyaris dua kali lipat alamiah. Setelah uji atmosfer dilarang, kurvanya turun cepat, meninggalkan tanda waktu yang tajam.',
+    id: 's5', key: 'b5', label: 'KUNCUP RASA', index: '05', theme: 'dark',
+    vo: 'Yang nyata: sampai sepuluh ribu kuncup rasa di lidahmu. Tiap kuncup berisi lima puluh sampai seratus sel, diganti baru tiap dua minggu, dan membaca semua rasa.',
     cap: [
-      'Puncaknya seribu sembilan ratus enam puluh tiga:',
-      'kadarnya nyaris dua kali lipat alamiah.',
-      'Setelah uji atmosfer dilarang,',
-      'kurvanya turun cepat,',
-      'meninggalkan tanda waktu yang tajam.',
+      'Yang nyata: sampai sepuluh ribu kuncup rasa di lidahmu.',
+      'Tiap kuncup berisi lima puluh sampai seratus sel,',
+      'diganti baru tiap dua minggu, dan membaca semua rasa.',
     ],
-    pad: 0.6,
+    pad: 0.5,
   },
   {
-    id: 's6', key: 'd6', label: 'KANVAS PALSU', index: '06', theme: 'dark',
-    vo: 'Sebuah lukisan kubisme karya Fernand Leje, katanya dibuat tahun seribu sembilan ratus tiga belas. Tapi serat kanvasnya bercerita lain: kapasnya dipanen tahun seribu sembilan ratus lima puluh sembilan.',
+    id: 's6', key: 'b6', label: 'UMAMI', index: '06', theme: 'dark',
+    vo: 'Bahkan peta itu ketinggalan satu rasa: umami, gurihnya kaldu, ditemukan tahun seribu sembilan ratus delapan, reseptornya dikonfirmasi sekitar tahun dua ribu dua.',
     cap: [
-      'Sebuah lukisan kubisme karya Fernand Léger,',
-      'katanya dibuat tahun seribu sembilan ratus tiga belas.',
-      'Tapi serat kanvasnya bercerita lain:',
-      'kapasnya dipanen tahun seribu sembilan ratus lima puluh sembilan.',
+      'Bahkan peta itu ketinggalan satu rasa:',
+      'umami, gurihnya kaldu,',
+      'ditemukan tahun seribu sembilan ratus delapan,',
+      'reseptornya dikonfirmasi sekitar tahun dua ribu dua.',
     ],
-    pad: 0.6,
+    pad: 0.5,
   },
   {
-    id: 's7', key: 'd7', label: 'GADING ILEGAL', index: '07', theme: 'dark',
-    vo: 'Gading gajah penyelundupan pun ketahuan. Jam yang sama mengungkap tahun gajah itu mati. Jika hasilnya setelah larangan global sembilan belas delapan puluh sembilan, itu gading buruan ilegal.',
+    id: 's7', key: 'b7', label: 'RASA KEENAM', index: '07', theme: 'dark',
+    vo: 'Kucing bahkan tidak punya reseptor manis sama sekali. Dan manusia masih mengejar rasa keenam: oleogustus, rasa lemak, diusulkan tahun dua ribu lima belas.',
     cap: [
-      'Gading gajah penyelundupan pun ketahuan.',
-      'Jam yang sama mengungkap tahun gajah itu mati.',
-      'Jika hasilnya setelah larangan global',
-      'sembilan belas delapan puluh sembilan,',
-      'itu gading buruan ilegal.',
+      'Kucing bahkan tidak punya reseptor manis sama sekali.',
+      'Dan manusia masih mengejar rasa keenam:',
+      'oleogustus, rasa lemak,',
+      'diusulkan tahun dua ribu lima belas.',
     ],
-    pad: 0.6,
+    pad: 0.5,
   },
   {
-    id: 's8', key: 'd8', label: 'TERKUNCI', index: '08', theme: 'dark',
-    vo: 'Kembali ke gigimu. Lapisan keras pembungkus gigi terbentuk saat kamu masih kecil, lalu terkunci selamanya. Berbeda dengan tulang yang terus membongkar pasang dirinya sepanjang hidup.',
+    id: 's8', key: 'b8', label: 'ORKESTRA', index: '08', theme: 'dark',
+    vo: 'Jadi lidahmu bukan peta zona, melainkan orkestra: setiap titik menyanyikan semua rasa dengan volume nyaris sama.',
     cap: [
-      'Kembali ke gigimu.',
-      'Lapisan keras pembungkus gigi terbentuk',
-      'saat kamu masih kecil, lalu terkunci selamanya.',
-      'Berbeda dengan tulang yang terus',
-      'membongkar pasang dirinya sepanjang hidup.',
+      'Jadi lidahmu bukan peta zona, melainkan orkestra:',
+      'setiap titik menyanyikan semua rasa dengan volume nyaris sama.',
     ],
-    pad: 0.6,
+    pad: 0.5,
   },
   {
-    id: 's9', key: 'd9', label: 'TAHUN LAHIR', index: '09', theme: 'dark',
-    vo: 'Maka tahun lahirmu tercatat di sana, akurat sampai satu koma lima tahun. Setelah tsunami Samudra Hindia dua ribu empat, cara ini membantu memberi nama para korban.',
+    id: 's9', key: 'b9', label: 'KOMENTAR', index: '09', theme: 'dark',
+    vo: 'Kamu tim manis, tim pedas, atau tim umami? Tulis di komentar, dan ikuti Naysi untuk fakta sehari-hari berikutnya.',
     cap: [
-      'Maka tahun lahirmu tercatat di sana,',
-      'akurat sampai satu koma lima tahun.',
-      'Setelah tsunami Samudra Hindia dua ribu empat,',
-      'cara ini membantu memberi nama para korban.',
+      'Kamu tim manis, tim pedas, atau tim umami?',
+      'Tulis di komentar, dan ikuti Naysi untuk fakta sehari-hari berikutnya.',
     ],
-    pad: 0.6,
-  },
-  {
-    id: 's10', key: 'd10', label: 'UMUR SEL', index: '10', theme: 'dark',
-    vo: 'Jam yang sama membocorkan umur sel-selmu. Sel usus berumur lima hari; sel lemak diganti sepuluh persen per tahun. Dan separuh sel jantungmu bawaan sejak lahir.',
-    cap: [
-      'Jam yang sama membocorkan umur sel-selmu.',
-      'Sel usus berumur lima hari;',
-      'sel lemak diganti sepuluh persen per tahun.',
-      'Dan separuh sel jantungmu bawaan sejak lahir.',
-    ],
-    pad: 0.6,
-  },
-  {
-    id: 's11', key: 'd11', label: 'JAM PADAM', index: '11', theme: 'dark',
-    vo: 'Namun ada satu batas: sejak manusia membakar batu bara dan minyak, karbon purba mengencerkan jejak bom di udara. Untuk bahan yang tumbuh sekarang, jam ini perlahan kehilangan ketepatannya.',
-    cap: [
-      'Namun ada satu batas:',
-      'sejak manusia membakar batu bara dan minyak,',
-      'karbon purba mengencerkan jejak bom di udara.',
-      'Untuk bahan yang tumbuh sekarang,',
-      'jam ini perlahan kehilangan ketepatannya.',
-    ],
-    pad: 0.6,
-  },
-  {
-    id: 's12', key: 'd12', label: 'KALENDER RAHASIA', index: '12', theme: 'dark',
-    vo: 'Jadi ledakan bom yang dulu menakutkan dunia, justru meninggalkan kalender rahasia di dalam gigi kita, di kanvas lukisan, dan di setiap sel tubuh. Sains membaca jam itu, dan menangkap pemalsu yang kira dirinya aman.',
-    cap: [
-      'Jadi ledakan bom yang dulu menakutkan dunia,',
-      'justru meninggalkan kalender rahasia',
-      'di dalam gigi kita, di kanvas lukisan,',
-      'dan di setiap sel tubuh.',
-      'Sains membaca jam itu,',
-      'dan menangkap pemalsu yang kira dirinya aman.',
-    ],
-    pad: 0.6,
-  },
-  {
-    id: 's13', key: 'd13', label: 'KOMENTAR', index: '13', theme: 'dark',
-    vo: 'Fakta mana yang paling membuatmu terperangah? Tulis di komentar, dan ikuti Naysi untuk sains sehari-hari berikutnya.',
-    cap: [
-      'Fakta mana yang paling membuatmu terperangah?',
-      'Tulis di komentar, dan ikuti Naysi untuk sains sehari-hari berikutnya.',
-    ],
-    pad: 2.2,
+    pad: 1.8,
   },
 ];

@@ -34,8 +34,10 @@ const STYLE = SCRIPT.STYLE || {};
 // shares the print finishing and replaces the plate swap with the deal
 const ATLAS = STYLE.look === 'atlas';
 // 'dossier' (episode 30): lab dossiers dealt onto a dark cutting mat; like
-// atlas it draws two layers per scene and moves one table camera at the end
-const DOSSIER = STYLE.look === 'dossier';
+// atlas it draws two layers per scene and moves one table camera at the end.
+// 'textbook' (episode 31) is the same machinery with school-book pages on a
+// walnut desk, so it shares the deal, the camera and the light grade.
+const DOSSIER = STYLE.look === 'dossier' || STYLE.look === 'textbook';
 const PRINT = STYLE.look === 'print' || ATLAS;
 
 function buildLayouts(ctx) {
