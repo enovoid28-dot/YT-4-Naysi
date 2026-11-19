@@ -18,6 +18,10 @@ const SPECS = [
   ['BG700', '@fontsource/bricolage-grotesque', 'bricolage-grotesque-latin-700-normal.woff2'],
   ['MONO4', '@fontsource/ibm-plex-mono', 'ibm-plex-mono-latin-400-normal.woff2'],
   ['MONO6', '@fontsource/ibm-plex-mono', 'ibm-plex-mono-latin-600-normal.woff2'],
+  ['FG400', '@fontsource/figtree', 'figtree-latin-400-normal.woff2'],
+  ['FG600', '@fontsource/figtree', 'figtree-latin-600-normal.woff2'],
+  ['FG700', '@fontsource/figtree', 'figtree-latin-700-normal.woff2'],
+  ['FG800', '@fontsource/figtree', 'figtree-latin-800-normal.woff2'],
 ];
 
 export const F = {
@@ -31,6 +35,11 @@ export const F = {
   display7: 'BG700',
   mono: 'MONO4',
   mono6: 'MONO6',
+  // captions (the reference style): spoken word bold, the rest regular
+  sub: 'FG700',
+  subDim: 'FG400',
+  fig6: 'FG600',
+  fig8: 'FG800',
 };
 
 export async function ensureFonts() {

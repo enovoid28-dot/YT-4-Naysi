@@ -848,7 +848,10 @@ export const SYSTEMS = [
  * The ISBT systems as a periodic-table wall. Tiles land in a diagonal wave as p
  * runs 0..1; `hi` maps an index to [rgb, strength] to light a tile.
  */
-export function systemTiles(ctx, x, y, cols, tw, th, gap, p, { a = 1, hi = {}, dim = 0, count = SYSTEMS.length, skip = -1, badge = {} } = {}) {
+export function systemTiles(ctx, x, y, cols, tw, th, gap, p, {
+  a = 1, hi = {}, dim = 0, count = SYSTEMS.length, skip = -1, badge = {},
+  fill = 'rgba(22,8,13,0.8)', edge = 'rgba(255,196,186,0.22)', gloss = false, wave = null,
+} = {}) {
   if (a <= 0.01 || p <= 0.001) return;
   const rows = Math.ceil(count / cols);
   ctx.save();
@@ -868,10 +871,32 @@ export function systemTiles(ctx, x, y, cols, tw, th, gap, p, { a = 1, hi = {}, d
     ctx.globalAlpha *= clamp(q * 1.4) * (1 - dim * (1 - k));
     if (k > 0) glow(ctx, tx + tw / 2, ty + th / 2, tw * 2.2, h[0], 0.45 * k);
     rrPath(ctx, tx, ty, tw, th, 14);
-    ctx.fillStyle = k > 0 ? `rgba(${h[0]},${0.1 + 0.16 * k})` : 'rgba(22,8,13,0.8)';
+    ctx.fillStyle = k > 0 ? `rgba(${h[0]},${0.1 + 0.16 * k})` : fill;
     ctx.fill();
+    if (gloss) {
+      // a glass tile: light from the top edge, a darker foot
+      const gg = ctx.createLinearGradient(0, ty, 0, ty + th);
+      gg.addColorStop(0, 'rgba(255,255,255,0.13)');
+      gg.addColorStop(0.45, 'rgba(255,255,255,0.02)');
+      gg.addColorStop(1, 'rgba(0,0,0,0.22)');
+      ctx.fillStyle = gg;
+      rrPath(ctx, tx, ty, tw, th, 14);
+      ctx.fill();
+    }
+    if (wave) {
+      // a light wave running across the wall: [rgb, strength 0..1]
+      const wk = wave(i, c, r);
+      if (wk > 0.01) {
+        ctx.save();
+        ctx.globalAlpha *= wk;
+        rrPath(ctx, tx, ty, tw, th, 14);
+        ctx.fillStyle = 'rgba(140,220,255,0.22)';
+        ctx.fill();
+        ctx.restore();
+      }
+    }
     ctx.lineWidth = 2;
-    ctx.strokeStyle = k > 0 ? `rgba(${h[0]},${0.45 + 0.5 * k})` : 'rgba(255,196,186,0.22)';
+    ctx.strokeStyle = k > 0 ? `rgba(${h[0]},${0.45 + 0.5 * k})` : edge;
     ctx.stroke();
     txt(ctx, String(i + 1).padStart(3, '0'), tx + 14, ty + 28, { size: 17, font: F.mono, color: k > 0 ? `rgba(${h[0]},0.95)` : 'rgba(214,230,248,0.45)', track: 1 });
     const name = SYSTEMS[i];

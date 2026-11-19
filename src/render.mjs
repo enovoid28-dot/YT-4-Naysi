@@ -8,7 +8,7 @@ import { W, H, FPS, C, M, txt, tracking, linGrad, hexA, fillRR } from './engine/
 import {
   initFilm, drawGrain, drawVignette, drawScrim, drawFlash, drawFilm,
 } from './engine/film.mjs';
-import { buildCaption, drawCaption, drawCard } from './engine/caption.mjs';
+import { buildSubs, drawSubs } from './engine/subs.mjs';
 import { buildTimeline, sceneAt } from './timeline.mjs';
 import { SCENES, BRAND, SERIES } from './script.mjs';
 import { clamp, lerp, EASE } from './engine/anim.mjs';
@@ -23,20 +23,10 @@ const arg = (name, def = null) => {
 const has = (name) => args.includes(`--${name}`);
 
 const timeline = buildTimeline();
-const captionLayouts = new Map();
-// fixed anchor for the caption block: the first line never moves, whatever the
-// number of lines in the sentence.
-const CAPTION_TOP = 1798;
+const subLayouts = new Map();
 
 function buildLayouts(ctx) {
-  for (const s of timeline.scenes) {
-    captionLayouts.set(
-      s.id,
-      s.captions.map((g) =>
-        buildCaption(ctx, g, { maxWidth: W - 2 * 74, size: 104, font: F.semi, maxLines: 4 }),
-      ),
-    );
-  }
+  for (const s of timeline.scenes) subLayouts.set(s.id, buildSubs(ctx, s));
 }
 
 function drawChapter(ctx, scene, local, idxGlobal) {
@@ -130,7 +120,13 @@ function drawFrame(ctx, frame) {
   const by = Math.cos(t * 0.29) * 1.6 + Math.sin(t * 0.91) * 0.45;
   const dir = index % 2 === 0 ? 1 : -1;
   const zp = EASE.smooth(clamp(local / Math.max(0.2, scene.dur)));
-  const zoom = dir * (0.058 * zp - 0.014);
+  // zoom-through cuts: the outgoing shot pushes in over its last frames and
+  // the incoming one lands from a little closer, settling on an expo curve
+  const tail = scene.dur - local;
+  const last = index === timeline.scenes.length - 1;
+  const inK = index > 0 ? 0.075 * (1 - EASE.outExpo(clamp(local / 0.5))) : 0;
+  const outK = last ? 0 : 0.06 * EASE.inQuad(clamp(1 - tail / 0.24));
+  const zoom = dir * (0.058 * zp - 0.014) + inK + outK;
   const camDx = Math.sin(local * 0.28 + index * 1.7) * 9 + bx;
   const camDy = Math.cos(local * 0.21 + index) * 7 + by;
   const cam = { p: zp, dx: camDx * 0.55, dy: camDy * 0.55, zoom: zoom * 0.32 };
@@ -158,45 +154,11 @@ function drawFrame(ctx, frame) {
   ctx.restore();
   ctx.restore();
 
-  // captions
-  mark('scrim', () => {
-    if (scene.theme === 'light') {
-      // cream scenes take a cream wash, not a black one: dark ink needs the
-      // paper to stay bright underneath it.
-      const g = ctx.createLinearGradient(0, 1520, 0, 2100);
-      g.addColorStop(0, 'rgba(243,232,211,0)');
-      g.addColorStop(0.55, 'rgba(243,232,211,0.78)');
-      g.addColorStop(1, 'rgba(243,232,211,0.97)');
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 1520, W, H - 1520);
-    } else {
-      drawScrim(ctx, 1520, 0.80);
-    }
-  });
-  const layouts = captionLayouts.get(scene.id);
-  mark('captions', () => scene.captions.forEach((card, gi) => {
-    // card windows come from the measured alignment: a card opens on its
-    // sentence and closes inside the pause that follows it.
-    const from = card.from ?? card.words[0].start - 0.14;
-    const to = card.to ?? card.words[card.words.length - 1].end + 0.18;
-    if (local < from - 0.02 || local > to + 0.02) return;
-    const a = clamp((local - from) / 0.15) * clamp((to - local) / 0.13);
-    if (a <= 0.002) return;
-    drawCard(ctx, layouts[gi], local - from, {
-      top: CAPTION_TOP,
-      alphaMul: a,
-      ...(scene.theme === 'light'
-        ? { color: '#171310', accent: '#B32E1C', shadow: 0 }
-        : {}),
-    });
-  }));
-
   mark('chrome', () => drawChrome(ctx, scene, local, t, index));
 
-  // cuts: the incoming scene opens under a short veil of its own paper/ink,
-  // which reads as a clean editorial cut rather than a flash
+  // cuts: the incoming scene opens under a short veil of its own ink
   if (index > 0) {
-    const f = Math.max(0, 1 - local / 0.24);
+    const f = Math.max(0, 1 - local / 0.16);
     if (f > 0) {
       ctx.save();
       ctx.globalAlpha = f * f * 0.92;
@@ -206,6 +168,23 @@ function drawFrame(ctx, frame) {
     }
   }
   mark('film', () => drawFilm(ctx, frame));
+
+  // captions: the reference style, high and centred, word by word, over a
+  // soft shade so the half-white words stay readable on any picture; drawn
+  // after the film pass so the type stays clean like an overlay graphic
+  mark('captions', () => {
+    ctx.save();
+    const sg = ctx.createLinearGradient(0, 290, 0, 850);
+    sg.addColorStop(0, 'rgba(4,2,6,0)');
+    sg.addColorStop(0.25, 'rgba(4,2,6,0.46)');
+    sg.addColorStop(0.72, 'rgba(4,2,6,0.46)');
+    sg.addColorStop(1, 'rgba(4,2,6,0)');
+    ctx.fillStyle = sg;
+    ctx.fillRect(0, 290, W, 560);
+    ctx.restore();
+    drawSubs(ctx, subLayouts.get(scene.id), local);
+  });
+
 
   // global fades
   // open on picture almost at once: the first second decides the swipe
@@ -246,6 +225,24 @@ async function main() {
 
   const from = Number(arg('from', 0));
   const to = Number(arg('to', Math.round(timeline.total * FPS)));
+
+  if (has('sweep')) {
+    // draw every n-th frame without encoding: timings and scene errors only
+    const step = Number(arg('sweep', 9));
+    const times = [];
+    for (let frame = from; frame < to; frame += step) {
+      const t0 = performance.now();
+      drawFrame(ctx, frame);
+      ctx.getImageData(0, 0, 1, 1);
+      times.push([performance.now() - t0, frame]);
+      if (times.length % 20 === 0 && globalThis.gc) globalThis.gc();
+    }
+    times.sort((a, b) => b[0] - a[0]);
+    const avg = times.reduce((a, b) => a + b[0], 0) / times.length;
+    console.log(`sweep ${from}-${to}/${step}: ${times.length} frames, avg ${avg.toFixed(0)} ms, worst ${times.slice(0, 5).map(([ms, f]) => `${f}:${ms.toFixed(0)}`).join(' ')}`);
+    console.log(`errors: ${globalThis.__sceneErr ? [...globalThis.__sceneErr].join(' | ') : 'none'}`);
+    return;
+  }
   const out = arg('out', path.join('out', 'video.mp4'));
   fs.mkdirSync(path.dirname(out), { recursive: true });
 

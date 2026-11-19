@@ -287,73 +287,96 @@ function renderSFX() {
     SFX.boom(sc.start - 0.05, 0.036, 54);
   });
 
-  // s1 — SATU ORANG: the reticle locks, one ring, four slashes
+  // s1 — SATU ORANG: the reticle locks, a punch-in, four bags rise and are struck
   SFX.air(0.0, 0.045, 1.2, 1500);
   SFX.lock(0.12, 0.02);
   SFX.boom(W(0, 0, 6) - 0.04, 0.075, 46);
   SFX.ding(W(0, 0, 6) + 0.02, 0.028, 659, 2.2);
+  SFX.air(W(0, 1, 2) - 0.35, 0.04, 0.7, 2600, 0.1);
+  for (let i = 0; i < 4; i++) SFX.drop(W(0, 1, 2) - 0.3 + i * 0.09 + 0.3, 0.02, 520 + i * 60, (i - 1.5) * 0.3);
   [3, 4, 5, 7].forEach((k, i) => SFX.slash(W(0, 1, k) - 0.02, 0.05, (i - 1.5) * 0.3));
   SFX.ding(W(0, 1, 7) + 0.3, 0.022, 494, 2.4);
 
-  // s2 — PENANDA: markers pop up, a callout, the four types, the year
+  // s2 — PENANDA: markers pop up, the magnifier glides in, a banner, the size;
+  // then the desk: three glass slides, the card, the year, a stamp
   for (let k = 0; k < 14; k++) SFX.pop(W(1, 0, 4) - 0.1 + k * 0.1 + rand() * 0.04, 0.02, 600 + rand() * 700, (rand() - 0.5) * 0.8);
-  SFX.tick(W(1, 0, 4) + 0.4, 0.02, 1500, 0.3);
-  SFX.air(W(1, 0, 7) - 0.1, 0.03, 0.5, 4200, -0.2);
-  SFX.air(cap(1, 1) - 0.32, 0.06, 0.8, 2800, -0.2);
-  const ap = [W(1, 1, 1), W(1, 1, 2), (W(1, 1, 2) + W(1, 1, 3)) / 2, W(1, 1, 3)];
-  ap.forEach((t, i) => SFX.drop(t - 0.1, 0.03, 700 + i * 120, (i - 1.5) * 0.3));
+  SFX.air(W(1, 0, 4) - 0.15, 0.045, 0.7, 3200, 0.5);
+  SFX.tick(W(1, 0, 4) + 0.5, 0.02, 1500, 0.3);
+  SFX.air(W(1, 0, 5) - 0.05, 0.03, 0.4, 5200, 0.3);
+  SFX.tick(W(1, 0, 8) - 0.05, 0.016, 1300, -0.2);
+  SFX.air(cap(1, 1) - 0.42, 0.06, 0.8, 2800, -0.2);
+  [1, 2, 3].forEach((k, i) => {
+    SFX.ding(W(1, 1, k) + 0.08, 0.016, 2200 + i * 180, 0.5, (i - 1) * 0.3);
+    SFX.tick(W(1, 1, k) + 0.06, 0.02, 900 + i * 80, (i - 1) * 0.3);
+  });
+  SFX.air(W(1, 1, 4) - 0.12, 0.04, 0.7, 2400, 0.1);
   for (let k = 0; k < 11; k++) SFX.tick(W(1, 1, 6) - 0.1 + k * ((W(1, 1, 9) + 0.45 - W(1, 1, 6)) / 11), 0.012, 1100 + k * 30);
   SFX.ding(W(1, 1, 9) + 0.38, 0.03, 587, 2.2);
+  SFX.stamp(W(1, 1, 9) + 0.6, 0.07);
 
-  // s3 — 48 SISTEM: the big tile, the drop, a rattle of 47, the markers pour
+  // s3 — 49 SISTEM: the big tile, the drop, a rattle of tiles, the light wave,
+  // the badges, the markers pour
   SFX.boom(W(2, 0, 1) - 0.12, 0.06, 50);
   SFX.tick(W(2, 0, 5) + 0.5, 0.03, 900, 0);
   SFX.boom(W(2, 0, 5) + 0.52, 0.04, 62);
   const r0 = W(2, 0, 7) - 0.2;
   const r1 = W(2, 0, 10) + 0.2;
   for (let k = 0; k < 47; k++) SFX.tick(r0 + (k / 47) * (r1 - r0) + rand() * 0.01, 0.009, 1300 + rand() * 500, (rand() - 0.5) * 0.9);
-  SFX.ding(W(2, 0, 10) + 0.42, 0.022, 740, 1.8, -0.3);
-  SFX.ding(W(2, 0, 10) + 0.72, 0.022, 988, 1.8, 0.35);
+  SFX.air(W(2, 0, 10) + 0.2, 0.026, 0.9, 6000, -0.3);
+  SFX.ding(W(2, 0, 10) + 0.62, 0.022, 740, 1.8, -0.3);
+  SFX.ding(W(2, 0, 10) + 0.87, 0.022, 988, 1.8, 0.35);
   SFX.shimmer(cap(2, 1) + 0.05, W(2, 1, 7) + 0.3 - cap(2, 1), 0.03, 1500);
   for (let k = 0; k < 26; k++) SFX.pop(cap(2, 1) + 0.1 + (k / 26) * (W(2, 1, 7) - cap(2, 1)), 0.01, 900 + rand() * 1400, (rand() - 0.5) * 0.9);
   SFX.ding(W(2, 1, 7) + 0.32, 0.03, 659, 2.2);
 
-  // s4 — RHESUS: three drops, anti-D lights, plus and minus, five of a thousand
-  [0, 1, 2].forEach((i) => SFX.drop(S(3) + 0.42 + i * 0.14, 0.03, 820 + i * 90, (i - 1) * 0.35));
+  // s4 — RHESUS: the pipette drops into three wells, anti-D lights, the two
+  // answers (one clumps), then five of a thousand
+  const dk = W(3, 0, 3);
+  [dk - 0.42, dk - 0.05, dk + 0.32].forEach((t0, i) => SFX.drop(t0 + 0.22, 0.032, 820 + i * 90, (i - 1) * 0.35));
+  SFX.air(dk - 1.0, 0.03, 0.6, 3000, 0.5);
   SFX.boom(W(3, 0, 7) - 0.05, 0.04, 58);
   SFX.ding(W(3, 0, 7) - 0.02, 0.026, 784, 2.0, 0.3);
-  SFX.air(W(3, 0, 7) + 0.1, 0.03, 0.6, 2600, -0.1);
   SFX.ding(W(3, 0, 8) - 0.06, 0.026, 1046, 1.6, -0.3);
+  SFX.crackle(W(3, 0, 8) + 0.1, 0.022, -0.3);
   SFX.ding(W(3, 0, 10) - 0.06, 0.026, 466, 1.8, 0.3);
-  SFX.air(cap(3, 1) - 0.22, 0.05, 0.8, 2600, 0.2);
+  SFX.air(cap(3, 1) - 0.32, 0.05, 0.8, 2600, 0.2);
   for (let k = 0; k < 20; k++) SFX.tick(cap(3, 1) + 0.12 + k * 0.06, 0.006, 1600 + rand() * 400, (rand() - 0.5) * 0.8);
   for (let k = 0; k < 5; k++) SFX.pop(W(3, 1, 3) - 0.08 + k * 0.09, 0.024, 1300 + k * 140, (k - 2) * 0.3);
   SFX.boom(W(3, 1, 4) - 0.12, 0.06, 48);
   SFX.tick(W(3, 1, 7) + 0.32, 0.018, 1200, -0.2);
 
-  // s5 — DARAH EMAS: gold, the markers let go, a few dots on the world
-  SFX.shimmer(W(4, 0, 3) - 0.12, 1.0, 0.03, 1318, true);
+  // s5 — DARAH EMAS: a punch-in, gold and glitter, the markers let go; the world
+  SFX.boom(W(4, 0, 3) - 0.1, 0.05, 50);
+  SFX.shimmer(W(4, 0, 3) - 0.12, 1.4, 0.034, 1318, true);
   SFX.boom(W(4, 0, 5) - 0.03, 0.045, 52);
   SFX.dissolve(W(4, 0, 5) - 0.02, 1.3, 0.022);
   SFX.tick(W(4, 0, 5) + 0.08, 0.016, 1400, 0.4);
   SFX.tick(W(4, 0, 6) + 0.22, 0.016, 1250, 0.4);
-  SFX.air(cap(4, 1) - 0.28, 0.05, 0.9, 2200, -0.2);
+  SFX.air(cap(4, 1) - 0.4, 0.05, 0.9, 2200, -0.2);
   for (let k = 0; k < 14; k++) SFX.pop(W(4, 1, 1) + (k / 14) * (W(4, 1, 3) + 0.6 - W(4, 1, 1)), 0.016, 1500 + rand() * 600, (rand() - 0.5) * 0.9);
+  for (let k = 0; k < 9; k++) SFX.tick(W(4, 1, 1) + k * ((W(4, 1, 3) + 0.45 - W(4, 1, 1)) / 9), 0.009, 1150 + k * 30);
   SFX.boom(W(4, 1, 3) + 0.47, 0.04, 56);
   SFX.air(W(4, 1, 7) - 0.3, 0.035, 1.2, 3600, -0.6);
   SFX.air(W(4, 1, 7) + 0.2, 0.03, 0.9, 3600, 0.6);
   SFX.ding(W(4, 1, 8) + 0.32, 0.026, 659, 2.4);
 
-  // s6 — GWADA: the year, tile 048, a stamp; five clumps and one clean match
+  // s6 — GWADA: the year, the press release typing itself, a banner, a stamp;
+  // one woman, then five clumps and one clean match
   for (let k = 0; k < 12; k++) SFX.tick(W(5, 0, 0) + k * ((W(5, 0, 5) + 0.3 - W(5, 0, 0)) / 12), 0.011, 1100 + k * 35);
-  SFX.ding(W(5, 0, 10) - 0.12, 0.03, 880, 2.2, 0.4);
-  SFX.boom(W(5, 0, 10) - 0.1, 0.04, 60);
-  SFX.boom(W(5, 0, 10) + 0.25, 0.03, 66);
-  SFX.air(W(5, 0, 11) - 0.3, 0.03, 0.6, 2400, 0);
-  SFX.stamp(W(5, 0, 12) + 0.05, 0.08);
-  SFX.air(cap(5, 1) - 0.22, 0.05, 0.8, 2400, -0.25);
-  SFX.ding(W(5, 1, 3) - 0.04, 0.024, 698, 2.0, 0);
-  for (let i = 0; i < 6; i++) SFX.drop(cap(5, 1) + 0.6 + i * 0.12, 0.022, 760 + i * 60, (i - 2.5) * 0.25);
+  SFX.air(0.3 + S(5), 0.035, 0.7, 2600, 0.2);
+  const typeRun = (t0, dur, n) => { for (let k = 0; k < n; k++) SFX.key(t0 + (k / n) * dur + rand() * 0.015, 0.011); };
+  typeRun(W(5, 0, 6) - 0.1, 0.5, 8);
+  typeRun(W(5, 0, 8) - 0.1, 0.6, 10);
+  typeRun(W(5, 0, 10) - 0.05, 0.45, 8);
+  typeRun(W(5, 0, 11) - 0.1, 0.4, 7);
+  SFX.ding(W(5, 0, 10) - 0.06, 0.026, 880, 2.0, -0.4);
+  SFX.tick(W(5, 0, 10), 0.02, 1500, -0.4);
+  SFX.stamp(W(5, 0, 12) + 0.08, 0.085);
+  SFX.boom(W(5, 0, 12) + 0.08, 0.035, 60);
+  typeRun(W(5, 0, 12) + 0.3, 0.7, 12);
+  SFX.air(cap(5, 1) - 0.4, 0.05, 0.8, 2400, -0.25);
+  SFX.ding(W(5, 1, 2) - 0.04, 0.024, 698, 2.0, 0);
+  for (let i = 0; i < 6; i++) SFX.drop(cap(5, 1) + 0.7 + i * 0.1 + 0.15, 0.02, 760 + i * 60, (i - 2.5) * 0.25);
   for (let i = 0; i < 5; i++) {
     const at = W(5, 1, 7) - 0.1 + i * 0.12;
     SFX.crackle(at + 0.05, 0.026, (i - 2.5) * 0.25);
@@ -361,17 +384,19 @@ function renderSFX() {
   }
   SFX.chord(W(5, 1, 10) - 0.04, 0.026, 523.25);
 
-  // s7 — GOLONGANMU: the badges, the full coat of markers, the bubble, typing
-  for (let i = 0; i < 4; i++) SFX.tick(W(6, 0, 5) - 0.26 + i * 0.06, 0.016, 1100 + i * 90, (i - 1.5) * 0.3);
-  SFX.tick(W(6, 0, 7) - 0.08, 0.02, 1700, 0.3);
-  SFX.tick(W(6, 0, 8) - 0.08, 0.02, 1300, 0.4);
-  SFX.shimmer(W(6, 0, 8) + 0.1, 1.3, 0.026, 1318);
-  SFX.boom(W(6, 0, 8) + 0.1, 0.04, 54);
-  SFX.pop(W(6, 1, 2) - 0.04, 0.04, 520, 0.4);
-  SFX.ding(W(6, 1, 2) + 0.02, 0.02, 1046, 1.4, 0.4);
+  // s7 — GOLONGANMU: the stickers slap on, the full coat of markers, the
+  // stickers drop away, the comment box, typing, the answers
+  for (let i = 0; i < 4; i++) SFX.tick(W(6, 0, 5) - 0.3 + i * 0.08 + 0.1, 0.018, 1000 + i * 90, (i - 1.5) * 0.3);
+  SFX.tick(W(6, 0, 7) - 0.0, 0.02, 1700, 0.3);
+  SFX.tick(W(6, 0, 8) - 0.0, 0.02, 1300, 0.4);
+  SFX.shimmer(W(6, 0, 8) + 0.15, 1.3, 0.026, 1318);
+  SFX.boom(W(6, 0, 8) + 0.12, 0.045, 54);
+  SFX.air(cap(6, 1) - 0.25, 0.04, 0.7, 2200, 0);
+  SFX.pop(W(6, 1, 2) - 0.3, 0.04, 520, 0.4);
+  SFX.ding(W(6, 1, 2) - 0.25, 0.02, 1046, 1.4, 0.4);
   const tKom = W(6, 1, 2) + 0.1;
-  for (let k = 0; k < 22; k++) SFX.key(tKom + k * 0.07 + rand() * 0.02, 0.013);
-  for (let i = 0; i < 4; i++) SFX.tick(W(6, 1, 3) + i * 0.1, 0.014, 1200 + i * 80, (i - 1.5) * 0.3);
+  for (let k = 0; k < 18; k++) SFX.key(tKom + k * (1.2 / 18) + rand() * 0.015, 0.013);
+  for (let i = 0; i < 4; i++) SFX.tick(W(6, 1, 3) + i * 0.1 + 0.08, 0.016, 1200 + i * 80, (i - 1.5) * 0.3);
   SFX.ding(W(6, 1, 5), 0.028, 659, 2.6);
   SFX.ding(W(6, 1, 5) + 0.45, 0.026, 494, 3.0);
 }

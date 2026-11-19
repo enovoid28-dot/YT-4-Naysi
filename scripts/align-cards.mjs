@@ -11,14 +11,40 @@
  * count predicts it. Words are spread over the voiced time of their own phrase
  * and every card edge is the middle of a real pause.
  *
+ * Word timing: when the caption is word-for-word the VO, every word is placed
+ * by phonetic forced alignment (scripts/align-words.py, PocketSphinx; set
+ * ALIGN_PY to a python with `pip install pocketsphinx`). The pause matching
+ * below stays as the fallback and as the report.
+ *
  * Output: assets/audio/align.json
  *   { [sceneId]: { onset, end, gaps: [...], cards: [[{text,accent,start,end}], ...] } }
  */
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { SCENES } from '../src/script.mjs';
 import { capCards } from '../src/timeline.mjs';
-import { decodeVo } from '../src/audio.mjs';
+import { decodeVo, VO_EP } from '../src/audio.mjs';
+
+/** phonetic word timings for every scene, or null when the aligner is not installed */
+function forcedWords() {
+  const py = process.env.ALIGN_PY || path.join(os.homedir(), '.venv-align', 'bin', 'python');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'align-'));
+  const vo = path.join(tmp, 'vo.json');
+  const res = path.join(tmp, 'words.json');
+  fs.writeFileSync(vo, JSON.stringify(Object.fromEntries(SCENES.map((s) => [s.id, s.vo]))));
+  try {
+    execFileSync(fs.existsSync(py) ? py : 'python3', [path.join('scripts', 'align-words.py'), path.join('voice', VO_EP), vo, res], { stdio: ['ignore', 'inherit', 'inherit'] });
+    return JSON.parse(fs.readFileSync(res, 'utf8'));
+  } catch (err) {
+    console.warn(`forced alignment unavailable (${err.message.split('\n')[0]}); pause matching only`);
+    return null;
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+}
+const FORCED = forcedWords();
 
 const FRAME = 0.01;
 const THRESH = 0.02;
@@ -258,6 +284,15 @@ for (const sc of SCENES) {
     timed.push(...placeWords(words.slice(A.w, B.w).map((w) => w.text), A.tOut, B.tIn, env, th));
   }
 
+  // phonetic alignment wins whenever the caption is the VO word for word
+  const fw = FORCED?.[sc.id];
+  const exact = spoken === voWords && fw && fw.length === words.length;
+  if (exact) {
+    fw.forEach((w, i) => {
+      timed[i] = { text: cleanWord(flat[i]), accent: isAccent(flat[i]), start: +w.start.toFixed(3), end: +w.end.toFixed(3) };
+    });
+  }
+
   // card edges: the middle of the pause that ends the card's last word
   const usedGap = new Set(hit.filter((h) => h !== null));
   const cards = [];
@@ -266,7 +301,7 @@ for (const sc of SCENES) {
     const card = timed.slice(w0, w0 + cw.length).map((w) => ({ ...w }));
     w0 += cw.length;
     cards.push(card);
-    if (ci === capWords.length - 1) return;
+    if (ci === capWords.length - 1 || exact) return;
     const lastW = w0 - 1;
     const k = marks.findIndex((m) => m.w === lastW);
     let edge;
@@ -306,7 +341,7 @@ for (const sc of SCENES) {
   const edges = [speechStart, ...cards.slice(1).map((c) => c[0].start), speechEnd];
   const lens = edges.slice(0, -1).map((e, i) => (edges[i + 1] - e).toFixed(2));
   const short = lens.some((l) => +l < MIN_CARD) ? '  ! card under 1.2 s' : '';
-  console.log(`${sc.id}  speech ${speechStart.toFixed(2)}–${speechEnd.toFixed(2)}  ${cards.length} cards  ${lens.join(' · ')} s${short}`);
+  console.log(`${sc.id}  speech ${speechStart.toFixed(2)}–${speechEnd.toFixed(2)}  ${cards.length} cards  ${lens.join(' · ')} s${short}  ${exact ? 'words: phonetic' : 'words: pause-matched'}`);
   cards.forEach((c, i) => {
     const head = c.slice(0, 3).map((w) => w.text).join(' ');
     const tail = c.slice(-2).map((w) => w.text).join(' ');

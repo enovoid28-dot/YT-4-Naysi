@@ -1,109 +1,105 @@
-import { txt } from '../engine/draw.mjs';
 import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, EASE } from '../engine/anim.mjs';
 import { plane } from '../engine/rig.mjs';
 import { shotCam } from './_layar.mjs';
-import { HUD, roll, hero, chip, hudFrame, wordT, callout, dimension } from './_bulan.mjs';
-import { vessel, vesselFront, drawCell, markers, typeBadge, legend, labStrip } from './_darah.mjs';
+import { wordT, dimension } from './_bulan.mjs';
+import { vessel, vesselFront, drawCell, markers, glow } from './_darah.mjs';
+import {
+  tag, ribbon, loupe, membrane, desk, slide, paperCard, rays, grade, labText, inkStamp,
+} from './_lab.mjs';
 
 // 02 — PENANDA
-// Card 0: one red cell, close. Markers sprout over its membrane on "penanda",
-// a callout names them, a dimension line gives the cell's size.
-// Card 1: the cell flies into a row of four — A, B, AB, O — each wearing its
-// own markers, and the year rolls to 1901.
+// Card 0: one red cell, close. On "penanda" a magnifier slides over its edge:
+// inside it the membrane, its double layer of lipids and the antigens standing
+// on it — protein stalks with chains of sugar. A banner names them; a
+// dimension line gives the cell's size.
+// Card 1: cut to a desk under a lamp, 1901. Three glass slides land, A, B, O,
+// each on its letter; Landsteiner's card slides in and the year rolls to 1901.
 const P = (t, at, d) => clamp((t - at) / d);
 const eo = (p) => EASE.outCubic(clamp(p));
 const io = (p) => EASE.inOutQuad(clamp(p));
 
-const TYPES = [
-  { s: 'A', kinds: ['A'] },
-  { s: 'B', kinds: ['B'] },
-  { s: 'AB', kinds: ['A', 'B'] },
-  { s: 'O', kinds: ['H'] },
-];
-const SLOT = (i) => [720 + (i - 1.5) * 316, 960];
-
 function drawScene(ctx, t, scene, g = {}) {
   const cam = shotCam(t, 0.8);
   const tPen = wordT(scene, 0, 4);
+  const tKecil = wordT(scene, 0, 5);
   const tPerm = wordT(scene, 0, 7);
+  const tSel = wordT(scene, 0, 8);
   const t1 = wordT(scene, 1, 0);
-  const tA = wordT(scene, 1, 1);
-  const tB = wordT(scene, 1, 2);
-  const tO = wordT(scene, 1, 3);
+  const tAs = [wordT(scene, 1, 1), wordT(scene, 1, 2), wordT(scene, 1, 3)];
+  const tDit = wordT(scene, 1, 4);
   const tTahun = wordT(scene, 1, 5);
   const tSeribu = wordT(scene, 1, 6);
   const tSatu = wordT(scene, 1, 9);
   const flow = [-0.14, -0.42];
-  const appear = [tA - 0.12, tB - 0.12, (tB + tO) / 2 - 0.12, tO - 0.12];
+  const pX = io(P(t, t1 - 0.4, 0.6));
 
-  vessel(ctx, t, cam, { seed: 2, flow, dark: 0.12 });
-
-  // the transition: the big cell flies into slot A and becomes the A cell
-  const pX = io(P(t, t1 - 0.3, 0.85));
-  const [ax, ay] = SLOT(0);
-  const cx = lerp(720, ax, pX);
-  const cy = lerp(1000, ay, pX);
-  const d = lerp(700, 250, pX);
-  const tilt = 28;
-  const rot = -0.35 + t * 0.05;
-  plane(ctx, cam, 1.0, () => {
-    drawCell(ctx, cx, cy, d, { hero: true, tilt, rot });
-    // card 0 markers: a mix of systems; they give way to the A markers
-    markers(ctx, cx, cy, d, {
-      kinds: ['X', 'X', 'A', 'D', 'X', 'B'], n: 30, p: P(t, tPen - 0.15, 1.5), t, tilt, rot, seed: 21,
-      face: 0.7, len: 0.07, a: 1 - pX,
-    });
-    markers(ctx, cx, cy, d, { kinds: ['A'], n: 16, p: P(t, appear[0], 0.9), t, tilt, rot, seed: 31, face: 0.5, len: 0.09 });
-    // the other three types
-    for (let i = 1; i < 4; i++) {
-      const [x, y] = SLOT(i);
-      const q = eo(P(t, appear[i], 0.5));
-      if (q <= 0.01) continue;
-      const dd = 250 * (0.6 + 0.4 * q);
-      const rr = 0.4 * i + t * 0.05;
-      drawCell(ctx, x, y + (1 - q) * 60, dd, { hero: true, tilt, rot: rr, a: q });
-      markers(ctx, x, y + (1 - q) * 60, dd, { kinds: TYPES[i].kinds, n: TYPES[i].s === 'O' ? 14 : 16, p: P(t, appear[i] + 0.1, 0.9), t, tilt, rot: rr, seed: 31 + i * 7, face: 0.5, len: TYPES[i].s === 'O' ? 0.05 : 0.09, a: q });
-    }
-    // card 0 annotations
-    const a0 = 1 - eo(P(t, t1 - 0.4, 0.3));
-    if (a0 > 0.01) {
-      const an = -2.35;
-      const px = 720 + Math.cos(an) * 700 * 0.55;
-      const py = 1000 + Math.sin(an) * 700 * 0.52;
-      callout(ctx, px, py, px - 70, py - 120, 250, P(t, tPen + 0.35, 0.8), {
-        label: 'PROTEIN & GULA', value: 'ANTIGEN', side: 'left', vsize: 50, a: a0,
+  /* ------------------------------- card 0 -------------------------------- */
+  if (pX < 0.999) {
+    vessel(ctx, t, cam, { seed: 2, flow, dark: 0.08 });
+    grade(ctx, { tint: '#FF6A3D', k: 0.12 });
+    const cx = 700 + Math.sin(t * 0.45) * 10;
+    const cy = 1400 + Math.cos(t * 0.5) * 8;
+    const d = 760 * (1 + 0.1 * pX);
+    const tilt = 26;
+    const rot = -0.35 + t * 0.045;
+    plane(ctx, cam, 1.0, () => {
+      glow(ctx, cx, cy, d * 2.2, '255,120,90', 0.22);
+      drawCell(ctx, cx, cy, d, { hero: true, tilt, rot });
+      markers(ctx, cx, cy, d, {
+        kinds: ['X', 'X', 'A', 'D', 'X', 'B'], n: 34, p: P(t, tPen - 0.15, 1.5), t, tilt, rot, seed: 21,
+        face: 0.7, len: 0.07,
       });
-      dimension(ctx, 370, 1380, 1070, 1380, P(t, tPerm - 0.1, 0.8), { label: '± 7,5 µm · SEL DARAH MERAH', a: a0, size: 24 });
-    }
-  });
-  vesselFront(ctx, t, cam, { seed: 2, flow, a: 0.55 * (1 - pX) });
-
-  // card 1: the letters under the four cells, and what each one wears
-  TYPES.forEach((ty, i) => {
-    const [x] = SLOT(i);
-    typeBadge(ctx, ty.s, x, 1218, 70, P(t, appear[i] + 0.15, 0.4), {});
-  });
-  const pL = P(t, tO + 0.35, 0.5);
-  legend(ctx, 'A', 'PENANDA A', 150, 1392, pL);
-  legend(ctx, 'B', 'PENANDA B', 560, 1392, P(t, tO + 0.45, 0.5));
-  legend(ctx, 'H', 'TANPA A & B = O', 950, 1392, P(t, tO + 0.55, 0.5));
-
-  labStrip(ctx, t, { a: eo(P(t, 0.05, 0.6)), left: 'ERITROSIT · ± 7,5 µm' });
-
-  // headlines: PENANDA, then SISTEM ABO, then the year
-  const aH0 = 1 - eo(P(t, t1 - 0.3, 0.3));
-  if (aH0 > 0.01) hero(ctx, 'PENANDA', 'DI PERMUKAAN SEL DARAH MERAH', 104, 440, P(t, 0.35, 0.7), { size: 200, a: aH0 });
-  const aH1 = eo(P(t, t1 - 0.05, 0.4)) * (1 - eo(P(t, tTahun - 0.3, 0.3)));
-  if (aH1 > 0.01) hero(ctx, 'SISTEM ABO', 'A · B · AB · O', 104, 440, P(t, t1 - 0.05, 0.7), { size: 170, a: aH1 });
-  const aY = eo(P(t, tTahun - 0.1, 0.4));
-  if (aY > 0.01) {
-    const val = (tt) => 1890 + 11 * io(P(tt, tSeribu - 0.1, tSatu + 0.35 - tSeribu + 0.1));
-    roll(ctx, val(t), 104, 440, { size: 210, font: F.display, color: HUD.bone, a: aY, track: -6, prev: val(t - 1 / 90) });
-    txt(ctx, 'KARL LANDSTEINER · WINA', 110, 492, { size: 25, font: F.mono6, color: HUD.amber, track: 6, alpha: aY });
-    chip(ctx, 'NOBEL KEDOKTERAN 1930', 104, 568, P(t, tSatu + 0.45, 0.5), { align: 'left', color: HUD.amber });
+    });
+    vesselFront(ctx, t, cam, { seed: 2, flow, a: 0.5 });
+    // the magnifier and what it sees
+    const pL = P(t, tPen - 0.12, 0.7);
+    const lx = lerp(1700, 960, eo(pL)) + Math.sin(t * 0.8) * 6;
+    const ly = lerp(1300, 1130, eo(pL)) + Math.cos(t * 0.7) * 6;
+    loupe(ctx, lx, ly, 250, pL, (c) => {
+      c.fillStyle = '#2A0610';
+      c.fillRect(lx - 260, ly - 260, 520, 520);
+      membrane(c, lx - 300, ly + 430, 520, -1.5, -0.4, t, {
+        kinds: ['A', 'X', 'D', 'B', 'X', 'H'], p: P(t, tPen + 0.05, 1.3), n: 8, seed: 3,
+      });
+    }, { zoom: 1, handle: 0.75 });
+    ribbon(ctx, 1110, 1480, 'ANTIGEN', P(t, tKecil - 0.05, 0.5), { size: 38, rot: -0.04 });
+    labText(ctx, 'protein + rantai gula', 1110, 1566, {
+      size: 32, font: F.sub, color: 'rgba(255,236,214,0.85)', align: 'center', alpha: eo(P(t, tKecil + 0.25, 0.5)),
+    });
+    dimension(ctx, 330, 1880, 1070, 1880, P(t, tSel - 0.1, 0.8), { label: '± 7,5 µm · SEL DARAH MERAH', size: 30, a: 1 });
+    // the magnifier grows a ring of light as it lands
+    if (pL > 0 && pL < 1) glow(ctx, lx, ly, 600, '255,220,180', 0.12 * Math.sin(pL * Math.PI));
+    void tPerm;
   }
-  hudFrame(ctx, t, g.t ?? t, { cam });
+
+  /* ------------------------------- card 1 -------------------------------- */
+  if (pX > 0.001) {
+    ctx.save();
+    ctx.globalAlpha *= pX;
+    desk(ctx, t, cam, { tone: 'wood', lamp: [720, 1300], lampR: 1250 });
+    rays(ctx, 720, 520, { t, rgb: '255,214,160', a: 0.06, n: 6, len: 1900, spread: 0.5, seed: 5 });
+    plane(ctx, cam, 0.7, () => {
+      const SL = [[700, 960, -0.06], [740, 1130, 0.03], [690, 1300, -0.02]];
+      ['A', 'B', 'O'].forEach((s, i) => {
+        const [x, y, r] = SL[i];
+        slide(ctx, x, y, 820, 150, P(t, tAs[i] - 0.14, 0.45), { label: s, rot: r, t, seed: i + 1, drop: eo(P(t, tAs[i] + 0.1, 0.4)) });
+      });
+      paperCard(ctx, 720, 1860, 920, 330, P(t, tDit - 0.1, 0.6), {
+        rot: -0.03, lines: [
+          { s: 'WINA, 1901', size: 52, y: 78, font: F.mono6 },
+          { s: 'KARL LANDSTEINER', y: 156, size: 38 },
+          { s: 'golongan  A · B · C (kini O)', y: 222, size: 34 },
+        ],
+      });
+      inkStamp(ctx, 'NOBEL 1930', 1000, 1985, P(t, tSatu + 0.45, 0.4), { size: 44, rot: -0.12, color: '#B8281E' });
+    });
+    const val = (tt) => 1890 + 11 * io(P(tt, tSeribu - 0.1, tSatu + 0.35 - tSeribu + 0.1));
+    tag(ctx, 720, 1520, P(t, tTahun - 0.1, 0.5), {
+      count: { value: val(t), prev: val(t - 1 / 90), digits: 4 }, color: '#FFD08A', size: 150, glowRgb: '255,190,110',
+    });
+    ctx.restore();
+  }
 }
 
 export default { draw: drawScene };

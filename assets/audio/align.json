@@ -33,112 +33,112 @@
     {
      "text": "Ada",
      "accent": false,
-     "start": 0.32,
-     "end": 0.6
+     "start": 0.28,
+     "end": 0.57
     },
     {
      "text": "golongan",
      "accent": false,
-     "start": 0.615,
-     "end": 1.07
+     "start": 0.57,
+     "end": 1.04
     },
     {
      "text": "darah",
      "accent": false,
-     "start": 1.085,
-     "end": 1.38
+     "start": 1.04,
+     "end": 1.42
     },
     {
      "text": "yang",
      "accent": false,
-     "start": 1.395,
-     "end": 1.57
+     "start": 1.42,
+     "end": 1.64
     },
     {
      "text": "cuma",
      "accent": false,
-     "start": 1.585,
-     "end": 1.95
+     "start": 1.64,
+     "end": 2.04
     },
     {
      "text": "dimiliki",
      "accent": false,
-     "start": 1.965,
-     "end": 2.61
+     "start": 2.04,
+     "end": 2.62
     },
     {
      "text": "satu",
      "accent": true,
-     "start": 2.625,
-     "end": 3.07
+     "start": 2.62,
+     "end": 3.22
     },
     {
      "text": "orang",
      "accent": true,
-     "start": 3.085,
-     "end": 3.44
+     "start": 3.22,
+     "end": 3.57
     },
     {
      "text": "di",
      "accent": false,
-     "start": 3.455,
-     "end": 3.59
+     "start": 3.57,
+     "end": 3.68
     },
     {
      "text": "dunia.",
      "accent": false,
-     "start": 3.605,
-     "end": 4.255
+     "start": 3.68,
+     "end": 4.05
     }
    ],
    [
     {
      "text": "Dan",
      "accent": false,
-     "start": 4.255,
-     "end": 4.63
+     "start": 4.47,
+     "end": 4.67
     },
     {
      "text": "itu",
      "accent": false,
-     "start": 4.645,
-     "end": 5.16
+     "start": 4.67,
+     "end": 5.1
     },
     {
      "text": "bukan",
-     "accent": false,
-     "start": 5.175,
-     "end": 5.72
+     "accent": true,
+     "start": 5.1,
+     "end": 5.55
     },
     {
      "text": "A,",
-     "accent": true,
-     "start": 5.735,
-     "end": 5.88
+     "accent": false,
+     "start": 5.55,
+     "end": 5.86
     },
     {
      "text": "B,",
-     "accent": true,
-     "start": 6.26,
-     "end": 6.67
+     "accent": false,
+     "start": 6.23,
+     "end": 6.75
     },
     {
      "text": "AB,",
-     "accent": true,
-     "start": 7.12,
-     "end": 7.58
+     "accent": false,
+     "start": 7.11,
+     "end": 7.64
     },
     {
      "text": "atau",
      "accent": false,
-     "start": 7.93,
-     "end": 8.27
+     "start": 7.9,
+     "end": 8.14
     },
     {
      "text": "O.",
-     "accent": true,
-     "start": 8.285,
-     "end": 8.38
+     "accent": false,
+     "start": 8.25,
+     "end": 8.47
     }
    ]
   ]
@@ -181,130 +181,130 @@
     {
      "text": "Golongan",
      "accent": false,
-     "start": 0.28,
-     "end": 0.64
+     "start": 0.25,
+     "end": 0.96
     },
     {
      "text": "darah",
      "accent": false,
-     "start": 0.655,
-     "end": 0.89
+     "start": 0.96,
+     "end": 1.33
     },
     {
      "text": "ditentukan",
      "accent": false,
-     "start": 0.905,
-     "end": 1.86
+     "start": 1.33,
+     "end": 2.02
     },
     {
      "text": "oleh",
      "accent": false,
-     "start": 1.875,
-     "end": 2.16
+     "start": 2.02,
+     "end": 2.3
     },
     {
      "text": "penanda",
      "accent": true,
-     "start": 2.175,
-     "end": 2.63
+     "start": 2.3,
+     "end": 2.67
     },
     {
      "text": "kecil",
      "accent": false,
-     "start": 2.645,
-     "end": 3.13
+     "start": 2.67,
+     "end": 3.23
     },
     {
      "text": "di",
      "accent": false,
-     "start": 3.145,
-     "end": 3.35
+     "start": 3.23,
+     "end": 3.42
     },
     {
      "text": "permukaan",
      "accent": false,
-     "start": 3.365,
-     "end": 4.17
+     "start": 3.42,
+     "end": 4.09
     },
     {
      "text": "sel",
-     "accent": true,
-     "start": 4.185,
-     "end": 4.33
+     "accent": false,
+     "start": 4.09,
+     "end": 4.42
     },
     {
      "text": "darah",
-     "accent": true,
-     "start": 4.345,
-     "end": 4.71
+     "accent": false,
+     "start": 4.42,
+     "end": 4.67
     },
     {
      "text": "merah.",
-     "accent": true,
-     "start": 4.725,
-     "end": 5.41
+     "accent": false,
+     "start": 4.67,
+     "end": 5.06
     }
    ],
    [
     {
      "text": "Sistem",
      "accent": false,
-     "start": 5.41,
-     "end": 6.09
+     "start": 5.73,
+     "end": 6.26
     },
     {
      "text": "A,",
-     "accent": true,
-     "start": 6.105,
-     "end": 6.2
+     "accent": false,
+     "start": 6.35,
+     "end": 6.62
     },
     {
      "text": "B,",
-     "accent": true,
-     "start": 6.37,
-     "end": 6.6
+     "accent": false,
+     "start": 6.83,
+     "end": 7.16
     },
     {
      "text": "O",
-     "accent": true,
-     "start": 6.81,
-     "end": 6.93
+     "accent": false,
+     "start": 7.33,
+     "end": 7.65
     },
     {
      "text": "ditemukan",
      "accent": false,
-     "start": 6.945,
-     "end": 8.14
+     "start": 7.97,
+     "end": 8.54
     },
     {
      "text": "tahun",
      "accent": false,
-     "start": 8.155,
-     "end": 8.46
+     "start": 8.54,
+     "end": 8.87
     },
     {
      "text": "seribu",
      "accent": true,
-     "start": 8.475,
-     "end": 9.02
+     "start": 8.87,
+     "end": 9.31
     },
     {
      "text": "sembilan",
      "accent": true,
-     "start": 9.035,
-     "end": 9.5
+     "start": 9.31,
+     "end": 9.67
     },
     {
      "text": "ratus",
      "accent": true,
-     "start": 9.515,
-     "end": 9.77
+     "start": 9.67,
+     "end": 9.98
     },
     {
      "text": "satu.",
      "accent": true,
-     "start": 9.785,
-     "end": 10.25
+     "start": 9.98,
+     "end": 10.48
     }
    ]
   ]
@@ -351,130 +351,130 @@
     {
      "text": "Tapi",
      "accent": false,
-     "start": 0.29,
-     "end": 0.57
+     "start": 0.25,
+     "end": 0.71
     },
     {
      "text": "A,",
-     "accent": true,
-     "start": 0.585,
-     "end": 0.66
+     "accent": false,
+     "start": 0.84,
+     "end": 1.02
     },
     {
      "text": "B,",
-     "accent": true,
-     "start": 0.86,
-     "end": 0.91
+     "accent": false,
+     "start": 1.02,
+     "end": 1.26
     },
     {
      "text": "O",
-     "accent": true,
-     "start": 0.925,
-     "end": 0.98
+     "accent": false,
+     "start": 1.38,
+     "end": 1.7
     },
     {
      "text": "cuma",
      "accent": false,
-     "start": 0.995,
-     "end": 1.39
+     "start": 1.7,
+     "end": 2.03
     },
     {
      "text": "satu",
      "accent": false,
-     "start": 1.405,
-     "end": 2.01
+     "start": 2.03,
+     "end": 2.53
     },
     {
      "text": "dari",
      "accent": false,
-     "start": 2.025,
-     "end": 2.2
+     "start": 2.53,
+     "end": 2.81
     },
     {
      "text": "empat",
      "accent": true,
-     "start": 2.215,
-     "end": 2.6
+     "start": 2.81,
+     "end": 3.16
     },
     {
      "text": "puluh",
      "accent": true,
-     "start": 2.615,
-     "end": 3.05
+     "start": 3.16,
+     "end": 3.38
     },
     {
      "text": "sembilan",
      "accent": true,
-     "start": 3.065,
-     "end": 3.58
+     "start": 3.38,
+     "end": 3.77
     },
     {
      "text": "sistem",
-     "accent": true,
-     "start": 3.595,
-     "end": 3.94
+     "accent": false,
+     "start": 3.77,
+     "end": 4.17
     },
     {
      "text": "golongan",
      "accent": false,
-     "start": 3.955,
-     "end": 4.53
+     "start": 4.17,
+     "end": 4.49
     },
     {
      "text": "darah.",
      "accent": false,
-     "start": 4.545,
-     "end": 5.025
+     "start": 4.49,
+     "end": 4.87
     }
    ],
    [
     {
      "text": "Penandanya",
      "accent": false,
-     "start": 5.025,
-     "end": 5.64
+     "start": 5.27,
+     "end": 5.85
     },
     {
      "text": "sudah",
      "accent": false,
-     "start": 5.655,
-     "end": 5.88
+     "start": 5.85,
+     "end": 6.12
     },
     {
      "text": "lebih",
      "accent": false,
-     "start": 5.895,
-     "end": 6.14
+     "start": 6.12,
+     "end": 6.44
     },
     {
      "text": "dari",
      "accent": false,
-     "start": 6.155,
-     "end": 6.51
+     "start": 6.44,
+     "end": 6.7
     },
     {
      "text": "tiga",
      "accent": true,
-     "start": 6.525,
-     "end": 7.02
+     "start": 6.7,
+     "end": 7.14
     },
     {
      "text": "ratus",
      "accent": true,
-     "start": 7.035,
-     "end": 7.31
+     "start": 7.14,
+     "end": 7.4
     },
     {
      "text": "enam",
      "accent": true,
-     "start": 7.325,
-     "end": 7.5
+     "start": 7.4,
+     "end": 7.62
     },
     {
      "text": "puluh.",
      "accent": true,
-     "start": 7.515,
-     "end": 7.77
+     "start": 7.62,
+     "end": 7.98
     }
    ]
   ]
@@ -521,118 +521,118 @@
     {
      "text": "Yang",
      "accent": false,
-     "start": 0.34,
-     "end": 0.47
+     "start": 0.31,
+     "end": 0.54
     },
     {
      "text": "paling",
      "accent": false,
-     "start": 0.485,
-     "end": 0.85
+     "start": 0.54,
+     "end": 0.8
     },
     {
      "text": "sering",
      "accent": false,
-     "start": 0.865,
-     "end": 1.16
+     "start": 0.8,
+     "end": 1.12
     },
     {
      "text": "dicek",
      "accent": false,
-     "start": 1.175,
+     "start": 1.12,
      "end": 1.58
     },
     {
      "text": "selain",
      "accent": false,
-     "start": 1.595,
-     "end": 2.18
+     "start": 1.58,
+     "end": 1.94
     },
     {
      "text": "itu",
      "accent": false,
-     "start": 2.195,
-     "end": 2.53
+     "start": 1.94,
+     "end": 2.27
     },
     {
      "text": "adalah",
      "accent": false,
-     "start": 2.545,
-     "end": 2.99
+     "start": 2.27,
+     "end": 2.68
     },
     {
      "text": "rhesus,",
      "accent": true,
-     "start": 3.005,
-     "end": 3.21
+     "start": 2.68,
+     "end": 3.25
     },
     {
      "text": "positif",
-     "accent": true,
-     "start": 3.61,
-     "end": 4.23
+     "accent": false,
+     "start": 3.49,
+     "end": 4.11
     },
     {
      "text": "atau",
      "accent": false,
-     "start": 4.245,
-     "end": 4.47
+     "start": 4.22,
+     "end": 4.38
     },
     {
      "text": "negatif.",
-     "accent": true,
-     "start": 4.485,
-     "end": 5.265
+     "accent": false,
+     "start": 4.38,
+     "end": 4.96
     }
    ],
    [
     {
      "text": "Di",
      "accent": false,
-     "start": 5.265,
-     "end": 5.84
+     "start": 5.64,
+     "end": 5.79
     },
     {
      "text": "Indonesia,",
-     "accent": true,
-     "start": 5.855,
-     "end": 6.55
+     "accent": false,
+     "start": 5.79,
+     "end": 6.58
     },
     {
      "text": "rhesus",
      "accent": false,
-     "start": 6.7,
-     "end": 6.96
+     "start": 6.73,
+     "end": 7.07
     },
     {
      "text": "negatif",
-     "accent": true,
-     "start": 6.975,
-     "end": 7.34
+     "accent": false,
+     "start": 7.07,
+     "end": 7.57
     },
     {
      "text": "kurang",
      "accent": false,
-     "start": 7.355,
-     "end": 7.93
+     "start": 7.57,
+     "end": 8.12
     },
     {
      "text": "dari",
      "accent": false,
-     "start": 7.945,
-     "end": 8.15
+     "start": 8.12,
+     "end": 8.31
     },
     {
      "text": "satu",
      "accent": true,
-     "start": 8.165,
-     "end": 8.41
+     "start": 8.31,
+     "end": 8.56
     },
     {
      "text": "persen.",
      "accent": true,
-     "start": 8.425,
-     "end": 8.85
+     "start": 8.56,
+     "end": 9.01
     }
    ]
   ]
@@ -679,124 +679,124 @@
     {
      "text": "Lalu",
      "accent": false,
-     "start": 0.32,
-     "end": 0.6
+     "start": 0.26,
+     "end": 0.74
     },
     {
      "text": "ada",
      "accent": false,
-     "start": 0.615,
-     "end": 1.12
+     "start": 0.74,
+     "end": 0.97
     },
     {
      "text": "darah",
      "accent": true,
-     "start": 1.135,
-     "end": 1.57
+     "start": 0.97,
+     "end": 1.38
     },
     {
      "text": "emas,",
      "accent": true,
-     "start": 1.585,
-     "end": 1.89
+     "start": 1.44,
+     "end": 2
     },
     {
      "text": "rhesus",
-     "accent": true,
-     "start": 2.36,
-     "end": 2.8
+     "accent": false,
+     "start": 2.33,
+     "end": 2.76
     },
     {
      "text": "nol,",
      "accent": true,
-     "start": 2.815,
-     "end": 3
+     "start": 2.76,
+     "end": 3.19
     },
     {
      "text": "tanpa",
      "accent": false,
-     "start": 3.57,
-     "end": 3.93
+     "start": 3.55,
+     "end": 3.87
     },
     {
      "text": "satu",
      "accent": false,
-     "start": 3.945,
-     "end": 4.39
+     "start": 3.87,
+     "end": 4.19
     },
     {
      "text": "pun",
      "accent": false,
-     "start": 4.405,
-     "end": 4.6
+     "start": 4.19,
+     "end": 4.49
     },
     {
      "text": "penanda",
      "accent": false,
-     "start": 4.615,
-     "end": 4.98
+     "start": 4.49,
+     "end": 4.84
     },
     {
      "text": "rhesus.",
      "accent": false,
-     "start": 4.995,
-     "end": 5.575
+     "start": 4.84,
+     "end": 5.31
     }
    ],
    [
     {
      "text": "Pemiliknya",
      "accent": false,
-     "start": 5.575,
-     "end": 6.47
+     "start": 5.83,
+     "end": 6.57
     },
     {
      "text": "kurang",
      "accent": false,
-     "start": 6.485,
-     "end": 6.98
+     "start": 6.69,
+     "end": 7.11
     },
     {
      "text": "dari",
      "accent": false,
-     "start": 6.995,
-     "end": 7.23
+     "start": 7.11,
+     "end": 7.48
     },
     {
      "text": "lima",
      "accent": true,
-     "start": 7.245,
-     "end": 7.51
+     "start": 7.48,
+     "end": 7.74
     },
     {
      "text": "puluh",
      "accent": true,
-     "start": 7.525,
-     "end": 7.87
+     "start": 7.74,
+     "end": 8.11
     },
     {
      "text": "orang",
      "accent": true,
-     "start": 7.885,
-     "end": 8.22
+     "start": 8.11,
+     "end": 8.44
     },
     {
      "text": "di",
      "accent": false,
-     "start": 8.235,
-     "end": 8.37
+     "start": 8.44,
+     "end": 8.5
     },
     {
      "text": "seluruh",
      "accent": false,
-     "start": 8.385,
-     "end": 8.7
+     "start": 8.5,
+     "end": 8.85
     },
     {
      "text": "dunia.",
      "accent": false,
-     "start": 8.715,
-     "end": 9.21
+     "start": 8.85,
+     "end": 9.24
     }
    ]
   ]
@@ -843,148 +843,148 @@
     {
      "text": "Tahun",
      "accent": false,
-     "start": 0.29,
-     "end": 0.51
+     "start": 0.27,
+     "end": 0.63
     },
     {
      "text": "dua",
      "accent": true,
-     "start": 0.525,
+     "start": 0.63,
      "end": 0.78
     },
     {
      "text": "ribu",
      "accent": true,
-     "start": 0.795,
-     "end": 1.1
+     "start": 0.78,
+     "end": 1.03
     },
     {
      "text": "dua",
      "accent": true,
-     "start": 1.115,
-     "end": 1.35
+     "start": 1.03,
+     "end": 1.22
     },
     {
      "text": "puluh",
      "accent": true,
-     "start": 1.365,
-     "end": 1.64
+     "start": 1.22,
+     "end": 1.42
     },
     {
      "text": "lima,",
      "accent": true,
-     "start": 1.655,
-     "end": 1.83
+     "start": 1.42,
+     "end": 1.86
     },
     {
      "text": "Prancis",
      "accent": false,
-     "start": 2.23,
-     "end": 2.62
+     "start": 2.16,
+     "end": 2.73
     },
     {
      "text": "mengumumkan",
      "accent": false,
-     "start": 2.635,
-     "end": 3.23
+     "start": 2.73,
+     "end": 3.36
     },
     {
      "text": "golongan",
      "accent": false,
-     "start": 3.245,
-     "end": 3.67
+     "start": 3.36,
+     "end": 3.79
     },
     {
      "text": "darah",
      "accent": false,
-     "start": 3.685,
-     "end": 4
+     "start": 3.79,
+     "end": 4.07
     },
     {
      "text": "baru,",
      "accent": false,
-     "start": 4.015,
-     "end": 4.34
+     "start": 4.07,
+     "end": 4.54
     },
     {
      "text": "Gwada",
      "accent": true,
-     "start": 5.02,
-     "end": 5.31
+     "start": 4.86,
+     "end": 5.42
     },
     {
      "text": "negatif.",
      "accent": true,
-     "start": 5.325,
-     "end": 6.285
+     "start": 5.42,
+     "end": 6.06
     }
    ],
    [
     {
      "text": "Pemiliknya",
      "accent": false,
-     "start": 6.285,
-     "end": 7.21
+     "start": 6.68,
+     "end": 7.25
     },
     {
      "text": "baru",
      "accent": false,
-     "start": 7.225,
-     "end": 7.43
+     "start": 7.25,
+     "end": 7.47
     },
     {
      "text": "satu",
      "accent": true,
-     "start": 7.445,
-     "end": 7.62
+     "start": 7.47,
+     "end": 7.78
     },
     {
      "text": "perempuan,",
      "accent": true,
-     "start": 7.635,
-     "end": 8.26
+     "start": 7.78,
+     "end": 8.45
     },
     {
      "text": "dan",
      "accent": false,
-     "start": 8.78,
-     "end": 8.85
+     "start": 8.73,
+     "end": 8.93
     },
     {
      "text": "darahnya",
      "accent": false,
-     "start": 8.865,
-     "end": 9.16
+     "start": 8.93,
+     "end": 9.38
     },
     {
      "text": "hanya",
      "accent": false,
-     "start": 9.175,
-     "end": 9.58
+     "start": 9.38,
+     "end": 9.82
     },
     {
      "text": "cocok",
      "accent": false,
-     "start": 9.595,
-     "end": 9.76
+     "start": 9.82,
+     "end": 10.22
     },
     {
      "text": "dengan",
      "accent": false,
-     "start": 9.775,
-     "end": 10.11
+     "start": 10.22,
+     "end": 10.49
     },
     {
      "text": "dirinya",
      "accent": true,
-     "start": 10.125,
-     "end": 10.72
+     "start": 10.49,
+     "end": 10.82
     },
     {
      "text": "sendiri.",
      "accent": true,
-     "start": 10.735,
-     "end": 11.11
+     "start": 10.82,
+     "end": 11.37
     }
    ]
   ]
@@ -1019,94 +1019,94 @@
     {
      "text": "Jadi",
      "accent": false,
-     "start": 0.37,
-     "end": 0.69
+     "start": 0.28,
+     "end": 1.02
     },
     {
      "text": "golongan",
      "accent": false,
-     "start": 0.705,
-     "end": 1.41
+     "start": 1.02,
+     "end": 1.5
     },
     {
      "text": "darah",
      "accent": false,
-     "start": 1.425,
-     "end": 1.71
+     "start": 1.5,
+     "end": 1.92
     },
     {
      "text": "bukan",
      "accent": false,
-     "start": 1.725,
-     "end": 2.17
+     "start": 1.92,
+     "end": 2.22
     },
     {
      "text": "cuma",
      "accent": false,
-     "start": 2.185,
-     "end": 2.65
+     "start": 2.22,
+     "end": 2.5
     },
     {
      "text": "huruf",
      "accent": true,
-     "start": 2.665,
-     "end": 3.19
+     "start": 2.5,
+     "end": 2.93
     },
     {
      "text": "dan",
      "accent": false,
-     "start": 3.205,
-     "end": 3.37
+     "start": 2.93,
+     "end": 3.12
     },
     {
      "text": "plus",
      "accent": true,
-     "start": 3.385,
-     "end": 3.52
+     "start": 3.12,
+     "end": 3.31
     },
     {
      "text": "minus.",
      "accent": true,
-     "start": 3.535,
-     "end": 4.075
+     "start": 3.31,
+     "end": 3.86
     }
    ],
    [
     {
      "text": "Tulis",
      "accent": false,
-     "start": 4.075,
-     "end": 4.5
+     "start": 4.31,
+     "end": 4.59
     },
     {
      "text": "di",
      "accent": false,
-     "start": 4.515,
-     "end": 4.64
+     "start": 4.59,
+     "end": 4.67
     },
     {
      "text": "komentar:",
      "accent": false,
-     "start": 4.655,
-     "end": 5.1
+     "start": 4.67,
+     "end": 5.27
     },
     {
      "text": "golongan",
      "accent": true,
-     "start": 5.58,
-     "end": 5.84
+     "start": 5.52,
+     "end": 5.86
     },
     {
      "text": "darahmu",
      "accent": true,
-     "start": 5.855,
-     "end": 6.25
+     "start": 5.86,
+     "end": 6.2
     },
     {
      "text": "apa?",
      "accent": false,
-     "start": 6.265,
-     "end": 6.5
+     "start": 6.2,
+     "end": 6.54
     }
    ]
   ]

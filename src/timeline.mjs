@@ -52,7 +52,24 @@ function readAlign() {
  */
 export const capCards = (cap) => {
   const list = Array.isArray(cap) ? cap : String(cap).split(/(?<=[.!?])\s+/);
-  return list.map((s) => String(s).trim()).filter(Boolean);
+  return list.map((s) => String(s).replace(/\s*\|\s*/g, ' ').trim()).filter(Boolean);
+};
+
+/**
+ * Caption phrases: a '|' in a card marks where a new on-screen phrase opens.
+ * Returns, per card, the set of word indices that start a phrase.
+ */
+export const capBreaks = (cap) => {
+  const list = Array.isArray(cap) ? cap : String(cap).split(/(?<=[.!?])\s+/);
+  return list.map((s) => String(s).trim()).filter(Boolean).map((s) => {
+    const set = new Set();
+    let i = 0;
+    for (const tok of s.split(/\s+/)) {
+      if (tok === '|') set.add(i);
+      else if (tok) i++;
+    }
+    return set;
+  });
 };
 
 const cleanWord = (w) => w.replace(/\*/g, '');
@@ -107,10 +124,12 @@ export function buildTimeline() {
     // are what the voice actually did (see scripts/align-cards.mjs).
     if (aligned && Array.isArray(aligned.cards) && aligned.cards.length === sentences.length) {
       const num = (v) => Math.max(0, Math.min(audioDur - 0.02, v));
+      const breaks = capBreaks(sc.cap);
       aligned.cards.forEach((card, ci) => {
-        const ws = card.map((w) => ({
+        const ws = card.map((w, wi) => ({
           text: w.text,
           accent: w.accent,
+          brk: breaks[ci]?.has(wi) || false,
           start: +(voOffset + num(w.start)).toFixed(3),
           end: +(voOffset + num(w.end)).toFixed(3),
         }));

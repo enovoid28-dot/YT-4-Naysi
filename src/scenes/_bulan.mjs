@@ -2077,8 +2077,9 @@ export function stamp(ctx, s, x, y, p, { color = '#C8322A', size = 44, rot = -0.
   txt(ctx, s, 0, size * 0.34, { size, font: F.mono6, color, track: 4, align: 'center' });
   const r = rng(77);
   ctx.fillStyle = paper;
+  const baseA = ctx.globalAlpha / Math.max(1e-3, clamp(q * 3));
   for (let i = 0; i < 70; i++) {
-    ctx.globalAlpha = a * 0.5;
+    ctx.globalAlpha = baseA * 0.5;
     ctx.fillRect(-w / 2 + r() * w, -h / 2 + r() * h, 1.5 + r() * 3, 1.5 + r() * 2.5);
   }
   ctx.restore();
