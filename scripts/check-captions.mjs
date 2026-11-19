@@ -7,11 +7,11 @@
  *   1. every caption card is a verbatim slice of the scene's VO text,
  *   2. cards are in order, never overlapping, none shorter than 0.5 s,
  *   3. no card is missing the words the voice says between two cards,
- *   4. every on-screen phrase fits in two lines at the caption size.
+ *   4. every card fits in three lines without dropping below 64 px type.
  */
 import { createCanvas } from '@napi-rs/canvas';
 import { ensureFonts, F } from '../src/engine/fonts.mjs';
-import { buildSubs } from '../src/engine/subs.mjs';
+import { buildKaraoke } from '../src/engine/karaoke.mjs';
 import { buildTimeline } from '../src/timeline.mjs';
 import { W } from '../src/engine/draw.mjs';
 import { SCENES } from '../src/script.mjs';
@@ -57,9 +57,12 @@ for (const scene of tl.scenes) {
     if (t1 - t0 < 0.5) fail(`${scene.id}.${i + 1} terlalu singkat (${(t1 - t0).toFixed(2)} s)`);
     prevEnd = t1;
   });
-  // every on-screen phrase must fit in two lines at the fixed caption size
-  buildSubs(ctx, scene).forEach((ph, k) => {
-    if (ph.lines > 2) fail(`${scene.id} frasa ${k + 1} butuh ${ph.lines} baris: ${ph.words.map((w) => w.text).join(' ')}`);
+  // every card must fit the karaoke block: three lines, type not below 64 px
+  buildKaraoke(ctx, scene).forEach((c, k) => {
+    const text = c.lines.map((l) => l.words.map((w) => w.text).join(' ')).join(' / ');
+    console.log(`  ${scene.id}.${k + 1}  ${c.size}px  ${text}`);
+    if (c.lines.length > 3) fail(`${scene.id}.${k + 1} butuh ${c.lines.length} baris`);
+    if (c.size < 64) fail(`${scene.id}.${k + 1} huruf terlalu kecil (${c.size}px)`);
   });
 }
 

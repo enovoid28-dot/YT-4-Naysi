@@ -27,7 +27,7 @@ const LIT = [127, 388, 512, 743, 961];
 // the card's geometry (typingCard lays its wells out like this)
 const CW = 1180;
 const CX = 720;
-const CY = 1150;
+const CY = 860;
 const CH = CW * 0.46;
 const WX = (i) => CX - CW / 2 + (CW / 3) * (i + 0.5);
 const WY = CY - CH / 2 + CH * 0.56;
@@ -50,8 +50,8 @@ function drawScene(ctx, t, scene, g = {}) {
 
   /* ------------------------------- card 0 -------------------------------- */
   if (pX < 0.999) {
-    desk(ctx, t, cam, { tone: 'slate', lamp: [720, 1250], lampR: 1300, rgb: '190,220,255' });
-    rays(ctx, 720, 560, { t, rgb: '200,230,255', a: 0.05, n: 6, len: 1900, spread: 0.55, seed: 4 });
+    desk(ctx, t, cam, { tone: 'slate', lamp: [720, 1000], lampR: 1300, rgb: '190,220,255' });
+    rays(ctx, 720, 280, { t, rgb: '200,230,255', a: 0.05, n: 6, len: 1900, spread: 0.55, seed: 4 });
     ctx.save();
     ctx.translate(0, -200 * pX);
     ctx.globalAlpha *= 1 - pX;
@@ -81,15 +81,15 @@ function drawScene(ctx, t, scene, g = {}) {
       dropper(ctx, px, py, 300, { p: P(t, tDrop[0] - 0.6, 0.4), drop, fall: 170, rot: 0.0 });
 
       // the two answers
-      const ys = 1650;
+      const ys = 1330;
       const pPos = P(t, tPos - 0.15, 0.45);
       const pNeg = P(t, tNeg - 0.15, 0.45);
       if (pPos > 0) glow(ctx, 450, ys, 340, MINT, 0.3 * eo(pPos));
       if (pNeg > 0) glow(ctx, 990, ys, 340, CORAL, 0.26 * eo(pNeg));
       well(ctx, 450, ys, 104, { p: pPos, seed: 61, t, agg: eo(P(t, tPos + 0.05, 0.8)) });
       well(ctx, 990, ys, 104, { p: pNeg, seed: 62, t, agg: 0 });
-      tag(ctx, 450, 1880, P(t, tPos - 0.05, 0.45), { big: 'RH +', color: '#7FF0CF', size: 104, glowRgb: MINT, sub: 'MENGGUMPAL' });
-      tag(ctx, 990, 1880, P(t, tNeg - 0.05, 0.45), { big: 'RH −', color: '#FFA090', size: 104, glowRgb: CORAL, sub: 'TETAP HALUS' });
+      tag(ctx, 450, 1560, P(t, tPos - 0.05, 0.45), { big: 'RH +', color: '#7FF0CF', size: 104, glowRgb: MINT, sub: 'MENGGUMPAL' });
+      tag(ctx, 990, 1560, P(t, tNeg - 0.05, 0.45), { big: 'RH −', color: '#FFA090', size: 104, glowRgb: CORAL, sub: 'TETAP HALUS' });
     });
     ctx.restore();
   }
@@ -98,18 +98,18 @@ function drawScene(ctx, t, scene, g = {}) {
   if (pX > 0.001) {
     ctx.save();
     ctx.globalAlpha *= pX;
-    studio(ctx, t, cam, { top: '#03141A', bottom: '#010608', rgb: '60,200,180', spot: [720, 1150], spotR: 1150, spotA: 0.22, seed: 4 });
+    studio(ctx, t, cam, { top: '#03141A', bottom: '#010608', rgb: '60,200,180', spot: [720, 900], spotR: 1150, spotA: 0.22, seed: 4 });
     ctx.translate(0, 200 * (1 - pX));
     plane(ctx, cam, 0.85, () => {
       const mw = 1240;
       const mh = (mw * 17.6) / 47;
       const pMap = eo(P(t, tIndo - 0.35, 0.7));
-      indoMap(ctx, 720 - mw / 2, 860, mw, mh, pMap, { a: 0.95 });
+      indoMap(ctx, 720 - mw / 2, 470, mw, mh, pMap, { a: 0.95 });
       // a thousand people; five are rhesus negative
-      dotGrid(ctx, 181, 1400, 50, 20, 22, 4.8, P(t, t1 + 0.1, 1.3), { lit: LIT, litRgb: MINT, litP: P(t, tNeg2 - 0.1, 0.6), t, base: 'rgba(214,230,248,0.46)' });
-      txt(ctx, 'TIAP TITIK = 1 ORANG', 1259, 1366, { size: 22, font: F.mono6, color: HUD.sub, align: 'right', track: 3, alpha: eo(P(t, t1 + 0.6, 0.5)) });
+      dotGrid(ctx, 181, 1010, 50, 20, 22, 4.8, P(t, t1 + 0.1, 1.3), { lit: LIT, litRgb: MINT, litP: P(t, tNeg2 - 0.1, 0.6), t, base: 'rgba(214,230,248,0.46)' });
+      txt(ctx, 'TIAP TITIK = 1 ORANG', 1259, 976, { size: 22, font: F.mono6, color: HUD.sub, align: 'right', track: 3, alpha: eo(P(t, t1 + 0.6, 0.5)) });
     });
-    tag(ctx, 720, 1960, P(t, tKurang - 0.1, 0.5), {
+    tag(ctx, 720, 1580, P(t, tKurang - 0.1, 0.5), {
       big: '< 1%', color: '#7FF0CF', size: 150, glowRgb: MINT, sub: '± 1,2 JUTA ORANG',
     });
     void tPersen;

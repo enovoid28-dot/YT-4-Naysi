@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Episode 25 v2 — "Golongan darah yang cuma dimiliki satu orang."
+# Episode 25 v3 — "Golongan darah yang cuma dimiliki satu orang."
 # Six chunks of 90 fps in two parallel lanes, concatenated losslessly, then
 # muxed with the FLAC mix (AAC) without a second video encode.
 set -euo pipefail
@@ -27,7 +27,7 @@ wait $B
 : > out/concat25.txt
 for f in $(ls out/q25_*.mp4 | sort -t_ -k2 -n); do printf "file '%s'\n" "$PWD/$f" >> out/concat25.txt; done
 "$FF" -y -hide_banner -loglevel error -f concat -safe 0 -i out/concat25.txt -c copy out/video25_silent.mp4
-OUT="out/Golongan Darah yang Cuma Dimiliki Satu Orang - Naysi - 1440x2560 90fps v2.mp4"
+OUT="out/Golongan Darah yang Cuma Dimiliki Satu Orang - Naysi - 1440x2560 90fps v3.mp4"
 "$FF" -y -hide_banner -loglevel error -i out/video25_silent.mp4 -i assets/audio/mix-ep25.flac \
   -af volume=-0.7dB \
   -map 0:v:0 -map 1:a:0 -c:v copy \

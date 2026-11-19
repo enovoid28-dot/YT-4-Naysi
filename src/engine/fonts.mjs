@@ -35,7 +35,7 @@ export const F = {
   display7: 'BG700',
   mono: 'MONO4',
   mono6: 'MONO6',
-  // captions (the reference style): spoken word bold, the rest regular
+  // Figtree: labels and tags of the illustrated kit (src/scenes/_lab.mjs)
   sub: 'FG700',
   subDim: 'FG400',
   fig6: 'FG600',

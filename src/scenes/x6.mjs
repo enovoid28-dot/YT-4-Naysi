@@ -35,17 +35,17 @@ function drawScene(ctx, t, scene, g = {}) {
 
   /* ------------------------------- card 0 -------------------------------- */
   if (pX < 0.999) {
-    desk(ctx, t, cam, { tone: 'slate', lamp: [720, 1450], lampR: 1300, rgb: '215,200,255' });
-    rays(ctx, 720, 560, { t, rgb: '215,200,255', a: 0.05, n: 6, len: 1900, spread: 0.5, seed: 7 });
+    desk(ctx, t, cam, { tone: 'slate', lamp: [720, 1100], lampR: 1300, rgb: '215,200,255' });
+    rays(ctx, 720, 240, { t, rgb: '215,200,255', a: 0.05, n: 6, len: 1900, spread: 0.5, seed: 7 });
     ctx.save();
     ctx.globalAlpha *= 1 - pX;
     ctx.translate(-260 * pX, 0);
     const yr = (tt) => 2000 + 25 * io(P(tt, tTahun, tLima + 0.3 - tTahun));
-    tag(ctx, 720, 990, P(t, 0.2, 0.5), {
+    tag(ctx, 720, 480, P(t, 0.2, 0.5), {
       count: { value: yr(t), prev: yr(t - 1 / 90), digits: 4 }, color: '#E2D2FF', size: 150, glowRgb: VIO,
     });
     plane(ctx, cam, 0.8, () => {
-      paperCard(ctx, 720, 1590, 1040, 700, P(t, 0.3, 0.6), {
+      paperCard(ctx, 720, 1170, 1040, 700, P(t, 0.3, 0.6), {
         rot: -0.025, paper: '#F1EEE7', ruled: false, age: 0.16, flag: ['#28449C', '#F4F4F4', '#D8322E'],
         lines: [
           { s: 'SIARAN PERS · PRANCIS', y: 78, size: 28, font: F.mono6, color: 'rgba(40,32,40,0.6)', track: 3, p: P(t, tPr - 0.1, 0.5) },
@@ -56,9 +56,9 @@ function drawScene(ctx, t, scene, g = {}) {
           { s: 'Ditemukan pada satu pasien dari Guadeloupe.', y: 520, size: 32, font: F.sub, color: 'rgba(40,32,40,0.7)', track: 0, p: P(t, tNeg + 0.3, 0.7) },
         ],
       });
-      ribbon(ctx, 300, 1905, 'BARU', P(t, tBaru - 0.05, 0.45), { size: 40, rot: -0.08, color: '#B98CFF', dark: '#6F48C0', ink: '#1A0E2E' });
-      inkStamp(ctx, 'GWADA −', 1000, 1850, P(t, tNeg - 0.1, 0.45), { color: '#6A35C8', size: 60, rot: -0.12 });
-      ringBurst(ctx, 1000, 1850, P(t, tNeg + 0.08, 0.9), { r: 260, color: VIO });
+      ribbon(ctx, 300, 1485, 'BARU', P(t, tBaru - 0.05, 0.45), { size: 40, rot: -0.08, color: '#B98CFF', dark: '#6F48C0', ink: '#1A0E2E' });
+      inkStamp(ctx, 'GWADA −', 1000, 1430, P(t, tNeg - 0.1, 0.45), { color: '#6A35C8', size: 60, rot: -0.12 });
+      ringBurst(ctx, 1000, 1430, P(t, tNeg + 0.08, 0.9), { r: 260, color: VIO });
     });
     void tGw;
     ctx.restore();
@@ -68,24 +68,24 @@ function drawScene(ctx, t, scene, g = {}) {
   if (pX > 0.001) {
     ctx.save();
     ctx.globalAlpha *= pX;
-    studio(ctx, t, cam, { top: '#130A20', bottom: '#05030A', rgb: '170,130,255', spot: [720, 1100], spotR: 1100, spotA: 0.26, seed: 6 });
+    studio(ctx, t, cam, { top: '#130A20', bottom: '#05030A', rgb: '170,130,255', spot: [720, 760], spotR: 1100, spotA: 0.26, seed: 6 });
     ctx.translate(260 * (1 - pX), 0);
     plane(ctx, cam, 0.85, () => {
       const pP = eo(P(t, t1, 0.6));
       const pulse = 1 + 0.05 * Math.sin(t * 4);
-      rays(ctx, 720, 760, { t, rgb: VIO, a: 0.09 * pP, n: 7, len: 700, spread: 0.6, seed: 8 });
-      glow(ctx, 720, 1080, 460 * pulse, VIO, 0.5 * pP);
+      rays(ctx, 720, 420, { t, rgb: VIO, a: 0.09 * pP, n: 7, len: 700, spread: 0.6, seed: 8 });
+      glow(ctx, 720, 740, 460 * pulse, VIO, 0.5 * pP);
       for (let i = 0; i < 6; i++) {
         const x = 720 + (i < 3 ? -1 : 1) * (200 + (i % 3) * 140);
-        personIcon(ctx, x, 1250, 190, { fem: i % 2 === 1, color: 'rgba(214,230,248,0.24)', a: pP * eo(P(t, t1 + 0.1 + i * 0.05, 0.5)) });
+        personIcon(ctx, x, 910, 190, { fem: i % 2 === 1, color: 'rgba(214,230,248,0.24)', a: pP * eo(P(t, t1 + 0.1 + i * 0.05, 0.5)) });
       }
-      personIcon(ctx, 720, 1270, 320, { fem: true, color: '#D2B8FF', a: pP });
-      ringBurst(ctx, 720, 1110, P(t, tSatu - 0.05, 0.9), { r: 280, color: VIO });
+      personIcon(ctx, 720, 930, 320, { fem: true, color: '#D2B8FF', a: pP });
+      ringBurst(ctx, 720, 770, P(t, tSatu - 0.05, 0.9), { r: 280, color: VIO });
       // her blood against five donors and herself
       const labels = ['DONOR 1', 'DONOR 2', 'DONOR 3', 'DONOR 4', 'DONOR 5', 'DIRINYA'];
       const CW = 1280;
       const CH = CW * 0.46;
-      const cy = 1680;
+      const cy = 1330;
       const wx = (i) => 720 - CW / 2 + (CW / 6) * (i + 0.5);
       const wy = cy - CH / 2 + CH * 0.56;
       typingCard(ctx, 720, cy, CW, {

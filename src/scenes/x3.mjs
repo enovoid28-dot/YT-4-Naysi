@@ -21,7 +21,7 @@ const TW = 172;
 const TH = 110;
 const GAP = 14;
 const X0 = (1440 - (COLS * TW + (COLS - 1) * GAP)) / 2;
-const Y0 = 880;
+const Y0 = 470;
 const tileC = (i) => [X0 + (i % COLS) * (TW + GAP) + TW / 2, Y0 + Math.floor(i / COLS) * (TH + GAP) + TH / 2];
 
 // the antigen cloud: 371 glyphs (the antigens inside the systems, ISBT 2025)
@@ -37,7 +37,7 @@ const CLOUD = (() => {
     out.push({
       home,
       x: 720 + Math.cos(an) * rad * 620,
-      y: 1310 + Math.sin(an) * rad * 430,
+      y: 900 + Math.sin(an) * rad * 430,
       kind: kinds[Math.floor(r() * kinds.length)],
       rot: r() * TAU,
       s: 9 + r() * 7,
@@ -57,8 +57,8 @@ function drawScene(ctx, t, scene, g = {}) {
   const tTiga = wordT(scene, 1, 4);
   const tPuluh = wordT(scene, 1, 7);
 
-  studio(ctx, t, cam, { top: '#061420', bottom: '#020509', rgb: '70,170,255', spot: [720, 1320], spotR: 1200, spotA: 0.26, floor: 0.55, seed: 3 });
-  rays(ctx, 720, 560, { t, rgb: '150,210,255', a: 0.055, n: 7, len: 1900, spread: 0.7, seed: 3 });
+  studio(ctx, t, cam, { top: '#061420', bottom: '#020509', rgb: '70,170,255', spot: [720, 950], spotR: 1200, spotA: 0.26, floor: 0.55, seed: 3 });
+  rays(ctx, 720, 240, { t, rgb: '150,210,255', a: 0.055, n: 7, len: 1900, spread: 0.7, seed: 3 });
 
   const pBig = eo(P(t, tA - 0.2, 0.5));
   const pDrop = io(P(t, tSatu - 0.1, 0.7));
@@ -70,7 +70,7 @@ function drawScene(ctx, t, scene, g = {}) {
   const wave = (i, c, r) => (wv > 0 && wv < 1 ? Math.max(0, 1 - Math.abs((c + r) / 12 - wv * 1.3 + 0.15) * 6) : 0);
   const k = punch(t, tSatu + 0.5, 0.035, 0.5);
 
-  zoomed(ctx, k, 720, 1300, () => plane(ctx, cam, 0.8, () => {
+  zoomed(ctx, k, 720, 900, () => plane(ctx, cam, 0.8, () => {
     systemTiles(ctx, X0, Y0, COLS, TW, TH, GAP, pWall, {
       hi: {
         0: [ICE, pDrop >= 1 ? 1 : 0],
@@ -91,7 +91,7 @@ function drawScene(ctx, t, scene, g = {}) {
       const [sx, sy] = tileC(0);
       const kk = lerp(3.4, 1, pDrop);
       const x = lerp(720, sx, pDrop);
-      const y = lerp(1300, sy, pDrop);
+      const y = lerp(900, sy, pDrop);
       ctx.save();
       ctx.translate(x, y);
       ctx.scale(kk * (0.85 + 0.15 * pBig), kk * (0.85 + 0.15 * pBig));
@@ -120,13 +120,13 @@ function drawScene(ctx, t, scene, g = {}) {
   // the counters: systems, then antigens
   const aC = 1 - eo(P(t, t1 - 0.3, 0.3));
   const n = (tt) => 1 + 48 * io(P(tt, tEmpat - 0.1, tSistem + 0.3 - tEmpat));
-  tag(ctx, 720, 1930, P(t, tEmpat - 0.15, 0.5), {
+  tag(ctx, 720, 1560, P(t, tEmpat - 0.15, 0.5), {
     count: { value: n(t), prev: n(t - 1 / 90), digits: 2 }, small: 'SISTEM', color: '#9FE8FF', size: 150, glowRgb: ICE, a: aC,
     sub: 'DIAKUI ISBT · 2026',
   });
   const val = (tt) => 360 * io(P(tt, t1 + 0.05, tPuluh + 0.3 - t1 - 0.05));
   const pGt = eo(P(t, tPuluh + 0.3, 0.35));
-  tag(ctx, 720, 1930, P(t, t1 - 0.05, 0.5), {
+  tag(ctx, 720, 1560, P(t, t1 - 0.05, 0.5), {
     pre: '>', count: { value: val(t), prev: val(t - 1 / 90), digits: 3, preA: pGt }, small: 'PENANDA', color: '#FFD27A', size: 150,
     glowRgb: '255,198,84', sub: 'ANTIGEN TERCATAT',
   });

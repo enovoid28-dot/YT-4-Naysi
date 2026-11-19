@@ -27,12 +27,12 @@ function drawScene(ctx, t, scene, g = {}) {
 
   vessel(ctx, t, cam, { seed: 1, flow, dark: 0.1 });
   grade(ctx, { tint: '#6B4BC8', k: 0.22 });
-  rays(ctx, 720, 640, { t, rgb: VIO, a: 0.075 + 0.04 * done, n: 8, len: 2000, spread: 0.6, seed: 2 });
+  rays(ctx, 720, 380, { t, rgb: VIO, a: 0.075 + 0.04 * done, n: 8, len: 2000, spread: 0.6, seed: 2 });
 
   const pC = io(P(t, t1 - 0.25, 0.85));
   const cx = 720 + Math.sin(t * 0.5) * 14;
-  const cy = lerp(1380, 1000, pC) + Math.cos(t * 0.6) * 10;
-  const d = lerp(680, 330, pC) * (1 + 0.012 * Math.sin(t * 2.2));
+  const cy = lerp(1060, 700, pC) + Math.cos(t * 0.6) * 10;
+  const d = lerp(700, 360, pC) * (1 + 0.012 * Math.sin(t * 2.2));
   const tilt = 24 + 12 * Math.sin(t * 0.42);
   const rot = 0.55 + t * 0.07;
   const k = punch(t, tSatu - 0.06, 0.05, 0.55) * (1 - 0.03 * pC);
@@ -53,7 +53,7 @@ function drawScene(ctx, t, scene, g = {}) {
 
   // card 0: the in-art label
   const aTag = 1 - eo(P(t, t1 - 0.3, 0.3));
-  tag(ctx, 720, 1960, P(t, tSatu - 0.05, 0.5), {
+  tag(ctx, 720, 1560, P(t, tSatu - 0.05, 0.5), {
     big: '1', small: 'ORANG', color: '#D6BEFF', glowRgb: VIO, a: aTag, size: 150,
     sub: 'DARI ± 8,2 MILIAR MANUSIA',
   });
@@ -64,7 +64,7 @@ function drawScene(ctx, t, scene, g = {}) {
     names.forEach((s, i) => {
       const x = 720 + (i - 1.5) * 315;
       const st = P(t, tL[i] - 0.02, 0.28);
-      bloodBag(ctx, x, 1640 + Math.sin(t * 1.3 + i) * 4, 400, {
+      bloodBag(ctx, x, 1290 + Math.sin(t * 1.3 + i) * 4, 410, {
         type: s, p: P(t, tBukan - 0.3 + i * 0.09, 0.55), t: t + i * 0.7,
         strike: st, dim: 0.75 * eo(P(t, tL[i] + 0.1, 0.4)), tube: i % 2 ? -1 : 1,
       });

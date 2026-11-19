@@ -8,7 +8,7 @@ import { W, H, FPS, C, M, txt, tracking, linGrad, hexA, fillRR } from './engine/
 import {
   initFilm, drawGrain, drawVignette, drawScrim, drawFlash, drawFilm,
 } from './engine/film.mjs';
-import { buildSubs, drawSubs } from './engine/subs.mjs';
+import { buildKaraoke, drawKaraoke } from './engine/karaoke.mjs';
 import { buildTimeline, sceneAt } from './timeline.mjs';
 import { SCENES, BRAND, SERIES } from './script.mjs';
 import { clamp, lerp, EASE } from './engine/anim.mjs';
@@ -26,7 +26,7 @@ const timeline = buildTimeline();
 const subLayouts = new Map();
 
 function buildLayouts(ctx) {
-  for (const s of timeline.scenes) subLayouts.set(s.id, buildSubs(ctx, s));
+  for (const s of timeline.scenes) subLayouts.set(s.id, buildKaraoke(ctx, s));
 }
 
 function drawChapter(ctx, scene, local, idxGlobal) {
@@ -154,6 +154,11 @@ function drawFrame(ctx, frame) {
   ctx.restore();
   ctx.restore();
 
+  // captions: karaoke cards low in the frame over a soft scrim, under the
+  // chrome and the film pass like the rest of the picture
+  mark('scrim', () => drawScrim(ctx, 1520, 0.8));
+  mark('captions', () => drawKaraoke(ctx, subLayouts.get(scene.id), local));
+
   mark('chrome', () => drawChrome(ctx, scene, local, t, index));
 
   // cuts: the incoming scene opens under a short veil of its own ink
@@ -168,23 +173,6 @@ function drawFrame(ctx, frame) {
     }
   }
   mark('film', () => drawFilm(ctx, frame));
-
-  // captions: the reference style, high and centred, word by word, over a
-  // soft shade so the half-white words stay readable on any picture; drawn
-  // after the film pass so the type stays clean like an overlay graphic
-  mark('captions', () => {
-    ctx.save();
-    const sg = ctx.createLinearGradient(0, 290, 0, 850);
-    sg.addColorStop(0, 'rgba(4,2,6,0)');
-    sg.addColorStop(0.25, 'rgba(4,2,6,0.46)');
-    sg.addColorStop(0.72, 'rgba(4,2,6,0.46)');
-    sg.addColorStop(1, 'rgba(4,2,6,0)');
-    ctx.fillStyle = sg;
-    ctx.fillRect(0, 290, W, 560);
-    ctx.restore();
-    drawSubs(ctx, subLayouts.get(scene.id), local);
-  });
-
 
   // global fades
   // open on picture almost at once: the first second decides the swipe

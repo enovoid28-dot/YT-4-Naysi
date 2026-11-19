@@ -40,9 +40,9 @@ function drawScene(ctx, t, scene, g = {}) {
   if (pX < 0.999) {
     vessel(ctx, t, cam, { seed: 5, flow, dark: 0.12 });
     grade(ctx, { tint: '#FFB23A', k: 0.08 + 0.22 * kGold });
-    rays(ctx, 720, 600, { t, rgb: '255,214,140', a: 0.04 + 0.07 * kGold, n: 9, len: 2000, spread: 0.65, seed: 6 });
+    rays(ctx, 720, 320, { t, rgb: '255,214,140', a: 0.04 + 0.07 * kGold, n: 9, len: 2000, spread: 0.65, seed: 6 });
     const cx = 720 + Math.sin(t * 0.5) * 10;
-    const cy = 1360 + Math.cos(t * 0.55) * 8;
+    const cy = 1040 + Math.cos(t * 0.55) * 8;
     const d = 720 * (1 - 0.15 * pX);
     const tilt = 26 + 10 * Math.sin(t * 0.4);
     const rot = 0.2 + t * 0.06;
@@ -60,7 +60,7 @@ function drawScene(ctx, t, scene, g = {}) {
       sparks(ctx, cx, cy, t, { n: 70, rgb: '255,214,120', r: d * 0.8, a: kGold, seed: 5, rise: 140, born: tEmas });
     }));
     vesselFront(ctx, t, cam, { seed: 5, flow, a: 0.5 });
-    tag(ctx, 720, 1960, P(t, tNol - 0.05, 0.5), {
+    tag(ctx, 720, 1590, P(t, tNol - 0.05, 0.5), {
       big: 'RH-NULL', color: '#FFD98A', size: 130, glowRgb: GOLD, sub: '0 PENANDA RHESUS', a: 1 - pX,
     });
     void tDarah;
@@ -70,12 +70,12 @@ function drawScene(ctx, t, scene, g = {}) {
   if (pX > 0.001) {
     ctx.save();
     ctx.globalAlpha *= pX;
-    studio(ctx, t, cam, { top: '#160F05', bottom: '#050302', rgb: '255,180,80', spot: [720, 1220], spotR: 1150, spotA: 0.2, seed: 5 });
+    studio(ctx, t, cam, { top: '#160F05', bottom: '#050302', rgb: '255,180,80', spot: [720, 900], spotR: 1150, spotA: 0.2, seed: 5 });
     plane(ctx, cam, 0.85, () => {
       const mw = 1240;
       const mh = mw * 0.3965;
       const mx = 100;
-      const my = 960;
+      const my = 600;
       worldDots(ctx, mx, my, mw, mh, P(t, t1 - 0.05, 0.9), { a: 1, base: 0.42, sweep: P(t, tSel - 0.3, 1.2) * 1.2 - 0.1, sweepRgb: GOLD });
       const nShow = Math.floor(CARRIERS.length * eo(P(t, tKurang, tLima + 0.6 - tKurang)));
       for (let i = 0; i < nShow; i++) {
@@ -92,7 +92,7 @@ function drawScene(ctx, t, scene, g = {}) {
     });
     const val = (tt) => 50 * io(P(tt, tKurang - 0.05, tLima + 0.5 - tKurang));
     const pLt = eo(P(t, tLima + 0.45, 0.4));
-    tag(ctx, 720, 1730, P(t, tKurang - 0.12, 0.5), {
+    tag(ctx, 720, 1400, P(t, tKurang - 0.12, 0.5), {
       pre: '<', count: { value: val(t), prev: val(t - 1 / 90), digits: 2, preA: pLt }, small: 'ORANG', color: '#FFD98A', size: 150,
       glowRgb: GOLD, sub: 'PERTAMA DITEMUKAN · 1961',
     });

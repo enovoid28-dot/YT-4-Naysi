@@ -32,11 +32,11 @@ function drawScene(ctx, t, scene, g = {}) {
 
   vessel(ctx, t, cam, { seed: 7, flow, dark: 0.12 + 0.2 * pX });
   grade(ctx, { tint: '#FF8A3D', k: 0.14 });
-  rays(ctx, 720, 600, { t, rgb: '255,200,150', a: 0.05 + 0.04 * eo(coat), n: 8, len: 2000, spread: 0.6, seed: 9 });
+  rays(ctx, 720, 300, { t, rgb: '255,200,150', a: 0.05 + 0.04 * eo(coat), n: 8, len: 2000, spread: 0.6, seed: 9 });
 
   const cx = 720 + Math.sin(t * 0.45) * 12;
-  const cy = lerp(1320, 1080, pX);
-  const d = lerp(660, 470, pX);
+  const cy = lerp(1000, 760, pX);
+  const d = lerp(680, 480, pX);
   const tilt = 22 + 10 * Math.sin(t * 0.4);
   const rot = -0.2 + t * 0.06;
   const k = punch(t, tMinus + 0.12, 0.045, 0.5);
@@ -57,17 +57,17 @@ function drawScene(ctx, t, scene, g = {}) {
   row.forEach(([s, at], i) => {
     const x = 720 + (i - 2.5) * 205;
     const fall = EASE.inQuad(P(t, t1 - 0.25 + i * 0.03, 0.5));
-    sticker(ctx, s, x, 1930 + fall * 260, 124, P(t, at, 0.4), {
+    sticker(ctx, s, x, 1560 + fall * 160, 124, P(t, at, 0.4), {
       color: TYPE_COL[s], rot: (i % 2 ? 1 : -1) * 0.06, a: aB,
     });
   });
 
   // card 1: the comment box, and the answers people will give
-  commentBox(ctx, 720, 1640, 1240, P(t, tKom - 0.35, 0.55), {
+  commentBox(ctx, 720, 1330, 1240, P(t, tKom - 0.35, 0.55), {
     typed: P(t, tKom + 0.1, 1.2), s: 'Golongan darahku: ', t, send: 0,
   });
   ['A', 'B', 'AB', 'O'].forEach((s, i) => {
-    sticker(ctx, `${s}?`, 720 + (i - 1.5) * 270, 1930, 118, P(t, tGol + i * 0.1, 0.4), {
+    sticker(ctx, `${s}?`, 720 + (i - 1.5) * 270, 1580, 118, P(t, tGol + i * 0.1, 0.4), {
       color: TYPE_COL[s], rot: (i % 2 ? 1 : -1) * 0.05,
     });
   });
