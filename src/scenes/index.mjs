@@ -1,10 +1,11 @@
-import x1 from './x1.mjs';
-import x2 from './x2.mjs';
-import x3 from './x3.mjs';
-import x4 from './x4.mjs';
-import x5 from './x5.mjs';
-import x6 from './x6.mjs';
-import x7 from './x7.mjs';
+import y1 from './y1.mjs';
+import y2 from './y2.mjs';
+import y3 from './y3.mjs';
+import y4 from './y4.mjs';
+import y5 from './y5.mjs';
+import y6 from './y6.mjs';
+import y7 from './y7.mjs';
+import y8 from './y8.mjs';
 
-// Episode 25 ("Golongan darah yang cuma dimiliki satu orang") — keys x1..x7 on the DARAH kit.
-export default { x1, x2, x3, x4, x5, x6, x7 };
+// Episode 26 ("Tanpa Einstein, GPS di HP-mu nyasar sepuluh kilometer sehari") — keys y1..y8 on the GPS kit.
+export default { y1, y2, y3, y4, y5, y6, y7, y8 };

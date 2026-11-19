@@ -1858,9 +1858,10 @@ export function dimension(ctx, x0, y0, x1, y1, p, { label = '', color = HUD.line
   ctx.stroke();
   if (label) {
     const tw = measure(ctx, label, size, F.mono6, 3) + 28;
-    ctx.fillStyle = 'rgba(5,8,14,0.92)';
+    const la = clamp((q - 0.5) / 0.5);
+    ctx.fillStyle = `rgba(5,8,14,${0.92 * la})`;
     ctx.fillRect(mx - tw / 2, my - size * 0.8, tw, size * 1.6);
-    txt(ctx, label, mx, my + size * 0.36, { size, font: F.mono6, color: HUD.text, track: 3, align: 'center', alpha: clamp((q - 0.5) / 0.5) });
+    txt(ctx, label, mx, my + size * 0.36, { size, font: F.mono6, color: HUD.text, track: 3, align: 'center', alpha: la });
   }
   ctx.restore();
 }

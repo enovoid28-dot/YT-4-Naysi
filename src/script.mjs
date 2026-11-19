@@ -1,94 +1,104 @@
-// Episode 25 — "Golongan darah yang cuma dimiliki satu orang."
+// Episode 26 — "Tanpa Einstein, GPS di HP-mu nyasar sepuluh kilometer sehari."
 //
-// Blood groups, told from the inside out: a vessel full of cells and one that
-// does not match anyone; the markers on a red cell that decide the type; the
-// 49 systems behind the four letters; rhesus and how rare negative is here;
-// golden blood with no rhesus markers at all; and Gwada negative, the 48th
-// system (2025), found in one woman whose blood matches only her own.
+// Relativity you carry in your pocket, told as one chain of numbers: a phone
+// finds itself by timing signals from atomic clocks in orbit; one microsecond
+// of error is three hundred metres; the satellite's speed slows its clock by
+// seven microseconds a day, the weaker gravity up there speeds it up by
+// forty-five; the net thirty-eight microseconds is more than ten kilometres;
+// the 1977 test satellite measured it; today every clock leaves the ground
+// already tuned slow.
 //
 // Sources (Nov 2026):
-//   ABO discovered by Karl Landsteiner, 1901 (Nobel 1930); Rh 1940.
-//   ISBT: 49 blood group systems since June 2026 (JAMA, ISBT 049, ratified
-//     at ISBT Kuala Lumpur, announced Sep 2026); PIGZ (048, antigen GWADA)
-//     June 2025; 371 antigens inside the 48 systems of 2025, three more in
-//     the August 2026 release.
-//   Gwada negative: EFS announcement June 2025, ratified at ISBT Milan; one
-//     known carrier, a woman from Guadeloupe (antibody found 2011, aged 54;
-//     exome sequencing 2019, PIGZ mutation inherited from both parents);
-//     "the only person in the world who is compatible with herself".
-//   Rh null ("golden blood"): first described 1961 in an Aboriginal
-//     Australian woman; fewer than 50 people known; ~9 active donors.
-//   Indonesia: rhesus negative under 1% of the population (BPS 2010, about
-//     1.2 million people; Komunitas Rhesus Negatif Indonesia, PMI).
+//   R. W. Pogge, "Real-World Relativity: The GPS Navigation System" (Ohio
+//     State University): ~14,000 km/h, ~20,000 km up; special relativity
+//     -7 us/day, general relativity +45 us/day, net +38 us/day; uncorrected,
+//     errors would accumulate at about 10 km per day.
+//   38 us x c = 11.4 km of range ("lebih dari sepuluh kilometer").
+//   N. Ashby, "Relativity in the Global Positioning System", Living Reviews
+//     in Relativity 6 (2003): NTS-2, launched 23 June 1977, first caesium
+//     clock in orbit; some doubted the effect, so a frequency synthesizer
+//     was built in; ~20 days uncorrected, measured +442.5 vs predicted
+//     +446.5 parts in 10^12 (about 1 %). Satellite clocks are set before
+//     launch to 10.22999999543 MHz instead of 10.23 MHz.
 //
 // Copy rules: two sentences per scene == two caption cards, so every card is
 // a measured block of audio and can never drift. Numbers spelled the way
 // the voice says them.
 
-export const SERIES = 'NAYSI · TUBUH';
+export const SERIES = 'NAYSI · FISIKA';
 export const BRAND = 'NAYSI';
 
 export const SCENES = [
   {
-    id: 's1', key: 'x1', label: 'SATU ORANG', index: '01', theme: 'dark',
-    vo: 'Ada golongan darah yang cuma dimiliki satu orang di dunia. Dan itu bukan A, B, AB, atau O.',
+    id: 's1', key: 'y1', label: 'NYASAR', index: '01', theme: 'dark',
+    vo: 'Tanpa teori Einstein, GPS di HP-mu bisa nyasar sepuluh kilometer setiap hari. Masalahnya bukan sinyal, tapi waktu.',
     cap: [
-      'Ada golongan darah yang cuma dimiliki satu orang di dunia.',
-      'Dan itu bukan A, B, AB, atau O.',
+      'Tanpa teori Einstein, GPS di HP-mu bisa nyasar sepuluh kilometer setiap hari.',
+      'Masalahnya bukan sinyal, tapi waktu.',
     ],
-    pad: 1.0,
+    lead: 0.36,
+    pad: 0.55,
   },
   {
-    id: 's2', key: 'x2', label: 'PENANDA', index: '02', theme: 'dark',
-    vo: 'Golongan darah ditentukan oleh penanda kecil di permukaan sel darah merah. Sistem A, B, O ditemukan tahun seribu sembilan ratus satu.',
+    id: 's2', key: 'y2', label: 'JAM ATOM', index: '02', theme: 'dark',
+    vo: 'Satelit GPS membawa jam atom dan terus memancarkan waktunya. HP-mu menghitung jarak dari lama perjalanan sinyal itu.',
     cap: [
-      'Golongan darah ditentukan oleh penanda kecil di permukaan sel darah merah.',
-      'Sistem A, B, O ditemukan tahun seribu sembilan ratus satu.',
+      'Satelit GPS membawa jam atom dan terus memancarkan waktunya.',
+      'HP-mu menghitung jarak dari lama perjalanan sinyal itu.',
     ],
-    pad: 1.0,
+    pad: 0.55,
   },
   {
-    id: 's3', key: 'x3', label: '49 SISTEM', index: '03', theme: 'dark',
-    vo: 'Tapi A, B, O cuma satu dari empat puluh sembilan sistem golongan darah. Penandanya sudah lebih dari tiga ratus enam puluh.',
+    id: 's3', key: 'y3', label: '300 METER', index: '03', theme: 'dark',
+    vo: 'Sinyal itu melaju secepat cahaya. Jadi selisih satu mikrodetik saja, posisimu meleset tiga ratus meter.',
     cap: [
-      'Tapi A, B, O cuma satu dari empat puluh sembilan sistem golongan darah.',
-      'Penandanya sudah lebih dari tiga ratus enam puluh.',
+      'Sinyal itu melaju secepat cahaya.',
+      'Jadi selisih satu mikrodetik saja, posisimu meleset tiga ratus meter.',
     ],
-    pad: 1.0,
+    pad: 0.55,
   },
   {
-    id: 's4', key: 'x4', label: 'RHESUS', index: '04', theme: 'dark',
-    vo: 'Yang paling sering dicek selain itu adalah rhesus, positif atau negatif. Di Indonesia, rhesus negatif kurang dari satu persen.',
+    id: 's4', key: 'y4', label: 'KECEPATAN', index: '04', theme: 'dark',
+    vo: 'Satelitnya melesat hampir empat belas ribu kilometer per jam. Menurut relativitas khusus, jamnya melambat tujuh mikrodetik per hari.',
     cap: [
-      'Yang paling sering dicek selain itu adalah rhesus, positif atau negatif.',
-      'Di Indonesia, rhesus negatif kurang dari satu persen.',
+      'Satelitnya melesat hampir empat belas ribu kilometer per jam.',
+      'Menurut relativitas khusus, jamnya melambat tujuh mikrodetik per hari.',
     ],
-    pad: 1.0,
+    pad: 0.55,
   },
   {
-    id: 's5', key: 'x5', label: 'DARAH EMAS', index: '05', theme: 'dark',
-    vo: 'Lalu ada darah emas, rhesus nol, tanpa satu pun penanda rhesus. Pemiliknya kurang dari lima puluh orang di seluruh dunia.',
+    id: 's5', key: 'y5', label: 'GRAVITASI', index: '05', theme: 'dark',
+    vo: 'Tapi di ketinggian dua puluh ribu kilometer, gravitasi lebih lemah. Menurut relativitas umum, waktu di sana justru berjalan lebih cepat, empat puluh lima mikrodetik per hari.',
     cap: [
-      'Lalu ada darah emas, rhesus nol, tanpa satu pun penanda rhesus.',
-      'Pemiliknya kurang dari lima puluh orang di seluruh dunia.',
+      'Tapi di ketinggian dua puluh ribu kilometer, gravitasi lebih lemah.',
+      'Menurut relativitas umum, waktu di sana justru berjalan lebih cepat, empat puluh lima mikrodetik per hari.',
     ],
-    pad: 1.0,
+    pad: 0.55,
   },
   {
-    id: 's6', key: 'x6', label: 'GWADA', index: '06', theme: 'dark',
-    vo: 'Tahun dua ribu dua puluh lima, Prancis mengumumkan golongan darah baru, Gwada negatif. Pemiliknya baru satu perempuan, dan darahnya hanya cocok dengan dirinya sendiri.',
+    id: 's6', key: 'y6', label: '38 MIKRODETIK', index: '06', theme: 'dark',
+    vo: 'Hasilnya, jam satelit maju tiga puluh delapan mikrodetik setiap hari. Dikali kecepatan cahaya, itu lebih dari sepuluh kilometer.',
     cap: [
-      'Tahun dua ribu dua puluh lima, Prancis mengumumkan golongan darah baru, Gwada negatif.',
-      'Pemiliknya baru satu perempuan, dan darahnya hanya cocok dengan dirinya sendiri.',
+      'Hasilnya, jam satelit maju tiga puluh delapan mikrodetik setiap hari.',
+      'Dikali kecepatan cahaya, itu lebih dari sepuluh kilometer.',
     ],
-    pad: 1.0,
+    pad: 0.55,
   },
   {
-    id: 's7', key: 'x7', label: 'GOLONGANMU', index: '07', theme: 'dark',
-    vo: 'Jadi golongan darah bukan cuma huruf dan plus minus. Tulis di komentar: golongan darahmu apa?',
+    id: 's7', key: 'y7', label: 'UJI 1977', index: '07', theme: 'dark',
+    vo: 'Tahun seribu sembilan ratus tujuh puluh tujuh, masih ada yang ragu. Lalu satelit uji mengukurnya, hasilnya nyaris persis hitungan Einstein.',
     cap: [
-      'Jadi golongan darah bukan cuma huruf dan plus minus.',
-      'Tulis di komentar: golongan darahmu apa?',
+      'Tahun seribu sembilan ratus tujuh puluh tujuh, masih ada yang ragu.',
+      'Lalu satelit uji mengukurnya, hasilnya nyaris persis hitungan Einstein.',
+    ],
+    pad: 0.55,
+  },
+  {
+    id: 's8', key: 'y8', label: 'DISETEL', index: '08', theme: 'dark',
+    vo: 'Kini jam satelit sengaja disetel lebih lambat sebelum diluncurkan. Pernah nyasar gara-gara GPS? Tulis di komentar.',
+    cap: [
+      'Kini jam satelit sengaja disetel lebih lambat sebelum diluncurkan.',
+      'Pernah nyasar gara-gara GPS? Tulis di komentar.',
     ],
     pad: 1.8,
   },

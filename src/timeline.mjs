@@ -90,7 +90,8 @@ export function buildTimeline() {
     const sc = SCENES[i];
     // the take is decoded from mp3 in memory; there is no wav on disk
     const audioDur = decodeVo(sc.id).duration;
-    const voOffset = i === 0 ? 0.60 : 0.22;
+    // the take starts this long after the cut (the hook can speak sooner)
+    const voOffset = sc.lead ?? (i === 0 ? 0.60 : 0.22);
     const dur = voOffset + audioDur + sc.pad;
 
     const sentences = capCards(sc.cap);

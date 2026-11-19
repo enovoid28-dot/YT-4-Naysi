@@ -41,9 +41,21 @@ def clean(word):
     return re.sub(r"[^a-z0-9\-]", '', word.lower())
 
 
+# loanwords the letter rules would get wrong
+EXCEPT = {'einstein': ['AY', 'N', 'S', 'T', 'AY', 'N']}
+
+
 def g2p(word, spelled):
+    # hyphenated words (HP-mu, gara-gara): each part on its own, acronyms spelled
+    if '-' in word:
+        out = []
+        for part in [x for x in word.split('-') if x]:
+            out += g2p(part, bool(re.fullmatch(r"[A-Z]{1,4}", part)))
+        return out or ['AH']
     w = clean(word)
-    if spelled and len(w) <= 2 and w.isalpha():
+    if w in EXCEPT:
+        return list(EXCEPT[w])
+    if spelled and len(w) <= 4 and w.isalpha():
         out = []
         for ch in w:
             out += LETTERS[ch]
@@ -77,7 +89,7 @@ def tokens(text):
         core = re.sub(r"[^\w\-]", '', raw)
         if not core:
             continue
-        spelled = bool(re.fullmatch(r"[A-Z]{1,2}", core))
+        spelled = bool(re.fullmatch(r"[A-Z]{1,4}", core))
         out.append((raw, core, spelled))
     return out
 
