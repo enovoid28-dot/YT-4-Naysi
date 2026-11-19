@@ -48,6 +48,8 @@ EXCEPT = {
     'scoville': ['S', 'K', 'OW', 'V', 'IH', 'L'],
     'greenland': ['G', 'R', 'IY', 'N', 'L', 'AH', 'N', 'D'],
     'mercator': ['M', 'AH', 'R', 'K', 'AA', 'T', 'OW', 'R'],
+    # caption "Léger", spoken "Leje" (/ləˈʒe/)
+    'lger': ['L', 'AH', 'ZH', 'EY'],
 }
 
 

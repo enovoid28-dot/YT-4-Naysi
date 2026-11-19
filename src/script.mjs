@@ -1,122 +1,185 @@
-// Episode 29 — "Indonesia lebih lebar dari Amerika Serikat."
+// Episode 30 — "Jejak bom nuklir di dalam gigimu."
 //
-// Why the map on every classroom wall makes Indonesia look small: Mercator's
-// 1569 sailing chart stretches the world away from the equator (area x4 at
-// 60 degrees), so Greenland rivals Africa (really 14x smaller) and Europe is
-// drawn at more than twice its size, while Indonesia, on the equator, is
-// drawn almost true. Moved at true size, Sabang-Merauke runs from Ireland past
-// the Caspian Sea; its width beats the United States coast to coast; and on
-// 4 September 2026 the UN General Assembly backed equal-area maps 164 to 1,
-// the one "no" being the United States.
+// The bomb pulse: cosmic rays make a trickle of carbon-14 that every living
+// thing absorbs; the 5,730-year half-life is far too slow to date modern
+// objects, but the 500+ atmospheric nuclear tests of 1945-1980 doubled the
+// atmospheric C-14 (peak 1963, ~2x natural), and the post-treaty decline drew
+// a sharp time signature into everything that grew since. Forensics reads it:
+// a Venetian cubist canvas attributed to Fernand Léger, "1913", whose cotton
+// was harvested in 1959; elephant ivory dated against the 1989 global ban;
+// tooth enamel, locked from childhood, gives a birth year within ~1.5 years
+// and identified victims of the 2004 Indian Ocean tsunami; our own cells keep
+// their birth C-14 (gut 5 days, fat ~10%/yr, over half of heart cells from
+// birth). The Suess effect — fossil carbon with no C-14 — is now diluting the
+// bomb signature back toward pre-1950 values, switching the clock off.
 //
-// Sources (Nov 2026):
-//   Mercator, "Nova et Aucta Orbis Terrae Descriptio" (1569); Mercator scale
-//     factor sec(lat), area factor sec^2(lat): x2.00 at 45 deg, x2.42 at 50,
-//     x4.00 at 60, x10.5 at 72 (Greenland).
-//   Areas: Africa 30.37 million km2, Greenland 2.17 million km2 (UN 2017
-//     figures as quoted by Visual Capitalist, Jan 2026) -> about 14x.
-//   Indonesia: 6 N - 11 S, 95 E - 141 E, ~5,120 km east-west (CIA / standard
-//     references); our Natural Earth 1:50m geometry: 5,175 km between the
-//     extreme points, Sabang-Merauke 5,248 km great-circle.
-//   Contiguous United States: ~2,800 mi (4,500 km) coast to coast; Natural
-//     Earth: 124.7 W - 67.0 E, 4,544 km along 45 N, 4,322 km great-circle.
-//   True-size move (rotation on the sphere, no Mercator rescale): Sabang set on
-//     west Ireland (9.7 W, 52.8 N) puts Merauke at 59.3 E, 40.1 N
-//     (Turkmenistan, east of the Caspian Sea).
-//   UN General Assembly, "Correct the Map: rebalancing global cartographic
-//     representation ... particularly Africa", A/RES/80/307 (draft A/80/L.104),
-//     adopted 4 Sept 2026: 164 in favour, 1 against (United States),
-//     6 abstentions; non-binding; encourages Equal Earth and other equal-area
-//     projections (Šavrič, Patterson & Jenny 2018).
+// Sources (verified Nov 2026): UNSCEAR / CTBTO test counts (528 atmospheric
+// 1945-1980, last atmospheric 1980, PTBT 1963); bomb pulse ~200 pMC NH peak
+// 1963, decline ~4%/yr; Caforio et al. 2014 Eur. Phys. J. Plus 129:6 (INFN
+// Florence AMS, Léger-attributed canvas post-1959); Uno et al. 2013 PNAS
+// 110(29) (ivory vs 1989 CITES ban); Spalding et al. 2005 Nature 437:333
+// (enamel birth dating 1.3±1.0 yr, tsunami IDs); Spalding 2008 Cell / Bergmann
+// 2009 Science (fat ~10%/yr, cardiomyocyte renewal); Hua et al. 2022
+// Radiocarbon 64(4) & SUERC (post-2020 <100 pMC, Suess effect).
 //
 // Copy rules: one caption card per sentence, long sentences split at the
 // comma, numbers spelled the way the voice says them.
 
-export const SERIES = 'NAYSI · ATLAS';
+export const SERIES = 'NAYSI · FORENSIK';
 export const BRAND = 'NAYSI';
 
-// finishing pass for this episode: atlas sheets dealt onto a dark chart table
-export const STYLE = { look: 'atlas', scrimY: 1786, scrimA: 0.55 };
+// finishing pass for this episode: lab dossiers on a dark cutting-mat desk
+export const STYLE = { look: 'dossier', scrimY: 1786, scrimA: 0.55 };
 
 export const SCENES = [
   {
-    id: 's1', key: 'g1', label: 'LEBIH LEBAR', index: '01', theme: 'dark',
-    vo: 'Indonesia itu lebih lebar dari Amerika Serikat. Tapi di peta dunia yang kita lihat sejak SD, Indonesia terlihat kecil.',
+    id: 's1', key: 'd1', label: 'JEJAK BOM', index: '01', theme: 'dark',
+    vo: 'Di lapisan terkeras gigimu, tersimpan jejak bom nuklir Perang Dingin. Jejak yang sama kini membongkar lukisan palsu miliaran rupiah. Ini cerita jam atom di tubuh kita.',
     cap: [
-      'Indonesia itu lebih lebar dari Amerika Serikat.',
-      'Tapi di peta dunia yang kita lihat sejak SD, Indonesia terlihat kecil.',
+      'Di lapisan terkeras gigimu,',
+      'tersimpan jejak bom nuklir Perang Dingin.',
+      'Jejak yang sama kini membongkar lukisan palsu miliaran rupiah.',
+      'Ini cerita jam atom di tubuh kita.',
     ],
-    lead: 0.36,
-    pad: 0.42,
+    lead: 0.4,
+    pad: 0.6,
   },
   {
-    id: 's2', key: 'g2', label: 'MERCATOR', index: '02', theme: 'dark',
-    vo: 'Penyebabnya proyeksi Mercator, peta buatan tahun seribu lima ratus enam puluh sembilan untuk para pelaut. Bumi yang bulat dibentangkan jadi persegi panjang. Makin jauh dari khatulistiwa, wilayah makin digelembungkan.',
+    id: 's2', key: 'd2', label: 'SINAR KOSMIK', index: '02', theme: 'dark',
+    vo: 'Semuanya dimulai dari luar angkasa. Sinar kosmik membombardir atmosfer, melahirkan karbon radioaktif yang menyerap ke tumbuhan, lalu ke setiap rantai makanan. Termasuk ke tubuhmu, tanpa berhenti.',
     cap: [
-      'Penyebabnya proyeksi Mercator,',
-      'peta buatan tahun seribu lima ratus enam puluh sembilan untuk para pelaut.',
-      'Bumi yang bulat dibentangkan jadi persegi panjang.',
-      'Makin jauh dari khatulistiwa, wilayah makin digelembungkan.',
+      'Semuanya dimulai dari luar angkasa.',
+      'Sinar kosmik membombardir atmosfer,',
+      'melahirkan karbon radioaktif yang menyerap ke tumbuhan,',
+      'lalu ke setiap rantai makanan.',
+      'Termasuk ke tubuhmu, tanpa berhenti.',
     ],
-    pad: 0.42,
+    pad: 0.6,
   },
   {
-    id: 's3', key: 'g3', label: 'DISTORSI', index: '03', theme: 'dark',
-    vo: 'Di garis lintang enam puluh derajat, luasnya sudah empat kali lipat. Greenland terlihat sebesar Afrika, padahal Afrika empat belas kali lebih luas.',
+    id: 's3', key: 'd3', label: 'WAKTU PARUH', index: '03', theme: 'dark',
+    vo: 'Karbon ini meluruh dengan waktu paruh lima ribu tujuh ratus tiga puluh tahun. Sempurna untuk mumi purba, tapi hampir buta untuk benda modern berusia puluhan tahun.',
     cap: [
-      'Di garis lintang enam puluh derajat, luasnya sudah empat kali lipat.',
-      'Greenland terlihat sebesar Afrika,',
-      'padahal Afrika empat belas kali lebih luas.',
+      'Karbon ini meluruh dengan waktu paruh',
+      'lima ribu tujuh ratus tiga puluh tahun.',
+      'Sempurna untuk mumi purba,',
+      'tapi hampir buta untuk benda modern berusia puluhan tahun.',
     ],
-    pad: 0.42,
+    pad: 0.6,
   },
   {
-    id: 's4', key: 'g4', label: 'KHATULISTIWA', index: '04', theme: 'dark',
-    vo: 'Indonesia ada tepat di khatulistiwa, jadi ukurannya hampir tidak digelembungkan. Sementara Eropa tampil lebih dari dua kali luas aslinya.',
+    id: 's4', key: 'd4', label: 'UJI ATMOSFER', index: '04', theme: 'dark',
+    vo: 'Lalu manusia menambahkannya sendiri. Selama tiga puluh lima tahun sejak seribu sembilan ratus empat puluh lima, lebih dari lima ratus ledakan nuklir atmosfer menggandakan karbon radioaktif di udara.',
     cap: [
-      'Indonesia ada tepat di khatulistiwa,',
-      'jadi ukurannya hampir tidak digelembungkan.',
-      'Sementara Eropa tampil lebih dari dua kali luas aslinya.',
+      'Lalu manusia menambahkannya sendiri.',
+      'Selama tiga puluh lima tahun sejak',
+      'seribu sembilan ratus empat puluh lima,',
+      'lebih dari lima ratus ledakan nuklir atmosfer',
+      'menggandakan karbon radioaktif di udara.',
     ],
-    pad: 0.42,
+    pad: 0.6,
   },
   {
-    id: 's5', key: 'g5', label: 'UKURAN ASLI', index: '05', theme: 'dark',
-    vo: 'Sekarang pindahkan Indonesia ke Eropa dengan ukuran aslinya. Dari Sabang sampai Merauke, ia membentang dari Irlandia sampai melewati Laut Kaspia.',
+    id: 's5', key: 'd5', label: 'PUNCAK', index: '05', theme: 'dark',
+    vo: 'Puncaknya seribu sembilan ratus enam puluh tiga: kadarnya nyaris dua kali lipat alamiah. Setelah uji atmosfer dilarang, kurvanya turun cepat, meninggalkan tanda waktu yang tajam.',
     cap: [
-      'Sekarang pindahkan Indonesia ke Eropa dengan ukuran aslinya.',
-      'Dari Sabang sampai Merauke,',
-      'ia membentang dari Irlandia sampai melewati Laut Kaspia.',
+      'Puncaknya seribu sembilan ratus enam puluh tiga:',
+      'kadarnya nyaris dua kali lipat alamiah.',
+      'Setelah uji atmosfer dilarang,',
+      'kurvanya turun cepat,',
+      'meninggalkan tanda waktu yang tajam.',
     ],
-    pad: 0.42,
+    pad: 0.6,
   },
   {
-    id: 's6', key: 'g6', label: 'AMERIKA', index: '06', theme: 'dark',
-    vo: 'Lebarnya sekitar lima ribu seratus kilometer. Amerika Serikat dari pantai ke pantai cuma sekitar empat ribu lima ratus.',
+    id: 's6', key: 'd6', label: 'KANVAS PALSU', index: '06', theme: 'dark',
+    vo: 'Sebuah lukisan kubisme karya Fernand Leje, katanya dibuat tahun seribu sembilan ratus tiga belas. Tapi serat kanvasnya bercerita lain: kapasnya dipanen tahun seribu sembilan ratus lima puluh sembilan.',
     cap: [
-      'Lebarnya sekitar lima ribu seratus kilometer.',
-      'Amerika Serikat dari pantai ke pantai cuma sekitar empat ribu lima ratus.',
+      'Sebuah lukisan kubisme karya Fernand Léger,',
+      'katanya dibuat tahun seribu sembilan ratus tiga belas.',
+      'Tapi serat kanvasnya bercerita lain:',
+      'kapasnya dipanen tahun seribu sembilan ratus lima puluh sembilan.',
     ],
-    pad: 0.42,
+    pad: 0.6,
   },
   {
-    id: 's7', key: 'g7', label: 'PBB', index: '07', theme: 'dark',
-    vo: 'Empat September lalu, PBB mendukung pemakaian peta yang ukurannya sesuai luas asli. Seratus enam puluh empat negara setuju. Yang menolak cuma satu: Amerika Serikat.',
+    id: 's7', key: 'd7', label: 'GADING ILEGAL', index: '07', theme: 'dark',
+    vo: 'Gading gajah penyelundupan pun ketahuan. Jam yang sama mengungkap tahun gajah itu mati. Jika hasilnya setelah larangan global sembilan belas delapan puluh sembilan, itu gading buruan ilegal.',
     cap: [
-      'Empat September lalu,',
-      'PBB mendukung pemakaian peta yang ukurannya sesuai luas asli.',
-      'Seratus enam puluh empat negara setuju.',
-      'Yang menolak cuma satu: Amerika Serikat.',
+      'Gading gajah penyelundupan pun ketahuan.',
+      'Jam yang sama mengungkap tahun gajah itu mati.',
+      'Jika hasilnya setelah larangan global',
+      'sembilan belas delapan puluh sembilan,',
+      'itu gading buruan ilegal.',
     ],
-    pad: 0.42,
+    pad: 0.6,
   },
   {
-    id: 's8', key: 'g8', label: 'PULAUMU', index: '08', theme: 'dark',
-    vo: 'Jadi, Indonesia tidak sekecil yang kamu kira. Kamu tinggal di pulau mana? Tulis di komentar.',
+    id: 's8', key: 'd8', label: 'TERKUNCI', index: '08', theme: 'dark',
+    vo: 'Kembali ke gigimu. Lapisan keras pembungkus gigi terbentuk saat kamu masih kecil, lalu terkunci selamanya. Berbeda dengan tulang yang terus membongkar pasang dirinya sepanjang hidup.',
     cap: [
-      'Jadi, Indonesia tidak sekecil yang kamu kira.',
-      'Kamu tinggal di pulau mana? Tulis di komentar.',
+      'Kembali ke gigimu.',
+      'Lapisan keras pembungkus gigi terbentuk',
+      'saat kamu masih kecil, lalu terkunci selamanya.',
+      'Berbeda dengan tulang yang terus',
+      'membongkar pasang dirinya sepanjang hidup.',
     ],
-    pad: 1.8,
+    pad: 0.6,
+  },
+  {
+    id: 's9', key: 'd9', label: 'TAHUN LAHIR', index: '09', theme: 'dark',
+    vo: 'Maka tahun lahirmu tercatat di sana, akurat sampai satu koma lima tahun. Setelah tsunami Samudra Hindia dua ribu empat, cara ini membantu memberi nama para korban.',
+    cap: [
+      'Maka tahun lahirmu tercatat di sana,',
+      'akurat sampai satu koma lima tahun.',
+      'Setelah tsunami Samudra Hindia dua ribu empat,',
+      'cara ini membantu memberi nama para korban.',
+    ],
+    pad: 0.6,
+  },
+  {
+    id: 's10', key: 'd10', label: 'UMUR SEL', index: '10', theme: 'dark',
+    vo: 'Jam yang sama membocorkan umur sel-selmu. Sel usus berumur lima hari; sel lemak diganti sepuluh persen per tahun. Dan separuh sel jantungmu bawaan sejak lahir.',
+    cap: [
+      'Jam yang sama membocorkan umur sel-selmu.',
+      'Sel usus berumur lima hari;',
+      'sel lemak diganti sepuluh persen per tahun.',
+      'Dan separuh sel jantungmu bawaan sejak lahir.',
+    ],
+    pad: 0.6,
+  },
+  {
+    id: 's11', key: 'd11', label: 'JAM PADAM', index: '11', theme: 'dark',
+    vo: 'Namun ada satu batas: sejak manusia membakar batu bara dan minyak, karbon purba mengencerkan jejak bom di udara. Untuk bahan yang tumbuh sekarang, jam ini perlahan kehilangan ketepatannya.',
+    cap: [
+      'Namun ada satu batas:',
+      'sejak manusia membakar batu bara dan minyak,',
+      'karbon purba mengencerkan jejak bom di udara.',
+      'Untuk bahan yang tumbuh sekarang,',
+      'jam ini perlahan kehilangan ketepatannya.',
+    ],
+    pad: 0.6,
+  },
+  {
+    id: 's12', key: 'd12', label: 'KALENDER RAHASIA', index: '12', theme: 'dark',
+    vo: 'Jadi ledakan bom yang dulu menakutkan dunia, justru meninggalkan kalender rahasia di dalam gigi kita, di kanvas lukisan, dan di setiap sel tubuh. Sains membaca jam itu, dan menangkap pemalsu yang kira dirinya aman.',
+    cap: [
+      'Jadi ledakan bom yang dulu menakutkan dunia,',
+      'justru meninggalkan kalender rahasia',
+      'di dalam gigi kita, di kanvas lukisan,',
+      'dan di setiap sel tubuh.',
+      'Sains membaca jam itu,',
+      'dan menangkap pemalsu yang kira dirinya aman.',
+    ],
+    pad: 0.6,
+  },
+  {
+    id: 's13', key: 'd13', label: 'KOMENTAR', index: '13', theme: 'dark',
+    vo: 'Fakta mana yang paling membuatmu terperangah? Tulis di komentar, dan ikuti Naysi untuk sains sehari-hari berikutnya.',
+    cap: [
+      'Fakta mana yang paling membuatmu terperangah?',
+      'Tulis di komentar, dan ikuti Naysi untuk sains sehari-hari berikutnya.',
+    ],
+    pad: 2.2,
   },
 ];

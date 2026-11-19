@@ -26,8 +26,10 @@
     "render:ep27": "bash scripts/render-ep27.sh",
     "audio:ep28": "VO_EP=ep28 node scripts/audio-ep28.mjs",
     "audio:ep29": "VO_EP=ep29 node scripts/audio-ep29.mjs",
+    "audio:ep30": "VO_EP=ep30 node scripts/audio-ep30.mjs",
     "render:ep28": "bash scripts/render-ep28.sh",
-    "render:ep29": "bash scripts/render-ep29.sh"
+    "render:ep29": "bash scripts/render-ep29.sh",
+    "render:ep30": "bash scripts/render-ep30.sh"
   },
   "repository": {
     "type": "git",

@@ -1,12 +1,17 @@
-import * as g1 from './g1.mjs';
-import * as g2 from './g2.mjs';
-import * as g3 from './g3.mjs';
-import * as g4 from './g4.mjs';
-import * as g5 from './g5.mjs';
-import * as g6 from './g6.mjs';
-import * as g7 from './g7.mjs';
-import * as g8 from './g8.mjs';
+import * as d1 from './d1.mjs';
+import * as d2 from './d2.mjs';
+import * as d3 from './d3.mjs';
+import * as d4 from './d4.mjs';
+import * as d5 from './d5.mjs';
+import * as d6 from './d6.mjs';
+import * as d7 from './d7.mjs';
+import * as d8 from './d8.mjs';
+import * as d9 from './d9.mjs';
+import * as d10 from './d10.mjs';
+import * as d11 from './d11.mjs';
+import * as d12 from './d12.mjs';
+import * as d13 from './d13.mjs';
 
-// Episode 29 ("Indonesia lebih lebar dari Amerika Serikat") — keys g1..g8 on
-// the atlas kit (src/scenes/_atlas.mjs).
-export default { g1, g2, g3, g4, g5, g6, g7, g8 };
+// Episode 30 ("Jejak bom nuklir di dalam gigimu") — keys d1..d13 on the
+// dossier kit (src/scenes/_dossier.mjs).
+export default { d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13 };

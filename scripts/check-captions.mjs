@@ -31,8 +31,12 @@ const fail = (msg) => {
   console.log('  ✗ ' + msg);
 };
 
+// words the voice spells phonetically for the TTS while the caption shows the
+// real spelling (one token for one token, so timings stay honest)
+const SPOKEN_AS = { leje: 'léger' };
+
 for (const sc of SCENES) {
-  const vo = norm(sc.vo).join(' ');
+  const vo = norm(sc.vo).map((w) => SPOKEN_AS[w] || w).join(' ');
   const cards = capCards(sc.cap);
   const cap = cards.map(norm).flat().join(' ');
   const ok = vo === cap;

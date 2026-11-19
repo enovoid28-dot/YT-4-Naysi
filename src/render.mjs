@@ -15,6 +15,7 @@ import { SCENES, BRAND, SERIES } from './script.mjs';
 import * as SCRIPT from './script.mjs';
 import { clamp, lerp, EASE, noise1 } from './engine/anim.mjs';
 import sceneMap from './scenes/index.mjs';
+import { D_DEAL as DOSSIER_DEAL } from './scenes/_dossier.mjs';
 import { ffmpegPath } from './engine/ffmpeg.mjs';
 
 const args = process.argv.slice(2);
@@ -32,6 +33,9 @@ const STYLE = SCRIPT.STYLE || {};
 // 'atlas' (episode 29): printed atlas sheets dealt onto a chart table; it
 // shares the print finishing and replaces the plate swap with the deal
 const ATLAS = STYLE.look === 'atlas';
+// 'dossier' (episode 30): lab dossiers dealt onto a dark cutting mat; like
+// atlas it draws two layers per scene and moves one table camera at the end
+const DOSSIER = STYLE.look === 'dossier';
 const PRINT = STYLE.look === 'print' || ATLAS;
 
 function buildLayouts(ctx) {
@@ -147,9 +151,9 @@ function paintScene(ctx, scene, index, local, t, frame) {
   const camDy = Math.cos(local * 0.21 + index) * 7 + by;
   const cam = { p: zp, dx: camDx * 0.55, dy: camDy * 0.55, zoom: zoom * 0.32 };
   ctx.save();
-  // (atlas: the table camera is applied once to the finished picture, see
-  // atlasCamPost, so every layer here draws on whole pixels)
-  if (!ATLAS) {
+  // (atlas/dossier: the table camera is applied once to the finished picture,
+  // see atlasCamPost, so every layer here draws on whole pixels)
+  if (!ATLAS && !DOSSIER) {
     ctx.translate(W / 2 + camDx, H / 2 + camDy);
     ctx.scale(1 + zoom, 1 + zoom);
     ctx.translate(-W / 2, -H / 2);
@@ -245,6 +249,37 @@ function atlasDeal(ctx, index, local, t, frame) {
   ctx.restore();
 }
 
+/* ----------- dossier cuts: the old sheet is pulled away as one lands ------- */
+
+/** the outgoing dossier is dragged off the mat (up-left, tilting) while the
+ *  incoming one drops in from above-right; the desk stays under both. */
+function dossierDeal(ctx, index, local, t, frame) {
+  const prev = timeline.scenes[index - 1];
+  const cur = timeline.scenes[index];
+  const u = clamp(local / DOSSIER_DEAL);
+  const e = EASE.outQuint(u);
+  ctx.save();
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = C.ink0;
+  ctx.fillRect(0, 0, W, H);
+  const base = { t, frame, cam: { p: 0, dx: 0, dy: 0, zoom: 0 } };
+  drawMod(cur, ctx, local, { ...base, index, layer: 'bg' });
+  drawMod(prev, ctx, prev.dur + local, { ...base, index: index - 1, layer: 'card', exit: u });
+  // contact shadow of the landing sheet on the mat
+  if (u < 1) {
+    const k = 1 - e;
+    ctx.save();
+    ctx.globalAlpha = 0.34 * k;
+    ctx.fillStyle = '#000';
+    ctx.translate(W / 2 + 260 * k, H / 2 - 300 * k * k);
+    ctx.rotate(-0.05 * k);
+    ctx.fillRect(-620, -780, 1240, 1560);
+    ctx.restore();
+  }
+  drawMod(cur, ctx, local, { ...base, index, layer: 'card', deal: 1 - e });
+  ctx.restore();
+}
+
 /* ------------------- print cuts: the next plate slides in ------------------ */
 
 const SWAP = 0.46;
@@ -323,12 +358,21 @@ function drawFrame(ctx, frame) {
   const t = frame / FPS;
   const { scene, index, local } = sceneAt(timeline, t);
   beginLook();
-  const dealing = ATLAS && index > 0 && local < DEAL;
-  const cam = dealing ? mark('scene', () => atlasDeal(ctx, index, local, t, frame)) : paintScene(ctx, scene, index, local, t, frame);
+  const dealWin = DOSSIER ? DOSSIER_DEAL : DEAL;
+  const dealing = (ATLAS || DOSSIER) && index > 0 && local < dealWin;
+  const cam = dealing
+    ? mark('scene', () => (DOSSIER ? dossierDeal(ctx, index, local, t, frame) : atlasDeal(ctx, index, local, t, frame)))
+    : paintScene(ctx, scene, index, local, t, frame);
   const tail = scene.dur - local;
   const last = index === timeline.scenes.length - 1;
 
-  if (PRINT) {
+  if (DOSSIER) {
+    // dossiers: the landing sheet knocks through the mat, one table camera,
+    // a light grade — no halation, no RGB split on paper
+    if (index > 0) hit(local, DOSSIER_DEAL * 0.62, 0.3, 0.22);
+    mark('shake', () => atlasCamPost(ctx, t));
+    mark('grade', () => grade(ctx, { warm: 0.05, cool: 0.03 }));
+  } else if (PRINT) {
     // printed plates: the cut is a sheet sliding over the last one; accents
     // only kick the camera; a light grade, no halation, no RGB split
     if (!ATLAS && index > 0 && local < SWAP) mark('cut', () => plateSwap(ctx, index, local, t, frame));
@@ -359,7 +403,7 @@ function drawFrame(ctx, frame) {
   mark('chrome', () => drawChrome(ctx, scene, local, t, index));
 
   // cuts: the incoming scene opens under a short veil of its own ink
-  if (index > 0 && !PRINT) {
+  if (index > 0 && !PRINT && !DOSSIER) {
     const f = Math.max(0, 1 - local / 0.16);
     if (f > 0) {
       ctx.save();
@@ -374,7 +418,7 @@ function drawFrame(ctx, frame) {
   // global fades
   // open on picture almost at once: the first second decides the swipe
   // (an atlas sheet is already on the table at frame 0: no fade at all)
-  const fadeIn = ATLAS ? 1 : clamp(t / 0.15);
+  const fadeIn = ATLAS || DOSSIER ? 1 : clamp(t / 0.15);
   const fadeOut = clamp((timeline.total - t) / 0.5);
   const a = Math.min(fadeIn, fadeOut);
   if (a < 1) {
