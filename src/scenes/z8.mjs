@@ -3,9 +3,11 @@ import { F } from '../engine/fonts.mjs';
 import { txt } from '../engine/draw.mjs';
 import { plane } from '../engine/rig.mjs';
 import { shotCam } from './_layar.mjs';
-import { wordT, mono, ringBurst, hero } from './_bulan.mjs';
+import { wordT, mono, ringBurst } from './_bulan.mjs';
 import { punch, zoomed, commentBox, sparks } from './_lab.mjs';
 import { tick, cross } from './_darah.mjs';
+import { title, monoFx, shock, streaks } from './_fx.mjs';
+import { hit } from '../engine/look.mjs';
 import { C, P, eo, io, layer, garden, slate, bird, rat, seed, sprout, chili, cobek, levelMeter } from './_cabai.mjs';
 
 // 08 — STRATEGI CABAI
@@ -20,6 +22,7 @@ const SOIL = 1250;
 const LX = 380;
 const RX = 1060;
 
+let PANEL_T = 0;
 function panel(ctx, x0, w, a, { rgb, title, on }) {
   if (a <= 0.004) return;
   ctx.save();
@@ -31,6 +34,19 @@ function panel(ctx, x0, w, a, { rgb, title, on }) {
   ctx.strokeStyle = `rgba(${rgb},${0.25 + 0.45 * on})`;
   ctx.lineWidth = 3;
   ctx.stroke();
+  // a light running along the rim while the panel is the one being told
+  if (on > 0.02) {
+    const per = 2 * (w + 1000);
+    ctx.save();
+    ctx.setLineDash([per * 0.14, per * 0.86]);
+    ctx.lineDashOffset = -((PANEL_T * 0.2) % 1) * per;
+    ctx.strokeStyle = `rgba(255,240,215,${0.85 * on})`;
+    ctx.shadowColor = `rgba(${rgb},0.9)`;
+    ctx.shadowBlur = 14;
+    ctx.lineWidth = 3.6;
+    ctx.stroke();
+    ctx.restore();
+  }
   // soil strip
   ctx.save();
   ctx.beginPath();
@@ -54,6 +70,7 @@ function panel(ctx, x0, w, a, { rgb, title, on }) {
 }
 
 function diagram(ctx, t, scene, cam) {
+  PANEL_T = t;
   const tStrat = wordT(scene, 0, 1);
   const tMam = wordT(scene, 0, 3);
   const tKunyah = wordT(scene, 0, 4);
@@ -66,8 +83,8 @@ function diagram(ctx, t, scene, cam) {
   garden(ctx, t, cam, { sun: [720, 760] });
 
   plane(ctx, cam, 1.15, () => {
-    hero(ctx, 'STRATEGI', '', 720, 400, P(t, -0.3, 0.6), { size: 170, align: 'center', color: C.bone });
-    mono(ctx, 'CARA CABAI MEMILIH PENYEBAR BIJINYA', 720, 470, { size: 30, color: C.emberHi, align: 'center', track: 3, a: eo(P(t, tStrat, 0.5)) });
+    title(ctx, 'STRATEGI', 720, 410, t, -0.22, { size: 176, colors: ['#FFFFFF', '#EAF3DC', '#A8D88A', '#3F8A3A'], side: '#0C2410', glow: '150,230,130', depth: 14, stagger: 0.04 });
+    monoFx(ctx, 'CARA CABAI MEMILIH PENYEBAR BIJINYA', 720, 478, P(t, tStrat - 0.1, 0.8), t, { size: 30, color: C.emberHi, align: 'center', track: 3, seed: 25 });
   });
 
   const onL = eo(P(t, tMam - 0.2, 0.4)) * (1 - 0.6 * eo(P(t, tBurung - 0.3, 0.4)));
@@ -100,6 +117,8 @@ function diagram(ctx, t, scene, cam) {
     const xq = P(t, tBiji - 0.05, 0.35);
     cross(ctx, LX, 870, 70, xq, { lw: 14 });
     ringBurst(ctx, LX, 870, xq, { color: C.redRgb, r: 160 });
+    shock(ctx, LX, 870, P(t, tBiji - 0.08, 0.7), { r: 300, rgb: C.redRgb, lines: 12, seed: 71 });
+    hit(t, tBiji - 0.08, 0.6);
     mono(ctx, 'BIJI HANCUR', LX, 1450, { size: 38, color: '#FF8A7A', align: 'center', track: 5, a: eo(P(t, tBiji, 0.4)) });
   });
 
@@ -170,6 +189,8 @@ function diagram(ctx, t, scene, cam) {
     const tq = P(t, tSebar + 0.1, 0.35);
     tick(ctx, RX, 870, 70, tq, { lw: 14, color: C.mint });
     ringBurst(ctx, RX, 870, tq, { color: C.mintRgb, r: 160 });
+    shock(ctx, RX, 870, P(t, tSebar - 0.05, 0.7), { r: 300, rgb: C.mintRgb, lines: 12, seed: 72 });
+    hit(t, tSebar - 0.05, 0.5);
     mono(ctx, 'BIJI TERSEBAR', RX, 1450, { size: 38, color: C.mint, align: 'center', track: 5, a: eo(P(t, tSebar + 0.1, 0.4)) });
   });
 }
@@ -186,7 +207,7 @@ function outro(ctx, t, scene, cam) {
     chili(ctx, 360, 1390, 220, { rot: 0.25, hue: 'green', bend: 0.1 });
   });
   plane(ctx, cam, 1.12, () => {
-    hero(ctx, 'LEVEL', '', 720, 450, P(t, tLevel - 0.25, 0.6), { size: 210, align: 'center', color: '#FF5A3C' });
+    title(ctx, 'LEVEL', 720, 460, t, tLevel - 0.3, { size: 222, colors: ['#FFF0C8', '#FF8A3D', '#E0301C', '#8E0E0B'], glow: '255,80,40', depth: 18 });
     mono(ctx, 'PEDASMU BERAPA?', 720, 540, { size: 46, color: C.bone, align: 'center', track: 6, a: eo(P(t, tLevel + 0.1, 0.5)), font: F.fig8 });
   });
   const lv = 10 * io(P(t, tLevel, tBerapa - tLevel + 0.9));
@@ -199,6 +220,9 @@ function outro(ctx, t, scene, cam) {
     mono(ctx, '0 · AMAN', 140, 990, { size: 30, color: 'rgba(232,226,214,0.6)', track: 4, a: eo(P(t, tLevel, 0.4)) });
     mono(ctx, '10 · EKSTREM', 1300, 990, { size: 30, color: '#FF8A7A', align: 'right', track: 4, a: eo(P(t, tLevel, 0.4)) });
     if (lv > 9.5) sparks(ctx, 720, 860, t, { n: 30, rgb: '255,170,90', r: 560, a: 0.8, seed: 12, born: tBerapa + 0.6 });
+    shock(ctx, 720, 1040, P(t, tBerapa + 0.55, 0.8), { r: 560, rgb: '255,110,70', lines: 20, seed: 73 });
+    streaks(ctx, 720, 1040, P(t, tBerapa + 0.55, 0.6), { n: 22, r: 520, rgb: '255,180,120', seed: 74 });
+    hit(t, tBerapa + 0.55, 0.85);
   });
   plane(ctx, cam, 1.06, () => {
     const typed = clamp((t - tTulis) / 1.4);
@@ -206,6 +230,8 @@ function outro(ctx, t, scene, cam) {
       typed, s: 'Level 10! Sambal rawit 20 biji', t, send: P(t, tKom + 0.9, 0.3),
     });
     sparks(ctx, 720, 1560, t, { n: 30, rgb: '255,214,120', r: 520, a: 0.5, seed: 8, born: tKom + 0.9 });
+    streaks(ctx, 1210, 1560, P(t, tKom + 0.88, 0.5), { n: 14, r: 260, rgb: '255,214,140', seed: 75 });
+    hit(t, tKom + 0.88, 0.4);
   });
 }
 

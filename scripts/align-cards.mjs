@@ -84,9 +84,12 @@ function envelope(wav) {
 }
 
 function level(env) {
+  // a tightened, compressed take is voiced almost end to end: take the floor
+  // from the quietest frames and never set the bar above 8 % of the peak
   const sorted = [...env].sort((a, b) => a - b);
-  const floor = sorted[Math.floor(sorted.length * 0.35)] || 0;
-  return Math.max(THRESH, floor * 2.2);
+  const floor = sorted[Math.floor(sorted.length * 0.1)] || 0;
+  const top = sorted[sorted.length - 1] || 1;
+  return Math.max(THRESH, Math.min(floor * 2.2, top * 0.08));
 }
 
 function voiced(env, th) {
@@ -330,9 +333,12 @@ for (const sc of SCENES) {
     });
   }
 
+  // with phonetic words the first and last word are the truth
+  const onset = exact ? Math.min(speechStart, timed[0].start) : speechStart;
+  const finish = exact ? timed[timed.length - 1].end : speechEnd;
   out[sc.id] = {
-    onset: +speechStart.toFixed(3),
-    end: +speechEnd.toFixed(3),
+    onset: +onset.toFixed(3),
+    end: +finish.toFixed(3),
     gaps: gaps.map((g) => ({ t: +g.mid.toFixed(2), len: +g.len.toFixed(2) })),
     cards,
   };

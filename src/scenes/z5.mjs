@@ -4,6 +4,8 @@ import { shotCam } from './_layar.mjs';
 import { wordT, mono, chip, ringBurst } from './_bulan.mjs';
 import { tag, punch, zoomed } from './_lab.mjs';
 import { tick } from './_darah.mjs';
+import { monoFx, shock, haze } from './_fx.mjs';
+import { hit } from '../engine/look.mjs';
 import { C, P, eo, io, layer, slate, cup, badge, porthole, tissue, capsa, micelle, beaker, leader } from './_cabai.mjs';
 
 // 05 — SUSU
@@ -48,6 +50,8 @@ function water(ctx, t, scene, cam) {
     const gx = lerp(330, 250, mv);
     cup(ctx, gx, 540, 200, 280, { liquid: 'water', level: 0.7 - 0.25 * wet, t, tilt: 0.55 * pour, a: 1 - mv });
     badge(ctx, gx, 770, 'AIR', P(t, tMinum - 0.05, 0.4), { icon: 'air', size: 46, rgb: C.waterRgb, cross: P(t, tKaps - 0.05, 0.3), a: 1 - mv });
+    shock(ctx, gx, 770, P(t, tKaps - 0.06, 0.6), { r: 220, rgb: '255,120,100', lines: 10, seed: 41, a: 1 - mv });
+    hit(t, tKaps - 0.06, 0.55);
     // the stream into the scope
     if (pour > 0.05 && wet < 0.98) {
       ctx.save();
@@ -87,7 +91,8 @@ function water(ctx, t, scene, cam) {
         }
       }, { label: 'PERMUKAAN LIDAH', mag: '× 200' });
     });
-    mono(ctx, 'MALAH MENYEBAR', pc[0], pc[1] + pr + 100, { size: 32, color: '#FF9A7A', align: 'center', track: 6, a: eo(P(t, tSebar + 0.2, 0.4)) * (1 - mv) });
+    monoFx(ctx, 'MALAH MENYEBAR', pc[0], pc[1] + pr + 100, P(t, tSebar + 0.1, 0.6), t, { size: 32, color: '#FF9A7A', align: 'center', track: 6, a: 1 - mv, seed: 14 });
+    haze(ctx, pc[0] - pr * 0.7, pc[0] + pr * 0.7, pc[1] - pr * 0.6, 420, t, { n: 5, a: 0.16 * spread * (1 - mv), rgb: '255,150,120', seed: 42 });
   });
 
   // why: oil and water
@@ -106,12 +111,14 @@ function water(ctx, t, scene, cam) {
         const f = clamp(go * 1.3 - i * 0.04);
         capsa(ctx, x + Math.sin(t * 2 + i) * 5, lerp(y0, y1, io(f)), 28, { rot: r() * TAU + t * 0.3, a: eo(q) });
       }
-      mono(ctx, 'LEMAK', bx, b.liqTop - 70, { size: 30, color: '#FFD27A', align: 'center', track: 5, a: eo(q) });
-      mono(ctx, 'AIR', bx, b.bot + 60, { size: 30, color: C.water, align: 'center', track: 5, a: eo(q) });
+      monoFx(ctx, 'LEMAK', bx, b.liqTop - 70, q, t, { size: 32, color: '#FFD27A', align: 'center', track: 5, seed: 15 });
+      monoFx(ctx, 'AIR', bx, b.bot + 62, q, t, { size: 32, color: C.water, align: 'center', track: 5, seed: 16 });
+      shock(ctx, bx, (b.liqTop + b.oilB) / 2, P(t, tLemak - 0.08, 0.6), { r: 260, rgb: C.emberRgb, lines: 10, seed: 43 });
       ringBurst(ctx, bx, (b.liqTop + b.oilB) / 2, P(t, tLemak - 0.05, 0.6), { color: C.emberRgb, r: 200 });
     }
   });
   badge(ctx, 720, 1650, 'LARUT DALAM LEMAK', P(t, tLarut - 0.1, 0.45), { icon: 'lemak', size: 48, rgb: C.emberRgb, color: '#FFD27A', glow: 0.5 });
+  hit(t, tLemak - 0.08, 0.4);
 }
 
 function milk(ctx, t, scene, cam) {
@@ -160,13 +167,16 @@ function milk(ctx, t, scene, cam) {
       mp.forEach(([x, y], i) => micelle(c, x, y, 64, { t, seed: i + 3, a: micIn }));
     }, { label: 'PERMUKAAN LIDAH', mag: '× 200' });
     leader(ctx, pc[0] - 165, pc[1] - 104, 640, 540, P(t, tKasein - 0.1, 0.4), { color: 'rgba(244,239,230,0.8)', t, a: 1 - wash });
-    mono(ctx, 'KASEIN', 640, 512, { size: 36, color: C.milk, align: 'center', track: 6, a: eo(P(t, tKasein, 0.4)) * (1 - wash) });
-    mono(ctx, 'PROTEIN SUSU', 640, 466, { size: 24, color: 'rgba(244,239,230,0.65)', align: 'center', track: 4, a: eo(P(t, tKasein + 0.1, 0.4)) * (1 - wash) });
+    monoFx(ctx, 'KASEIN', 640, 512, P(t, tKasein - 0.05, 0.5), t, { size: 38, color: C.milk, align: 'center', track: 6, a: 1 - wash, seed: 17 });
+    monoFx(ctx, 'PROTEIN SUSU', 640, 462, P(t, tKasein + 0.05, 0.6), t, { size: 28, color: 'rgba(244,239,230,0.72)', align: 'center', track: 4, a: 1 - wash, seed: 18 });
     mono(ctx, 'MENGIKAT', pc[0], pc[1] + pr + 100, { size: 32, color: C.mint, align: 'center', track: 6, a: eo(P(t, tIkat, 0.4)) * (1 - eo(P(t, tBilas - 0.1, 0.25))) });
     mono(ctx, 'TERBILAS', pc[0], pc[1] + pr + 100, { size: 32, color: C.mint, align: 'center', track: 6, a: eo(P(t, tBilas + 0.2, 0.4)) });
   });
 
   tag(ctx, 720, 1650, P(t, tAmpuh - 0.15, 0.5), { big: 'SUSU', small: 'LEBIH AMPUH DARI AIR', color: C.milk, glowRgb: C.milkRgb, size: 96 });
+  shock(ctx, 720, 1650, P(t, tAmpuh - 0.12, 0.8), { r: 520, rgb: C.milkRgb, lines: 18, seed: 44 });
+  hit(t, tAmpuh - 0.12, 0.6);
+  hit(t, tIkat - 0.05, 0.35);
   chip(ctx, 'SUSU SKIM PUN SAMA AMPUHNYA', 720, 1545, eo(P(t, tBilas + 0.4, 0.45)), { color: C.mint, size: 28 });
 }
 

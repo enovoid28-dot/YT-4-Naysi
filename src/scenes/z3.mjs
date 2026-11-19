@@ -3,8 +3,10 @@ import { F } from '../engine/fonts.mjs';
 import { txt } from '../engine/draw.mjs';
 import { plane } from '../engine/rig.mjs';
 import { shotCam } from './_layar.mjs';
-import { wordT, mono, chip, ringBurst, glass } from './_bulan.mjs';
+import { wordT, mono, chip, ringBurst } from './_bulan.mjs';
 import { tag } from './_lab.mjs';
+import { monoFx, hud, panel, shock, streaks } from './_fx.mjs';
+import { hit } from '../engine/look.mjs';
 import { C, P, eo, io, layer, micro, molecule, capsa, bilayer, channel, ions, thermo, spikes, leader } from './_cabai.mjs';
 
 // 03 — SENSOR PANAS
@@ -153,15 +155,15 @@ function dock(ctx, t, scene, cam) {
   plane(ctx, cam, 0.9, () => {
     halfChili(ctx, 790, 600, 1120, t, { glow: eo(P(t, tKap - 0.1, 0.6)) });
     leader(ctx, 520, 600, 380, 780, P(t, tKap + 0.2, 0.4), { color: 'rgba(255,214,150,0.8)', t });
-    mono(ctx, 'URAT PUTIH = PABRIK KAPSAISIN', 110, 830, { size: 30, color: C.emberHi, track: 2, a: eo(P(t, tKap + 0.4, 0.4)) });
-    mono(ctx, 'BUKAN DI BIJINYA', 110, 874, { size: 26, color: 'rgba(232,226,214,0.65)', track: 3, a: eo(P(t, tKap + 0.55, 0.4)) });
+    monoFx(ctx, 'URAT PUTIH = PABRIK KAPSAISIN', 110, 830, P(t, tKap + 0.3, 0.8), t, { size: 30, color: C.emberHi, track: 2, seed: 6 });
+    monoFx(ctx, 'BUKAN DI BIJINYA', 110, 874, P(t, tKap + 0.55, 0.6), t, { size: 26, color: 'rgba(232,226,214,0.7)', track: 3, seed: 7 });
   });
 
   // the formula, top right, draws in on "kapsaisin"
   plane(ctx, cam, 1.1, () => {
     const q = eo(P(t, tKap - 0.1, 0.5));
     molecule(ctx, 840, 330, 36, { a: q, glowK: 0.5 });
-    mono(ctx, 'KAPSAISIN · C18H27NO3', 1330, 448, { size: 26, color: '#FFB08A', align: 'right', track: 3, a: q });
+    monoFx(ctx, 'KAPSAISIN · C18H27NO3', 1330, 448, P(t, tKap, 0.8), t, { size: 28, color: '#FFB08A', align: 'right', track: 3, seed: 8 });
   });
 
   // drifting molecules, then one docks
@@ -186,12 +188,18 @@ function dock(ctx, t, scene, cam) {
     const hy = lerp(M.y - 520, py, dk);
     capsa(ctx, hx, hy, lerp(38, 28, dk), { a: eo(P(t, tCabai, 0.4)), rot: lerp(0.8, 0, dk), glow: 1 + open });
     ringBurst(ctx, px, py, P(t, tTempel + 0.15, 0.6), { color: C.orangeRgb, r: 110 });
+    shock(ctx, px, py, P(t, tTempel + 0.12, 0.6), { r: 230, rgb: C.orangeRgb, lines: 12, seed: 21 });
+    streaks(ctx, px, py, P(t, tTempel + 0.12, 0.45), { n: 14, r: 220, rgb: '255,190,120', seed: 22 });
+    hit(t, tTempel + 0.12, 0.6);
+    hud(ctx, 260, M.y + 6, 110, M.y + 210, P(t, tSensor + 0.1, 0.7), t, { label: 'MEMBRAN SARAF', sub: 'UJUNG SARAF NYERI', rgb: '150,235,220', seed: 9 });
     mono(ctx, 'MENEMPEL', px - 60, py - 80, { size: 28, color: '#FFB08A', align: 'right', track: 4, a: eo(P(t, tTempel + 0.1, 0.35)) * (1 - eo(P(t, tSensor, 0.3))) });
   });
 
   plane(ctx, cam, 1.05, () => {
     tag(ctx, 720, 1640, P(t, tSensor - 0.12, 0.5), { big: 'SENSOR PANAS', color: C.mint, glowRgb: C.mintRgb, size: 84 });
     ringBurst(ctx, M.cx, M.y, P(t, tPanas - 0.05, 0.7), { color: C.emberRgb, r: 260 });
+    shock(ctx, M.cx, M.y, P(t, tPanas - 0.08, 0.8), { r: 440, rgb: C.emberRgb, lines: 16, seed: 23 });
+    hit(t, tPanas - 0.08, 0.55);
   });
   chip(ctx, 'ADA DI SARAF LIDAHMU', 720, 1520, eo(P(t, tLidah - 0.1, 0.4)), { color: C.mint, size: 28 });
 }
@@ -222,7 +230,7 @@ function threshold(ctx, t, scene, cam) {
   // the readout
   plane(ctx, cam, 1.15, () => {
     const q = eo(P(t, t1 - 0.2, 0.5));
-    glass(ctx, 420, 300, 600, 250, q, { tint: open > 0.5 ? '255,120,90' : '120,190,200', edge: '220,240,240', fill: 0.07 });
+    panel(ctx, 420, 300, 600, 250, t, q, { rgb: open > 0.5 ? '255,120,90' : '120,210,210', fill: 0.5, trace: 0.5 + 0.5 * open });
     mono(ctx, 'SUHU', 470, 362, { size: 28, color: 'rgba(232,226,214,0.75)', track: 6, a: q });
     const s = temp.toFixed(1).replace('.', ',');
     txt(ctx, `${s} °C`, 470, 500, { size: 120, font: F.fig8, color: open > 0.5 ? '#FF6A52' : C.bone, alpha: q });
@@ -242,7 +250,7 @@ function threshold(ctx, t, scene, cam) {
     channel(ctx, cx, y, s, open, t, { glow: open, label: open > 0.5 ? 'TRPV1 · MENYALA' : 'TRPV1 · TERTUTUP', deaf: 0 });
     ions(ctx, cx, y, s, t, open);
     // nerve trace beneath
-    glass(ctx, 560, 1300, 760, 200, eo(P(t, tNyala - 0.3, 0.5)), { tint: '255,210,74', edge: '255,230,160', fill: 0.05 });
+    panel(ctx, 560, 1300, 760, 200, t, eo(P(t, tNyala - 0.3, 0.5)), { rgb: '255,210,74', fill: 0.45, trace: open, ticks: false });
     mono(ctx, 'SINYAL NYERI', 600, 1352, { size: 26, color: C.nerve, track: 5, a: eo(P(t, tNyala - 0.2, 0.5)) });
     spikes(ctx, 590, 1440, 700, 50, t, { rate: 10, seed: 3, on: open, speed: 340 });
   });
@@ -250,6 +258,9 @@ function threshold(ctx, t, scene, cam) {
   plane(ctx, cam, 1.05, () => {
     tag(ctx, 720, 1640, P(t, tTiga - 0.05, 0.5), { big: '> 43 °C', small: 'BARU MENYALA', color: '#FF7A6A', glowRgb: C.redRgb, size: 100 });
     ringBurst(ctx, 930, 960, P(t, tTiga, 0.8), { color: C.redRgb, r: 300 });
+    shock(ctx, 930, 960, P(t, tTiga - 0.04, 0.9), { r: 560, rgb: C.redRgb, lines: 20, seed: 24 });
+    streaks(ctx, 930, 960, P(t, tTiga - 0.04, 0.6), { n: 20, r: 460, rgb: '255,150,110', seed: 25 });
+    hit(t, tTiga - 0.04, 1);
   });
   chip(ctx, 'AMBANG PANAS YANG MENYAKITKAN', 720, 1530, eo(P(t, tDerajat + 0.1, 0.4)), { color: '#FF9A8A', size: 28 });
 }

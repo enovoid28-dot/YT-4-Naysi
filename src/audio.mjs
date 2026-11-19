@@ -1,9 +1,10 @@
 // Voice-over decoding, without a wav file anywhere.
 //
-// The takes are mp3. This module pipes them through ffmpeg — same chain the old
-// prep step used (high-pass, presence, gentle compression, loudnorm) — and hands
-// back 48 kHz stereo float samples that live in memory only. Nothing on disk is
-// ever a .wav: the voice stays mp3, the mix is written as flac.
+// The takes are flac (episode 27 on: full-band 24 kHz straight from the voice
+// model, tightened by scripts/vo-prep.mjs) or mp3 (older episodes). This module
+// pipes them through ffmpeg — high-pass, de-mud, presence, air, compression,
+// loudnorm — and hands back 48 kHz stereo float samples that live in memory
+// only. Nothing on disk is ever a .wav: the voice is flac/mp3, the mix is flac.
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -13,19 +14,23 @@ const SR = 48000;
 
 /** The one voice chain. Kept in a single place so every consumer hears the same take. */
 export const VO_FILTER = [
-  'highpass=f=85:poles=2',
-  'equalizer=f=200:width_type=q:w=0.9:g=-2.8',
-  'equalizer=f=800:width_type=q:w=1.2:g=-1.2',
-  'equalizer=f=2900:width_type=q:w=1.1:g=2.8',
-  'equalizer=f=6800:width_type=q:w=1.4:g=1.4',
-  'acompressor=threshold=-18dB:ratio=1.8:attack=8:release=170',
-  'loudnorm=I=-16:TP=-2:LRA=8',
+  'aresample=48000',
+  'highpass=f=80:poles=2',
+  'equalizer=f=170:width_type=q:w=0.9:g=-2.5',
+  'equalizer=f=420:width_type=q:w=1.4:g=-1.6',
+  'equalizer=f=3100:width_type=q:w=0.9:g=3.0',
+  'highshelf=f=7800:g=2',
+  'acompressor=threshold=-22dB:ratio=3:attack=4:release=90:knee=4',
+  'loudnorm=I=-15:TP=-1.5:LRA=5',
   'aresample=48000',
 ].join(',');
 
 // the take folder: episode 27 by default, override with VO_EP (e.g. VO_EP=ep22)
 export const VO_EP = process.env.VO_EP || 'ep27';
-export const voFile = (id) => path.join(process.cwd(), 'voice', VO_EP, `${id}.mp3`);
+export const voFile = (id) => {
+  const flac = path.join(process.cwd(), 'voice', VO_EP, `${id}.flac`);
+  return fs.existsSync(flac) ? flac : path.join(process.cwd(), 'voice', VO_EP, `${id}.mp3`);
+};
 
 const cache = new Map();
 

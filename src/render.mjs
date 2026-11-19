@@ -9,6 +9,7 @@ import {
   initFilm, drawGrain, drawVignette, drawScrim, drawFlash, drawFilm,
 } from './engine/film.mjs';
 import { buildKaraoke, drawKaraoke } from './engine/karaoke.mjs';
+import { initLook, beginLook, bloom, cutFx, impactFx, shake, foreground, grade, LOOK } from './engine/look.mjs';
 import { buildTimeline, sceneAt } from './timeline.mjs';
 import { SCENES, BRAND, SERIES } from './script.mjs';
 import { clamp, lerp, EASE } from './engine/anim.mjs';
@@ -106,10 +107,14 @@ const mark = (name, fn) => {
   return r;
 };
 
+// the light of each cut: the incoming scene's key colour
+const LEAK = ['255,170,110', '255,186,120', '110,214,200', '255,120,92', '170,206,255', '255,196,128', '196,236,140', '255,150,96'];
+
 function drawFrame(ctx, frame) {
   const t = frame / FPS;
   const { scene, index, local } = sceneAt(timeline, t);
   const mod = sceneMap[scene.key];
+  beginLook();
   ctx.save();
   ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = C.ink0;
@@ -154,6 +159,18 @@ function drawFrame(ctx, frame) {
   ctx.restore();
   ctx.restore();
 
+  // the finishing pass on the picture only (captions and chrome stay crisp):
+  // foreground depth, split-tone grade, halation, accent hits, the cut kit
+  mark('shake', () => shake(ctx, t));
+  mark('fore', () => foreground(ctx, t, cam));
+  mark('grade', () => grade(ctx));
+  mark('bloom', () => bloom(ctx, { th: 0.6, k: 0.5 * LOOK.bloom }));
+  mark('impact', () => impactFx(ctx));
+  mark('cut', () => {
+    if (index > 0 && local < 0.26) cutFx(ctx, local, { rgb: LEAK[index % LEAK.length], side: index % 2 ? 1 : -1 });
+    else if (!last && tail < 0.12) cutFx(ctx, -tail, { rgb: LEAK[(index + 1) % LEAK.length], side: (index + 1) % 2 ? 1 : -1 });
+  });
+
   // captions: karaoke cards low in the frame over a soft scrim, under the
   // chrome and the film pass like the rest of the picture
   mark('scrim', () => drawScrim(ctx, 1520, 0.8));
@@ -166,7 +183,7 @@ function drawFrame(ctx, frame) {
     const f = Math.max(0, 1 - local / 0.16);
     if (f > 0) {
       ctx.save();
-      ctx.globalAlpha = f * f * 0.92;
+      ctx.globalAlpha = f * f * 0.6;
       ctx.fillStyle = scene.theme === 'light' ? '#F4ECDC' : '#06090C';
       ctx.fillRect(0, 0, W, H);
       ctx.restore();
@@ -191,6 +208,7 @@ function drawFrame(ctx, frame) {
 async function main() {
   await ensureFonts();
   initFilm({ createCanvas });
+  initLook({ createCanvas });
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext('2d');
   buildLayouts(ctx);

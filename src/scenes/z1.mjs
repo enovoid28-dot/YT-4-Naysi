@@ -1,8 +1,10 @@
 import { plane } from '../engine/rig.mjs';
 import { shotCam } from './_layar.mjs';
-import { wordT, mono, chip, glass, ringBurst, hero } from './_bulan.mjs';
+import { wordT, mono, chip, ringBurst, hero } from './_bulan.mjs';
 import { tag, punch, zoomed, sparks } from './_lab.mjs';
 import { C, P, eo, io, layer, slate, chili, cobek, badge, tongue, nerveTree, nerve, spikes, icon, flameIcon } from './_cabai.mjs';
+import { title, monoFx, hud, panel, haze, shock, streaks } from './_fx.mjs';
+import { hit } from '../engine/look.mjs';
 
 // 01 — BUKAN RASA
 // Card 0: a glossy cabai rawit under the lamp from frame 0. "Pedas" lands the
@@ -43,16 +45,28 @@ function hook(ctx, t, scene, cam) {
       ctx.fillStyle = g;
       ctx.fillRect(100, 300, 1240, 1400);
       const sway = 0.02 * Math.sin(t * 0.9);
+      haze(ctx, 470, 1120, 1010, 760, t, { n: 7, a: 0.16 + 0.12 * eo(P(t, tBukan, 0.8)), seed: 12 });
       chili(ctx, 330, 1290, 1020, { rot: -0.6 + sway, bend: 0.15, w: 0.165, sheen: P(t, tPedas - 0.1, 1.1) });
-      sparks(ctx, 760, 1000, t, { n: 36, r: 520, a: eo(P(t, tPedas, 0.8)) * 0.9, seed: 27, rise: 120, rgb: '255,170,90' });
+      sparks(ctx, 760, 1000, t, { n: 48, r: 560, a: eo(P(t, tPedas, 0.8)) * 0.95, seed: 27, rise: 160, rgb: '255,170,90' });
     });
+  });
+
+  // specimen callouts on the hero
+  const tSeb = wordT(scene, 0, 2);
+  plane(ctx, cam, 1.08, () => {
+    hud(ctx, 560, 1120, 96, 820, P(t, tSeb - 0.3, 0.7), t, { label: 'CAPSICUM FRUTESCENS', sub: 'CABAI RAWIT', rgb: '255,196,140', seed: 3 });
+    hud(ctx, 930, 905, 1350, 1190, P(t, tSeb + 0.05, 0.7), t, { label: '50–100 RB SHU', sub: 'SKALA SCOVILLE', rgb: '255,150,110', seed: 5 });
   });
 
   // the title, then RASA struck off
   plane(ctx, cam, 1.15, () => {
-    hero(ctx, 'PEDAS', '', 720, 470, P(t, tPedas - 0.12, 0.6), { size: 250, align: 'center', color: '#FF5A3C' });
-    mono(ctx, 'RASA  ATAU  RASA SAKIT?', 720, 556, { size: 32, color: C.emberHi, align: 'center', track: 6, a: eo(P(t, tPedas + 0.3, 0.5)) });
+    title(ctx, 'PEDAS', 720, 480, t, tPedas - 0.16, { size: 262, colors: ['#FFF0C8', '#FF8A3D', '#E0301C', '#8E0E0B'], glow: '255,80,40', depth: 20 });
+    monoFx(ctx, 'RASA  ATAU  RASA SAKIT?', 720, 570, P(t, tPedas + 0.25, 0.7), t, { size: 32, color: C.emberHi, align: 'center', track: 6, seed: 2 });
+    hit(t, tPedas - 0.02, 0.55);
     badge(ctx, 720, 1640, 'BUKAN RASA', P(t, tBukan - 0.1, 0.45), { size: 72, glow: 0.5, rgb: C.redRgb, color: '#FF8A7A' });
+    shock(ctx, 720, 1640, P(t, tRasa - 0.03, 0.8), { r: 520, rgb: C.redRgb, lines: 18, seed: 4 });
+    streaks(ctx, 720, 1640, P(t, tRasa - 0.03, 0.6), { n: 22, r: 520, rgb: '255,150,120', seed: 6 });
+    hit(t, tRasa - 0.03, 1);
     ringBurst(ctx, 720, 1640, P(t, tRasa, 0.7), { color: C.redRgb, r: 320 });
   });
 }
@@ -62,7 +76,7 @@ function signalPanel(ctx, y, t, a, { label, ic, seed, on, fire = 0 }) {
   const { x, w, h } = PANEL;
   ctx.save();
   ctx.globalAlpha *= a;
-  glass(ctx, x, y, w, h, 1, { tint: '255,170,90', edge: '255,214,150', glowC: `rgba(255,140,60,${0.25 + 0.25 * on})`, fill: 0.07 });
+  panel(ctx, x, y, w, h, t, 1, { rgb: ic === 'api' ? '255,140,80' : '255,190,110', trace: 0.4 + 0.6 * on, fill: 0.5 });
   if (ic === 'api') {
     flameIcon(ctx, x + 70, y + 112, 92 * (1 + 0.5 * fire), { t });
     if (fire > 0.01) sparks(ctx, x + 70, y + 70, t, { n: 16, r: 120, a: fire, seed: 9, rise: 90 });
@@ -70,7 +84,7 @@ function signalPanel(ctx, y, t, a, { label, ic, seed, on, fire = 0 }) {
     icon(ctx, ic, x + 70, y + 72, 86);
   }
   mono(ctx, label, x + 130, y + 66, { size: 30, color: C.emberHi, track: 3 });
-  mono(ctx, 'SARAF → OTAK', x + 130, y + 104, { size: 22, color: 'rgba(232,226,214,0.6)', track: 4 });
+  mono(ctx, 'SARAF → OTAK', x + 130, y + 108, { size: 26, color: 'rgba(232,226,214,0.66)', track: 4 });
   spikes(ctx, x + 30, y + 210, w - 60, 66, t, { rate: 9, seed, on, rgb: C.nerveRgb, speed: 360 });
   ctx.restore();
 }
@@ -115,7 +129,11 @@ function signal(ctx, t, scene, cam) {
       ctx.fillRect(cx - bw / 2, cy + 10, bw, 16);
       ctx.restore();
       ringBurst(ctx, cx, cy, P(t, tSama - 0.02, 0.7), { color: C.nerveRgb, r: 160 });
+      shock(ctx, cx, cy, P(t, tSama - 0.04, 0.7), { r: 260, rgb: C.nerveRgb, lines: 12, seed: 8 });
     }
+    hit(t, tSama - 0.04, 0.6);
+    hit(t, tBakar - 0.05, 0.9);
+    shock(ctx, PANEL.x + 70, PANEL.yB + 112, P(t, tBakar - 0.05, 0.8), { r: 340, rgb: '255,140,70', lines: 14, seed: 9 });
   });
 
   plane(ctx, cam, 1.05, () => {

@@ -40,7 +40,7 @@ export const SCENES = [
       'Lidahmu sedang mengirim sinyal yang sama seperti saat terbakar.',
     ],
     lead: 0.36,
-    pad: 0.55,
+    pad: 0.42,
   },
   {
     id: 's2', key: 'z2', label: 'LIMA RASA', index: '02', theme: 'dark',
@@ -49,7 +49,7 @@ export const SCENES = [
       'Lidah hanya mengenal lima rasa: manis, asam, asin, pahit, dan gurih.',
       'Pedas tidak termasuk, karena yang bekerja justru saraf nyeri.',
     ],
-    pad: 0.55,
+    pad: 0.42,
   },
   {
     id: 's3', key: 'z3', label: 'SENSOR PANAS', index: '03', theme: 'dark',
@@ -58,7 +58,7 @@ export const SCENES = [
       'Zat kapsaisin di cabai menempel pada sensor panas di lidahmu.',
       'Sensor ini biasanya baru menyala saat suhu di atas empat puluh tiga derajat.',
     ],
-    pad: 0.55,
+    pad: 0.42,
   },
   {
     id: 's4', key: 'z4', label: 'TERTIPU', index: '04', theme: 'dark',
@@ -67,7 +67,7 @@ export const SCENES = [
       'Jadi otakmu mengira mulutmu benar-benar terbakar.',
       'Makanya wajah memerah, keringat keluar, dan mata berair.',
     ],
-    pad: 0.55,
+    pad: 0.42,
   },
   {
     id: 's5', key: 'z5', label: 'SUSU', index: '05', theme: 'dark',
@@ -76,7 +76,7 @@ export const SCENES = [
       'Minum air justru menyebarkan kapsaisin, karena zat ini larut dalam lemak.',
       'Susu lebih ampuh: protein kaseinnya mengikat kapsaisin dan membilasnya.',
     ],
-    pad: 0.55,
+    pad: 0.42,
   },
   {
     id: 's6', key: 'z6', label: 'SKALA SCOVILLE', index: '06', theme: 'dark',
@@ -85,7 +85,7 @@ export const SCENES = [
       'Tingkat pedas diukur dengan skala Scoville sejak tahun seribu sembilan ratus dua belas.',
       'Cabai rawit sekitar lima puluh sampai seratus ribu, cabai terpedas di dunia dua koma tujuh juta.',
     ],
-    pad: 0.55,
+    pad: 0.42,
   },
   {
     id: 's7', key: 'z7', label: 'BURUNG', index: '07', theme: 'dark',
@@ -94,7 +94,7 @@ export const SCENES = [
       'Anehnya, burung sama sekali tidak merasakan pedas.',
       'Sensor panas mereka tidak bereaksi pada kapsaisin.',
     ],
-    pad: 0.55,
+    pad: 0.42,
   },
   {
     id: 's8', key: 'z8', label: 'STRATEGI CABAI', index: '08', theme: 'dark',

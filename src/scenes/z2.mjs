@@ -1,8 +1,10 @@
 import { clamp, lerp, rng, TAU } from '../engine/anim.mjs';
 import { plane } from '../engine/rig.mjs';
 import { shotCam } from './_layar.mjs';
-import { wordT, mono, ringBurst, hero } from './_bulan.mjs';
+import { wordT, mono, ringBurst } from './_bulan.mjs';
 import { punch, zoomed } from './_lab.mjs';
+import { title, monoFx, shock, streaks, scanline } from './_fx.mjs';
+import { hit } from '../engine/look.mjs';
 import { C, P, eo, io, slate, badge, tongue, nerveTree } from './_cabai.mjs';
 
 // 02 — LIMA RASA
@@ -61,6 +63,26 @@ function wheel(ctx, t, lit, fold) {
     ctx.lineTo(Math.cos(an) * (RING_R + 30 + l), Math.sin(an) * (RING_R + 30 + l));
     ctx.stroke();
   }
+  // a counter-rotating dashed ring and a sweeping scanner arc inside it
+  ctx.save();
+  ctx.rotate(-t * 0.25);
+  ctx.setLineDash([3, 14]);
+  ctx.strokeStyle = 'rgba(255,214,170,0.28)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(0, 0, RING_R - 44, 0, TAU);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+  ctx.save();
+  ctx.rotate(t * 0.9);
+  ctx.strokeStyle = 'rgba(255,226,180,0.5)';
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.arc(0, 0, RING_R + 58, 0, 0.5);
+  ctx.stroke();
+  ctx.restore();
   // five arcs
   TASTES.forEach((ts, i) => {
     const a0 = rad(ts.ang - 33);
@@ -137,14 +159,15 @@ function drawScene(ctx, t, scene) {
       if (xray > 0.01) {
         nerveTree(ctx, T.x, T.y, T.w, T.h, t, { reveal: io(P(t, tBekerja - 0.2, 1.2)), on: eo(P(t, tSaraf - 0.2, 0.5)), seed: 21 });
       }
+      scanline(ctx, T.x - T.w / 2 - 60, T.y - T.h / 2 - 20, T.w + 120, T.h + 40, P(t, tBekerja - 0.35, 1.0), { rgb: '255,214,140' });
     });
   });
 
   // the title
   plane(ctx, cam, 1.15, () => {
     const aT = 1 - eo(P(t, t1 - 0.6, 0.4));
-    hero(ctx, '5 RASA', '', 720, 400, P(t, tLima - 0.15, 0.6), { size: 190, align: 'center', color: C.bone, a: aT });
-    mono(ctx, 'YANG DIKENAL LIDAH', 720, 462, { size: 30, color: C.emberHi, align: 'center', track: 6, a: aT * eo(P(t, tLima + 0.2, 0.5)) });
+    title(ctx, '5 RASA', 720, 410, t, tLima - 0.2, { size: 196, colors: ['#FFFFFF', '#F6E7CF', '#FFB35A', '#D9601E'], side: '#2A1406', glow: '255,170,90', a: aT, depth: 16 });
+    monoFx(ctx, 'YANG DIKENAL LIDAH', 720, 478, P(t, tLima + 0.15, 0.7), t, { size: 30, color: C.emberHi, align: 'center', track: 6, a: aT, seed: 4 });
   });
 
   // the five badges: on the wheel, then folded into a row
@@ -157,6 +180,8 @@ function drawScene(ctx, t, scene) {
       const y = lerp(by, ROW_Y, fold);
       badge(ctx, x, y, ts.label, p, { icon: ts.k, size: lerp(46, 30, fold), rgb: ts.rgb, glow: 0.5 * (1 - fold) });
       ringBurst(ctx, bx, by, P(t, tWords[i] - 0.05, 0.6), { color: ts.rgb, r: 170, a: 1 - fold });
+      streaks(ctx, bx, by, P(t, tWords[i] - 0.06, 0.5), { n: 12, r: 200, rgb: ts.rgb, seed: 30 + i, a: 1 - fold });
+      hit(t, tWords[i] - 0.06, 0.3);
     });
     mono(ctx, 'RASA DASAR', 720, ROW_Y - 74, { size: 26, color: 'rgba(232,226,214,0.65)', align: 'center', track: 8, a: eo(P(t, t1 - 0.2, 0.5)) });
   });
@@ -169,7 +194,11 @@ function drawScene(ctx, t, scene) {
       icon: 'pedas', size: 64, rgb: C.redRgb, glow: 0.6, cross: P(t, tTermasuk - 0.05, 0.3), a: 1 - out,
     });
     mono(ctx, 'TIDAK TERMASUK', 720, 1530, { size: 30, color: '#FF8A7A', align: 'center', track: 6, a: eo(P(t, tTermasuk, 0.35)) * (1 - out) });
+    shock(ctx, 720 + shake, 1640, P(t, tTermasuk - 0.05, 0.7), { r: 420, rgb: C.redRgb, lines: 16, seed: 12, a: 1 - out });
+    hit(t, tTermasuk - 0.05, 0.85);
     badge(ctx, 720, 1640, 'SARAF NYERI', P(t, tSaraf - 0.12, 0.45), { icon: 'nyeri', size: 64, rgb: C.nerveRgb, color: C.nerve, glow: 0.7 });
+    shock(ctx, 720, 1640, P(t, tNyeri - 0.06, 0.8), { r: 480, rgb: C.nerveRgb, lines: 18, seed: 13 });
+    hit(t, tNyeri - 0.06, 0.7);
     ringBurst(ctx, 720, 1640, P(t, tNyeri - 0.05, 0.7), { color: C.nerveRgb, r: 320 });
     mono(ctx, 'BUKAN PENGECAP RASA', 720, 1530, { size: 30, color: C.nerve, align: 'center', track: 6, a: eo(P(t, tNyeri + 0.15, 0.4)) });
   });

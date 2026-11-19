@@ -693,7 +693,146 @@ function loadVO() {
 
 /* --------------------------------- mix ----------------------------------- */
 
+// RBJ biquads: the de-esser side chain and the music carve
+function biquad(b0, b1, b2, a1, a2) {
+  let x1 = 0;
+  let x2 = 0;
+  let y1 = 0;
+  let y2 = 0;
+  return (x) => {
+    const y = b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
+    x2 = x1; x1 = x; y2 = y1; y1 = y;
+    return y;
+  };
+}
+function rbj(type, f0, q) {
+  const w = TAU * f0 / SR;
+  const cs = Math.cos(w);
+  const al = Math.sin(w) / (2 * q);
+  const a0 = 1 + al;
+  if (type === 'hp') return biquad((1 + cs) / 2 / a0, -(1 + cs) / a0, (1 + cs) / 2 / a0, -2 * cs / a0, (1 - al) / a0);
+  return biquad(al / a0, 0, -al / a0, -2 * cs / a0, (1 - al) / a0); // band-pass, 0 dB peak
+}
+
+/** ITU-R BS.1770 integrated loudness: K-weighting, 400 ms blocks, both gates */
+function lufs(L, R) {
+  const kw = () => {
+    const s1 = biquad(1.53512485958697, -2.69169618940638, 1.19839281085285, -1.69065929318241, 0.73248077421585);
+    const s2 = biquad(1, -2, 1, -1.99004745483398, 0.99007225036621);
+    return (x) => s2(s1(x));
+  };
+  const kl = kw();
+  const kr = kw();
+  const n = L.length;
+  const pre = new Float64Array(n + 1);
+  for (let i = 0; i < n; i++) {
+    const a = kl(L[i]);
+    const b = kr(R[i]);
+    pre[i + 1] = pre[i] + a * a + b * b;
+  }
+  const blk = Math.round(0.4 * SR);
+  const hop = Math.round(0.1 * SR);
+  const z = [];
+  for (let s = 0; s + blk <= n; s += hop) z.push((pre[s + blk] - pre[s]) / blk);
+  const ld = (v) => -0.691 + 10 * Math.log10(v + 1e-20);
+  const mean = (a) => a.reduce((x, y) => x + y, 0) / Math.max(1, a.length);
+  const abs = z.filter((v) => ld(v) > -70);
+  const rel = abs.filter((v) => ld(v) > ld(mean(abs)) - 10);
+  return ld(mean(rel));
+}
+
+/**
+ * Lookahead brickwall. The gain each sample needs is min-filtered over a
+ * centred window of 2*la and box-averaged over la, so the gain is already down
+ * when a peak arrives and never above what that peak needs; it recovers on a
+ * one-pole release. Returns the deepest reduction (dB).
+ */
+function limiter(L, R, ceil, la = Math.round(0.0025 * SR), rel = 0.07) {
+  const n = L.length;
+  // true-peak-ish detection: the samples and three Catmull-Rom points
+  // between each pair, so inter-sample overs are caught before the encoder
+  const need = new Float32Array(n);
+  const tp = (X, i) => {
+    const x0 = X[Math.max(0, i - 1)];
+    const x1 = X[i];
+    const x2 = X[Math.min(n - 1, i + 1)];
+    const x3 = X[Math.min(n - 1, i + 2)];
+    let p = Math.abs(x1);
+    for (const u of [0.25, 0.5, 0.75]) {
+      const y = 0.5 * (2 * x1 + (-x0 + x2) * u + (2 * x0 - 5 * x1 + 4 * x2 - x3) * u * u + (-x0 + 3 * x1 - 3 * x2 + x3) * u * u * u);
+      p = Math.max(p, Math.abs(y));
+    }
+    return p;
+  };
+  for (let i = 0; i < n; i++) {
+    const p = Math.max(tp(L, i), tp(R, i));
+    need[i] = p > ceil ? ceil / p : 1;
+  }
+  const gmin = new Float32Array(n);
+  const dq = new Int32Array(n);
+  let h = 0;
+  let t = 0;
+  for (let j = 0; j < n + la; j++) {
+    if (j < n) {
+      while (t > h && need[dq[t - 1]] >= need[j]) t--;
+      dq[t++] = j;
+    }
+    const i = j - la;
+    if (i >= 0) {
+      while (dq[h] < i - la) h++;
+      gmin[i] = need[dq[h]];
+    }
+  }
+  const half = Math.max(1, la >> 1);
+  const pre = new Float64Array(n + 1);
+  for (let i = 0; i < n; i++) pre[i + 1] = pre[i] + gmin[i];
+  const rc = 1 - Math.exp(-1 / (rel * SR));
+  let g = 1;
+  let low = 1;
+  for (let i = 0; i < n; i++) {
+    const a = Math.max(0, i - half);
+    const b = Math.min(n, i + half + 1);
+    g = Math.min((pre[b] - pre[a]) / (b - a), g + (1 - g) * rc);
+    L[i] *= g;
+    R[i] *= g;
+    if (g < low) low = g;
+  }
+  return 20 * Math.log10(low);
+}
+
+/** split-band de-esser: only the top band of a sibilant is turned down, gently */
+function deEss() {
+  const hl = rbj('hp', 5200, 0.7);
+  const hr = rbj('hp', 5200, 0.7);
+  const atk = 1 - Math.exp(-1 / (0.0015 * SR));
+  const rls = 1 - Math.exp(-1 / (0.05 * SR));
+  let eS = 0;
+  let eF = 0;
+  let low = 1;
+  for (let i = 0; i < N; i++) {
+    const l = vo[0][i];
+    const r = vo[1][i];
+    const sl = hl(l);
+    const sr = hr(r);
+    const s = Math.max(Math.abs(sl), Math.abs(sr));
+    const f = Math.max(Math.abs(l), Math.abs(r));
+    eS += (s - eS) * (s > eS ? atk : rls);
+    eF += (f - eF) * (f > eF ? atk : rls);
+    const ratio = eS / Math.max(eF, 1e-6);
+    const g = ratio > 0.6 ? Math.pow(0.6 / ratio, 0.7) : 1;
+    vo[0][i] = l - sl + sl * g;
+    vo[1][i] = r - sr + sr * g;
+    if (g < low) low = g;
+  }
+  return 20 * Math.log10(low);
+}
+
+const TARGET = -10.5; // integrated LUFS of the master: loud, voice first
+const CEIL = 10 ** (-2.0 / 20);
+
 function mix() {
+  const ess = deEss();
+  // voice envelope (10 ms blocks) drives the ducking and the carve
   const block = Math.floor(SR * 0.01);
   const env = new Float32Array(Math.ceil(N / block) + 2);
   for (let b = 0; b < env.length; b++) {
@@ -704,52 +843,64 @@ function mix() {
   const smooth = new Float32Array(env.length);
   let v = 0;
   for (let b = 0; b < env.length; b++) {
-    const target = clamp(env[b] * 5);
-    v += (target - v) * (target > v ? 0.35 : 0.045);
+    const target = clamp(env[b] * 6);
+    v += (target - v) * (target > v ? 0.4 : 0.04);
     smooth[b] = v;
   }
+  // the bed steps aside for the voice: level down ~10 dB and a hole carved
+  // around 1.3-4.5 kHz where the consonants live
+  const carve = [rbj('bp', 2400, 0.75), rbj('bp', 2400, 0.75)];
   const out = [new Float32Array(N), new Float32Array(N)];
   for (let i = 0; i < N; i++) {
     const d = smooth[Math.floor(i / block)];
-    const duckM = 1 - 0.6 * d;
-    const duckS = 1 - 0.25 * d;
-    for (let ch = 0; ch < 2; ch++) out[ch][i] = vo[ch][i] + music[ch][i] * 1.2 * duckM + sfx[ch][i] * 0.95 * duckS;
-  }
-  for (let ch = 0; ch < 2; ch++) {
-    const f = hp(24);
-    for (let i = 0; i < N; i++) out[ch][i] = f(out[ch][i]);
-  }
-  let peak = 0;
-  for (let ch = 0; ch < 2; ch++) for (let i = 0; i < N; i++) peak = Math.max(peak, Math.abs(out[ch][i]));
-  // anchor the level on the voice, not on the blast: the limiter takes the rest
-  let vpk = 0;
-  for (let i = 0; i < N; i++) vpk = Math.max(vpk, Math.abs(vo[0][i]));
-  void peak;
-  const pre = 0.7 / Math.max(vpk, 1e-6);
-  const knee = 0.62;
-  for (let ch = 0; ch < 2; ch++) {
-    for (let i = 0; i < N; i++) {
-      let x = out[ch][i] * pre;
-      const a = Math.abs(x);
-      if (a > knee) {
-        const over = a - knee;
-        x = Math.sign(x) * (knee + over / (1 + over / (0.9 - knee)));
-      }
-      out[ch][i] = x;
+    const duckM = 1 - 0.68 * d;
+    const duckS = 1 - 0.3 * d;
+    for (let ch = 0; ch < 2; ch++) {
+      const m = music[ch][i];
+      const mid = carve[ch](m);
+      out[ch][i] = vo[ch][i] * 1.0 + (m - 0.55 * d * mid) * 1.0 * duckM + sfx[ch][i] * 0.95 * duckS;
     }
   }
+  for (let ch = 0; ch < 2; ch++) {
+    const f = hp(28);
+    for (let i = 0; i < N; i++) out[ch][i] = f(out[ch][i]);
+  }
+  // master: gain into the brickwall until the integrated loudness lands
+  let gain = 1;
+  let lim = 0;
+  let got = 0;
+  let L = null;
+  let R = null;
+  for (let it = 0; it < 5; it++) {
+    L = Float32Array.from(out[0], (x) => x * gain);
+    R = Float32Array.from(out[1], (x) => x * gain);
+    lim = limiter(L, R, CEIL);
+    got = lufs(L, R);
+    if (Math.abs(got - TARGET) < 0.05) break;
+    gain *= 10 ** ((TARGET - got) / 20);
+  }
   let pk = 0;
-  for (let ch = 0; ch < 2; ch++) for (let i = 0; i < N; i++) pk = Math.max(pk, Math.abs(out[ch][i]));
-  const norm = pk > 0 ? 0.89 / pk : 1;
-  for (let ch = 0; ch < 2; ch++) for (let i = 0; i < N; i++) out[ch][i] *= norm;
+  for (let i = 0; i < N; i++) pk = Math.max(pk, Math.abs(L[i]), Math.abs(R[i]));
   const file = path.join(process.cwd(), 'assets', 'audio', 'mix-ep27.flac');
   const inter = new Float32Array(N * 2);
   for (let i = 0; i < N; i++) {
-    inter[i * 2] = out[0][i];
-    inter[i * 2 + 1] = out[1][i];
+    inter[i * 2] = L[i];
+    inter[i * 2 + 1] = R[i];
   }
   writeFlac(inter, N, file);
-  console.log(`mix-ep27.flac  ${(N / SR).toFixed(2)}s  peak ${(pk * norm).toFixed(3)}  pre ${pre.toFixed(3)}`);
+  // voice-to-bed ratio while the voice speaks (the "is it clear" number)
+  let sv = 0;
+  let sb = 0;
+  let nv = 0;
+  for (let i = 0; i < N; i += 4) {
+    if (smooth[Math.floor(i / block)] < 0.9) continue;
+    sv += vo[0][i] * vo[0][i];
+    const b = out[0][i] - vo[0][i];
+    sb += b * b;
+    nv++;
+  }
+  const vbr = 10 * Math.log10((sv / Math.max(1, nv)) / Math.max(1e-12, sb / Math.max(1, nv)));
+  console.log(`mix-ep27.flac  ${(N / SR).toFixed(2)}s  ${got.toFixed(2)} LUFS  peak ${(20 * Math.log10(pk)).toFixed(2)} dBFS  limiter ${lim.toFixed(1)} dB  de-ess ${ess.toFixed(1)} dB  voice/bed ${vbr.toFixed(1)} dB  gain ${(20 * Math.log10(gain)).toFixed(1)} dB`);
 }
 
 loadVO();

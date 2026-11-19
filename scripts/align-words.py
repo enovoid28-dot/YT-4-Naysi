@@ -145,7 +145,10 @@ def main():
     script = json.load(open(script_json))
     result = {}
     for sid, text in script.items():
-        result[sid] = align(os.path.join(voice_dir, f"{sid}.mp3"), text)
+        take = os.path.join(voice_dir, f"{sid}.flac")
+        if not os.path.exists(take):
+            take = os.path.join(voice_dir, f"{sid}.mp3")
+        result[sid] = align(take, text)
     json.dump(result, open(out_json, 'w'), ensure_ascii=False, indent=1)
 
 

@@ -3,9 +3,12 @@ import { F } from '../engine/fonts.mjs';
 import { txt } from '../engine/draw.mjs';
 import { plane } from '../engine/rig.mjs';
 import { shotCam } from './_layar.mjs';
-import { wordT, mono, chip, ringBurst, hero } from './_bulan.mjs';
+import { wordT, mono, chip, ringBurst } from './_bulan.mjs';
 import { tag, punch, zoomed } from './_lab.mjs';
 import { tick } from './_darah.mjs';
+import { title, monoFx, panel, shock, streaks, haze } from './_fx.mjs';
+import { hit } from '../engine/look.mjs';
+import { grain } from './_lab.mjs';
 import { C, P, eo, io, layer, slate, cup, chili, flameIcon } from './_cabai.mjs';
 
 // 06 — SKALA SCOVILLE
@@ -31,7 +34,7 @@ function dilution(ctx, t, scene, cam) {
   slate(ctx, t, cam, { lamp: [720, 900], lampR: 1250, rgb: '255,196,150', heat: 0.1 });
 
   plane(ctx, cam, 1.15, () => {
-    hero(ctx, 'SKALA', '', 720, 420, P(t, -0.3, 0.6), { size: 170, align: 'center', color: C.bone });
+    title(ctx, 'SKALA', 720, 430, t, -0.22, { size: 180, colors: ['#FFFFFF', '#F3E6D2', '#E9B98A', '#B8743E'], side: '#2A1608', glow: '255,170,110', depth: 14 });
     mono(ctx, 'SCOVILLE', 720, 540, { size: 76, color: '#FF6A52', align: 'center', track: 16, a: eo(P(t, -0.1, 0.5)), font: F.fig8 });
     ringBurst(ctx, 720, 515, P(t, tSkala + 0.3, 0.7), { color: C.redRgb, r: 380 });
   });
@@ -68,6 +71,8 @@ function dilution(ctx, t, scene, cam) {
   plane(ctx, cam, 1.08, () => {
     const k = punch(t, tBelas - 0.05, 0.04, 0.5);
     zoomed(ctx, k, 720, 1460, () => {
+      shock(ctx, 720, 1460, P(t, tBelas - 0.05, 0.8), { r: 460, rgb: C.emberRgb, lines: 16, seed: 51 });
+      hit(t, tBelas - 0.05, 0.6);
       tag(ctx, 720, 1460, P(t, tSejak - 0.1, 0.5), {
         big: '1912', small: '', color: '#FFB03A', glowRgb: C.emberRgb, size: 132,
         count: { value: yv(t), digits: 4, prev: yv(t - 1 / 90) },
@@ -108,8 +113,9 @@ function chart(ctx, t, scene, cam) {
   const pxv = (tt) => 2693000 * io(P(tt, tDunia - 0.25, tJuta - tDunia + 0.5));
 
   plane(ctx, cam, 1.12, () => {
-    mono(ctx, 'TINGKAT PEDAS', CH.x0, 390, { size: 34, color: C.emberHi, track: 6, a: eo(P(t, tRawit - 0.3, 0.5)) });
-    mono(ctx, 'SCOVILLE HEAT UNIT (SHU)', CH.x0, 436, { size: 24, color: 'rgba(232,226,214,0.6)', track: 4, a: eo(P(t, tRawit - 0.2, 0.5)) });
+    panel(ctx, 70, 318, 1300, 1196, t, eo(P(t, tRawit - 0.45, 0.5)), { rgb: '255,170,110', fill: 0.42, trace: 0.35 + 0.65 * eo(P(t, tDunia - 0.3, 0.6)), r: 34 });
+    monoFx(ctx, 'TINGKAT PEDAS', CH.x0, 392, P(t, tRawit - 0.35, 0.7), t, { size: 34, color: C.emberHi, track: 6, seed: 19 });
+    monoFx(ctx, 'SCOVILLE HEAT UNIT (SHU)', CH.x0, 440, P(t, tRawit - 0.2, 0.7), t, { size: 26, color: 'rgba(232,226,214,0.68)', track: 4, seed: 20 });
   });
 
   plane(ctx, cam, 1.0, () => {
@@ -129,7 +135,7 @@ function chart(ctx, t, scene, cam) {
         ctx.moveTo(CH.x0, y);
         ctx.lineTo(CH.x1, y);
         ctx.stroke();
-        mono(ctx, short(v), CH.x0 - 14, y + 8, { size: 22, color: `rgba(232,226,214,${0.6 * al})`, align: 'right', track: 1 });
+        mono(ctx, short(v), CH.x0 - 14, y + 9, { size: 25, color: `rgba(232,226,214,${0.66 * al})`, align: 'right', track: 1 });
       }
     }
     ctx.strokeStyle = 'rgba(232,226,214,0.6)';
@@ -159,8 +165,33 @@ function chart(ctx, t, scene, cam) {
       ctx.beginPath();
       ctx.roundRect(x - bw / 2, y, bw, CH.base - y, [12, 12, 0, 0]);
       ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.18)';
-      ctx.fillRect(x - bw / 2 + 12, y + 8, 14, Math.max(0, CH.base - y - 16));
+      // texture and bevel: grain inside, a lit left edge, a shaded right edge
+      ctx.beginPath();
+      ctx.roundRect(x - bw / 2, y, bw, CH.base - y, [12, 12, 0, 0]);
+      grain(ctx, 0.22, 'overlay');
+      const bev = ctx.createLinearGradient(x - bw / 2, 0, x + bw / 2, 0);
+      bev.addColorStop(0, 'rgba(255,255,255,0.22)');
+      bev.addColorStop(0.18, 'rgba(255,255,255,0.04)');
+      bev.addColorStop(0.75, 'rgba(0,0,0,0)');
+      bev.addColorStop(1, 'rgba(0,0,0,0.3)');
+      ctx.fillStyle = bev;
+      ctx.beginPath();
+      ctx.roundRect(x - bw / 2, y, bw, CH.base - y, [12, 12, 0, 0]);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.fillRect(x - bw / 2 + 12, y + 8, 10, Math.max(0, CH.base - y - 16));
+      // a hot cap on the top edge
+      if (CH.base - y > 24) {
+        const cr = bw * 0.62;
+        const cg = ctx.createRadialGradient(x, y + 4, 2, x, y + 4, cr);
+        cg.addColorStop(0, hot ? 'rgba(255,220,150,0.7)' : 'rgba(255,230,190,0.4)');
+        cg.addColorStop(0.5, hot ? 'rgba(255,200,130,0.2)' : 'rgba(255,220,170,0.1)');
+        cg.addColorStop(1, 'rgba(255,200,120,0)');
+        ctx.globalCompositeOperation = 'screen';
+        ctx.fillStyle = cg;
+        ctx.fillRect(x - cr, y + 4 - cr, cr * 2, cr * 2);
+        ctx.globalCompositeOperation = 'source-over';
+      }
       // the range band (rawit: 50–100 thousand)
       if (b.lo && b.name === 'RAWIT') {
         const bq = eo(P(t, tLima - 0.1, 0.5)) * (1 - z);
@@ -180,7 +211,26 @@ function chart(ctx, t, scene, cam) {
       }
       ctx.restore();
       chili(ctx, x - 60, CH.base + 62, 120, { rot: -0.12, hue: b.hue, bend: 0.1, w: 0.22, shadow: 0, a: eo(P(t, t0, 0.3)) });
-      mono(ctx, b.name, x, CH.base + 132, { size: 25, color: hot ? '#FFB08A' : 'rgba(232,226,214,0.75)', align: 'center', track: 2, a: eo(P(t, t0, 0.3)) });
+      mono(ctx, b.name, x, CH.base + 134, { size: 27, color: hot ? '#FFB08A' : 'rgba(232,226,214,0.78)', align: 'center', track: 2, a: eo(P(t, t0, 0.3)) });
+      if (b.name === 'PEPPER X' && g > 0) {
+        // the record bar burns as it climbs
+        const climb = clamp((t - t0) / (tJuta - t0 + 0.4));
+        haze(ctx, x - 60, x + 60, y - 30, 380, t, { n: 4, a: 0.3 * eo(P(t, t0, 0.5)), rgb: '255,170,110', seed: 52, lw: 20 });
+        flameIcon(ctx, x, y - 70, 80 + 30 * climb, { t, a: eo(P(t, t0 + 0.1, 0.4)) });
+        // a tracer from the axis to the top of the bar
+        ctx.save();
+        ctx.globalAlpha *= eo(P(t, t0, 0.4)) * 0.8;
+        ctx.strokeStyle = 'rgba(255,214,120,0.8)';
+        ctx.setLineDash([8, 10]);
+        ctx.lineDashOffset = -t * 40;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(CH.x0, y);
+        ctx.lineTo(x - bw / 2 - 10, y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
       // value labels
       let lab = short(b.v);
       if (b.name === 'RAWIT') lab = '50–100 RB';
@@ -209,11 +259,15 @@ function chart(ctx, t, scene, cam) {
       mono(ctx, 'RAWIT', x, CH.base - 170, { size: 28, color: C.emberHi, align: 'center', track: 5, a: fq });
     }
     ringBurst(ctx, CH.x0 + 120 + 4 * 232, Y(pxv(t)), P(t, tJuta - 0.05, 0.8), { color: C.emberRgb, r: 220 });
+    shock(ctx, CH.x0 + 120 + 4 * 232, Math.max(CH.top - 20, Y(pxv(t))), P(t, tJuta - 0.08, 0.8), { r: 420, rgb: C.emberRgb, lines: 18, seed: 53 });
+    streaks(ctx, CH.x0 + 120 + 4 * 232, Math.max(CH.top - 20, Y(pxv(t))), P(t, tJuta - 0.08, 0.6), { n: 20, r: 380, rgb: '255,214,140', seed: 54 });
   });
 
   plane(ctx, cam, 1.05, () => {
     tag(ctx, 720, 1670, P(t, tDua - 0.1, 0.5), { big: '2,7 JUTA', small: 'SHU', color: '#FFD27A', glowRgb: C.emberRgb, size: 100 });
   });
+  hit(t, tTerpedas + 0.1, 0.4);
+  hit(t, tJuta - 0.08, 0.9);
   chip(ctx, 'PEPPER X · REKOR GUINNESS 2023', 720, 1555, eo(P(t, tDunia + 0.2, 0.45)), { color: C.emberHi, size: 28 });
 }
 

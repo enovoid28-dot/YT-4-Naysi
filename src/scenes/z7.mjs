@@ -3,8 +3,10 @@ import { F } from '../engine/fonts.mjs';
 import { txt } from '../engine/draw.mjs';
 import { plane } from '../engine/rig.mjs';
 import { shotCam } from './_layar.mjs';
-import { wordT, mono, chip, ringBurst, glass } from './_bulan.mjs';
+import { wordT, mono, chip, ringBurst } from './_bulan.mjs';
 import { tag } from './_lab.mjs';
+import { monoFx, hud, panel, shock } from './_fx.mjs';
+import { hit } from '../engine/look.mjs';
 import { C, P, eo, io, layer, garden, micro, plant, chili, bird, rat, levelMeter, bilayer, channel, ions, capsa, spikes } from './_cabai.mjs';
 
 // 07 — BURUNG
@@ -70,11 +72,17 @@ function perch(ctx, t, scene, cam) {
   plane(ctx, cam, 1.12, () => {
     txt(ctx, '?!', 1250, 620, { size: 130, font: F.fig8, color: C.emberHi, align: 'center', alpha: eo(P(t, tAneh - 0.05, 0.35)) * (1 - eo(P(t, tTidak - 0.3, 0.3))) });
     const q = eo(P(t, tTidak - 0.15, 0.45));
-    glass(ctx, 200, 1440, 1040, 190, q, { tint: '120,200,140', edge: '200,240,210', fill: 0.1 });
-    mono(ctx, 'LEVEL PEDAS YANG DIRASAKAN BURUNG', 250, 1500, { size: 26, color: C.mint, track: 2, a: q });
+    panel(ctx, 200, 1440, 1040, 190, t, q, { rgb: '120,220,160', fill: 0.5, trace: 0.6 });
+    monoFx(ctx, 'LEVEL PEDAS YANG DIRASAKAN BURUNG', 250, 1502, P(t, tTidak - 0.1, 0.8), t, { size: 27, color: C.mint, track: 2, a: q, seed: 21 });
     levelMeter(ctx, 620, 1572, 720, 0, { p: q });
     txt(ctx, '0', 1140, 1604, { size: 96, font: F.fig8, color: C.mint, align: 'center', alpha: eo(P(t, tPedas - 0.1, 0.35)) });
     ringBurst(ctx, 1140, 1570, P(t, tPedas - 0.05, 0.7), { color: C.mintRgb, r: 160 });
+    shock(ctx, 1140, 1570, P(t, tPedas - 0.08, 0.7), { r: 300, rgb: C.mintRgb, lines: 12, seed: 61 });
+  });
+  hit(t, tPedas - 0.08, 0.6);
+  // field notes on the bird
+  plane(ctx, cam, 1.08, () => {
+    hud(ctx, bx + 40, by - 150, 1360, 330, P(t, tBurung + 0.1, 0.8), t, { label: 'CUCAK KUTILANG', sub: 'PYCNONOTUS AURIGASTER', rgb: '255,226,160', seed: 22 });
   });
 }
 
@@ -123,13 +131,15 @@ function sensors(ctx, t, scene, cam) {
     mono(ctx, 'BURUNG', R, 700, { size: 30, color: 'rgba(232,226,214,0.8)', align: 'center', track: 6, a: appear });
     // traces
     const tq = eo(P(t, tSensor, 0.5));
-    glass(ctx, 70, 1250, 620, 210, tq, { tint: '255,210,74', edge: '255,230,160', fill: 0.06 });
-    glass(ctx, 750, 1250, 620, 210, tq, { tint: '180,190,200', edge: '220,230,240', fill: 0.06 });
+    panel(ctx, 70, 1250, 620, 210, t, tq, { rgb: '255,210,74', fill: 0.5, trace: 0.8 });
+    panel(ctx, 750, 1250, 620, 210, t, tq, { rgb: '180,196,210', fill: 0.5, trace: 0.15 });
     spikes(ctx, 100, 1380, 560, 56, t, { rate: 10, seed: 5, on: openL });
     spikes(ctx, 780, 1380, 560, 56, t, { rate: 10, seed: 5, on: 0, rgb: '180,190,200' });
-    mono(ctx, 'BEREAKSI', 110, 1306, { size: 28, color: C.nerve, track: 5, a: tq });
-    mono(ctx, 'TIDAK BEREAKSI', 790, 1306, { size: 28, color: 'rgba(210,220,230,0.9)', track: 5, a: eo(P(t, tTidak - 0.1, 0.4)) });
+    monoFx(ctx, 'BEREAKSI', 110, 1308, tq, t, { size: 28, color: C.nerve, track: 5, seed: 23 });
+    monoFx(ctx, 'TIDAK BEREAKSI', 790, 1308, P(t, tTidak - 0.15, 0.6), t, { size: 28, color: 'rgba(210,220,230,0.92)', track: 5, seed: 24 });
     ringBurst(ctx, R, y, P(t, tReaksi - 0.05, 0.7), { color: '200,210,220', r: 240 });
+    shock(ctx, R, y, P(t, tReaksi - 0.08, 0.7), { r: 360, rgb: '200,214,230', lines: 14, seed: 62 });
+    hit(t, tReaksi - 0.08, 0.55);
   });
 
   plane(ctx, cam, 1.05, () => {

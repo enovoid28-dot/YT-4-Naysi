@@ -22,6 +22,8 @@ import { F } from '../engine/fonts.mjs';
 import { clamp, lerp, TAU, rng, EASE } from '../engine/anim.mjs';
 import { fbm3 } from './_earth.mjs';
 import { grain, rr, contact } from './_lab.mjs';
+import { reportBg } from '../engine/look.mjs';
+import { rays } from './_fx.mjs';
 
 export const C = {
   red: '#E3342F', redRgb: '227,52,47', redHi: '#FF6B5B', deep: '#8E0E0B',
@@ -48,6 +50,7 @@ export const back = (p) => {
 /** draw `fn` into an offscreen frame and lay it over at `alpha` (clean cross-fades) */
 const LAYERS = [];
 let depth = 0;
+let LA = 1; // opacity of the layer being drawn (backdrops report it to the look pass)
 export function layer(ctx, alpha, fn) {
   if (alpha <= 0.001) return;
   if (alpha >= 0.999) { fn(ctx); return; }
@@ -59,7 +62,9 @@ export function layer(ctx, alpha, fn) {
   c.globalCompositeOperation = 'source-over';
   c.clearRect(0, 0, W, H);
   depth++;
-  try { fn(c); } finally { depth--; }
+  const prevLA = LA;
+  LA *= alpha;
+  try { fn(c); } finally { depth--; LA = prevLA; }
   ctx.save();
   ctx.globalAlpha *= alpha;
   ctx.drawImage(cv, 0, 0);
@@ -69,26 +74,114 @@ export function layer(ctx, alpha, fn) {
 /* ================================ surfaces ================================= */
 
 let SLATE = null;
+/**
+ * The worktop, baked once at half resolution: two scales of stone, a fine
+ * speckle, faint mineral veins and scratches, and a scatter of what a sambal
+ * leaves behind — chili flakes, pale seeds and salt grains, thicker toward
+ * the edges.
+ */
 function slateTex() {
   if (SLATE) return SLATE;
-  const w = 360;
-  const h = 640;
+  const w = 720;
+  const h = 1280;
   const cv = createCanvas(w, h);
   const c = cv.getContext('2d');
   const img = c.createImageData(w, h);
+  const R = rng(2727);
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
-      const n = fbm3(x / 70, y / 70, 0.5, 4, 27);
-      const m = fbm3(x / 14, y / 14, 2.2, 2, 29);
-      const v = 16 + n * 26 + m * 7;
+      const n = fbm3(x / 140, y / 140, 0.5, 4, 27);
+      const m = fbm3(x / 26, y / 26, 2.2, 2, 29);
+      const v = 15 + n * 27 + m * 8 + (R() - 0.5) * 7;
       const i = (y * w + x) * 4;
-      img.data[i] = v * 1.02;
+      img.data[i] = v * 1.03;
       img.data[i + 1] = v * 0.94;
-      img.data[i + 2] = v * 0.9;
+      img.data[i + 2] = v * 0.88;
       img.data[i + 3] = 255;
     }
   }
   c.putImageData(img, 0, 0);
+  // mineral veins and fine scratches
+  c.lineCap = 'round';
+  for (let k = 0; k < 9; k++) {
+    let x = R() * w;
+    let y = R() * h;
+    let an = R() * TAU;
+    c.beginPath();
+    c.moveTo(x, y);
+    for (let s2 = 0; s2 < 40; s2++) {
+      an += (R() - 0.5) * 0.5;
+      x += Math.cos(an) * 9;
+      y += Math.sin(an) * 9;
+      c.lineTo(x, y);
+    }
+    c.strokeStyle = `rgba(255,236,214,${0.025 + R() * 0.035})`;
+    c.lineWidth = 0.8 + R() * 1.4;
+    c.stroke();
+  }
+  for (let k = 0; k < 60; k++) {
+    const x = R() * w;
+    const y = R() * h;
+    const an = R() * TAU;
+    const L = 20 + R() * 90;
+    c.beginPath();
+    c.moveTo(x, y);
+    c.lineTo(x + Math.cos(an) * L, y + Math.sin(an) * L);
+    c.strokeStyle = `rgba(255,240,225,${0.02 + R() * 0.03})`;
+    c.lineWidth = 0.6;
+    c.stroke();
+  }
+  // scatter density: more toward the edges and the bottom
+  const place = () => {
+    for (;;) {
+      const x = R() * w;
+      const y = R() * h;
+      const ex = Math.min(x, w - x) / (w / 2);
+      const dens = 0.25 + 0.75 * (1 - ex) * (0.5 + 0.5 * (y / h));
+      if (R() < dens) return [x, y];
+    }
+  };
+  for (let k = 0; k < 170; k++) {
+    const [x, y] = place();
+    const rad = 1.6 + R() * 4.2;
+    const n = 4 + Math.floor(R() * 3);
+    const rot = R() * TAU;
+    c.beginPath();
+    for (let j = 0; j < n; j++) {
+      const an = rot + (j / n) * TAU;
+      const rr2 = rad * (0.55 + R() * 0.6);
+      const px = x + Math.cos(an) * rr2;
+      const py = y + Math.sin(an) * rr2 * 0.8;
+      if (j === 0) c.moveTo(px, py);
+      else c.lineTo(px, py);
+    }
+    c.closePath();
+    const hue = R();
+    c.fillStyle = hue < 0.6 ? `rgba(${150 + R() * 60},${20 + R() * 25},${12 + R() * 10},${0.55 + R() * 0.35})` : `rgba(${190 + R() * 50},${60 + R() * 40},${20 + R() * 15},${0.5 + R() * 0.3})`;
+    c.fill();
+    c.fillStyle = `rgba(255,190,160,${0.25 + R() * 0.25})`;
+    c.fillRect(x - rad * 0.3, y - rad * 0.35, Math.max(0.8, rad * 0.35), Math.max(0.6, rad * 0.22));
+  }
+  for (let k = 0; k < 70; k++) {
+    const [x, y] = place();
+    c.save();
+    c.translate(x, y);
+    c.rotate(R() * TAU);
+    c.beginPath();
+    c.ellipse(0, 0, 3.4 + R() * 1.2, 2.3 + R() * 0.6, 0, 0, TAU);
+    c.fillStyle = `rgba(${220 + R() * 20},${185 + R() * 20},${110 + R() * 30},${0.5 + R() * 0.3})`;
+    c.fill();
+    c.strokeStyle = 'rgba(120,80,30,0.5)';
+    c.lineWidth = 0.6;
+    c.stroke();
+    c.restore();
+  }
+  for (let k = 0; k < 260; k++) {
+    const [x, y] = place();
+    const sz = 0.7 + R() * 1.6;
+    c.fillStyle = `rgba(255,250,240,${0.15 + R() * 0.35})`;
+    c.fillRect(x, y, sz, sz);
+  }
   SLATE = cv;
   return cv;
 }
@@ -96,6 +189,7 @@ function slateTex() {
 /** dark stone worktop under a warm lamp */
 export function slate(ctx, t, cam = {}, { lamp = [720, 900], lampR = 1250, rgb = '255,170,110', a = 1, heat = 0, k = 1 } = {}) {
   if (a <= 0.004) return;
+  reportBg('slate', a * LA * ctx.globalAlpha);
   ctx.save();
   ctx.globalAlpha *= a;
   ctx.imageSmoothingEnabled = true;
@@ -114,6 +208,9 @@ export function slate(ctx, t, cam = {}, { lamp = [720, 900], lampR = 1250, rgb =
   vg.addColorStop(1, 'rgba(0,0,0,0.78)');
   ctx.fillStyle = vg;
   ctx.fillRect(0, 0, W, H);
+  // the lamp's beams falling through the steam
+  ctx.globalCompositeOperation = 'source-over';
+  rays(ctx, lamp[0] + 260 + (cam.dx || 0) * 0.6, -260, t, { n: 6, len: 2600, dir: Math.PI / 2 + 0.12, spread: 0.55, rgb, a: 0.075 * k, seed: 61 });
   if (heat > 0.01) {
     ctx.globalCompositeOperation = 'screen';
     const hg = ctx.createRadialGradient(lamp[0], lamp[1] + 300, 60, lamp[0], lamp[1] + 300, 1100);
@@ -125,9 +222,64 @@ export function slate(ctx, t, cam = {}, { lamp = [720, 900], lampR = 1250, rgb =
   ctx.restore();
 }
 
-/** a deep microscope field: dark, cool, with soft out-of-focus blobs */
+/** a hexagonal lattice and a few loose fibres, baked once at full size */
+let HEX = null;
+function hexTex() {
+  if (HEX) return HEX;
+  const cv = createCanvas(W + 160, H + 160);
+  const c = cv.getContext('2d');
+  const R = rng(91);
+  const r = 46;
+  const dx = r * Math.sqrt(3);
+  const dy = r * 1.5;
+  c.lineWidth = 1.6;
+  for (let row = 0; row * dy < cv.height + r; row++) {
+    for (let col = 0; col * dx < cv.width + dx; col++) {
+      const cx = col * dx + (row % 2 ? dx / 2 : 0);
+      const cy = row * dy;
+      c.beginPath();
+      for (let k = 0; k < 6; k++) {
+        const an = Math.PI / 6 + (k * Math.PI) / 3;
+        const px = cx + Math.cos(an) * r;
+        const py = cy + Math.sin(an) * r;
+        if (k === 0) c.moveTo(px, py);
+        else c.lineTo(px, py);
+      }
+      c.closePath();
+      c.strokeStyle = `rgba(150,235,225,${0.35 + R() * 0.4})`;
+      c.stroke();
+      if (R() < 0.05) {
+        c.fillStyle = 'rgba(150,235,225,0.22)';
+        c.fill();
+      }
+    }
+  }
+  // loose fibres in the medium
+  c.lineCap = 'round';
+  for (let k = 0; k < 26; k++) {
+    let x = R() * cv.width;
+    let y = R() * cv.height;
+    let an = R() * TAU;
+    c.beginPath();
+    c.moveTo(x, y);
+    for (let j = 0; j < 30; j++) {
+      an += (R() - 0.5) * 0.4;
+      x += Math.cos(an) * 14;
+      y += Math.sin(an) * 14;
+      c.lineTo(x, y);
+    }
+    c.strokeStyle = `rgba(190,240,230,${0.25 + R() * 0.3})`;
+    c.lineWidth = 1.2 + R() * 2.4;
+    c.stroke();
+  }
+  HEX = cv;
+  return cv;
+}
+
+/** a deep microscope field: dark, cool, with soft out-of-focus blobs and a lattice */
 export function micro(ctx, t, cam = {}, { a = 1, rgb = '60,120,140', warm = 0 } = {}) {
   if (a <= 0.004) return;
+  reportBg('micro', a * LA * ctx.globalAlpha);
   ctx.save();
   ctx.globalAlpha *= a;
   const g = ctx.createLinearGradient(0, 0, 0, H);
@@ -136,6 +288,10 @@ export function micro(ctx, t, cam = {}, { a = 1, rgb = '60,120,140', warm = 0 } 
   g.addColorStop(1, '#040608');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
+  const base = ctx.globalAlpha;
+  ctx.globalAlpha = base * 0.07;
+  ctx.drawImage(hexTex(), -80 + (cam.dx || 0) * 0.5 + Math.sin(t * 0.11) * 14, -80 + (cam.dy || 0) * 0.5 - t * 4 % 69);
+  ctx.globalAlpha = base;
   const r = rng(77);
   ctx.globalCompositeOperation = 'screen';
   for (let i = 0; i < 14; i++) {
@@ -149,6 +305,9 @@ export function micro(ctx, t, cam = {}, { a = 1, rgb = '60,120,140', warm = 0 } 
     ctx.fillStyle = gg;
     ctx.fillRect(x - rad, y - rad, rad * 2, rad * 2);
   }
+  // the microscope's light from above
+  ctx.globalCompositeOperation = 'source-over';
+  rays(ctx, 720 + (cam.dx || 0) * 0.4, -400, t, { n: 5, len: 2600, dir: Math.PI / 2, spread: 0.6, rgb: '120,220,210', a: 0.05, seed: 17 });
   ctx.restore();
 }
 
@@ -2193,6 +2352,7 @@ export function fireWall(ctx, x0, x1, y, h, t, { a = 1, n = 9, seed = 4 } = {}) 
 /** a dusk garden: deep green gradient, leaf bokeh, warm low sun */
 export function garden(ctx, t, cam = {}, { a = 1, sun = [1080, 520] } = {}) {
   if (a <= 0.004) return;
+  reportBg('garden', a * LA * ctx.globalAlpha);
   ctx.save();
   ctx.globalAlpha *= a;
   const g = ctx.createLinearGradient(0, 0, 0, H);
@@ -2227,12 +2387,64 @@ export function garden(ctx, t, cam = {}, { a = 1, sun = [1080, 520] } = {}) {
     ctx.fill();
   }
   ctx.globalCompositeOperation = 'source-over';
+  rays(ctx, sx, sy, t, { n: 9, len: 2400, dir: Math.PI * 0.62, spread: 1.6, rgb: '255,214,150', a: 0.07, seed: 23 });
+  // out-of-focus leaves framing the shot, nearer than everything else
+  const fx = (cam.dx || 0) * 1.6;
+  const fy = (cam.dy || 0) * 1.6;
+  ctx.drawImage(foliageTex(), -70 + fx + Math.sin(t * 0.4) * 6, -70 + fy, W + 140, H + 140);
   const vg = ctx.createRadialGradient(720, 1000, 500, 720, 1000, 1700);
   vg.addColorStop(0, 'rgba(0,0,0,0)');
   vg.addColorStop(1, 'rgba(0,0,0,0.7)');
   ctx.fillStyle = vg;
   ctx.fillRect(0, 0, W, H);
   ctx.restore();
+}
+
+let FOLIAGE = null;
+/** soft dark leaves in the corners, baked at half size so they read out of focus */
+function foliageTex() {
+  if (FOLIAGE) return FOLIAGE;
+  const w = 720;
+  const h = 1280;
+  const cv = createCanvas(w, h);
+  const c = cv.getContext('2d');
+  const R = rng(4711);
+  const leaf = (x, y, L, an, col, edge) => {
+    c.save();
+    c.translate(x, y);
+    c.rotate(an);
+    c.beginPath();
+    c.moveTo(0, 0);
+    c.bezierCurveTo(L * 0.3, -L * 0.22, L * 0.75, -L * 0.18, L, 0);
+    c.bezierCurveTo(L * 0.75, L * 0.18, L * 0.3, L * 0.22, 0, 0);
+    c.fillStyle = col;
+    c.fill();
+    c.strokeStyle = edge;
+    c.lineWidth = 1.2;
+    c.beginPath();
+    c.moveTo(L * 0.05, 0);
+    c.lineTo(L * 0.92, 0);
+    c.stroke();
+    c.restore();
+  };
+  const clusters = [[-20, 80, 0.4], [740, 40, 2.6], [-30, 760, -0.3], [750, 820, 3.5], [120, 1010, -0.9], [640, 1000, -2.3]];
+  for (const [cx, cy, dir] of clusters) {
+    for (let k = 0; k < 9; k++) {
+      const an = dir + (R() - 0.5) * 1.5;
+      const L = 120 + R() * 150;
+      const d = R() * 60;
+      const g = 14 + R() * 16;
+      leaf(cx + Math.cos(an) * d, cy + Math.sin(an) * d, L, an, `rgba(${g * 0.6},${g * 1.5},${g * 0.8},0.92)`, `rgba(120,200,110,${0.08 + R() * 0.08})`);
+    }
+  }
+  // soften: draw it back through a blur, like a lens at f/1.8
+  const out = createCanvas(w, h);
+  const o = out.getContext('2d');
+  o.filter = 'blur(5px)';
+  o.drawImage(cv, 0, 0);
+  o.filter = 'none';
+  FOLIAGE = out;
+  return out;
 }
 
 /** a soft dashed leader line with a dot at its start */
