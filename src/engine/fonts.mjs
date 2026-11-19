@@ -22,6 +22,11 @@ const SPECS = [
   ['FG600', '@fontsource/figtree', 'figtree-latin-600-normal.woff2'],
   ['FG700', '@fontsource/figtree', 'figtree-latin-700-normal.woff2'],
   ['FG800', '@fontsource/figtree', 'figtree-latin-800-normal.woff2'],
+  ['FR900', '@fontsource/fraunces', 'fraunces-latin-900-normal.woff2'],
+  ['FR700', '@fontsource/fraunces', 'fraunces-latin-700-normal.woff2'],
+  ['FR500', '@fontsource/fraunces', 'fraunces-latin-500-normal.woff2'],
+  ['FRI400', '@fontsource/fraunces', 'fraunces-latin-400-italic.woff2'],
+  ['FRI600', '@fontsource/fraunces', 'fraunces-latin-600-italic.woff2'],
 ];
 
 export const F = {
@@ -40,6 +45,12 @@ export const F = {
   subDim: 'FG400',
   fig6: 'FG600',
   fig8: 'FG800',
+  // Fraunces: the serif of the printed-plate kit (src/scenes/_cyano.mjs)
+  serif: 'FR900',
+  serif7: 'FR700',
+  serif5: 'FR500',
+  italic: 'FRI400',
+  italic6: 'FRI600',
 };
 
 export async function ensureFonts() {

@@ -1,11 +1,11 @@
-import z1 from './z1.mjs';
-import z2 from './z2.mjs';
-import z3 from './z3.mjs';
-import z4 from './z4.mjs';
-import z5 from './z5.mjs';
-import z6 from './z6.mjs';
-import z7 from './z7.mjs';
-import z8 from './z8.mjs';
+import a1 from './a1.mjs';
+import a2 from './a2.mjs';
+import a3 from './a3.mjs';
+import a4 from './a4.mjs';
+import a5 from './a5.mjs';
+import a6 from './a6.mjs';
+import a7 from './a7.mjs';
+import a8 from './a8.mjs';
 
-// Episode 27 ("Pedas itu bukan rasa") — keys z1..z8 on the chili kit.
-export default { z1, z2, z3, z4, z5, z6, z7, z8 };
+// Episode 28 ("Hiu lebih tua dari pohon") — keys a1..a8 on the cyanotype kit.
+export default { a1, a2, a3, a4, a5, a6, a7, a8 };

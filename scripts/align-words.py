@@ -26,6 +26,7 @@ LETTERS = {
     'g': ['G', 'EY'], 'h': ['HH', 'AA'], 'i': ['IY'], 'j': ['JH', 'EY'], 'k': ['K', 'AA'], 'l': ['EH', 'L'],
     'm': ['EH', 'M'], 'n': ['EH', 'N'], 'o': ['OW'], 'p': ['P', 'EY'], 'r': ['EH', 'R'], 's': ['EH', 'S'],
     't': ['T', 'EY'], 'u': ['UW'], 'w': ['W', 'EY'], 'x': ['EH', 'K', 'S'], 'y': ['Y', 'EY'], 'z': ['Z', 'EH', 'T'],
+    'v': ['F', 'EH'], 'q': ['K', 'IY'],
 }
 VOWEL = {'a': 'AA', 'i': 'IY', 'u': 'UW', 'e': 'AH', 'o': 'OW'}
 CONS = {
@@ -45,6 +46,7 @@ def clean(word):
 EXCEPT = {
     'einstein': ['AY', 'N', 'S', 'T', 'AY', 'N'],
     'scoville': ['S', 'K', 'OW', 'V', 'IH', 'L'],
+    'greenland': ['G', 'R', 'IY', 'N', 'L', 'AH', 'N', 'D'],
 }
 
 

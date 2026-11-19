@@ -12,7 +12,8 @@ import { buildKaraoke, drawKaraoke } from './engine/karaoke.mjs';
 import { initLook, beginLook, bloom, cutFx, impactFx, shake, foreground, grade, LOOK } from './engine/look.mjs';
 import { buildTimeline, sceneAt } from './timeline.mjs';
 import { SCENES, BRAND, SERIES } from './script.mjs';
-import { clamp, lerp, EASE } from './engine/anim.mjs';
+import * as SCRIPT from './script.mjs';
+import { clamp, lerp, EASE, noise1 } from './engine/anim.mjs';
 import sceneMap from './scenes/index.mjs';
 import { ffmpegPath } from './engine/ffmpeg.mjs';
 
@@ -25,6 +26,10 @@ const has = (name) => args.includes(`--${name}`);
 
 const timeline = buildTimeline();
 const subLayouts = new Map();
+// the finishing style of the episode: 'glow' (default) or 'print' (episode 28:
+// cyanotype plates, no halation or chromatic split, paper-sheet cuts)
+const STYLE = SCRIPT.STYLE || {};
+const PRINT = STYLE.look === 'print';
 
 function buildLayouts(ctx) {
   for (const s of timeline.scenes) subLayouts.set(s.id, buildKaraoke(ctx, s));
@@ -38,7 +43,12 @@ function drawChapter(ctx, scene, local, idxGlobal) {
   ctx.save();
   ctx.globalAlpha = (light ? 0.85 : 0.55) * p;
   txt(ctx, `${scene.index}`, M, y, { size: 26, font: F.num6, color: light ? '#B32E1C' : C.amber, track: 2 });
-  txt(ctx, `—  ${scene.label}`, M + 44, y, { size: 26, font: F.num6, color: ink, track: 4 });
+  ctx.save();
+  ctx.font = `26px ${F.num6}`;
+  ctx.letterSpacing = '2px';
+  const iw = ctx.measureText(`${scene.index}`).width;
+  ctx.restore();
+  txt(ctx, `—  ${scene.label}`, M + Math.max(44, iw + 14), y, { size: 26, font: F.num6, color: ink, track: 4 });
   ctx.restore();
 
   // series ticks on the right
@@ -110,11 +120,9 @@ const mark = (name, fn) => {
 // the light of each cut: the incoming scene's key colour
 const LEAK = ['255,170,110', '255,186,120', '110,214,200', '255,120,92', '170,206,255', '255,196,128', '196,236,140', '255,150,96'];
 
-function drawFrame(ctx, frame) {
-  const t = frame / FPS;
-  const { scene, index, local } = sceneAt(timeline, t);
+/** one scene under its camera, into ctx (clears the frame first) */
+function paintScene(ctx, scene, index, local, t, frame) {
   const mod = sceneMap[scene.key];
-  beginLook();
   ctx.save();
   ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = C.ink0;
@@ -129,8 +137,8 @@ function drawFrame(ctx, frame) {
   // the incoming one lands from a little closer, settling on an expo curve
   const tail = scene.dur - local;
   const last = index === timeline.scenes.length - 1;
-  const inK = index > 0 ? 0.075 * (1 - EASE.outExpo(clamp(local / 0.5))) : 0;
-  const outK = last ? 0 : 0.06 * EASE.inQuad(clamp(1 - tail / 0.24));
+  const inK = index > 0 && !PRINT ? 0.075 * (1 - EASE.outExpo(clamp(local / 0.5))) : 0;
+  const outK = last || PRINT ? 0 : 0.06 * EASE.inQuad(clamp(1 - tail / 0.24));
   const zoom = dir * (0.058 * zp - 0.014) + inK + outK;
   const camDx = Math.sin(local * 0.28 + index * 1.7) * 9 + bx;
   const camDy = Math.cos(local * 0.21 + index) * 7 + by;
@@ -158,18 +166,110 @@ function drawFrame(ctx, frame) {
   }
   ctx.restore();
   ctx.restore();
+  return cam;
+}
 
-  // the finishing pass on the picture only (captions and chrome stay crisp):
-  // foreground depth, split-tone grade, halation, accent hits, the cut kit
-  mark('shake', () => shake(ctx, t));
-  mark('fore', () => foreground(ctx, t, cam));
-  mark('grade', () => grade(ctx));
-  mark('bloom', () => bloom(ctx, { th: 0.6, k: 0.5 * LOOK.bloom }));
-  mark('impact', () => impactFx(ctx));
-  mark('cut', () => {
-    if (index > 0 && local < 0.26) cutFx(ctx, local, { rgb: LEAK[index % LEAK.length], side: index % 2 ? 1 : -1 });
-    else if (!last && tail < 0.12) cutFx(ctx, -tail, { rgb: LEAK[(index + 1) % LEAK.length], side: (index + 1) % 2 ? 1 : -1 });
-  });
+/* ------------------- print cuts: the next plate slides in ------------------ */
+
+const SWAP = 0.46;
+const EDGE_W = 150;
+let swapBuf = null;
+let edgeStrip = null;
+
+/** the incoming sheet's left margin: a deckled edge, bare paper, then the
+ *  brushed boundary where the sensitiser starts (bristle streaks) */
+function bakeEdge() {
+  const cv = createCanvas(EDGE_W, H);
+  const c = cv.getContext('2d');
+  const img = c.createImageData(EDGE_W, H);
+  let seed = 4093;
+  for (let y = 0; y < H; y++) {
+    const dk = 14 + 6 * noise1(y / 9, 1) + 3 * noise1(y / 2.3, 2);
+    const be = EDGE_W - 70 + 24 * noise1(y / 140, 3) + 12 * noise1(y / 31, 4);
+    for (let x = 0; x < EDGE_W; x++) {
+      let al = 0;
+      if (x >= dk) {
+        if (x < be) al = 1;
+        else {
+          const streak = noise1(y / 1.6 + x * 0.015, 5) * 0.7 + noise1(y / 6 + x * 0.03, 6) * 0.3;
+          const fade = 1 - (x - be) / (EDGE_W - be);
+          al = clamp(fade * 1.7 - (1 - streak) * 1.0);
+        }
+        if (x - dk < 2) al *= (x - dk + 1) / 3;
+      }
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      const n = ((seed >>> 24) - 128) / 32;
+      const o = (y * EDGE_W + x) * 4;
+      img.data[o] = 234 + n;
+      img.data[o + 1] = 239 + n;
+      img.data[o + 2] = 233 + n;
+      img.data[o + 3] = 255 * al;
+    }
+  }
+  c.putImageData(img, 0, 0);
+  return cv;
+}
+
+function plateSwap(ctx, index, local, t, frame) {
+  if (!swapBuf) {
+    swapBuf = createCanvas(W, H);
+    edgeStrip = bakeEdge();
+  }
+  const prev = timeline.scenes[index - 1];
+  const e = EASE.outQuint(clamp(local / SWAP));
+  const b = swapBuf.getContext('2d');
+  b.globalCompositeOperation = 'copy';
+  b.drawImage(ctx.canvas, 0, 0);
+  b.globalCompositeOperation = 'source-over';
+  // the outgoing plate keeps moving underneath, drifts left and darkens
+  ctx.save();
+  ctx.translate(-110 * e, 0);
+  paintScene(ctx, prev, index - 1, prev.dur + local, t, frame);
+  ctx.restore();
+  const xe = W * (1 - e);
+  ctx.save();
+  ctx.fillStyle = `rgba(2,7,20,${0.42 * e})`;
+  ctx.fillRect(0, 0, W, H);
+  // contact shadow cast leftward by the incoming sheet's edge
+  const sx = xe - (EDGE_W - 64);
+  const g = ctx.createLinearGradient(sx - 90, 0, sx + 6, 0);
+  g.addColorStop(0, 'rgba(1,4,12,0)');
+  g.addColorStop(1, 'rgba(1,4,12,0.55)');
+  ctx.fillStyle = g;
+  ctx.fillRect(sx - 90, 0, 96, H);
+  ctx.drawImage(swapBuf, xe, 0);
+  ctx.globalAlpha = 1 - EASE.smooth(clamp((e - 0.82) / 0.18));
+  ctx.drawImage(edgeStrip, sx, 0);
+  ctx.restore();
+}
+
+function drawFrame(ctx, frame) {
+  const t = frame / FPS;
+  const { scene, index, local } = sceneAt(timeline, t);
+  beginLook();
+  const cam = paintScene(ctx, scene, index, local, t, frame);
+  const tail = scene.dur - local;
+  const last = index === timeline.scenes.length - 1;
+
+  if (PRINT) {
+    // printed plates: the cut is a sheet sliding over the last one; accents
+    // only kick the camera; a light grade, no halation, no RGB split
+    if (index > 0 && local < SWAP) mark('cut', () => plateSwap(ctx, index, local, t, frame));
+    mark('shake', () => shake(ctx, t));
+    mark('grade', () => grade(ctx, { warm: 0.07, cool: 0.04 }));
+  } else {
+    // the finishing pass on the picture only (captions and chrome stay crisp):
+    // foreground depth, split-tone grade, halation, accent hits, the cut kit
+    mark('shake', () => shake(ctx, t));
+    mark('fore', () => foreground(ctx, t, cam));
+    mark('grade', () => grade(ctx));
+    mark('bloom', () => bloom(ctx, { th: 0.6, k: 0.5 * LOOK.bloom }));
+    mark('impact', () => impactFx(ctx));
+    mark('cut', () => {
+      if (index > 0 && local < 0.26) cutFx(ctx, local, { rgb: LEAK[index % LEAK.length], side: index % 2 ? 1 : -1 });
+      else if (!last && tail < 0.12) cutFx(ctx, -tail, { rgb: LEAK[(index + 1) % LEAK.length], side: (index + 1) % 2 ? 1 : -1 });
+    });
+  }
 
   // captions: karaoke cards low in the frame over a soft scrim, under the
   // chrome and the film pass like the rest of the picture
@@ -179,7 +279,7 @@ function drawFrame(ctx, frame) {
   mark('chrome', () => drawChrome(ctx, scene, local, t, index));
 
   // cuts: the incoming scene opens under a short veil of its own ink
-  if (index > 0) {
+  if (index > 0 && !PRINT) {
     const f = Math.max(0, 1 - local / 0.16);
     if (f > 0) {
       ctx.save();

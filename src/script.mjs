@@ -1,108 +1,120 @@
-// Episode 27 — "Pedas itu bukan rasa."
+// Episode 28 — "Hiu lebih tua dari pohon."
 //
-// Why chili burns, told as one chain: the tongue knows five tastes and heat
-// is not one of them; capsaicin sits on the heat sensor that normally fires
-// above forty-three degrees, so the brain reads a burn that is not there;
-// water spreads it, milk protein mops it up; the Scoville scale ranks it;
-// birds feel nothing at all — and that is exactly what the plant wants.
+// Deep time told through one animal: the oldest shark evidence (scales,
+// ~450 million years) against the first trees (~385 million years); the
+// whole of Earth's history squeezed into one day; five mass extinctions
+// survived; a fossil record made almost only of teeth; a living shark born in
+// the age of the VOC — and the turn at the end: after 450 million years,
+// overfishing, with Indonesia as the largest shark catcher on Earth.
 //
 // Sources (Nov 2026):
-//   M. J. Caterina, D. Julius et al., "The capsaicin receptor: a
-//     heat-activated ion channel in the pain pathway", Nature 389 (1997):
-//     TRPV1 opens for capsaicin and for heat above ~43 °C, on pain-sensing
-//     neurons; Nobel Prize in Physiology or Medicine 2021 (Julius,
-//     Patapoutian). Pungency is not one of the five basic tastes.
-//   Nasrawi & Pangborn (1990); Nolden, Lenart & Hayes (2019): milk beats
-//     water, skim and whole milk alike — casein binds capsaicin; capsaicin
-//     is fat-soluble, water spreads it.
-//   W. Scoville, 1912 (dilution test). Cabai rawit / bird's eye chili
-//     50,000-100,000 SHU; Pepper X 2,693,000 SHU average (Guinness World
-//     Records, 2023), Carolina Reaper 1,641,183.
-//   S.-E. Jordt & D. Julius, "Molecular basis for species-specific
-//     sensitivity to 'hot' chili peppers", Cell 108 (2002): bird TRPV1 does
-//     not respond to capsaicin. J. J. Tewksbury & G. P. Nabhan, "Directed
-//     deterrence by capsaicin in chillies", Nature 412 (2001): rodents
-//     destroy the seeds and are repelled, birds pass them intact.
+//   Natural History Museum (London), shark evolution timeline: earliest
+//     shark-like scales from Late Ordovician rocks, ~450 million years
+//     (Colorado); undisputed scales ~420 million years. Sharks survived all
+//     five mass extinctions. NHM, "What can shark teeth tell us?": teeth
+//     replaced like a conveyor belt, some species go through ~30,000.
+//   W. E. Stein et al., Current Biology 30 (2020) / Stein et al., Nature 446
+//     (2007): Archaeopteris and Wattieza (Gilboa and Cairo, New York),
+//     the earliest trees and forests, ~385-386 million years.
+//   J. Nielsen et al., "Eye lens radiocarbon reveals centuries of longevity
+//     in the Greenland shark", Science 353 (2016): largest animal
+//     392 ± 120 years, longest-lived vertebrate known.
+//   N. K. Dulvy et al., "Overfishing drives over one-third of all sharks and
+//     rays toward a global extinction crisis", Current Biology 31 (2021):
+//     37.5 % threatened, overfishing the universal threat.
+//   TRAFFIC (2019), "An overview of major shark traders, catchers and
+//     species": Indonesia the top shark catcher 2007-2017, mean 110,737 t/yr.
+//   Earth 4.54 billion years; Homo sapiens ~300,000 years: on a 24-hour
+//     clock sharks arrive at 21:37, trees at 21:58, us 5.7 s before midnight.
 //
-// Copy rules: one caption card per sentence (the last scene splits its long
-// sentence at the comma), so every card is a measured block of audio and can
-// never drift. Numbers spelled the way the voice says them.
+// Copy rules: one caption card per sentence, long sentences split at the
+// comma, so every card is a measured block of audio and can never drift.
+// Numbers spelled the way the voice says them.
 
-export const SERIES = 'NAYSI · RASA';
+export const SERIES = 'NAYSI · PURBA';
 export const BRAND = 'NAYSI';
+
+// finishing pass for this episode: printed-paper look, no glow, no RGB split
+export const STYLE = { look: 'print' };
 
 export const SCENES = [
   {
-    id: 's1', key: 'z1', label: 'BUKAN RASA', index: '01', theme: 'dark',
-    vo: 'Pedas itu sebenarnya bukan rasa. Lidahmu sedang mengirim sinyal yang sama seperti saat terbakar.',
+    id: 's1', key: 'a1', label: 'LEBIH TUA', index: '01', theme: 'dark',
+    vo: 'Hiu itu lebih tua dari pohon. Saat hiu pertama berenang di laut, daratan masih gundul, cuma ada lumut.',
     cap: [
-      'Pedas itu sebenarnya bukan rasa.',
-      'Lidahmu sedang mengirim sinyal yang sama seperti saat terbakar.',
+      'Hiu itu lebih tua dari pohon.',
+      'Saat hiu pertama berenang di laut, daratan masih gundul, cuma ada lumut.',
     ],
     lead: 0.36,
     pad: 0.42,
   },
   {
-    id: 's2', key: 'z2', label: 'LIMA RASA', index: '02', theme: 'dark',
-    vo: 'Lidah hanya mengenal lima rasa: manis, asam, asin, pahit, dan gurih. Pedas tidak termasuk, karena yang bekerja justru saraf nyeri.',
+    id: 's2', key: 'a2', label: 'BUKTI FOSIL', index: '02', theme: 'dark',
+    vo: 'Bukti hiu tertua: sisik berumur sekitar empat ratus lima puluh juta tahun. Pohon pertama baru muncul sekitar tiga ratus delapan puluh lima juta tahun lalu. Selisihnya enam puluh lima juta tahun.',
     cap: [
-      'Lidah hanya mengenal lima rasa: manis, asam, asin, pahit, dan gurih.',
-      'Pedas tidak termasuk, karena yang bekerja justru saraf nyeri.',
+      'Bukti hiu tertua: sisik berumur sekitar empat ratus lima puluh juta tahun.',
+      'Pohon pertama baru muncul sekitar tiga ratus delapan puluh lima juta tahun lalu.',
+      'Selisihnya enam puluh lima juta tahun.',
     ],
     pad: 0.42,
   },
   {
-    id: 's3', key: 'z3', label: 'SENSOR PANAS', index: '03', theme: 'dark',
-    vo: 'Zat kapsaisin di cabai menempel pada sensor panas di lidahmu. Sensor ini biasanya baru menyala saat suhu di atas empat puluh tiga derajat.',
+    id: 's3', key: 'a3', label: 'JAM BUMI', index: '03', theme: 'dark',
+    vo: 'Kalau sejarah bumi dipadatkan jadi dua puluh empat jam, hiu muncul jam sembilan lewat tiga puluh tujuh malam. Pohon, jam sepuluh kurang dua menit. Manusia? Baru muncul di enam detik terakhir.',
     cap: [
-      'Zat kapsaisin di cabai menempel pada sensor panas di lidahmu.',
-      'Sensor ini biasanya baru menyala saat suhu di atas empat puluh tiga derajat.',
+      'Kalau sejarah bumi dipadatkan jadi dua puluh empat jam,',
+      'hiu muncul jam sembilan lewat tiga puluh tujuh malam.',
+      'Pohon, jam sepuluh kurang dua menit.',
+      'Manusia? Baru muncul di enam detik terakhir.',
     ],
     pad: 0.42,
   },
   {
-    id: 's4', key: 'z4', label: 'TERTIPU', index: '04', theme: 'dark',
-    vo: 'Jadi otakmu mengira mulutmu benar-benar terbakar. Makanya wajah memerah, keringat keluar, dan mata berair.',
+    id: 's4', key: 'a4', label: 'LIMA KEPUNAHAN', index: '04', theme: 'dark',
+    vo: 'Sejak itu, hiu selamat dari lima kepunahan massal. Termasuk hantaman asteroid yang memusnahkan dinosaurus, enam puluh enam juta tahun lalu.',
     cap: [
-      'Jadi otakmu mengira mulutmu benar-benar terbakar.',
-      'Makanya wajah memerah, keringat keluar, dan mata berair.',
+      'Sejak itu, hiu selamat dari lima kepunahan massal.',
+      'Termasuk hantaman asteroid yang memusnahkan dinosaurus,',
+      'enam puluh enam juta tahun lalu.',
     ],
     pad: 0.42,
   },
   {
-    id: 's5', key: 'z5', label: 'SUSU', index: '05', theme: 'dark',
-    vo: 'Minum air justru menyebarkan kapsaisin, karena zat ini larut dalam lemak. Susu lebih ampuh: protein kaseinnya mengikat kapsaisin dan membilasnya.',
+    id: 's5', key: 'a5', label: 'FOSIL GIGI', index: '05', theme: 'dark',
+    vo: 'Anehnya, fosil hiu hampir selalu berupa gigi. Kerangkanya tulang rawan, mudah hancur. Giginya terus berganti seperti ban berjalan. Ada yang sampai tiga puluh ribu gigi seumur hidup.',
     cap: [
-      'Minum air justru menyebarkan kapsaisin, karena zat ini larut dalam lemak.',
-      'Susu lebih ampuh: protein kaseinnya mengikat kapsaisin dan membilasnya.',
+      'Anehnya, fosil hiu hampir selalu berupa gigi.',
+      'Kerangkanya tulang rawan, mudah hancur.',
+      'Giginya terus berganti seperti ban berjalan.',
+      'Ada yang sampai tiga puluh ribu gigi seumur hidup.',
     ],
     pad: 0.42,
   },
   {
-    id: 's6', key: 'z6', label: 'SKALA SCOVILLE', index: '06', theme: 'dark',
-    vo: 'Tingkat pedas diukur dengan skala Scoville sejak tahun seribu sembilan ratus dua belas. Cabai rawit sekitar lima puluh sampai seratus ribu, cabai terpedas di dunia dua koma tujuh juta.',
+    id: 's6', key: 'a6', label: 'HIU GREENLAND', index: '06', theme: 'dark',
+    vo: 'Hiu Greenland bahkan bisa hidup berabad-abad. Yang tertua diperkirakan berumur sekitar empat ratus tahun, lahir di zaman VOC.',
     cap: [
-      'Tingkat pedas diukur dengan skala Scoville sejak tahun seribu sembilan ratus dua belas.',
-      'Cabai rawit sekitar lima puluh sampai seratus ribu, cabai terpedas di dunia dua koma tujuh juta.',
+      'Hiu Greenland bahkan bisa hidup berabad-abad.',
+      'Yang tertua diperkirakan berumur sekitar empat ratus tahun, lahir di zaman VOC.',
     ],
     pad: 0.42,
   },
   {
-    id: 's7', key: 'z7', label: 'BURUNG', index: '07', theme: 'dark',
-    vo: 'Anehnya, burung sama sekali tidak merasakan pedas. Sensor panas mereka tidak bereaksi pada kapsaisin.',
+    id: 's7', key: 'a7', label: 'TERANCAM', index: '07', theme: 'dark',
+    vo: 'Tapi setelah empat ratus lima puluh juta tahun bertahan, lebih dari sepertiga jenis hiu dan pari kini terancam punah. Penyebab utamanya: penangkapan berlebihan.',
     cap: [
-      'Anehnya, burung sama sekali tidak merasakan pedas.',
-      'Sensor panas mereka tidak bereaksi pada kapsaisin.',
+      'Tapi setelah empat ratus lima puluh juta tahun bertahan,',
+      'lebih dari sepertiga jenis hiu dan pari kini terancam punah.',
+      'Penyebab utamanya: penangkapan berlebihan.',
     ],
     pad: 0.42,
   },
   {
-    id: 's8', key: 'z8', label: 'STRATEGI CABAI', index: '08', theme: 'dark',
-    vo: 'Itu strategi cabai: mamalia mengunyah bijinya, burung menelannya utuh lalu menyebarkannya. Level pedasmu berapa? Tulis di komentar.',
+    id: 's8', key: 'a8', label: 'INDONESIA', index: '08', theme: 'dark',
+    vo: 'Dan negara penangkap hiu terbesar di dunia adalah Indonesia. Menurutmu, hiu perlu dilindungi? Tulis di komentar.',
     cap: [
-      'Itu strategi cabai: mamalia mengunyah bijinya,',
-      'burung menelannya utuh lalu menyebarkannya.',
-      'Level pedasmu berapa? Tulis di komentar.',
+      'Dan negara penangkap hiu terbesar di dunia adalah Indonesia.',
+      'Menurutmu, hiu perlu dilindungi? Tulis di komentar.',
     ],
     pad: 1.8,
   },
