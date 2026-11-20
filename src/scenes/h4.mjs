@@ -1,36 +1,51 @@
-// h4 PERTAHANAN AIR — the first defense: 17% moisture. A glass panel chart
-// pits honey against ordinary food while a honeycomb floods amber.
-import { camPar, grain, odo,MD, tomb, dust, vign, hexGrid, glassPanel, bars, heading, chip, label,
-  cue, P, eo, keys, frameOn, W, H } from './_madu.mjs';
+import { NM, abyss, contours, sonar, depthRuler, gyre, craft, streak, waveStrip, panel, heading, chip, seaPass, cue, cueEnd, P, eo, e3, io, sm, keys, frameOn, label, textW, drawOn, spline, sampleSpline, polyPath, bake, rng, clamp, lerp, TAU, F, hatch, snow, rgba, W, H, grain, back, odo } from './_nemo.mjs';
+
+const ship = (ctx, x, y, s, col) => {
+  ctx.save();
+  ctx.translate(x, y); ctx.scale(s, s);
+  ctx.fillStyle = col;
+  ctx.beginPath();
+  ctx.moveTo(-70, 0); ctx.quadraticCurveTo(-58, 26, 0, 28); ctx.quadraticCurveTo(60, 26, 74, 0);
+  ctx.closePath(); ctx.fill();
+  ctx.fillRect(-18, -26, 34, 26);
+  ctx.fillRect(20, -14, 16, 14);
+  ctx.fillRect(-4, -44, 4, 20);
+  ctx.restore();
+};
 
 export default {
   draw(ctx, t, scene, env) {
     const cam = keys(t, [
-      [0, 720, 1120, 1.06], [2.5, 720, 1090, 1.0], [scene.dur, 720, 1050, 1.05],
+      [0, 720, 1140, 1.08], [scene.dur * 0.5, 720, 1080, 1.03], [scene.dur, 720, 1020, 1.0],
     ]);
     ctx.save();
     frameOn(ctx, cam);
-    tomb(ctx, t, { hex: 0 });
-    ctx.restore();
+    abyss(ctx, t, { top: '#0E3A5C' });
+    const q = eo(P(t, 0.6, 1.2));
+    // sea line
+    ctx.strokeStyle = 'rgba(159,184,204,0.5)';
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    for (let x = 100; x <= W - 100; x += 14) {
+      const y = 1300 + Math.sin(x * 0.02 + t * 1.4) * 5;
+      if (x === 100) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ship(ctx, 300, 1288, 0.9, 'rgba(159,184,204,0.75)');
+    label(ctx, 'TANPA RUTE RUTIN', 300, 1392, { size: 26, color: NM.steel, align: 'center', track: 3, p: q });
+    // ISS overhead
     ctx.save();
-    frameOn(ctx, cam);
-    hexGrid(ctx, 760, 560, 640, 1080, 96, { a: 0.07, fill: 0.55 * eo(P(t, 1.0, 3.4)), t });
-    glassPanel(ctx, 110, 620, 900, 980, { p: eo(P(t, 0.4, 0.8)) });
-    label(ctx, 'KANDUNGAN AIR', 170, 706, { size: 30, color: MD.amber, track: 5 });
-    label(ctx, 'PERSEN BERAT', 170, 748, { size: 24, color: 'rgba(243,239,228,0.45)', track: 4 });
-    bars(ctx, 200, 800, 720, 620, [
-      { v: 0.17, txt: '17%', count: 17, suffix: '%', label: 'MADU' },
-      { v: 0.8, txt: '70–90%', label: 'BUAH & SUSU', c0: '#BFE8DE', c1: '#2E7A6C' },
-    ], P(t, 1.1, 2.6), { grid: true, stag: 0.22 });
-    const tC = cue(scene, 'tujuh');
-    if (t > tC - 0.4) chip(ctx, 'RAHASIA 01 · AIR', 560, 560, { p: P(t, tC - 0.4, 0.5) });
-    heading(ctx, 'HAMPIR', '', 120, 400, { amber: 'TANPA AIR', p: P(t, 0.35, 1.0), size: 110, sub: 'SELEBIHNYA GULA LEWAT JENUH' });
+    ctx.setLineDash([8, 10]);
+    ctx.strokeStyle = 'rgba(53,224,180,0.6)';
+    ctx.lineWidth = 2.4;
+    ctx.globalAlpha = q;
+    ctx.beginPath(); ctx.moveTo(980, 830); ctx.lineTo(980, 1290); ctx.stroke();
     ctx.restore();
-    ctx.save();
-    frameOn(ctx, cam);
-    dust(ctx, t, 23, 26);
+    craft(ctx, 980, 780, 1.15, { rot: -0.06 });
+    odo(ctx, 415, 980, 1080, q, { font: '800 96px Poppins, sans-serif', col: NM.sonar, glow: 'rgba(53,224,180,0.5)', suffix: ' KM' });
+    label(ctx, 'STASIUN LUAR ANGKASA DI ATAS KEPALA', 980, 1140, { size: 26, color: NM.bio, align: 'center', track: 3, p: q });
+    heading(ctx, 'MANUSIA', 'TERDEKAT', 120, 430, { sub: 'BUKAN DI KAPAL · BUKAN DI PULAU', p: P(t, 0.4, 1.0), size: 128 });
     ctx.restore();
-    vign(ctx, 0.5);
-    grain(ctx, t, 0.05);
+    seaPass(ctx, t);
   },
 };

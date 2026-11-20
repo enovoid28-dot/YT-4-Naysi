@@ -1,73 +1,43 @@
-// h15 WARNA TUA — three jars age left to right: the honey darkens, the
-// sparkle fades, a decade ruler runs beneath; flavour changes, safety not.
-import { camPar, grain, MD, tomb, dust, vign, jar, heading, chip, label, leader, sparkle,
-  cue, P, eo, keys, frameOn, clamp, lerp, TAU, W, H } from './_madu.mjs';
+import { NM, abyss, contours, sonar, depthRuler, gyre, craft, streak, waveStrip, panel, heading, chip, seaPass, cue, cueEnd, P, eo, e3, io, sm, keys, frameOn, label, textW, drawOn, spline, sampleSpline, polyPath, bake, rng, clamp, lerp, TAU, F, hatch, snow, rgba, W, H, grain, back, odo } from './_nemo.mjs';
+
+const ship = (ctx, x, y, s, col) => {
+  ctx.save();
+  ctx.translate(x, y); ctx.scale(s, s);
+  ctx.fillStyle = col;
+  ctx.beginPath();
+  ctx.moveTo(-70, 0); ctx.quadraticCurveTo(-58, 26, 0, 28); ctx.quadraticCurveTo(60, 26, 74, 0);
+  ctx.closePath(); ctx.fill();
+  ctx.fillRect(-18, -26, 34, 26);
+  ctx.fillRect(20, -14, 16, 14);
+  ctx.fillRect(-4, -44, 4, 20);
+  ctx.restore();
+};
 
 export default {
   draw(ctx, t, scene, env) {
     const cam = keys(t, [
-      [0, 720, 1100, 1.05], [scene.dur - 3.5, 720, 1070, 1.0], [scene.dur, 720, 1050, 1.04],
+      [0, 720, 1140, 1.08], [scene.dur * 0.5, 720, 1080, 1.03], [scene.dur, 720, 1020, 1.0],
     ]);
     ctx.save();
     frameOn(ctx, cam);
-    tomb(ctx, t, { hex: 0.035 });
-    ctx.restore();
+    abyss(ctx, t);
+    contours(ctx, 720, 1150, t, { n: 4, gap: 160 });
+    sonar(ctx, 720, 1150, t, { max: 480, a: 0.4, per: 3.2 });
+    const q = eo(P(t, 0.5, 1.1));
+    panel(ctx, 240, 860, 960, 480, { p: q });
+    label(ctx, 'MALAM INI DI TITIK NEMO', 720, 940, { size: 28, color: NM.sonar, align: 'center', track: 5, p: q });
     ctx.save();
-    frameOn(ctx, cam);
-    const xs = [360, 720, 1080];
-    const tints = [0, 0.42, 0.72];
-    const decades = ['0 TAHUN', '30 TAHUN', '60 TAHUN'];
-    xs.forEach((x, i) => {
-      const q = eo(P(t, 0.5 + i * 0.8, 0.8));
-      ctx.save();
-      ctx.globalAlpha = q;
-      jar(ctx, x, 1080, 0.86, { kind: 'glass', seal: true, glow: 0.5 - i * 0.14, level: 0.8 });
-      // age tint over the body
-      if (tints[i] > 0) {
-        ctx.save();
-        ctx.globalCompositeOperation = 'multiply';
-        const tg = ctx.createRadialGradient(x, 1080, 20, x, 1080, 170);
-        tg.addColorStop(0, `rgba(96,52,12,${1 - 0.55 * (1 - tints[i])})`);
-        tg.addColorStop(1, 'rgba(255,255,255,1)');
-        ctx.fillStyle = tg;
-        ctx.beginPath();
-        ctx.rect(x - 80, 990, 160, 200);
-        ctx.fill();
-        ctx.restore();
-      }
-      ctx.globalAlpha = q;
-      ctx.restore();
-      chip(ctx, decades[i], x, 1392, { p: q, col: i === 2 ? 'rgba(196,120,40,0.9)' : 'rgba(255,182,39,0.85)' });
-      for (let k = 0; k < 4 - i; k++) {
-        sparkle(ctx, x - 40 + k * 28, 1020 + (k % 2) * 60, 9, q * (0.5 - i * 0.16) * (0.6 + 0.4 * Math.sin(t * 2.4 + k + i)), k);
-      }
-    });
-    // ageing arrow
-    const aq = eo(P(t, 2.6, 1.2));
-    ctx.save();
-    ctx.strokeStyle = `rgba(243,239,228,${0.5 * aq})`;
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(430, 1520);
-    ctx.lineTo(430 + 580 * aq, 1520);
-    if (aq > 0.9) {
-      ctx.lineTo(990, 1504);
-      ctx.moveTo(1010, 1520);
-      ctx.lineTo(990, 1536);
-    }
-    ctx.stroke();
+    ctx.globalAlpha = q;
+    ctx.font = '700 52px Poppins, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = NM.foam;
+    ctx.fillText('MANUSIA TERDEKATMU', 720, 1080);
+    ctx.fillStyle = NM.sonar;
+    ctx.fillText('MENGAPUNG DI ATASMU', 720, 1156);
     ctx.restore();
-    label(ctx, 'WARNA GELAP · RASA BERUBAH · AMAN TETAP', 720, 1588,
-      { size: 26, color: 'rgba(243,239,228,0.65)', track: 4, align: 'center' });
-    leader(ctx, 1080, 980, 1210, 840, { col: 'rgba(245,208,140,0.6)' });
-    chip(ctx, 'KUALITAS ≠ KEAMANAN', 1180, 800, { p: P(t, cue(scene, 'keamanan'), 0.5) });
-    heading(ctx, 'GELAP', '', 120, 400, { amber: '≠ BASI', p: P(t, 0.35, 1.0), size: 110, sub: 'PULUHAN TAHUN HANYA MENGUBAH RASA' });
+    chip(ctx, 'TULIS KOMENTARMU', 720, 1690, { p: P(t, 2.0, 0.9) });
+    heading(ctx, 'KAMU DI', 'SANA?', 120, 430, { sub: 'TEMPAT PALING SUNYI DI BUMI', p: P(t, 0.4, 1.0), size: 132 });
     ctx.restore();
-    ctx.save();
-    frameOn(ctx, cam);
-    dust(ctx, t, 71, 24);
-    ctx.restore();
-    vign(ctx, 0.5);
-    grain(ctx, t, 0.05);
+    seaPass(ctx, t);
   },
 };

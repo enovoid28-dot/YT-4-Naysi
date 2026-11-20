@@ -1,65 +1,46 @@
-// h2 TUTANKHAMUN 1922 — torchlight sweeps a tomb wall of glyphs and finds a
-// row of sealed jars still standing where they were left.
-import { camPar, grain, wallTex,MD, tomb, shafts, dust, vign, jar, glyphRow, heading, chip, leader,
-  cue, P, eo, keys, frameOn, label, clamp, lerp, W, H } from './_madu.mjs';
+import { NM, abyss, contours, sonar, depthRuler, gyre, craft, streak, waveStrip, panel, heading, chip, seaPass, cue, cueEnd, P, eo, e3, io, sm, keys, frameOn, label, textW, drawOn, spline, sampleSpline, polyPath, bake, rng, clamp, lerp, TAU, F, hatch, snow, rgba, W, H, grain, back, odo } from './_nemo.mjs';
+
+const ship = (ctx, x, y, s, col) => {
+  ctx.save();
+  ctx.translate(x, y); ctx.scale(s, s);
+  ctx.fillStyle = col;
+  ctx.beginPath();
+  ctx.moveTo(-70, 0); ctx.quadraticCurveTo(-58, 26, 0, 28); ctx.quadraticCurveTo(60, 26, 74, 0);
+  ctx.closePath(); ctx.fill();
+  ctx.fillRect(-18, -26, 34, 26);
+  ctx.fillRect(20, -14, 16, 14);
+  ctx.fillRect(-4, -44, 4, 20);
+  ctx.restore();
+};
 
 export default {
   draw(ctx, t, scene, env) {
     const cam = keys(t, [
-      [0, 700, 1080, 1.06], [3, 720, 1060, 1.0],
-      [scene.dur - 3, 760, 1030, 1.06], [scene.dur, 770, 1020, 1.08],
+      [0, 720, 1140, 1.08], [scene.dur * 0.5, 720, 1080, 1.03], [scene.dur, 720, 1020, 1.0],
     ]);
-    wallTex(ctx, 11, 0.42);
     ctx.save();
     frameOn(ctx, cam);
-    tomb(ctx, t, { hex: 0.03 });
-    ctx.restore();
+    abyss(ctx, t);
+    contours(ctx, 720, 1120, t, { n: 4, gap: 190, sy: 0.6 });
+    const q = P(t, 0.6, 1.8);
+    const rd = rng(9);
     ctx.save();
-    frameOn(ctx, cam);
-    // stone courses
-    ctx.strokeStyle = 'rgba(255,196,110,0.10)';
-    ctx.lineWidth = 2;
-    for (let y = 560; y < 1700; y += 92) {
+    ctx.strokeStyle = 'rgba(53,224,180,0.5)';
+    ctx.lineWidth = 3;
+    for (let i = 0; i < 36; i++) {
+      const an = (i / 36) * TAU - Math.PI / 2;
+      const r0 = 430, r1 = i % 9 === 0 ? 486 : 462;
+      ctx.globalAlpha = eo(q) * (i / 36 < eo(q) ? 1 : 0.14);
       ctx.beginPath();
-      ctx.moveTo(60, y);
-      ctx.lineTo(W - 60, y);
+      ctx.moveTo(720 + Math.cos(an) * r0, 1120 + Math.sin(an) * r0 * 0.86);
+      ctx.lineTo(720 + Math.cos(an) * r1, 1120 + Math.sin(an) * r1 * 0.86);
       ctx.stroke();
-      for (let x = 60 + ((y / 92) % 2) * 120; x < W - 60; x += 240) {
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x, y + 92);
-        ctx.stroke();
-      }
     }
-    glyphRow(ctx, 140, 640, W - 280, 12, 5, { col: 'rgba(255,196,110,0.34)', s: 1.15 });
-    glyphRow(ctx, 140, 1620, W - 280, 12, 8, { col: 'rgba(255,196,110,0.22)', s: 1.0 });
-    // torch sweep
-    const sx = lerp(-300, W + 300, clamp(t / (scene.dur - 1.5)));
-    const g = ctx.createRadialGradient(sx, 1150, 40, sx, 1150, 760);
-    g.addColorStop(0, 'rgba(255,176,64,0.30)');
-    g.addColorStop(1, 'rgba(255,176,64,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 400, W, 1400);
-    // jar row, lit as the sweep passes
-    const xs = [400, 720, 1040];
-    xs.forEach((x, i) => {
-      const lit = clamp(1 - Math.abs(sx - x) / 620);
-      const p = eo(P(t, 0.7 + i * 0.45, 0.9));
-      ctx.save();
-      ctx.globalAlpha = 0.35 + 0.65 * lit;
-      jar(ctx, x, 1290 - (i === 1 ? 40 : 0), i === 1 ? 1.0 : 0.8, { seal: true, glow: lit * 0.8 });
-      ctx.restore();
-      void p;
-    });
-    leader(ctx, 720, 1120, 980, 900, { col: 'rgba(245,208,140,0.6)' });
-    chip(ctx, 'MADU · TETAP UTUH', 1120, 868, { p: P(t, cue(scene, 'stoples'), 0.5), col: 'rgba(255,182,39,0.9)' });
-    heading(ctx, 'TUTANKHAMUN', '', 120, 400, { p: P(t, 0.4, 1.0), size: 96, sub: '1922 · MAKAM DIBUKA', subCol: 'rgba(243,239,228,0.75)' });
     ctx.restore();
-    ctx.save();
-    frameOn(ctx, cam);
-    dust(ctx, t, 13, 30);
+    odo(ctx, 2688, 720, 1180, q, { font: '800 230px Poppins, sans-serif', col: NM.foam, glow: 'rgba(111,216,255,0.5)', suffix: ' KM' });
+    label(ctx, 'KE ARAH MANA PUN KAMU MENGHADAP', 720, 1330, { size: 30, color: NM.steel, align: 'center', track: 4, p: P(t, 1.6, 0.9) });
+    heading(ctx, 'SEJAUH', 'APA?', 120, 430, { sub: 'DARI DARATAN TERDEKAT', p: P(t, 0.4, 1.0), size: 132 });
     ctx.restore();
-    vign(ctx, 0.5);
-    grain(ctx, t, 0.05);
+    seaPass(ctx, t);
   },
 };
