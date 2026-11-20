@@ -44,6 +44,7 @@ export default {
     craft(ctx, 980, 780, 1.15, { rot: -0.06 });
     odo(ctx, 415, 980, 1080, q, { font: '800 96px Poppins, sans-serif', col: NM.sonar, glow: 'rgba(53,224,180,0.5)', suffix: ' KM' });
     label(ctx, 'STASIUN LUAR ANGKASA DI ATAS KEPALA', 980, 1140, { size: 26, color: NM.bio, align: 'center', track: 3, p: q });
+    contours(ctx, 720, 2100, t, { n: 3, gap: 150, sy: 0.5, col: 'rgba(111,216,255,0.10)' });
     heading(ctx, 'MANUSIA', 'TERDEKAT', 120, 430, { sub: 'BUKAN DI KAPAL · BUKAN DI PULAU', p: P(t, 0.4, 1.0), size: 128 });
     ctx.restore();
     seaPass(ctx, t);

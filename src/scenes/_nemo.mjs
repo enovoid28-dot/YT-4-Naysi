@@ -276,7 +276,13 @@ export function heading(ctx, main, accent, x, y, o = {}) {
   ctx.save();
   ctx.globalAlpha = clamp(p * 1.6);
   ctx.textAlign = 'left';
-  ctx.font = `800 ${o.size ?? 128}px Poppins, sans-serif`;
+  let size = o.size ?? 128;
+  ctx.font = `800 ${size}px Poppins, sans-serif`;
+  const tot = ctx.measureText(main).width + (accent ? 26 + ctx.measureText(accent).width : 0);
+  if (tot > W - 220) {
+    size = Math.floor(size * (W - 220) / tot);
+    ctx.font = `800 ${size}px Poppins, sans-serif`;
+  }
   ctx.fillStyle = NM.foam;
   ctx.shadowColor = 'rgba(111,216,255,0.5)';
   ctx.shadowBlur = 26;
