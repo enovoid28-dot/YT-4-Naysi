@@ -1,0 +1,10 @@
+import {execFileSync} from 'node:child_process';
+import fs from 'node:fs';
+import {ffmpegPath} from '../src/engine/ffmpeg.mjs';
+execFileSync(process.execPath,['scripts/build-ep33.mjs'],{stdio:'inherit'});
+execFileSync(process.execPath,['src/heat/render.mjs'],{stdio:'inherit'});
+const tl=JSON.parse(fs.readFileSync('src/heat/timeline.json'));
+const output='out/Besi vs Kayu - Naysi - 1440x2560 90fps.mp4';
+execFileSync(ffmpegPath(),['-y','-hide_banner','-loglevel','error','-i','out/ep33-silent.mp4','-i','public/audio/ep33.mp3','-map','0:v:0','-map','1:a:0','-c:v','copy','-c:a','aac','-b:a','256k','-ar','48000','-t',String(tl.duration),'-movflags','+faststart',output],{stdio:'inherit'});
+if(fs.statSync(output).size>100*1024*1024)throw Error('Drive upload limit exceeded');
+console.log('MASTER READY',output,fs.statSync(output).size);

@@ -1,0 +1,41 @@
+import fs from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {EPISODE} from '../src/heat/episode.mjs';
+import {ffmpegPath} from '../src/engine/ffmpeg.mjs';
+import {CUES} from '../src/heat/cues.mjs';
+import {ensureFonts} from '../src/engine/fonts.mjs';
+await ensureFonts();
+fs.mkdirSync('public/fonts',{recursive:true});
+for(const font of ['PJS700','IT800','MONO6'])fs.copyFileSync(`.fonts/${font}.ttf`,`public/fonts/${font}.ttf`);
+const ff = ffmpegPath();
+fs.mkdirSync('out',{recursive:true});
+fs.mkdirSync('public/audio',{recursive:true});
+let cursor=0;
+const scenes=EPISODE.scenes.map(s=>{
+  const raw=execFileSync(ff,['-v','error','-i',`voice/ep33/${s.id}.mp3`,'-ar','24000','-ac','1','-f','f32le','-'],{maxBuffer:20*1024*1024});
+  const samples=new Float32Array(raw.buffer,raw.byteOffset,raw.byteLength/4);
+  const peaks=[];
+  for(let i=0;i<samples.length;i+=240){let p=0;for(let j=i;j<Math.min(i+240,samples.length);j++)p=Math.max(p,Math.abs(samples[j]));peaks.push(p);}
+  const first=peaks.findIndex(x=>x>0.012);
+  const last=peaks.findLastIndex(x=>x>0.012);
+  if(first<0||last<=first)throw Error(`silent take ${s.id}`);
+  const trimStart=Math.max(0,first*.01-.07);
+  const trimEnd=Math.min(samples.length/24000,(last+1)*.01+.13);
+  const frames=Math.ceil((trimEnd-trimStart+.16)*90);
+  const duration=frames/90;
+  const target=`out/ep33-${s.id}.flac`;
+  execFileSync(ff,['-y','-v','error','-i',`voice/ep33/${s.id}.mp3`,'-af',`atrim=start=${trimStart}:end=${trimEnd},asetpts=PTS-STARTPTS,highpass=f=75,equalizer=f=220:width_type=q:w=1:g=-2,acompressor=threshold=-20dB:ratio=2:attack=8:release=110,loudnorm=I=-16:TP=-2:LRA=7,aresample=48000,apad,atrim=duration=${duration}`,'-ac','2',target]);
+  const result={...s,start:cursor/90,startFrame:cursor,frames,duration,onset:Math.max(0,first*.01-trimStart),offset:Math.min(duration,(last+1)*.01-trimStart),trimStart,trimEnd};
+  if(CUES[s.index].map(c=>c[1]).join(' ')!==s.text)throw Error(`caption transcript mismatch ${s.id}`);
+  result.cards=CUES[s.index].map(([at,text],i,cards)=>({text,from:Math.max(0,at-trimStart-.025),to:i+1<cards.length?cards[i+1][0]-trimStart-.025:result.offset+.12}));
+  cursor+=frames;
+  console.log(s.id,duration.toFixed(3),`caption ${result.onset.toFixed(2)}–${result.offset.toFixed(2)}`);
+  return result;
+});
+const timeline={...EPISODE,scenes,frames:cursor,duration:cursor/90};
+fs.writeFileSync('src/heat/timeline.json',JSON.stringify(timeline,null,2)+'\n');
+fs.writeFileSync('out/ep33-audio.txt',scenes.map(s=>`file '${process.cwd()}/out/ep33-${s.id}.flac'`).join('\n'));
+execFileSync(ff,['-y','-v','error','-f','concat','-safe','0','-i','out/ep33-audio.txt','-af','asetpts=N/SR/TB','-c:a','flac','out/ep33-voice.flac']);
+// Quiet original electronic score. VO has >20 dB priority over the bed.
+execFileSync(ff,['-y','-v','error','-i','out/ep33-voice.flac','-f','lavfi','-i',`aevalsrc=0.008*sin(2*PI*110*t)+0.005*sin(2*PI*164.8138*t)+0.003*sin(2*PI*220*t)*(0.5+0.5*sin(2*PI*0.7*t)):s=48000:d=${timeline.duration}`,'-filter_complex',`[1:a]afade=t=in:d=1.5,afade=t=out:st=${timeline.duration-2}:d=2,pan=stereo|c0=c0|c1=c0[bed];[0:a][bed]amix=inputs=2,volume=2,alimiter=limit=0.794:level=false,atrim=duration=${timeline.duration}[mix]`,'-map','[mix]','-c:a','libmp3lame','-b:a','256k','public/audio/ep33.mp3']);
+console.log('TOTAL',timeline.duration,'seconds',cursor,'frames');

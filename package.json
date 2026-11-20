@@ -5,9 +5,9 @@
   "scripts": {
     "vo": "node scripts/prep-vo.mjs",
     "audio": "node scripts/audio.mjs",
-    "stills": "node src/render.mjs --stills 3,12,26,38,47,60,75",
-    "render": "node src/render.mjs --from 0 --to 7067 --preset superfast --crf 18 --out out/video.mp4",
-    "build": "node scripts/build.mjs",
+    "stills": "node src/heat/render.mjs --stills",
+    "render": "node scripts/render-ep33.mjs",
+    "build": "node scripts/build-ep33.mjs",
     "mux": "node scripts/mux.mjs",
     "studio": "remotion studio --port=3000 --host=0.0.0.0",
     "remotion:render": "remotion render src/remotion/index.js NaysiShort out/remotion.mp4 --concurrency=2",
@@ -29,7 +29,13 @@
     "audio:ep30": "VO_EP=ep30 node scripts/audio-ep30.mjs",
     "render:ep28": "bash scripts/render-ep28.sh",
     "render:ep29": "bash scripts/render-ep29.sh",
-    "render:ep30": "bash scripts/render-ep30.sh"
+    "render:ep30": "bash scripts/render-ep30.sh",
+    "build:ep33": "node scripts/build-ep33.mjs",
+    "render:ep33": "node scripts/render-ep33.mjs",
+    "stills:ep33": "node src/heat/render.mjs --stills",
+    "test:ep33": "node --test src/heat/episode.test.mjs",
+    "prestudio": "npm run build:ep33",
+    "preremotion:render": "npm run build:ep33"
   },
   "repository": {
     "type": "git",
@@ -51,12 +57,12 @@
     "@fontsource/inter-tight": "5.3.0",
     "@fontsource/plus-jakarta-sans": "5.3.0",
     "@napi-rs/canvas": "1.1.1",
-    "@remotion/cli": "4.0.544",
-    "@remotion/player": "4.0.544",
-    "@remotion/renderer": "4.0.544",
+    "@remotion/cli": "4.0.545",
+    "@remotion/player": "4.0.545",
+    "@remotion/renderer": "4.0.545",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "remotion": "4.0.544",
+    "remotion": "4.0.545",
     "topojson-client": "3.1.0",
     "wawoff2": "2.0.1",
     "world-atlas": "2.0.2"
@@ -64,6 +70,6 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@remotion/eslint-config-flat": "4.0.544"
+    "@remotion/eslint-config-flat": "4.0.545"
   }
 }

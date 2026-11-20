@@ -1,0 +1,364 @@
+{
+  "title": "Kenapa Besi Terasa Lebih Dingin dari Kayu, Padahal Suhunya Sama?",
+  "width": 1440,
+  "height": 2560,
+  "fps": 90,
+  "source": "https://web.ics.purdue.edu/~dchavas/teaching/interactive/heat-transfer.html",
+  "scenes": [
+    {
+      "id": "s1",
+      "a": "SUHU SAMA.",
+      "b": "RASA BERBEDA.",
+      "text": "Besi dan kayu ini suhunya sama. Tapi saat disentuh, kenapa besi terasa lebih dingin?",
+      "accent": [
+        "lebih dingin?"
+      ],
+      "label": "PERTANYAAN",
+      "index": 0,
+      "start": 0,
+      "startFrame": 0,
+      "frames": 632,
+      "duration": 7.022222222222222,
+      "onset": 0.07,
+      "offset": 6.73,
+      "trimStart": 0.21000000000000002,
+      "trimEnd": 7.07,
+      "cards": [
+        {
+          "text": "Besi dan kayu ini suhunya sama.",
+          "from": 0.045000000000000005,
+          "to": 3.205
+        },
+        {
+          "text": "Tapi saat disentuh,",
+          "from": 3.205,
+          "to": 4.7749999999999995
+        },
+        {
+          "text": "kenapa besi terasa lebih dingin?",
+          "from": 4.7749999999999995,
+          "to": 6.8500000000000005
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "a": "BUKAN DINGIN",
+      "b": "YANG BERPINDAH.",
+      "text": "Bukan karena besi menyimpan dingin. Kuncinya ada pada seberapa cepat panas berpindah dari kulitmu.",
+      "accent": [
+        "panas",
+        "berpindah"
+      ],
+      "label": "KUNCI JAWABAN",
+      "index": 1,
+      "start": 7.022222222222222,
+      "startFrame": 632,
+      "frames": 614,
+      "duration": 6.822222222222222,
+      "onset": 0.07,
+      "offset": 6.529999999999999,
+      "trimStart": 0.22999999999999998,
+      "trimEnd": 6.89,
+      "cards": [
+        {
+          "text": "Bukan karena besi menyimpan dingin.",
+          "from": 0.045000000000000005,
+          "to": 2.685
+        },
+        {
+          "text": "Kuncinya ada pada seberapa cepat panas berpindah dari kulitmu.",
+          "from": 2.685,
+          "to": 6.6499999999999995
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "a": "SATU RUANGAN.",
+      "b": "DUA BAHAN.",
+      "text": "Bayangkan keduanya sudah lama berada di ruangan bersuhu dua puluh lima derajat, tanpa sumber panas lain.",
+      "accent": [
+        "dua puluh lima derajat,"
+      ],
+      "label": "KESETIMBANGAN",
+      "index": 2,
+      "start": 13.844444444444445,
+      "startFrame": 1246,
+      "frames": 639,
+      "duration": 7.1,
+      "onset": 0.07,
+      "offset": 6.81,
+      "trimStart": 0.12,
+      "trimEnd": 7.06,
+      "cards": [
+        {
+          "text": "Bayangkan keduanya sudah lama berada di ruangan bersuhu dua puluh lima derajat,",
+          "from": 0.045000000000000005,
+          "to": 5.385
+        },
+        {
+          "text": "tanpa sumber panas lain.",
+          "from": 5.385,
+          "to": 6.93
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "a": "DARI HANGAT",
+      "b": "KE LEBIH DINGIN.",
+      "text": "Tanganmu lebih hangat. Jadi saat menyentuh keduanya, panas mengalir dari tangan ke benda, bukan sebaliknya.",
+      "accent": [
+        "dari tangan ke benda,"
+      ],
+      "label": "ARAH ALIRAN",
+      "index": 3,
+      "start": 20.944444444444443,
+      "startFrame": 1885,
+      "frames": 711,
+      "duration": 7.9,
+      "onset": 0.07,
+      "offset": 7.609999999999999,
+      "trimStart": 0.19,
+      "trimEnd": 7.93,
+      "cards": [
+        {
+          "text": "Tanganmu lebih hangat.",
+          "from": 0.045000000000000005,
+          "to": 1.665
+        },
+        {
+          "text": "Jadi saat menyentuh keduanya,",
+          "from": 1.665,
+          "to": 4.074999999999999
+        },
+        {
+          "text": "panas mengalir dari tangan ke benda,",
+          "from": 4.074999999999999,
+          "to": 6.384999999999999
+        },
+        {
+          "text": "bukan sebaliknya.",
+          "from": 6.384999999999999,
+          "to": 7.7299999999999995
+        }
+      ]
+    },
+    {
+      "id": "s5",
+      "a": "BESI: PANAS",
+      "b": "CEPAT MENYEBAR.",
+      "text": "Besi menghantarkan panas dengan baik. Panas dari kulit cepat menyebar ke bagian besi yang lain.",
+      "accent": [
+        "cepat menyebar"
+      ],
+      "label": "KONDUKTOR",
+      "index": 4,
+      "start": 28.844444444444445,
+      "startFrame": 2596,
+      "frames": 575,
+      "duration": 6.388888888888889,
+      "onset": 0.07,
+      "offset": 6.09,
+      "trimStart": 0.16999999999999998,
+      "trimEnd": 6.39,
+      "cards": [
+        {
+          "text": "Besi menghantarkan panas dengan baik.",
+          "from": 0.045000000000000005,
+          "to": 2.805
+        },
+        {
+          "text": "Panas dari kulit cepat menyebar ke bagian besi yang lain.",
+          "from": 2.805,
+          "to": 6.21
+        }
+      ]
+    },
+    {
+      "id": "s6",
+      "a": "KAYU: PANAS",
+      "b": "TERTAHAN LOKAL.",
+      "text": "Kayu menghantarkan panas jauh lebih lambat. Bagian yang menyentuh tangan cepat menghangat, sehingga perpindahan panas melambat.",
+      "accent": [
+        "jauh lebih lambat."
+      ],
+      "label": "PENGHANTAR BURUK",
+      "index": 5,
+      "start": 35.233333333333334,
+      "startFrame": 3171,
+      "frames": 709,
+      "duration": 7.877777777777778,
+      "onset": 0.07,
+      "offset": 7.58,
+      "trimStart": 0.21000000000000002,
+      "trimEnd": 7.92,
+      "cards": [
+        {
+          "text": "Kayu menghantarkan panas jauh lebih lambat.",
+          "from": 0.045000000000000005,
+          "to": 3.185
+        },
+        {
+          "text": "Bagian yang menyentuh tangan cepat menghangat,",
+          "from": 3.185,
+          "to": 5.595
+        },
+        {
+          "text": "sehingga perpindahan panas melambat.",
+          "from": 5.595,
+          "to": 7.7
+        }
+      ]
+    },
+    {
+      "id": "s7",
+      "a": "KULITMU",
+      "b": "YANG MENDINGIN.",
+      "text": "Sarafmu merespons suhu kulit dan perubahannya. Kulit yang lebih cepat mendingin membuat besi terasa lebih dingin.",
+      "accent": [
+        "suhu kulit",
+        "perubahannya."
+      ],
+      "label": "RESPONS SARAF",
+      "index": 6,
+      "start": 43.111111111111114,
+      "startFrame": 3880,
+      "frames": 699,
+      "duration": 7.766666666666667,
+      "onset": 0.07,
+      "offset": 7.47,
+      "trimStart": 0.21000000000000002,
+      "trimEnd": 7.81,
+      "cards": [
+        {
+          "text": "Sarafmu merespons suhu kulit dan perubahannya.",
+          "from": 0.05499999999999996,
+          "to": 3.415
+        },
+        {
+          "text": "Kulit yang lebih cepat mendingin",
+          "from": 3.415,
+          "to": 5.534999999999999
+        },
+        {
+          "text": "membuat besi terasa lebih dingin.",
+          "from": 5.534999999999999,
+          "to": 7.59
+        }
+      ]
+    },
+    {
+      "id": "s8",
+      "a": "LEBIH DARI",
+      "b": "DAYA HANTAR.",
+      "text": "Penjelasan lengkapnya memakai efusivitas termal: gabungan daya hantar panas, massa jenis, dan kapasitas panas bahan.",
+      "accent": [
+        "efusivitas termal:"
+      ],
+      "label": "EFUSIVITAS",
+      "index": 7,
+      "start": 50.87777777777778,
+      "startFrame": 4579,
+      "frames": 749,
+      "duration": 8.322222222222223,
+      "onset": 0.07,
+      "offset": 8.03,
+      "trimStart": 0.22999999999999998,
+      "trimEnd": 8.39,
+      "cards": [
+        {
+          "text": "Penjelasan lengkapnya memakai efusivitas termal:",
+          "from": 0.045000000000000005,
+          "to": 3.545
+        },
+        {
+          "text": "gabungan daya hantar panas, massa jenis, dan kapasitas panas bahan.",
+          "from": 3.545,
+          "to": 8.149999999999999
+        }
+      ]
+    },
+    {
+      "id": "s9",
+      "a": "SAAT LEBIH PANAS,",
+      "b": "ARAHNYA BERBALIK.",
+      "text": "Kalau bendanya lebih panas dari kulit, arahnya berbalik. Logam justru terasa lebih panas. Jangan mengujinya dengan benda panas.",
+      "accent": [
+        "lebih panas.",
+        "Jangan mengujinya"
+      ],
+      "label": "PEMBALIKAN",
+      "index": 8,
+      "start": 59.2,
+      "startFrame": 5328,
+      "frames": 793,
+      "duration": 8.811111111111112,
+      "onset": 0.07,
+      "offset": 8.52,
+      "trimStart": 0.21000000000000002,
+      "trimEnd": 8.860000000000001,
+      "cards": [
+        {
+          "text": "Kalau bendanya lebih panas dari kulit,",
+          "from": 0.05499999999999996,
+          "to": 2.4650000000000003
+        },
+        {
+          "text": "arahnya berbalik.",
+          "from": 2.4650000000000003,
+          "to": 3.8249999999999997
+        },
+        {
+          "text": "Logam justru terasa lebih panas.",
+          "from": 3.8249999999999997,
+          "to": 6.545
+        },
+        {
+          "text": "Jangan mengujinya dengan benda panas.",
+          "from": 6.545,
+          "to": 8.639999999999999
+        }
+      ]
+    },
+    {
+      "id": "s10",
+      "a": "SUHU SAMA.",
+      "b": "LAJU BERBEDA.",
+      "text": "Jadi, sensasi dingin bukan bukti suhunya lebih rendah. Suhu bisa sama, tetapi laju perpindahan panasnya berbeda.",
+      "accent": [
+        "laju perpindahan panasnya berbeda."
+      ],
+      "label": "INTINYA",
+      "index": 9,
+      "start": 68.0111111111111,
+      "startFrame": 6121,
+      "frames": 833,
+      "duration": 9.255555555555556,
+      "onset": 0.07,
+      "offset": 8.96,
+      "trimStart": 0.2,
+      "trimEnd": 9.290000000000001,
+      "cards": [
+        {
+          "text": "Jadi, sensasi dingin bukan bukti suhunya lebih rendah.",
+          "from": 0.045000000000000005,
+          "to": 4.534999999999999
+        },
+        {
+          "text": "Suhu bisa sama,",
+          "from": 4.534999999999999,
+          "to": 6.0249999999999995
+        },
+        {
+          "text": "tetapi laju perpindahan panasnya berbeda.",
+          "from": 6.0249999999999995,
+          "to": 9.08
+        }
+      ]
+    }
+  ],
+  "frames": 6954,
+  "duration": 77.26666666666667
+}

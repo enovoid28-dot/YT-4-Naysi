@@ -1,6 +1,7 @@
 import React from 'react';
 import {Composition} from 'remotion';
 import {NaysiShort} from './NaysiShort.jsx';
+import timeline from '../heat/timeline.json';
 
 export const RemotionRoot = () => {
   return (
@@ -8,7 +9,7 @@ export const RemotionRoot = () => {
       <Composition
         id="NaysiShort"
         component={NaysiShort}
-        durationInFrames={16145}
+        durationInFrames={timeline.frames}
         fps={90}
         width={1440}
         height={2560}
