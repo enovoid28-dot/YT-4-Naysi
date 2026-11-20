@@ -1,6 +1,6 @@
 // h7 ENZIM LEBAH — third defense: a bee over a honey drop; glucose-oxidase
 // diamonds release slow hydrogen-peroxide bubbles through the drop.
-import { MD, tomb, shafts, dust, vign, bee, jar, heading, chip, label, sparkle,
+import { camPar, grain, MD, tomb, shafts, dust, vign, bee, jar, heading, chip, label, sparkle,
   cue, P, eo, keys, frameOn, clamp, TAU, W, H } from './_madu.mjs';
 
 export default {
@@ -8,8 +8,11 @@ export default {
     const cam = keys(t, [
       [0, 720, 1040, 1.07], [3, 720, 1080, 1.0], [scene.dur, 720, 1110, 1.05],
     ]);
+    ctx.save();
+    frameOn(ctx, cam);
     tomb(ctx, t, { hex: 0.045 });
-    shafts(ctx, t, { n: 2, a: 0.055, x: 260, gap: 640 });
+        shafts(ctx, t, { n: 2, a: 0.055, x: 260, gap: 640 });
+ctx.restore();
     ctx.save();
     frameOn(ctx, cam);
     // big honey drop
@@ -87,7 +90,11 @@ export default {
     heading(ctx, 'ENZIM', '', 120, 400, { amber: 'LEBAH', p: P(t, 0.35, 1.0), size: 110, sub: 'PENJAGA STERIL YANG PELAHAN' });
     sparkle(ctx, cx + 210, cy - 140, 16, 0.5 + 0.4 * Math.sin(t * 2.2));
     ctx.restore();
+    ctx.save();
+    frameOn(ctx, cam);
     dust(ctx, t, 37, 26);
+    ctx.restore();
     vign(ctx, 0.5);
+    grain(ctx, t, 0.05);
   },
 };

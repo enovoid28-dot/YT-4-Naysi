@@ -1,6 +1,6 @@
 // h11 GRADE MEDIS — modern HUD: glass panel line chart of bacterial load
 // falling over days under medical-grade honey dressing.
-import { MD, tomb, dust, vign, glassPanel, heading, chip, label, sparkle,
+import { camPar, grain, MD, tomb, dust, vign, glassPanel, heading, chip, label, sparkle,
   cue, P, eo, keys, frameOn, clamp, lerp, TAU, W, H } from './_madu.mjs';
 
 export default {
@@ -8,7 +8,10 @@ export default {
     const cam = keys(t, [
       [0, 720, 1100, 1.05], [scene.dur - 3.5, 720, 1070, 1.0], [scene.dur, 720, 1050, 1.04],
     ]);
+    ctx.save();
+    frameOn(ctx, cam);
     tomb(ctx, t, { hex: 0.04 });
+    ctx.restore();
     ctx.save();
     frameOn(ctx, cam);
     glassPanel(ctx, 110, 600, W - 220, 1000, {});
@@ -63,6 +66,22 @@ export default {
     }
     ctx.stroke();
     ctx.shadowColor = 'transparent';
+    ctx.save();
+    ctx.globalAlpha = 0.5 * pp;
+    const ag = ctx.createLinearGradient(0, y0, 0, y1);
+    ag.addColorStop(0, 'rgba(79,192,180,0.30)');
+    ag.addColorStop(1, 'rgba(79,192,180,0)');
+    ctx.fillStyle = ag;
+    ctx.beginPath();
+    ctx.moveTo(x0, y1);
+    pts.forEach(([d, v], i) => {
+      if (i + 1 > nShow) return;
+      ctx.lineTo(x0 + ((x1 - x0 - 40) * d) / 7, y1 - (y1 - y0) * v);
+    });
+    ctx.lineTo(x0 + ((x1 - x0 - 40) * Math.min(nShow - 1, 7)) / 7, y1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
     pts.forEach(([d, v], i) => {
       if (i + 1 > nShow) return;
       const x = x0 + ((x1 - x0 - 40) * d) / 7;
@@ -71,6 +90,13 @@ export default {
       ctx.beginPath();
       ctx.arc(x, y, 8, 0, TAU);
       ctx.fill();
+      if (i === Math.floor(nShow) - 1) {
+        ctx.strokeStyle = `rgba(79,192,180,${0.5 + 0.3 * Math.sin(t * 3.2)})`;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(x, y, 14 + 3 * Math.sin(t * 3.2), 0, TAU);
+        ctx.stroke();
+      }
     });
     ctx.restore();
     const endQ = eo(P(t, 4.6, 0.8));
@@ -93,7 +119,11 @@ export default {
     heading(ctx, 'GRADE', '', 120, 400, { amber: 'MEDIS', p: P(t, 0.35, 1.0), size: 110, sub: 'BUKTI DUNIA MODERN' });
     sparkle(ctx, W - 320, 700, 14, 0.4 + 0.3 * Math.sin(t * 2.0));
     ctx.restore();
+    ctx.save();
+    frameOn(ctx, cam);
     dust(ctx, t, 53, 22);
+    ctx.restore();
     vign(ctx, 0.5);
+    grain(ctx, t, 0.05);
   },
 };

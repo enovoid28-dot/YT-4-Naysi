@@ -1,6 +1,6 @@
 // h14 DAPUR LEBAH — the origin: a blossom on the left, the bee's dashed
 // commute, and a honeycomb whose cells flood amber as the fanning dries it.
-import { MD, tomb, shafts, dust, vign, hexGrid, bee, heading, chip, label, leader, plateFrame,
+import { camPar, grain, MD, tomb, shafts, dust, vign, hexGrid, bee, heading, chip, label, leader, plateFrame,
   cue, P, eo, keys, frameOn, clamp, TAU, W, H } from './_madu.mjs';
 
 export default {
@@ -8,8 +8,11 @@ export default {
     const cam = keys(t, [
       [0, 720, 1080, 1.06], [3, 720, 1060, 1.0], [scene.dur, 720, 1030, 1.05],
     ]);
+    ctx.save();
+    frameOn(ctx, cam);
     tomb(ctx, t, { hex: 0 });
-    shafts(ctx, t, { n: 2, a: 0.06, x: 300, gap: 620 });
+        shafts(ctx, t, { n: 2, a: 0.06, x: 300, gap: 620 });
+ctx.restore();
     ctx.save();
     frameOn(ctx, cam);
     // blossom
@@ -91,7 +94,11 @@ export default {
     chip(ctx, 'ENZIM DITAMBAHKAN', 430, 640, { p: P(t, cue(scene, 'enzim'), 0.5) });
     heading(ctx, 'DARI', '', 120, 400, { amber: 'NEKTAR', p: P(t, 0.35, 1.0), size: 110, sub: 'LEBAH MENGIPASI AIR SAMPAI HABIS' });
     ctx.restore();
+    ctx.save();
+    frameOn(ctx, cam);
     dust(ctx, t, 67, 26);
+    ctx.restore();
     vign(ctx, 0.5);
+    grain(ctx, t, 0.05);
   },
 };

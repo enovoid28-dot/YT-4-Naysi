@@ -1,6 +1,6 @@
 // h8 SEGEL RAPAT — split stage: sealed amphora glows safe; the open jar
 // drinks moist air (arrows in) and ferments (bubbles up).
-import { MD, tomb, dust, vign, jar, heading, chip, label, leader,
+import { camPar, grain, MD, tomb, dust, vign, jar, heading, chip, label, leader,
   cue, P, eo, keys, frameOn, clamp, TAU, W, H } from './_madu.mjs';
 
 export default {
@@ -8,7 +8,10 @@ export default {
     const cam = keys(t, [
       [0, 720, 1100, 1.05], [scene.dur - 3.5, 720, 1070, 1.0], [scene.dur, 720, 1050, 1.03],
     ]);
+    ctx.save();
+    frameOn(ctx, cam);
     tomb(ctx, t, { hex: 0.03 });
+    ctx.restore();
     ctx.save();
     frameOn(ctx, cam);
     // divider
@@ -70,7 +73,11 @@ export default {
     label(ctx, 'UDARA LEMBAB', W * 0.74, 700, { size: 26, color: 'rgba(159,216,207,0.8)', track: 4, align: 'center' });
     heading(ctx, 'SEGEL', '', 120, 400, { amber: 'RAPAT', p: P(t, 0.35, 1.0), size: 110, sub: 'MADU MENYERAP AIR DARI UDARA' });
     ctx.restore();
+    ctx.save();
+    frameOn(ctx, cam);
     dust(ctx, t, 41, 24);
+    ctx.restore();
     vign(ctx, 0.5);
+    grain(ctx, t, 0.05);
   },
 };

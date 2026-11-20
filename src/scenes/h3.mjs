@@ -1,6 +1,6 @@
 // h3 SAMPEL TERTUA — a year ruler stretches back: 3.000 (Egypt) then 5.500
 // (Georgian pottery), the oldest honey ever found.
-import { MD, tomb, shafts, dust, vign, yearRuler, jar, heading, chip,
+import { camPar, grain, odo,MD, tomb, shafts, dust, vign, yearRuler, jar, heading, chip,
   cue, P, eo, keys, frameOn, label, W, H } from './_madu.mjs';
 
 export default {
@@ -8,14 +8,17 @@ export default {
     const cam = keys(t, [
       [0, 720, 1150, 1.05], [scene.dur - 4, 720, 1080, 1.0], [scene.dur, 720, 1060, 1.03],
     ]);
+    ctx.save();
+    frameOn(ctx, cam);
     tomb(ctx, t, { hex: 0.04 });
-    shafts(ctx, t, { n: 2, a: 0.06, x: 320, gap: 560 });
+        shafts(ctx, t, { n: 2, a: 0.06, x: 320, gap: 560 });
+ctx.restore();
     ctx.save();
     frameOn(ctx, cam);
     const p = eo(P(t, 0.6, 3.2));
     yearRuler(ctx, 150, W - 150, 1420, 6000, p, [
-      { year: 3000, txt: '3.000', label: 'MESIR · MAKAM' },
-      { year: 5500, txt: '5.500', label: 'GEORGIA · TEMBIKAR', col: MD.gold },
+      { year: 3000, txt: '3.000', count: 3000, label: 'MESIR · MAKAM' },
+      { year: 5500, txt: '5.500', count: 5500, label: 'GEORGIA · TEMBIKAR', col: MD.gold },
     ], );
     // pottery vessel over the 5.500 mark
     const q = eo(P(t, 3.6, 1.2));
@@ -31,7 +34,11 @@ export default {
     const tC = cue(scene, 'tembikar');
     if (t > tC - 0.6) chip(ctx, 'BEJANA TEMBIKAR · GEORGIA', W - 430, 700, { p: P(t, tC - 0.6, 0.5) });
     ctx.restore();
+    ctx.save();
+    frameOn(ctx, cam);
     dust(ctx, t, 17, 26);
+    ctx.restore();
     vign(ctx, 0.5);
+    grain(ctx, t, 0.05);
   },
 };

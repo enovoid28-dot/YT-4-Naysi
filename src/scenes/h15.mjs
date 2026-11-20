@@ -1,6 +1,6 @@
 // h15 WARNA TUA — three jars age left to right: the honey darkens, the
 // sparkle fades, a decade ruler runs beneath; flavour changes, safety not.
-import { MD, tomb, dust, vign, jar, heading, chip, label, leader, sparkle,
+import { camPar, grain, MD, tomb, dust, vign, jar, heading, chip, label, leader, sparkle,
   cue, P, eo, keys, frameOn, clamp, lerp, TAU, W, H } from './_madu.mjs';
 
 export default {
@@ -8,7 +8,10 @@ export default {
     const cam = keys(t, [
       [0, 720, 1100, 1.05], [scene.dur - 3.5, 720, 1070, 1.0], [scene.dur, 720, 1050, 1.04],
     ]);
+    ctx.save();
+    frameOn(ctx, cam);
     tomb(ctx, t, { hex: 0.035 });
+    ctx.restore();
     ctx.save();
     frameOn(ctx, cam);
     const xs = [360, 720, 1080];
@@ -60,7 +63,11 @@ export default {
     chip(ctx, 'KUALITAS ≠ KEAMANAN', 1180, 800, { p: P(t, cue(scene, 'keamanan'), 0.5) });
     heading(ctx, 'GELAP', '', 120, 400, { amber: '≠ BASI', p: P(t, 0.35, 1.0), size: 110, sub: 'PULUHAN TAHUN HANYA MENGUBAH RASA' });
     ctx.restore();
+    ctx.save();
+    frameOn(ctx, cam);
     dust(ctx, t, 71, 24);
+    ctx.restore();
     vign(ctx, 0.5);
+    grain(ctx, t, 0.05);
   },
 };

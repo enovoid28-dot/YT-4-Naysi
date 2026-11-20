@@ -1,6 +1,6 @@
 // h6 DINDING ASAM — second defense: the pH ribbon 0–14 with honey's acid
 // band bracketed at 3–4,5; microbes bounce off the wall of acid.
-import { MD, tomb, dust, vign, microbe, heading, chip, label, leader,
+import { camPar, grain, MD, tomb, dust, vign, microbe, heading, chip, label, leader,
   cue, P, eo, keys, frameOn, clamp, lerp, W, H } from './_madu.mjs';
 
 export default {
@@ -8,7 +8,10 @@ export default {
     const cam = keys(t, [
       [0, 720, 1120, 1.05], [scene.dur - 3.5, 720, 1080, 1.0], [scene.dur, 720, 1060, 1.04],
     ]);
+    ctx.save();
+    frameOn(ctx, cam);
     tomb(ctx, t, { hex: 0.035 });
+    ctx.restore();
     ctx.save();
     frameOn(ctx, cam);
     const x0 = 150, x1 = W - 150, y = 1250, h = 96;
@@ -113,7 +116,11 @@ export default {
     });
     heading(ctx, 'DINDING', '', 120, 400, { amber: 'ASAM', p: P(t, 0.35, 1.0), size: 110, sub: 'TERLALU KERAS BAGI MIKROBA' });
     ctx.restore();
+    ctx.save();
+    frameOn(ctx, cam);
     dust(ctx, t, 31, 24);
+    ctx.restore();
     vign(ctx, 0.5);
+    grain(ctx, t, 0.05);
   },
 };

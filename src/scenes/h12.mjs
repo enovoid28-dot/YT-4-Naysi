@@ -1,6 +1,6 @@
 // h12 TANPA KEDALUWARSA — recap: the sealed amphora at center, three defense
 // chips orbit on leader lines, the honeycomb floods fully amber.
-import { MD, tomb, shafts, dust, vign, hexGrid, pedestal, jar, heading, chip, leader, sparkle,
+import { camPar, grain, embers,MD, tomb, shafts, dust, vign, hexGrid, pedestal, jar, heading, chip, leader, sparkle,
   cue, P, eo, keys, frameOn, clamp, TAU, W, H } from './_madu.mjs';
 
 export default {
@@ -8,8 +8,11 @@ export default {
     const cam = keys(t, [
       [0, 720, 1140, 1.08], [3, 720, 1100, 1.02], [scene.dur, 720, 1060, 1.0],
     ]);
+    ctx.save();
+    frameOn(ctx, cam);
     tomb(ctx, t, { hex: 0 });
-    shafts(ctx, t, { n: 3, a: 0.07 });
+        shafts(ctx, t, { n: 3, a: 0.07 });
+ctx.restore();
     ctx.save();
     frameOn(ctx, cam);
     hexGrid(ctx, 40, 560, W - 80, 1240, 120, { a: 0.06, fill: 0.55 * eo(P(t, 1.0, 4.0)), t, fillA: 0.6 });
@@ -33,7 +36,11 @@ export default {
     }
     heading(ctx, 'TANPA', '', 120, 400, { amber: 'KEDALUWARSA', p: P(t, 0.35, 1.0), size: 110, sub: 'SELAMA SEGELNYA UTUH' });
     ctx.restore();
-    dust(ctx, t, 59, 30);
+    ctx.save();
+    frameOn(ctx, cam);
+    embers(ctx, t, 16, 5);
+    ctx.restore();
     vign(ctx, 0.5);
+    grain(ctx, t, 0.05);
   },
 };

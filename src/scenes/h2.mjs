@@ -1,6 +1,6 @@
 // h2 TUTANKHAMUN 1922 — torchlight sweeps a tomb wall of glyphs and finds a
 // row of sealed jars still standing where they were left.
-import { MD, tomb, shafts, dust, vign, jar, glyphRow, heading, chip, leader,
+import { camPar, grain, wallTex,MD, tomb, shafts, dust, vign, jar, glyphRow, heading, chip, leader,
   cue, P, eo, keys, frameOn, label, clamp, lerp, W, H } from './_madu.mjs';
 
 export default {
@@ -9,7 +9,11 @@ export default {
       [0, 700, 1080, 1.06], [3, 720, 1060, 1.0],
       [scene.dur - 3, 760, 1030, 1.06], [scene.dur, 770, 1020, 1.08],
     ]);
+    wallTex(ctx, 11, 0.42);
+    ctx.save();
+    frameOn(ctx, cam);
     tomb(ctx, t, { hex: 0.03 });
+    ctx.restore();
     ctx.save();
     frameOn(ctx, cam);
     // stone courses
@@ -51,7 +55,11 @@ export default {
     chip(ctx, 'MADU · TETAP UTUH', 1120, 868, { p: P(t, cue(scene, 'stoples'), 0.5), col: 'rgba(255,182,39,0.9)' });
     heading(ctx, 'TUTANKHAMUN', '', 120, 400, { p: P(t, 0.4, 1.0), size: 96, sub: '1922 · MAKAM DIBUKA', subCol: 'rgba(243,239,228,0.75)' });
     ctx.restore();
+    ctx.save();
+    frameOn(ctx, cam);
     dust(ctx, t, 13, 30);
+    ctx.restore();
     vign(ctx, 0.5);
+    grain(ctx, t, 0.05);
   },
 };

@@ -1,6 +1,6 @@
 // h5 KUMAN MENGERING — osmosis in action: microbes drift onto the honey
 // surface, lose their water (arrows out), wrinkle dry and die.
-import { MD, tomb, dust, vign, hexGrid, microbe, heading, chip, label, leader,
+import { camPar, grain, MD, tomb, dust, vign, hexGrid, microbe, heading, chip, label, leader,
   cue, P, eo, keys, frameOn, clamp, TAU, W, H } from './_madu.mjs';
 
 export default {
@@ -8,7 +8,10 @@ export default {
     const cam = keys(t, [
       [0, 720, 1060, 1.08], [3, 720, 1090, 1.0], [scene.dur, 720, 1120, 1.06],
     ]);
+    ctx.save();
+    frameOn(ctx, cam);
     tomb(ctx, t, { hex: 0 });
+    ctx.restore();
     ctx.save();
     frameOn(ctx, cam);
     // honey surface band
@@ -68,7 +71,11 @@ export default {
     chip(ctx, 'AIR TARIK KELUAR · OSMOSIS', 720, 470, { p: P(t, cue(scene, 'cairan'), 0.5) });
     heading(ctx, 'KUMAN', '', 120, 380, { amber: 'MENGERING', p: P(t, 0.35, 1.0), size: 110, sub: 'SEPERTI DIAWETKAN DARI DALAM' });
     ctx.restore();
+    ctx.save();
+    frameOn(ctx, cam);
     dust(ctx, t, 29, 24);
+    ctx.restore();
     vign(ctx, 0.5);
+    grain(ctx, t, 0.05);
   },
 };

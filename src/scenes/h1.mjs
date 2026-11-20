@@ -1,6 +1,6 @@
 // h1 MAKAM GELAP — tomb slit light finds a sealed amphora; the 3.000-year
 // number rises out of the dark while dust hangs in the shafts.
-import { MD, tomb, shafts, dust, vign, hexGrid, pedestal, jar, heading,
+import { camPar, grain, wallTex, embers,MD, tomb, shafts, dust, vign, hexGrid, pedestal, jar, heading,
   chip, cue, P, eo, keys, frameOn, label, clamp, TAU, W, H } from './_madu.mjs';
 
 export default {
@@ -9,8 +9,13 @@ export default {
       [0, 720, 1120, 1.10], [2.6, 720, 1080, 1.04],
       [scene.dur - 3, 720, 1010, 1.0], [scene.dur, 720, 995, 1.02],
     ]);
+
+    wallTex(ctx, 7, 0.5);
+    ctx.save();
+    frameOn(ctx, cam);
     tomb(ctx, t);
-    shafts(ctx, t, { n: 3, a: 0.085 });
+        shafts(ctx, t, { n: 3, a: 0.085 });
+ctx.restore();
     ctx.save();
     frameOn(ctx, cam);
     hexGrid(ctx, 60, 620, W - 120, 760, 128, { a: 0.05, fill: 0.10 * eo(P(t, 1.2, 4)), t, fillA: 0.8 });
@@ -36,7 +41,11 @@ export default {
     const tC = cue(scene, 'makam');
     if (t > tC + 1.5) chip(ctx, 'MESIR KUNO · SEGEL UTUH', W / 2, 1905, { p: P(t, tC + 1.5, 0.5) });
     ctx.restore();
-    dust(ctx, t, 21, 34);
+    ctx.save();
+    frameOn(ctx, cam);
+    embers(ctx, t, 12, 3);
+    ctx.restore();
     vign(ctx, 0.52);
+    grain(ctx, t, 0.05);
   },
 };

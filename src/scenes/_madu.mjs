@@ -33,12 +33,12 @@ export function tomb(ctx, t, o = {}) {
   g.addColorStop(0.55, '#0E0803');
   g.addColorStop(1, '#050302');
   ctx.fillStyle = g;
-  ctx.fillRect(0, 0, W, H);
+  ctx.fillRect(-120, -120, W + 240, H + 240);
   const r = ctx.createRadialGradient(W * 0.5, -260, 60, W * 0.5, -260, 1900);
   r.addColorStop(0, 'rgba(255,176,64,0.16)');
   r.addColorStop(1, 'rgba(255,176,64,0)');
   ctx.fillStyle = r;
-  ctx.fillRect(0, 0, W, H);
+  ctx.fillRect(-120, -120, W + 240, H + 240);
   if (o.hex !== 0) hexGrid(ctx, 0, 0, W, H, 118, { a: o.hex ?? 0.05, t });
 }
 
@@ -268,6 +268,21 @@ export function jar(ctx, cx, cy, s, o = {}) {
       }
       ctx.stroke();
     }
+    // throwing rings + clay speckle
+    ctx.strokeStyle = 'rgba(30,15,4,0.14)';
+    ctx.lineWidth = 3;
+    for (let yy = -120; yy <= 130; yy += 22) {
+      ctx.beginPath();
+      ctx.ellipse(0, yy, 98 - Math.abs(yy - 10) * 0.22, 7, 0, 0.15 * Math.PI, 0.85 * Math.PI);
+      ctx.stroke();
+    }
+    const spd = rng(5);
+    ctx.fillStyle = 'rgba(58,32,12,0.22)';
+    for (let i = 0; i < 30; i++) {
+      ctx.beginPath();
+      ctx.arc(-90 + spd() * 180, -130 + spd() * 260, 1.2 + spd() * 2.2, 0, TAU);
+      ctx.fill();
+    }
     if (tint > 0) {
       const tg = ctx.createLinearGradient(0, -150, 0, 150);
       tg.addColorStop(0, `rgba(64,32,6,${0.75 * tint})`);
@@ -358,6 +373,17 @@ export function jar(ctx, cx, cy, s, o = {}) {
     }
     ctx.closePath();
     ctx.fill();
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(-rw - 8, ry - 52, rw * 2 + 16, 56);
+    ctx.clip();
+    ctx.strokeStyle = 'rgba(120,86,40,0.12)';
+    ctx.lineWidth = 1.4;
+    for (let gx = -rw - 8; gx < rw + 8; gx += 7) {
+      ctx.beginPath(); ctx.moveTo(gx, ry - 52); ctx.lineTo(gx + 10, ry + 4); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(gx + 10, ry - 52); ctx.lineTo(gx, ry + 4); ctx.stroke();
+    }
+    ctx.restore();
     ctx.strokeStyle = 'rgba(120,86,40,0.45)';
     ctx.lineWidth = 2;
     for (let i = -2; i <= 2; i++) {
@@ -783,7 +809,7 @@ export function bars(ctx, x, y, w, h, rows, p, o = {}) {
       ctx.textAlign = 'center';
       ctx.shadowColor = 'rgba(255,196,90,0.8)';
       ctx.shadowBlur = 22;
-      ctx.fillText(r.txt, bx + bw / 2, y + h - bh - 26);
+      ctx.fillText(r.count != null ? fmtInt(r.count * q) + (r.suffix ?? '') : r.txt, bx + bw / 2, y + h - bh - 26);
       ctx.shadowColor = 'transparent';
       ctx.font = '600 28px JetBrains Mono, monospace';
       ctx.fillStyle = 'rgba(243,239,228,0.72)';
@@ -840,7 +866,7 @@ export function yearRuler(ctx, x0, x1, y, maxYear, p, marks, o = {}) {
     ctx.textAlign = 'center';
     ctx.shadowColor = 'rgba(255,196,90,0.7)';
     ctx.shadowBlur = 20;
-    ctx.fillText(m.txt, x, y - 110 - (i % 2) * 64);
+    ctx.fillText(m.count != null ? fmtInt(m.count * q) : m.txt, x, y - 110 - (i % 2) * 64);
     ctx.shadowColor = 'transparent';
     ctx.font = '600 26px JetBrains Mono, monospace';
     ctx.fillStyle = 'rgba(243,239,228,0.7)';
@@ -916,12 +942,16 @@ export function heading(ctx, main, sub, x, y, o = {}) {
   }
   if (sub) {
     ctx.font = '600 30px JetBrains Mono, monospace';
-    ctx.fillStyle = o.subCol ?? 'rgba(255,182,39,0.9)';
     let lx = x;
+    let ci = 0;
     for (const ch of sub) {
+      ctx.fillStyle = o.subCol ?? 'rgba(255,182,39,0.9)';
+      ctx.globalAlpha = clamp(p * 1.9 - ci * 0.045);
       ctx.fillText(ch, lx, y + 58);
       lx += ctx.measureText(ch).width + 5;
+      ci++;
     }
+    ctx.globalAlpha = 1;
   }
   ctx.restore();
 }
@@ -935,7 +965,8 @@ export function chip(ctx, s, x, y, o = {}) {
   const p = eo(o.p ?? 1);
   ctx.globalAlpha = p;
   ctx.translate(x, y);
-  ctx.scale(0.9 + 0.1 * p, 0.9 + 0.1 * p);
+  const sc = 0.84 + 0.16 * back(o.p ?? 1);
+  ctx.scale(sc, sc);
   ctx.beginPath();
   ctx.moveTo(-w / 2 + h / 2, -h / 2);
   ctx.arcTo(w / 2, -h / 2, w / 2, h / 2, h / 2);
@@ -971,6 +1002,129 @@ export function leader(ctx, x0, y0, x1, y1, o = {}) {
   ctx.beginPath();
   ctx.arc(x0, y0, 5, 0, TAU);
   ctx.fill();
+  ctx.restore();
+}
+
+
+/* ─────────────── pro pass: depth, texture, counters, easing ─────────────── */
+
+/** parallax camera: f<1 background lag, f>1 foreground lead */
+export const camPar = (cam, f, fx = W / 2, fy = 1030) =>
+  [fx + (cam[0] - fx) * f, fy + (cam[1] - fy) * f, 1 + (cam[2] - 1) * f];
+
+/** 24 fps film grain — alive but never dirty */
+export function grain(ctx, t, a = 0.05) {
+  const rd = rng(9000 + Math.floor(t * 24));
+  ctx.save();
+  for (let i = 0; i < 240; i++) {
+    const x = rd() * W, y = rd() * H;
+    const w = rd() < 0.86 ? 1.4 : 2.6;
+    const white = rd() < 0.5;
+    ctx.fillStyle = white ? `rgba(255,246,228,${a * (0.3 + 0.7 * rd())})`
+      : `rgba(0,0,0,${a * (0.3 + 0.7 * rd())})`;
+    ctx.fillRect(x, y, w, w);
+  }
+  ctx.restore();
+}
+
+/** baked plaster wall: blotches + hairline cracks with a lit edge */
+export function wallTex(ctx, seed = 7, a = 0.5) {
+  const img = bake(`madu-wall-${seed}`, W, H, (c) => {
+    const rd = rng(seed);
+    for (let i = 0; i < 70; i++) {
+      const x = rd() * W, y = rd() * H, r = 60 + rd() * 260;
+      const g = c.createRadialGradient(x, y, 4, x, y, r);
+      const dark = rd() < 0.6;
+      g.addColorStop(0, dark ? `rgba(0,0,0,${0.05 + rd() * 0.06})` : `rgba(255,214,150,${0.03 + rd() * 0.04})`);
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      c.fillStyle = g;
+      c.beginPath(); c.arc(x, y, r, 0, TAU); c.fill();
+    }
+    for (let k = 0; k < 6; k++) {
+      let x = rd() * W, y = rd() * H * 0.8;
+      c.strokeStyle = 'rgba(0,0,0,0.34)';
+      c.lineWidth = 1.6 + rd() * 1.4;
+      c.beginPath();
+      c.moveTo(x, y);
+      const n = 6 + Math.floor(rd() * 8);
+      for (let i = 0; i < n; i++) {
+        x += (rd() - 0.5) * 160;
+        y += 40 + rd() * 120;
+        c.lineTo(x, y);
+      }
+      c.stroke();
+      c.strokeStyle = 'rgba(255,220,160,0.10)';
+      c.lineWidth = 1.2;
+      c.stroke();
+    }
+  });
+  ctx.save();
+  ctx.globalAlpha = a;
+  ctx.drawImage(img, 0, 0);
+  ctx.restore();
+}
+
+/** water caustics: wandering highlight bands */
+export function caustics(ctx, x, y, w, h, t, a = 0.25) {
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 4; i++) {
+    const yy = y + h * (0.18 + 0.22 * i);
+    ctx.strokeStyle = `rgba(255,240,200,${a * (0.45 + 0.55 * Math.sin(t * 0.9 + i * 1.7))})`;
+    ctx.lineWidth = 2.6;
+    ctx.beginPath();
+    for (let px = 0; px <= w; px += 12) {
+      const py = yy + Math.sin(px * 0.02 + t * 1.3 + i * 2.2) * 4.5
+        + Math.sin(px * 0.043 - t * 0.8 + i) * 2.5;
+      if (px) ctx.lineTo(x + px, py); else ctx.moveTo(x + px, py);
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/** rising ember sparks with flicker */
+export function embers(ctx, t, n = 14, seed = 3) {
+  const rd = rng(seed);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < n; i++) {
+    const x0 = rd() * W, sp = 26 + rd() * 60, ph = rd();
+    const life = ((t * 0.06 + ph) % 1);
+    const x = x0 + Math.sin(t * 0.7 + i * 2.4) * 46;
+    const y = H * 1.02 - life * H * 0.85;
+    const fl = 0.5 + 0.5 * Math.sin(t * 9 + i * 3.1);
+    const a = (1 - life) * 0.5 * fl;
+    ctx.strokeStyle = `rgba(255,176,64,${a})`;
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x - Math.sin(t * 0.7 + i * 2.4) * 6, y + 14 + sp * 0.12);
+    ctx.stroke();
+    ctx.fillStyle = `rgba(255,214,120,${a})`;
+    ctx.beginPath();
+    ctx.arc(x, y, 1.6 + fl * 1.6, 0, TAU);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+/** out-back easing for pops with overshoot */
+export const back = (p) => {
+  const c = 1.70158, q = clamp(p) - 1;
+  return 1 + (c + 1) * q * q * q + c * q * q;
+};
+
+const fmtInt = (n) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+/** odometer count-up number */
+export function odo(ctx, val, x, y, p, o = {}) {
+  ctx.save();
+  ctx.font = o.font ?? '800 52px Poppins, sans-serif';
+  ctx.textAlign = o.align ?? 'center';
+  ctx.fillStyle = o.col ?? MD.bone;
+  if (o.glow) { ctx.shadowColor = o.glow; ctx.shadowBlur = 22; }
+  ctx.fillText(fmtInt(val * eo(p)) + (o.suffix ?? ''), x, y);
   ctx.restore();
 }
 

@@ -1,6 +1,6 @@
 // h10 OBAT MESIR KUNO — a papyrus medical sheet: glyph rows, an ochre
 // wound-care diagram (bandage + honey drop) and the Hippocrates chip.
-import { MD, tomb, dust, vign, papyrus, glyphRow, heading, chip, label, leader, drip,
+import { camPar, grain, MD, tomb, dust, vign, papyrus, glyphRow, heading, chip, label, leader, drip,
   cue, P, eo, keys, frameOn, clamp, TAU, W, H } from './_madu.mjs';
 
 export default {
@@ -8,7 +8,10 @@ export default {
     const cam = keys(t, [
       [0, 700, 1120, 1.06], [3, 720, 1090, 1.0], [scene.dur, 740, 1060, 1.05],
     ]);
+    ctx.save();
+    frameOn(ctx, cam);
     tomb(ctx, t, { hex: 0.025 });
+    ctx.restore();
     ctx.save();
     frameOn(ctx, cam);
     const px = 130, py = 560, pw = W - 260, ph = 1020;
@@ -64,7 +67,11 @@ export default {
     chip(ctx, 'HIPPOCRATES · MADU + CUKA', W - 400, py - 70, { p: P(t, cue(scene, 'hippocrates'), 0.5) });
     heading(ctx, 'OBAT', '', 120, 400, { amber: 'LUKA', p: P(t, 0.35, 1.0), size: 110, sub: 'DARI PERSEMBAHAN SAMPAI PEMBALSAMAN' });
     ctx.restore();
+    ctx.save();
+    frameOn(ctx, cam);
     dust(ctx, t, 47, 24);
+    ctx.restore();
     vign(ctx, 0.5);
+    grain(ctx, t, 0.05);
   },
 };

@@ -1,6 +1,6 @@
 // h9 KRISTAL BUKAN BASI — a glass jar clouds with crystal flecks; a warm
 // bath below melts them back to clear honey while sparkles fade.
-import { MD, tomb, dust, vign, jar, steam, heading, chip, label, sparkle, rng,
+import { camPar, grain, caustics,MD, tomb, dust, vign, jar, steam, heading, chip, label, sparkle, rng,
   cue, P, eo, keys, frameOn, clamp, TAU, W, H } from './_madu.mjs';
 
 export default {
@@ -8,7 +8,10 @@ export default {
     const cam = keys(t, [
       [0, 720, 1080, 1.06], [scene.dur - 3.5, 720, 1050, 1.0], [scene.dur, 720, 1030, 1.04],
     ]);
+    ctx.save();
+    frameOn(ctx, cam);
     tomb(ctx, t, { hex: 0.03 });
+    ctx.restore();
     ctx.save();
     frameOn(ctx, cam);
     const cx = W / 2, cy = 1080;
@@ -59,13 +62,18 @@ export default {
     ctx.ellipse(cx, 1578, 320, 46, 0, 0, TAU);
     ctx.stroke();
     ctx.restore();
+    if (bq > 0.4) caustics(ctx, cx - 300, 1548, 600, 56, t, 0.3 * bq);
     if (bq > 0.4) steam(ctx, cx - 60, 1560, t, { a: 0.2 * bq });
     label(ctx, 'RENDEM AIR HANGAT · TEKSTUR KEMBALI', cx, 1760,
       { size: 26, color: 'rgba(243,239,228,0.6)', track: 4, align: 'center' });
     chip(ctx, 'KRISTAL ≠ BASI', cx, 560, { p: P(t, 0.9, 0.6) });
     heading(ctx, 'KRISTAL', '', 120, 400, { amber: 'BUKAN BASI', p: P(t, 0.35, 1.0), size: 104, sub: 'HANYA TEKSTUR YANG BERUBAH' });
     ctx.restore();
+    ctx.save();
+    frameOn(ctx, cam);
     dust(ctx, t, 43, 22);
+    ctx.restore();
     vign(ctx, 0.5);
+    grain(ctx, t, 0.05);
   },
 };
