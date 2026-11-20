@@ -1,13 +1,13 @@
 {
   "name": "naysi",
   "version": "1.0.0",
-  "description": "NAYSI Shorts — 2K 90fps motion graphics dari kode (canvas + Remotion Studio)",
+  "description": "NAYSI Shorts \u2014 2K 90fps motion graphics dari kode (canvas + Remotion Studio)",
   "scripts": {
     "vo": "node scripts/prep-vo.mjs",
     "audio": "node scripts/audio.mjs",
-    "stills": "node src/heat/render.mjs --stills",
-    "render": "node scripts/render-ep33.mjs",
-    "build": "node scripts/build-ep33.mjs",
+    "stills": "node src/oklo/render.mjs --stills",
+    "render": "node scripts/render-oklo.mjs",
+    "build": "node scripts/build-oklo.mjs && node scripts/audio-oklo.mjs",
     "mux": "node scripts/mux.mjs",
     "studio": "remotion studio --port=3000 --host=0.0.0.0",
     "remotion:render": "remotion render src/remotion/index.js NaysiShort out/remotion.mp4 --concurrency=2",
@@ -34,8 +34,11 @@
     "render:ep33": "node scripts/render-ep33.mjs",
     "stills:ep33": "node src/heat/render.mjs --stills",
     "test:ep33": "node --test src/heat/episode.test.mjs",
-    "prestudio": "npm run build:ep33",
-    "preremotion:render": "npm run build:ep33"
+    "prestudio": "npm run build:ep34",
+    "preremotion:render": "npm run build:ep34",
+    "test": "node --test src/oklo/episode.test.mjs",
+    "build:ep34": "node scripts/build-oklo.mjs && node scripts/audio-oklo.mjs",
+    "render:ep34": "node scripts/render-oklo.mjs"
   },
   "repository": {
     "type": "git",

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Composition} from 'remotion';
 import {NaysiShort} from './NaysiShort.jsx';
-import timeline from '../heat/timeline.json';
+import timeline from '../oklo/timeline.json';
 
 export const RemotionRoot = () => {
   return (

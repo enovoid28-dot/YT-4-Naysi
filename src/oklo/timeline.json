@@ -1,0 +1,2337 @@
+{
+  "title": "Reaktor Nuklir Berusia 2 Miliar Tahun Ini Bukan Buatan Manusia",
+  "width": 1440,
+  "height": 2560,
+  "fps": 90,
+  "sources": [
+    "https://www.iaea.org/newscenter/news/meet-oklo-the-earths-two-billion-year-old-only-known-natural-nuclear-reactor",
+    "https://www.osti.gov/etdeweb/biblio/20619276"
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "index": 0,
+      "label": "SEBELUM MANUSIA",
+      "text": "Jauh sebelum manusia ada, Bumi sudah punya reaktor nuklir. Bukan mesin peninggalan peradaban hilang, melainkan batuan yang menjalankan reaksi berantai sendiri. Jejaknya ditemukan di Oklo, Gabon, Afrika, dan usianya sekitar dua miliar tahun.",
+      "trimStart": 0.35,
+      "trimEnd": 18.89,
+      "start": 0,
+      "startFrame": 0,
+      "frames": 1666,
+      "duration": 18.511111111111113,
+      "cards": [
+        {
+          "text": "Jauh sebelum manusia ada,",
+          "from": 0.0543563526651023,
+          "to": 2.3379075874399384,
+          "words": [
+            {
+              "text": "Jauh",
+              "start": 0.1290702871829255,
+              "end": 0.6949938540619066
+            },
+            {
+              "text": "sebelum",
+              "start": 0.6949938540619066,
+              "end": 1.0722762319812273
+            },
+            {
+              "text": "manusia",
+              "start": 1.0722762319812273,
+              "end": 1.5389149625656502
+            },
+            {
+              "text": "ada,",
+              "start": 1.5389149625656502,
+              "end": 2.0551961112973522
+            }
+          ]
+        },
+        {
+          "text": "Bumi sudah punya reaktor nuklir.",
+          "from": 2.3379075874399384,
+          "to": 5.197310872723212,
+          "words": [
+            {
+              "text": "Bumi",
+              "start": 2.3379075874399384,
+              "end": 2.8296178343949054
+            },
+            {
+              "text": "sudah",
+              "start": 2.8296178343949054,
+              "end": 3.1870432450553143
+            },
+            {
+              "text": "punya",
+              "start": 3.1870432450553143,
+              "end": 3.604039557492458
+            },
+            {
+              "text": "reaktor",
+              "start": 3.604039557492458,
+              "end": 4.0309643535590585
+            },
+            {
+              "text": "nuklir.",
+              "start": 4.0309643535590585,
+              "end": 4.656458822214774
+            }
+          ]
+        },
+        {
+          "text": "Bukan mesin peninggalan peradaban hilang,",
+          "from": 5.197310872723212,
+          "to": 7.480862107498047,
+          "words": [
+            {
+              "text": "Bukan",
+              "start": 5.197310872723212,
+              "end": 5.490451447089062
+            },
+            {
+              "text": "mesin",
+              "start": 5.490451447089062,
+              "end": 5.778377472343281
+            },
+            {
+              "text": "peninggalan",
+              "start": 5.778377472343281,
+              "end": 6.2549446865571605
+            },
+            {
+              "text": "peradaban",
+              "start": 6.2549446865571605,
+              "end": 6.6620125153648475
+            },
+            {
+              "text": "hilang,",
+              "start": 6.6620125153648475,
+              "end": 7.188222147726005
+            }
+          ]
+        },
+        {
+          "text": "melainkan batuan yang menjalankan reaksi berantai sendiri.",
+          "from": 7.480862107498047,
+          "to": 11.71039613364622,
+          "words": [
+            {
+              "text": "melainkan",
+              "start": 7.505933623868592,
+              "end": 8.101642641635939
+            },
+            {
+              "text": "batuan",
+              "start": 8.101642641635939,
+              "end": 8.756922561180023
+            },
+            {
+              "text": "yang",
+              "start": 8.756922561180023,
+              "end": 8.915778299251317
+            },
+            {
+              "text": "menjalankan",
+              "start": 8.915778299251317,
+              "end": 9.5710582187954
+            },
+            {
+              "text": "reaksi",
+              "start": 9.5710582187954,
+              "end": 9.94834059671472
+            },
+            {
+              "text": "berantai",
+              "start": 9.94834059671472,
+              "end": 10.474550229075879
+            },
+            {
+              "text": "sendiri.",
+              "start": 10.474550229075879,
+              "end": 10.970974410548669
+            }
+          ]
+        },
+        {
+          "text": "Jejaknya ditemukan di Oklo, Gabon, Afrika,",
+          "from": 11.71039613364622,
+          "to": 15.364078109285959,
+          "words": [
+            {
+              "text": "Jejaknya",
+              "start": 11.735467650016766,
+              "end": 12.410604536819761
+            },
+            {
+              "text": "ditemukan",
+              "start": 12.410604536819761,
+              "end": 12.907028718292551
+            },
+            {
+              "text": "di",
+              "start": 12.907028718292551,
+              "end": 13.036099005475478
+            },
+            {
+              "text": "Oklo,",
+              "start": 13.036099005475478,
+              "end": 13.671521957760648
+            },
+            {
+              "text": "Gabon,",
+              "start": 13.850234663090854,
+              "end": 14.3565873281931
+            },
+            {
+              "text": "Afrika,",
+              "start": 14.455872164487658,
+              "end": 15.011867247737184
+            }
+          ]
+        },
+        {
+          "text": "dan usianya sekitar dua miliar tahun.",
+          "from": 15.364078109285959,
+          "to": 18.431111111111115,
+          "words": [
+            {
+              "text": "dan",
+              "start": 15.364078109285959,
+              "end": 15.557933847357251
+            },
+            {
+              "text": "usianya",
+              "start": 15.647290200022354,
+              "end": 16.10400044697732
+            },
+            {
+              "text": "sekitar",
+              "start": 16.10400044697732,
+              "end": 16.55078221030283
+            },
+            {
+              "text": "dua",
+              "start": 16.55078221030283,
+              "end": 17.07699184266399
+            },
+            {
+              "text": "miliar",
+              "start": 17.07699184266399,
+              "end": 17.662772376801883
+            },
+            {
+              "text": "tahun.",
+              "start": 17.662772376801883,
+              "end": 18.228695943680865
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "index": 1,
+      "label": "KEJANGGALAN 1972",
+      "text": "Misterinya terungkap pada tahun seribu sembilan ratus tujuh puluh dua. Peneliti memeriksa uranium dari tambang itu dan menemukan sesuatu yang janggal. Sebagian uranium yang biasanya tersedia di alam, ternyata sudah berkurang. Seolah pernah dipakai.",
+      "trimStart": 0.16,
+      "trimEnd": 17,
+      "start": 18.511111111111113,
+      "startFrame": 1666,
+      "frames": 1514,
+      "duration": 16.822222222222223,
+      "cards": [
+        {
+          "text": "Misterinya terungkap pada tahun seribu sembilan ratus tujuh puluh dua.",
+          "from": 0.054356352665102275,
+          "to": 4.770386076656611,
+          "words": [
+            {
+              "text": "Misterinya",
+              "start": 0.07942786903564646,
+              "end": 0.8637780757626553
+            },
+            {
+              "text": "terungkap",
+              "start": 0.8637780757626553,
+              "end": 1.5190579953067387
+            },
+            {
+              "text": "pada",
+              "start": 1.5190579953067387,
+              "end": 1.6977707006369434
+            },
+            {
+              "text": "tahun",
+              "start": 1.6977707006369434,
+              "end": 2.0750530785562638
+            },
+            {
+              "text": "seribu",
+              "start": 2.0750530785562638,
+              "end": 2.6111911945468775
+            },
+            {
+              "text": "sembilan",
+              "start": 2.6111911945468775,
+              "end": 2.9984020560956544
+            },
+            {
+              "text": "ratus",
+              "start": 2.9984020560956544,
+              "end": 3.365755950385519
+            },
+            {
+              "text": "tujuh",
+              "start": 3.365755950385519,
+              "end": 3.62389652475137
+            },
+            {
+              "text": "puluh",
+              "start": 3.62389652475137,
+              "end": 3.842323164599398
+            },
+            {
+              "text": "dua.",
+              "start": 3.842323164599398,
+              "end": 4.1600346407419835
+            }
+          ]
+        },
+        {
+          "text": "Peneliti memeriksa uranium dari tambang itu",
+          "from": 4.770386076656611,
+          "to": 7.629789361939884,
+          "words": [
+            {
+              "text": "Peneliti",
+              "start": 4.770386076656611,
+              "end": 5.242239356352667
+            },
+            {
+              "text": "memeriksa",
+              "start": 5.242239356352667,
+              "end": 5.748592021454913
+            },
+            {
+              "text": "uranium",
+              "start": 5.808162923231648,
+              "end": 6.413800424628453
+            },
+            {
+              "text": "dari",
+              "start": 6.413800424628453,
+              "end": 6.6024416135881125
+            },
+            {
+              "text": "tambang",
+              "start": 6.6024416135881125,
+              "end": 6.9300815733601535
+            },
+            {
+              "text": "itu",
+              "start": 6.9300815733601535,
+              "end": 7.347077885797297
+            }
+          ]
+        },
+        {
+          "text": "dan menemukan sesuatu yang janggal.",
+          "from": 7.629789361939884,
+          "to": 10.17148117108057,
+          "words": [
+            {
+              "text": "dan",
+              "start": 7.654860878310428,
+              "end": 7.793859649122809
+            },
+            {
+              "text": "menemukan",
+              "start": 7.793859649122809,
+              "end": 8.300212314225055
+            },
+            {
+              "text": "sesuatu",
+              "start": 8.300212314225055,
+              "end": 8.846278913845126
+            },
+            {
+              "text": "yang",
+              "start": 8.846278913845126,
+              "end": 9.034920102804785
+            },
+            {
+              "text": "janggal.",
+              "start": 9.034920102804785,
+              "end": 9.59091518605431
+            }
+          ]
+        },
+        {
+          "text": "Sebagian uranium yang biasanya tersedia di alam,",
+          "from": 10.17148117108057,
+          "to": 13.53723712146609,
+          "words": [
+            {
+              "text": "Sebagian",
+              "start": 10.18662420382166,
+              "end": 10.742619287071186
+            },
+            {
+              "text": "uranium",
+              "start": 10.802190188847918,
+              "end": 11.397899206615268
+            },
+            {
+              "text": "yang",
+              "start": 11.397899206615268,
+              "end": 11.646111297351665
+            },
+            {
+              "text": "biasanya",
+              "start": 11.646111297351665,
+              "end": 12.10282154430663
+            },
+            {
+              "text": "tersedia",
+              "start": 12.10282154430663,
+              "end": 12.668745111185611
+            },
+            {
+              "text": "di",
+              "start": 12.668745111185611,
+              "end": 12.827600849256905
+            },
+            {
+              "text": "alam,",
+              "start": 12.827600849256905,
+              "end": 13.185026259917313
+            }
+          ]
+        },
+        {
+          "text": "ternyata sudah berkurang.",
+          "from": 13.53723712146609,
+          "to": 15.135722985808474,
+          "words": [
+            {
+              "text": "ternyata",
+              "start": 13.53723712146609,
+              "end": 13.959447983014867
+            },
+            {
+              "text": "sudah",
+              "start": 13.959447983014867,
+              "end": 14.227517041010174
+            },
+            {
+              "text": "berkurang.",
+              "start": 14.227517041010174,
+              "end": 14.803369091518611
+            }
+          ]
+        },
+        {
+          "text": "Seolah pernah dipakai.",
+          "from": 15.135722985808474,
+          "to": 16.742222222222225,
+          "words": [
+            {
+              "text": "Seolah",
+              "start": 15.140937534920107,
+              "end": 15.70686110179909
+            },
+            {
+              "text": "pernah",
+              "start": 15.70686110179909,
+              "end": 16.03450106157113
+            },
+            {
+              "text": "dipakai.",
+              "start": 16.03450106157113,
+              "end": 16.669924013856303
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "index": 2,
+      "label": "SIDIK JARI ATOM",
+      "text": "Yang berkurang adalah uranium dua ratus tiga puluh lima. Jenis atom ini dapat mempertahankan reaksi fisi, yaitu pembelahan inti atom. Pemeriksaan lanjutan menemukan produk hasil pembelahan. Jadi, bukan sekadar salah ukur: batuannya menyimpan jejak reaktor.",
+      "trimStart": 0.25,
+      "trimEnd": 18.970000000000002,
+      "start": 35.333333333333336,
+      "startFrame": 3180,
+      "frames": 1682,
+      "duration": 18.68888888888889,
+      "cards": [
+        {
+          "text": "Yang berkurang adalah uranium dua ratus tiga puluh lima.",
+          "from": 0.0543563526651023,
+          "to": 3.8470370991172214,
+          "words": [
+            {
+              "text": "Yang",
+              "start": 0.07942786903564648,
+              "end": 0.27799754162476265
+            },
+            {
+              "text": "berkurang",
+              "start": 0.27799754162476265,
+              "end": 0.8538495921331997
+            },
+            {
+              "text": "adalah",
+              "start": 0.9531344284277576,
+              "end": 1.3304168063470785
+            },
+            {
+              "text": "uranium",
+              "start": 1.4197731590121805,
+              "end": 2.0452676276678967
+            },
+            {
+              "text": "dua",
+              "start": 2.0452676276678967,
+              "end": 2.2835512347748357
+            },
+            {
+              "text": "ratus",
+              "start": 2.2835512347748357,
+              "end": 2.6806905799530685
+            },
+            {
+              "text": "tiga",
+              "start": 2.6806905799530685,
+              "end": 2.899117219801096
+            },
+            {
+              "text": "puluh",
+              "start": 2.899117219801096,
+              "end": 3.117543859649124
+            },
+            {
+              "text": "lima.",
+              "start": 3.117543859649124,
+              "end": 3.474969270309533
+            }
+          ]
+        },
+        {
+          "text": "Jenis atom ini dapat mempertahankan reaksi fisi,",
+          "from": 3.8470370991172214,
+          "to": 7.322006369426754,
+          "words": [
+            {
+              "text": "Jenis",
+              "start": 4.140177673483072,
+              "end": 4.438032182366746
+            },
+            {
+              "text": "atom",
+              "start": 4.438032182366746,
+              "end": 4.745815174879877
+            },
+            {
+              "text": "ini",
+              "start": 4.745815174879877,
+              "end": 5.123097552799197
+            },
+            {
+              "text": "dapat",
+              "start": 5.123097552799197,
+              "end": 5.47059447983015
+            },
+            {
+              "text": "mempertahankan",
+              "start": 5.47059447983015,
+              "end": 6.195373784780425
+            },
+            {
+              "text": "reaksi",
+              "start": 6.195373784780425,
+              "end": 6.6222985808470245
+            },
+            {
+              "text": "fisi,",
+              "start": 6.6222985808470245,
+              "end": 7.088937311431447
+            }
+          ]
+        },
+        {
+          "text": "yaitu pembelahan inti atom.",
+          "from": 7.322006369426754,
+          "to": 10.131767236562748,
+          "words": [
+            {
+              "text": "yaitu",
+              "start": 7.322006369426754,
+              "end": 7.863359034529
+            },
+            {
+              "text": "pembelahan",
+              "start": 7.863359034529,
+              "end": 8.558352888590907
+            },
+            {
+              "text": "inti",
+              "start": 8.558352888590907,
+              "end": 8.866135881104038
+            },
+            {
+              "text": "atom.",
+              "start": 8.866135881104038,
+              "end": 9.342703095317916
+            }
+          ]
+        },
+        {
+          "text": "Pemeriksaan lanjutan menemukan produk hasil pembelahan.",
+          "from": 10.131767236562748,
+          "to": 13.676235892278472,
+          "words": [
+            {
+              "text": "Pemeriksaan",
+              "start": 10.131767236562748,
+              "end": 10.643334450776628
+            },
+            {
+              "text": "lanjutan",
+              "start": 10.643334450776628,
+              "end": 11.22911498491452
+            },
+            {
+              "text": "menemukan",
+              "start": 11.22911498491452,
+              "end": 11.74539613364622
+            },
+            {
+              "text": "produk",
+              "start": 11.74539613364622,
+              "end": 12.192177896971732
+            },
+            {
+              "text": "hasil",
+              "start": 12.192177896971732,
+              "end": 12.59924572577942
+            },
+            {
+              "text": "pembelahan.",
+              "start": 12.59924572577942,
+              "end": 13.26445412895296
+            }
+          ]
+        },
+        {
+          "text": "Jadi, bukan sekadar salah ukur:",
+          "from": 13.676235892278472,
+          "to": 15.880359258017663,
+          "words": [
+            {
+              "text": "Jadi,",
+              "start": 13.701307408649017,
+              "end": 14.088518270197792
+            },
+            {
+              "text": "bukan",
+              "start": 14.088518270197792,
+              "end": 14.406229746340378
+            },
+            {
+              "text": "sekadar",
+              "start": 14.406229746340378,
+              "end": 14.7835121242597
+            },
+            {
+              "text": "salah",
+              "start": 14.7835121242597,
+              "end": 15.091295116772828
+            },
+            {
+              "text": "ukur:",
+              "start": 15.091295116772828,
+              "end": 15.478505978321605
+            }
+          ]
+        },
+        {
+          "text": "batuannya menyimpan jejak reaktor.",
+          "from": 15.880359258017663,
+          "to": 18.60888888888889,
+          "words": [
+            {
+              "text": "batuannya",
+              "start": 15.880359258017663,
+              "end": 16.63021007933848
+            },
+            {
+              "text": "menyimpan",
+              "start": 16.63021007933848,
+              "end": 17.434417253324398
+            },
+            {
+              "text": "jejak",
+              "start": 17.434417253324398,
+              "end": 17.901055983908822
+            },
+            {
+              "text": "reaktor.",
+              "start": 17.901055983908822,
+              "end": 18.417337132640526
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "index": 3,
+      "label": "BAHAN BAKAR PURBA",
+      "text": "Tapi bagaimana batu bisa menjadi reaktor? Dua miliar tahun lalu, bagian uranium jenis itu di alam masih sekitar tiga persen. Sekarang tinggal sekitar nol koma tujuh persen. Jumlahnya menyusut karena peluruhan radioaktif sepanjang waktu.",
+      "trimStart": 0.17,
+      "trimEnd": 16.400000000000002,
+      "start": 54.022222222222226,
+      "startFrame": 4862,
+      "frames": 1460,
+      "duration": 16.22222222222222,
+      "cards": [
+        {
+          "text": "Tapi bagaimana batu bisa menjadi reaktor?",
+          "from": 0.054356352665102275,
+          "to": 3.360541401273886,
+          "words": [
+            {
+              "text": "Tapi",
+              "start": 0.054356352665102275,
+              "end": 0.4269247960665997
+            },
+            {
+              "text": "bagaimana",
+              "start": 0.4269247960665997,
+              "end": 1.0127053302044924
+            },
+            {
+              "text": "batu",
+              "start": 1.0127053302044924,
+              "end": 1.4197731590121807
+            },
+            {
+              "text": "bisa",
+              "start": 1.4197731590121807,
+              "end": 1.6282713152307526
+            },
+            {
+              "text": "menjadi",
+              "start": 1.6282713152307526,
+              "end": 2.0154821767795292
+            },
+            {
+              "text": "reaktor?",
+              "start": 2.0154821767795292,
+              "end": 2.571477260029054
+            }
+          ]
+        },
+        {
+          "text": "Dua miliar tahun lalu,",
+          "from": 3.360541401273886,
+          "to": 4.839885462062802,
+          "words": [
+            {
+              "text": "Dua",
+              "start": 3.5047547211979007,
+              "end": 3.7628952955637516
+            },
+            {
+              "text": "miliar",
+              "start": 3.7628952955637516,
+              "end": 4.130249189853616
+            },
+            {
+              "text": "tahun",
+              "start": 4.130249189853616,
+              "end": 4.398318247848923
+            },
+            {
+              "text": "lalu,",
+              "start": 4.398318247848923,
+              "end": 4.839885462062802
+            }
+          ]
+        },
+        {
+          "text": "bagian uranium jenis itu di alam masih sekitar tiga persen.",
+          "from": 4.839885462062802,
+          "to": 8.900635266510228,
+          "words": [
+            {
+              "text": "bagian",
+              "start": 4.984098781986816,
+              "end": 5.490451447089062
+            },
+            {
+              "text": "uranium",
+              "start": 5.490451447089062,
+              "end": 5.897519275896751
+            },
+            {
+              "text": "jenis",
+              "start": 5.897519275896751,
+              "end": 6.175516817521513
+            },
+            {
+              "text": "itu",
+              "start": 6.175516817521513,
+              "end": 6.4733713264051875
+            },
+            {
+              "text": "di",
+              "start": 6.4733713264051875,
+              "end": 6.582584646329201
+            },
+            {
+              "text": "alam",
+              "start": 6.582584646329201,
+              "end": 7.009509442395801
+            },
+            {
+              "text": "masih",
+              "start": 7.009509442395801,
+              "end": 7.317292434908931
+            },
+            {
+              "text": "sekitar",
+              "start": 7.317292434908931,
+              "end": 7.793859649122809
+            },
+            {
+              "text": "tiga",
+              "start": 7.932858419935191,
+              "end": 8.220784445189409
+            },
+            {
+              "text": "persen.",
+              "start": 8.220784445189409,
+              "end": 8.667566208514922
+            }
+          ]
+        },
+        {
+          "text": "Sekarang tinggal sekitar nol koma tujuh persen.",
+          "from": 8.900635266510228,
+          "to": 12.405389987708128,
+          "words": [
+            {
+              "text": "Sekarang",
+              "start": 9.154061906358256,
+              "end": 9.729913956866692
+            },
+            {
+              "text": "tinggal",
+              "start": 9.729913956866692,
+              "end": 10.097267851156557
+            },
+            {
+              "text": "sekitar",
+              "start": 10.097267851156557,
+              "end": 10.553978098111525
+            },
+            {
+              "text": "nol",
+              "start": 10.643334450776628,
+              "end": 10.980902894178124
+            },
+            {
+              "text": "koma",
+              "start": 10.980902894178124,
+              "end": 11.209258017655609
+            },
+            {
+              "text": "tujuh",
+              "start": 11.209258017655609,
+              "end": 11.447541624762547
+            },
+            {
+              "text": "persen.",
+              "start": 11.447541624762547,
+              "end": 11.86453793719969
+            }
+          ]
+        },
+        {
+          "text": "Jumlahnya menyusut karena peluruhan radioaktif sepanjang waktu.",
+          "from": 12.405389987708128,
+          "to": 16.142222222222223,
+          "words": [
+            {
+              "text": "Jumlahnya",
+              "start": 12.405389987708128,
+              "end": 12.966599620069287
+            },
+            {
+              "text": "menyusut",
+              "start": 12.966599620069287,
+              "end": 13.57223712146609
+            },
+            {
+              "text": "karena",
+              "start": 13.57223712146609,
+              "end": 13.88002011397922
+            },
+            {
+              "text": "peluruhan",
+              "start": 13.88002011397922,
+              "end": 14.455872164487658
+            },
+            {
+              "text": "radioaktif",
+              "start": 14.455872164487658,
+              "end": 15.121080567661197
+            },
+            {
+              "text": "sepanjang",
+              "start": 15.121080567661197,
+              "end": 15.667147167281266
+            },
+            {
+              "text": "waktu.",
+              "start": 15.667147167281266,
+              "end": 15.98485864342385
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s5",
+      "index": 4,
+      "label": "KONDISI YANG PAS",
+      "text": "Di Oklo, uranium terkumpul dalam endapan yang cukup pekat. Bentuk dan ukuran batuannya juga mendukung reaksi berantai. Tetapi bahan bakar saja belum cukup. Ada komponen lain yang membuat sistem ini bisa bekerja: air tanah.",
+      "trimStart": 0.19999999999999998,
+      "trimEnd": 17.27,
+      "start": 70.24444444444444,
+      "startFrame": 6322,
+      "frames": 1535,
+      "duration": 17.055555555555557,
+      "cards": [
+        {
+          "text": "Di Oklo, uranium terkumpul dalam endapan yang cukup pekat.",
+          "from": 0.054356352665102275,
+          "to": 4.760457593027155,
+          "words": [
+            {
+              "text": "Di",
+              "start": 0.07942786903564651,
+              "end": 0.3077829925131301
+            },
+            {
+              "text": "Oklo,",
+              "start": 0.3077829925131301,
+              "end": 1.1318471337579623
+            },
+            {
+              "text": "uranium",
+              "start": 1.2609174209408878,
+              "end": 1.8466979550787805
+            },
+            {
+              "text": "terkumpul",
+              "start": 1.8466979550787805,
+              "end": 2.4622639401050406
+            },
+            {
+              "text": "dalam",
+              "start": 2.4622639401050406,
+              "end": 2.7700469326181705
+            },
+            {
+              "text": "endapan",
+              "start": 2.7700469326181705,
+              "end": 3.3260420158676953
+            },
+            {
+              "text": "yang",
+              "start": 3.3260420158676953,
+              "end": 3.4948262375684447
+            },
+            {
+              "text": "cukup",
+              "start": 3.564325622974635,
+              "end": 3.891965582746677
+            },
+            {
+              "text": "pekat.",
+              "start": 3.891965582746677,
+              "end": 4.279176444295453
+            }
+          ]
+        },
+        {
+          "text": "Bentuk dan ukuran batuannya juga mendukung reaksi berantai.",
+          "from": 4.760457593027155,
+          "to": 9.387130964353563,
+          "words": [
+            {
+              "text": "Bentuk",
+              "start": 4.795457593027155,
+              "end": 5.381238127165048
+            },
+            {
+              "text": "dan",
+              "start": 5.381238127165048,
+              "end": 5.579807799754165
+            },
+            {
+              "text": "ukuran",
+              "start": 5.669164152419267,
+              "end": 6.046446530338588
+            },
+            {
+              "text": "batuannya",
+              "start": 6.046446530338588,
+              "end": 6.721583417141582
+            },
+            {
+              "text": "juga",
+              "start": 6.8208682534361404,
+              "end": 7.059151860543079
+            },
+            {
+              "text": "mendukung",
+              "start": 7.059151860543079,
+              "end": 7.585361492904237
+            },
+            {
+              "text": "reaksi",
+              "start": 7.585361492904237,
+              "end": 8.032143256229748
+            },
+            {
+              "text": "berantai.",
+              "start": 8.032143256229748,
+              "end": 8.617923790367643
+            }
+          ]
+        },
+        {
+          "text": "Tetapi bahan bakar saja belum cukup.",
+          "from": 9.387130964353563,
+          "to": 12.246534249636836,
+          "words": [
+            {
+              "text": "Tetapi",
+              "start": 9.387130964353563,
+              "end": 9.85898424404962
+            },
+            {
+              "text": "bahan",
+              "start": 9.85898424404962,
+              "end": 10.256123589227851
+            },
+            {
+              "text": "bakar",
+              "start": 10.256123589227851,
+              "end": 10.534121130852615
+            },
+            {
+              "text": "saja",
+              "start": 10.534121130852615,
+              "end": 10.980902894178124
+            },
+            {
+              "text": "belum",
+              "start": 10.980902894178124,
+              "end": 11.258900435802886
+            },
+            {
+              "text": "cukup.",
+              "start": 11.258900435802886,
+              "end": 11.874466420829147
+            }
+          ]
+        },
+        {
+          "text": "Ada komponen lain yang membuat sistem ini bisa bekerja:",
+          "from": 12.246534249636836,
+          "to": 15.870430774388204,
+          "words": [
+            {
+              "text": "Ada",
+              "start": 12.271605766007381,
+              "end": 12.519817856743776
+            },
+            {
+              "text": "komponen",
+              "start": 12.519817856743776,
+              "end": 13.026170521846021
+            },
+            {
+              "text": "lain",
+              "start": 13.026170521846021,
+              "end": 13.38359593250643
+            },
+            {
+              "text": "yang",
+              "start": 13.38359593250643,
+              "end": 13.55238015420718
+            },
+            {
+              "text": "membuat",
+              "start": 13.55238015420718,
+              "end": 13.88002011397922
+            },
+            {
+              "text": "sistem",
+              "start": 13.88002011397922,
+              "end": 14.217588557380719
+            },
+            {
+              "text": "ini",
+              "start": 14.217588557380719,
+              "end": 14.495586099005482
+            },
+            {
+              "text": "bisa",
+              "start": 14.495586099005482,
+              "end": 14.714012738853508
+            },
+            {
+              "text": "bekerja:",
+              "start": 14.714012738853508,
+              "end": 15.289864789361946
+            }
+          ]
+        },
+        {
+          "text": "air tanah.",
+          "from": 15.870430774388204,
+          "to": 16.97555555555556,
+          "words": [
+            {
+              "text": "air",
+              "start": 15.885573807129294,
+              "end": 16.213213766901337
+            },
+            {
+              "text": "tanah.",
+              "start": 16.213213766901337,
+              "end": 16.76920885015086
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s6",
+      "index": 5,
+      "label": "AIR MEMPERLAMBAT",
+      "text": "Saat sebuah inti terbelah, energi dan neutron dilepaskan. Air memperlambat neutron, sehingga lebih mudah memicu pembelahan inti berikutnya. Satu pembelahan memicu pembelahan lain. Dalam kondisi yang tepat, rangkaian ini bisa bertahan tanpa mesin buatan manusia.",
+      "trimStart": 0.17,
+      "trimEnd": 18.91,
+      "start": 87.3,
+      "startFrame": 7857,
+      "frames": 1684,
+      "duration": 18.711111111111112,
+      "cards": [
+        {
+          "text": "Saat sebuah inti terbelah,",
+          "from": 0.054356352665102275,
+          "to": 2.0698385294446315,
+          "words": [
+            {
+              "text": "Saat",
+              "start": 0.05957090177673485,
+              "end": 0.44678176332551134
+            },
+            {
+              "text": "sebuah",
+              "start": 0.44678176332551134,
+              "end": 0.774421723097553
+            },
+            {
+              "text": "inti",
+              "start": 0.774421723097553,
+              "end": 1.1318471337579623
+            },
+            {
+              "text": "terbelah,",
+              "start": 1.1318471337579623,
+              "end": 1.667985249748576
+            }
+          ]
+        },
+        {
+          "text": "energi dan neutron dilepaskan.",
+          "from": 2.0698385294446315,
+          "to": 4.810100011174434,
+          "words": [
+            {
+              "text": "energi",
+              "start": 2.0849815621857197,
+              "end": 2.601262710917422
+            },
+            {
+              "text": "dan",
+              "start": 2.601262710917422,
+              "end": 2.7799754162476265
+            },
+            {
+              "text": "neutron",
+              "start": 2.7799754162476265,
+              "end": 3.2565426304615053
+            },
+            {
+              "text": "dilepaskan.",
+              "start": 3.2565426304615053,
+              "end": 3.961464968152868
+            }
+          ]
+        },
+        {
+          "text": "Air memperlambat neutron,",
+          "from": 4.810100011174434,
+          "to": 6.577370097217568,
+          "words": [
+            {
+              "text": "Air",
+              "start": 4.845100011174434,
+              "end": 5.232310872723212
+            },
+            {
+              "text": "memperlambat",
+              "start": 5.232310872723212,
+              "end": 5.967018661302941
+            },
+            {
+              "text": "neutron,",
+              "start": 5.967018661302941,
+              "end": 6.334372555592806
+            }
+          ]
+        },
+        {
+          "text": "sehingga lebih mudah memicu pembelahan inti berikutnya.",
+          "from": 6.577370097217568,
+          "to": 10.320408425522407,
+          "words": [
+            {
+              "text": "sehingga",
+              "start": 6.691797966253215,
+              "end": 7.108794278690359
+            },
+            {
+              "text": "lebih",
+              "start": 7.108794278690359,
+              "end": 7.337149402167842
+            },
+            {
+              "text": "mudah",
+              "start": 7.337149402167842,
+              "end": 7.714431780087164
+            },
+            {
+              "text": "memicu",
+              "start": 7.714431780087164,
+              "end": 8.161213543412675
+            },
+            {
+              "text": "pembelahan",
+              "start": 8.161213543412675,
+              "end": 8.657637724885467
+            },
+            {
+              "text": "inti",
+              "start": 8.657637724885467,
+              "end": 9.00513465191642
+            },
+            {
+              "text": "berikutnya.",
+              "start": 9.00513465191642,
+              "end": 9.551201251536487
+            }
+          ]
+        },
+        {
+          "text": "Satu pembelahan memicu pembelahan lain.",
+          "from": 10.320408425522407,
+          "to": 13.58687953961337,
+          "words": [
+            {
+              "text": "Satu",
+              "start": 10.355408425522407,
+              "end": 10.673119901664995
+            },
+            {
+              "text": "pembelahan",
+              "start": 10.673119901664995,
+              "end": 11.48725555928037
+            },
+            {
+              "text": "memicu",
+              "start": 11.48725555928037,
+              "end": 11.98367974075316
+            },
+            {
+              "text": "pembelahan",
+              "start": 11.98367974075316,
+              "end": 12.440389987708128
+            },
+            {
+              "text": "lain.",
+              "start": 12.440389987708128,
+              "end": 12.877243267404184
+            }
+          ]
+        },
+        {
+          "text": "Dalam kondisi yang tepat,",
+          "from": 13.58687953961337,
+          "to": 15.135722985808474,
+          "words": [
+            {
+              "text": "Dalam",
+              "start": 13.611951055983914,
+              "end": 13.949519499385412
+            },
+            {
+              "text": "kondisi",
+              "start": 13.949519499385412,
+              "end": 14.30694491004582
+            },
+            {
+              "text": "yang",
+              "start": 14.30694491004582,
+              "end": 14.455872164487658
+            },
+            {
+              "text": "tepat,",
+              "start": 14.455872164487658,
+              "end": 14.773583640630244
+            }
+          ]
+        },
+        {
+          "text": "rangkaian ini bisa bertahan tanpa mesin buatan manusia.",
+          "from": 15.135722985808474,
+          "to": 18.631111111111114,
+          "words": [
+            {
+              "text": "rangkaian",
+              "start": 15.16079450217902,
+              "end": 15.677075650910723
+            },
+            {
+              "text": "ini",
+              "start": 15.677075650910723,
+              "end": 15.965001676164938
+            },
+            {
+              "text": "bisa",
+              "start": 15.965001676164938,
+              "end": 16.183428316012964
+            },
+            {
+              "text": "bertahan",
+              "start": 16.183428316012964,
+              "end": 16.759280366521402
+            },
+            {
+              "text": "tanpa",
+              "start": 16.759280366521402,
+              "end": 17.206062129846913
+            },
+            {
+              "text": "mesin",
+              "start": 17.206062129846913,
+              "end": 17.57341602413678
+            },
+            {
+              "text": "buatan",
+              "start": 17.57341602413678,
+              "end": 17.920912951167733
+            },
+            {
+              "text": "manusia.",
+              "start": 17.920912951167733,
+              "end": 18.42726561626998
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s7",
+      "index": 6,
+      "label": "REM ALAMI",
+      "text": "Yang mengejutkan, sistemnya bisa mengerem sendiri. Reaksi memanaskan batu dan air. Ketika air mendidih dan berkurang, neutron tidak lagi diperlambat dengan cukup baik. Reaksi pun mereda. Setelah batu mendingin, air masuk kembali, dan siklus berulang.",
+      "trimStart": 0.19000000000000003,
+      "trimEnd": 18.78,
+      "start": 106.0111111111111,
+      "startFrame": 9541,
+      "frames": 1671,
+      "duration": 18.566666666666666,
+      "cards": [
+        {
+          "text": "Yang mengejutkan, sistemnya bisa mengerem sendiri.",
+          "from": 0.054356352665102275,
+          "to": 3.9959643535590574,
+          "words": [
+            {
+              "text": "Yang",
+              "start": 0.07942786903564646,
+              "end": 0.26806905799530684
+            },
+            {
+              "text": "mengejutkan,",
+              "start": 0.26806905799530684,
+              "end": 1.0027768465750366
+            },
+            {
+              "text": "sistemnya",
+              "start": 1.181489551905241,
+              "end": 1.8268409878198686
+            },
+            {
+              "text": "bisa",
+              "start": 1.8268409878198686,
+              "end": 2.3133366856632036
+            },
+            {
+              "text": "mengerem",
+              "start": 2.3133366856632036,
+              "end": 2.760118448988715
+            },
+            {
+              "text": "sendiri.",
+              "start": 2.760118448988715,
+              "end": 3.3458989831266077
+            }
+          ]
+        },
+        {
+          "text": "Reaksi memanaskan batu dan air.",
+          "from": 3.9959643535590574,
+          "to": 6.994366409654711,
+          "words": [
+            {
+              "text": "Reaksi",
+              "start": 4.1004637389652485,
+              "end": 4.586959436808582
+            },
+            {
+              "text": "memanaskan",
+              "start": 4.586959436808582,
+              "end": 5.212453905464299
+            },
+            {
+              "text": "batu",
+              "start": 5.212453905464299,
+              "end": 5.669164152419267
+            },
+            {
+              "text": "dan",
+              "start": 5.669164152419267,
+              "end": 5.847876857749471
+            },
+            {
+              "text": "air.",
+              "start": 5.887590792267294,
+              "end": 6.195373784780424
+            }
+          ]
+        },
+        {
+          "text": "Ketika air mendidih dan berkurang,",
+          "from": 6.994366409654711,
+          "to": 9.317631578947372,
+          "words": [
+            {
+              "text": "Ketika",
+              "start": 6.994366409654711,
+              "end": 7.386791820315121
+            },
+            {
+              "text": "air",
+              "start": 7.386791820315121,
+              "end": 7.585361492904237
+            },
+            {
+              "text": "mendidih",
+              "start": 7.585361492904237,
+              "end": 8.15128505978322
+            },
+            {
+              "text": "dan",
+              "start": 8.15128505978322,
+              "end": 8.369711699631246
+            },
+            {
+              "text": "berkurang,",
+              "start": 8.369711699631246,
+              "end": 8.975349201028052
+            }
+          ]
+        },
+        {
+          "text": "neutron tidak lagi diperlambat dengan cukup baik.",
+          "from": 9.317631578947372,
+          "to": 12.345819085931394,
+          "words": [
+            {
+              "text": "neutron",
+              "start": 9.342703095317916,
+              "end": 9.918555145826353
+            },
+            {
+              "text": "tidak",
+              "start": 9.918555145826353,
+              "end": 10.18662420382166
+            },
+            {
+              "text": "lagi",
+              "start": 10.18662420382166,
+              "end": 10.474550229075879
+            },
+            {
+              "text": "diperlambat",
+              "start": 10.474550229075879,
+              "end": 11.129830148619963
+            },
+            {
+              "text": "dengan",
+              "start": 11.129830148619963,
+              "end": 11.387970722985813
+            },
+            {
+              "text": "cukup",
+              "start": 11.387970722985813,
+              "end": 11.65603978098112
+            },
+            {
+              "text": "baik.",
+              "start": 11.65603978098112,
+              "end": 12.073036093418263
+            }
+          ]
+        },
+        {
+          "text": "Reaksi pun mereda.",
+          "from": 12.345819085931394,
+          "to": 14.301730360934188,
+          "words": [
+            {
+              "text": "Reaksi",
+              "start": 12.46024695496704,
+              "end": 12.857386300145274
+            },
+            {
+              "text": "pun",
+              "start": 12.857386300145274,
+              "end": 13.065884456363845
+            },
+            {
+              "text": "mereda.",
+              "start": 13.065884456363845,
+              "end": 13.562308637836635
+            }
+          ]
+        },
+        {
+          "text": "Setelah batu mendingin,",
+          "from": 14.301730360934188,
+          "to": 15.681789585428545,
+          "words": [
+            {
+              "text": "Setelah",
+              "start": 14.326801877304732,
+              "end": 14.664370320706231
+            },
+            {
+              "text": "batu",
+              "start": 14.664370320706231,
+              "end": 14.892725444183712
+            },
+            {
+              "text": "mendingin,",
+              "start": 14.892725444183712,
+              "end": 15.508291429209974
+            }
+          ]
+        },
+        {
+          "text": "air masuk kembali,",
+          "from": 15.681789585428545,
+          "to": 17.04199184266399,
+          "words": [
+            {
+              "text": "air",
+              "start": 15.706861101799092,
+              "end": 16.024572577941672
+            },
+            {
+              "text": "masuk",
+              "start": 16.024572577941672,
+              "end": 16.381997988602084
+            },
+            {
+              "text": "kembali,",
+              "start": 16.381997988602084,
+              "end": 16.90820762096324
+            }
+          ]
+        },
+        {
+          "text": "dan siklus berulang.",
+          "from": 17.04199184266399,
+          "to": 18.486666666666668,
+          "words": [
+            {
+              "text": "dan",
+              "start": 17.06706335903453,
+              "end": 17.255704547994196
+            },
+            {
+              "text": "siklus",
+              "start": 17.255704547994196,
+              "end": 17.732271762208075
+            },
+            {
+              "text": "berulang.",
+              "start": 17.732271762208075,
+              "end": 18.337909263604878
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s8",
+      "index": 7,
+      "label": "JAM DI DALAM BATU",
+      "text": "Dari pola isotop gas xenon yang terperangkap dalam mineral, peneliti merekonstruksi salah satu pola kerjanya. Sekitar tiga puluh menit aktif, lalu dua setengah jam beristirahat. Bukan jam yang ditemukan di tambang, tetapi waktu yang dibaca dari atom.",
+      "trimStart": 0.27,
+      "trimEnd": 16.37,
+      "start": 124.57777777777778,
+      "startFrame": 11212,
+      "frames": 1448,
+      "duration": 16.08888888888889,
+      "cards": [
+        {
+          "text": "Dari pola isotop gas xenon yang terperangkap dalam mineral,",
+          "from": 0.05435635266510225,
+          "to": 3.7378237791932074,
+          "words": [
+            {
+              "text": "Dari",
+              "start": 0.05435635266510225,
+              "end": 0.45671024695496715
+            },
+            {
+              "text": "pola",
+              "start": 0.45671024695496715,
+              "end": 0.724779304950274
+            },
+            {
+              "text": "isotop",
+              "start": 0.724779304950274,
+              "end": 1.2112750027936086
+            },
+            {
+              "text": "gas",
+              "start": 1.2112750027936086,
+              "end": 1.4396301262710922
+            },
+            {
+              "text": "xenon",
+              "start": 1.4396301262710922,
+              "end": 1.8864118895966036
+            },
+            {
+              "text": "yang",
+              "start": 1.8864118895966036,
+              "end": 2.0551961112973522
+            },
+            {
+              "text": "terperangkap",
+              "start": 2.0551961112973522,
+              "end": 2.660833612694157
+            },
+            {
+              "text": "dalam",
+              "start": 2.660833612694157,
+              "end": 2.9388311543189194
+            },
+            {
+              "text": "mineral,",
+              "start": 2.9388311543189194,
+              "end": 3.4551123030506212
+            }
+          ]
+        },
+        {
+          "text": "peneliti merekonstruksi salah satu pola kerjanya.",
+          "from": 3.7378237791932074,
+          "to": 7.09365124594927,
+          "words": [
+            {
+              "text": "peneliti",
+              "start": 3.7378237791932074,
+              "end": 4.199748575259807
+            },
+            {
+              "text": "merekonstruksi",
+              "start": 4.199748575259807,
+              "end": 5.063526651022462
+            },
+            {
+              "text": "salah",
+              "start": 5.063526651022462,
+              "end": 5.361381159906137
+            },
+            {
+              "text": "satu",
+              "start": 5.361381159906137,
+              "end": 5.738663537825457
+            },
+            {
+              "text": "pola",
+              "start": 5.738663537825457,
+              "end": 5.967018661302941
+            },
+            {
+              "text": "kerjanya.",
+              "start": 5.967018661302941,
+              "end": 6.5230137445524665
+            }
+          ]
+        },
+        {
+          "text": "Sekitar tiga puluh menit aktif,",
+          "from": 7.09365124594927,
+          "to": 9.009848586434243,
+          "words": [
+            {
+              "text": "Sekitar",
+              "start": 7.108794278690359,
+              "end": 7.545647558386414
+            },
+            {
+              "text": "tiga",
+              "start": 7.545647558386414,
+              "end": 7.823645100011178
+            },
+            {
+              "text": "puluh",
+              "start": 7.823645100011178,
+              "end": 8.052000223488662
+            },
+            {
+              "text": "menit",
+              "start": 8.052000223488662,
+              "end": 8.2902838305956
+            },
+            {
+              "text": "aktif,",
+              "start": 8.2902838305956,
+              "end": 8.76685104480948
+            }
+          ]
+        },
+        {
+          "text": "lalu dua setengah jam beristirahat.",
+          "from": 9.009848586434243,
+          "to": 11.57139736283384,
+          "words": [
+            {
+              "text": "lalu",
+              "start": 9.009848586434243,
+              "end": 9.471773382500842
+            },
+            {
+              "text": "dua",
+              "start": 9.471773382500842,
+              "end": 9.680271538719413
+            },
+            {
+              "text": "setengah",
+              "start": 9.680271538719413,
+              "end": 10.037696949379823
+            },
+            {
+              "text": "jam",
+              "start": 10.037696949379823,
+              "end": 10.266052072857306
+            },
+            {
+              "text": "beristirahat.",
+              "start": 10.266052072857306,
+              "end": 11.139758632249418
+            }
+          ]
+        },
+        {
+          "text": "Bukan jam yang ditemukan di tambang,",
+          "from": 11.57139736283384,
+          "to": 13.51738015420718,
+          "words": [
+            {
+              "text": "Bukan",
+              "start": 11.57139736283384,
+              "end": 11.943965806235338
+            },
+            {
+              "text": "jam",
+              "start": 11.943965806235338,
+              "end": 12.142535478824454
+            },
+            {
+              "text": "yang",
+              "start": 12.142535478824454,
+              "end": 12.291462733266291
+            },
+            {
+              "text": "ditemukan",
+              "start": 12.291462733266291,
+              "end": 12.738244496591802
+            },
+            {
+              "text": "di",
+              "start": 12.738244496591802,
+              "end": 12.83752933288636
+            },
+            {
+              "text": "tambang,",
+              "start": 12.83752933288636,
+              "end": 13.294239579841328
+            }
+          ]
+        },
+        {
+          "text": "tetapi waktu yang dibaca dari atom.",
+          "from": 13.51738015420718,
+          "to": 16.00888888888889,
+          "words": [
+            {
+              "text": "tetapi",
+              "start": 13.51738015420718,
+              "end": 13.909805564867588
+            },
+            {
+              "text": "waktu",
+              "start": 13.909805564867588,
+              "end": 14.37644429545201
+            },
+            {
+              "text": "yang",
+              "start": 14.37644429545201,
+              "end": 14.555157000782215
+            },
+            {
+              "text": "dibaca",
+              "start": 14.555157000782215,
+              "end": 15.04165269862555
+            },
+            {
+              "text": "dari",
+              "start": 15.04165269862555,
+              "end": 15.448720527433238
+            },
+            {
+              "text": "atom.",
+              "start": 15.448720527433238,
+              "end": 15.786288970834738
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s9",
+      "index": 8,
+      "label": "BUKAN PEMBANGKIT",
+      "text": "Jadi ini bukan pembangkit listrik purba. Tidak ada turbin, kabel, atau kota yang diterangi. Yang ditemukan adalah bekas reaksi nuklir alami dalam batuan. Bahan bakar, air, dan kondisi geologi kebetulan bertemu pada tempat serta zaman yang tepat.",
+      "trimStart": 0.21,
+      "trimEnd": 18.48,
+      "start": 140.66666666666666,
+      "startFrame": 12660,
+      "frames": 1642,
+      "duration": 18.244444444444444,
+      "cards": [
+        {
+          "text": "Jadi ini bukan pembangkit listrik purba.",
+          "from": 0.054356352665102275,
+          "to": 3.7477522628226625,
+          "words": [
+            {
+              "text": "Jadi",
+              "start": 0.09928483629455809,
+              "end": 0.8141356576153763
+            },
+            {
+              "text": "ini",
+              "start": 0.9531344284277576,
+              "end": 1.2212034864230645
+            },
+            {
+              "text": "bukan",
+              "start": 1.2212034864230645,
+              "end": 1.65805676611912
+            },
+            {
+              "text": "pembangkit",
+              "start": 1.65805676611912,
+              "end": 2.184266398480278
+            },
+            {
+              "text": "listrik",
+              "start": 2.184266398480278,
+              "end": 2.601262710917422
+            },
+            {
+              "text": "purba.",
+              "start": 2.601262710917422,
+              "end": 3.2664711140909612
+            }
+          ]
+        },
+        {
+          "text": "Tidak ada turbin, kabel, atau kota yang diterangi.",
+          "from": 3.7477522628226625,
+          "to": 7.649646329198796,
+          "words": [
+            {
+              "text": "Tidak",
+              "start": 3.7477522628226625,
+              "end": 4.0210358699296025
+            },
+            {
+              "text": "ada",
+              "start": 4.0210358699296025,
+              "end": 4.1501061571125275
+            },
+            {
+              "text": "turbin,",
+              "start": 4.1501061571125275,
+              "end": 4.894742429321713
+            },
+            {
+              "text": "kabel,",
+              "start": 4.894742429321713,
+              "end": 5.748592021454913
+            },
+            {
+              "text": "atau",
+              "start": 5.857805341378928,
+              "end": 6.036518046709132
+            },
+            {
+              "text": "kota",
+              "start": 6.036518046709132,
+              "end": 6.413800424628453
+            },
+            {
+              "text": "yang",
+              "start": 6.413800424628453,
+              "end": 6.602441613588113
+            },
+            {
+              "text": "diterangi.",
+              "start": 6.602441613588113,
+              "end": 7.168365180467093
+            }
+          ]
+        },
+        {
+          "text": "Yang ditemukan adalah bekas reaksi nuklir alami dalam batuan.",
+          "from": 7.649646329198796,
+          "to": 12.01817912615935,
+          "words": [
+            {
+              "text": "Yang",
+              "start": 7.843502067270088,
+              "end": 8.022214772600291
+            },
+            {
+              "text": "ditemukan",
+              "start": 8.022214772600291,
+              "end": 8.538495921331995
+            },
+            {
+              "text": "adalah",
+              "start": 8.538495921331995,
+              "end": 8.876064364733493
+            },
+            {
+              "text": "bekas",
+              "start": 8.876064364733493,
+              "end": 9.302989160800092
+            },
+            {
+              "text": "reaksi",
+              "start": 9.302989160800092,
+              "end": 9.719985473237235
+            },
+            {
+              "text": "nuklir",
+              "start": 9.719985473237235,
+              "end": 10.11712481841547
+            },
+            {
+              "text": "alami",
+              "start": 10.11712481841547,
+              "end": 10.63340596714717
+            },
+            {
+              "text": "dalam",
+              "start": 10.63340596714717,
+              "end": 10.871689574254109
+            },
+            {
+              "text": "batuan.",
+              "start": 10.871689574254109,
+              "end": 11.288685886691253
+            }
+          ]
+        },
+        {
+          "text": "Bahan bakar, air, dan kondisi geologi",
+          "from": 12.01817912615935,
+          "to": 14.986795731366637,
+          "words": [
+            {
+              "text": "Bahan",
+              "start": 12.01817912615935,
+              "end": 12.311319700525202
+            },
+            {
+              "text": "bakar,",
+              "start": 12.311319700525202,
+              "end": 12.986456587328195
+            },
+            {
+              "text": "air,",
+              "start": 13.155240809028946,
+              "end": 13.611951055983912
+            },
+            {
+              "text": "dan",
+              "start": 13.919734048497043,
+              "end": 14.108375237456704
+            },
+            {
+              "text": "kondisi",
+              "start": 14.108375237456704,
+              "end": 14.49558609900548
+            },
+            {
+              "text": "geologi",
+              "start": 14.49558609900548,
+              "end": 14.986795731366637
+            }
+          ]
+        },
+        {
+          "text": "kebetulan bertemu pada tempat serta zaman yang tepat.",
+          "from": 14.986795731366637,
+          "to": 18.164444444444445,
+          "words": [
+            {
+              "text": "kebetulan",
+              "start": 14.99201028047827,
+              "end": 15.796217454464191
+            },
+            {
+              "text": "bertemu",
+              "start": 15.796217454464191,
+              "end": 16.173499832383513
+            },
+            {
+              "text": "pada",
+              "start": 16.173499832383513,
+              "end": 16.352212537713715
+            },
+            {
+              "text": "tempat",
+              "start": 16.352212537713715,
+              "end": 16.878422170074874
+            },
+            {
+              "text": "serta",
+              "start": 16.878422170074874,
+              "end": 17.225919097105827
+            },
+            {
+              "text": "zaman",
+              "start": 17.225919097105827,
+              "end": 17.62305844228406
+            },
+            {
+              "text": "yang",
+              "start": 17.62305844228406,
+              "end": 17.732271762208075
+            },
+            {
+              "text": "tepat.",
+              "start": 17.732271762208075,
+              "end": 18.00034082020338
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s10",
+      "index": 9,
+      "label": "ARSIP DUA MILIAR TAHUN",
+      "text": "Kini reaktor alaminya sudah lama berhenti. Namun batuannya menyimpan bukti bahwa alam melakukan fisi jauh sebelum manusia memahaminya. Oklo mengubah pertanyaan kita: bukan siapa yang membangunnya, melainkan kondisi apa yang membuatnya mungkin. Kamu baru tahu tentang Oklo?",
+      "trimStart": 0.22,
+      "trimEnd": 19.1,
+      "start": 158.9111111111111,
+      "startFrame": 14302,
+      "frames": 1697,
+      "duration": 18.855555555555554,
+      "cards": [
+        {
+          "text": "Kini reaktor alaminya sudah lama berhenti.",
+          "from": 0.054356352665102275,
+          "to": 3.142114761425858,
+          "words": [
+            {
+              "text": "Kini",
+              "start": 0.054356352665102275,
+              "end": 0.6056375013968043
+            },
+            {
+              "text": "reaktor",
+              "start": 0.724779304950274,
+              "end": 1.1616325846463296
+            },
+            {
+              "text": "alaminya",
+              "start": 1.1616325846463296,
+              "end": 1.65805676611912
+            },
+            {
+              "text": "sudah",
+              "start": 1.65805676611912,
+              "end": 2.0949100458151753
+            },
+            {
+              "text": "lama",
+              "start": 2.0949100458151753,
+              "end": 2.4026930383283056
+            },
+            {
+              "text": "berhenti.",
+              "start": 2.4026930383283056,
+              "end": 2.948759637948375
+            }
+          ]
+        },
+        {
+          "text": "Namun batuannya menyimpan bukti bahwa alam melakukan fisi",
+          "from": 3.142114761425858,
+          "to": 7.272363951279475,
+          "words": [
+            {
+              "text": "Namun",
+              "start": 3.3558274667560632,
+              "end": 3.7926807464521186
+            },
+            {
+              "text": "batuannya",
+              "start": 3.7926807464521186,
+              "end": 4.378461280590011
+            },
+            {
+              "text": "menyimpan",
+              "start": 4.378461280590011,
+              "end": 4.864956978433346
+            },
+            {
+              "text": "bukti",
+              "start": 4.864956978433346,
+              "end": 5.301810258129402
+            },
+            {
+              "text": "bahwa",
+              "start": 5.301810258129402,
+              "end": 5.609593250642532
+            },
+            {
+              "text": "alam",
+              "start": 5.679092636048723,
+              "end": 6.056375013968044
+            },
+            {
+              "text": "melakukan",
+              "start": 6.056375013968044,
+              "end": 6.542870711811378
+            },
+            {
+              "text": "fisi",
+              "start": 6.542870711811378,
+              "end": 7.098865795060903
+            }
+          ]
+        },
+        {
+          "text": "jauh sebelum manusia memahaminya.",
+          "from": 7.272363951279475,
+          "to": 9.69491395686669,
+          "words": [
+            {
+              "text": "jauh",
+              "start": 7.317292434908931,
+              "end": 7.774002681863899
+            },
+            {
+              "text": "sebelum",
+              "start": 7.774002681863899,
+              "end": 8.161213543412673
+            },
+            {
+              "text": "manusia",
+              "start": 8.161213543412673,
+              "end": 8.617923790367641
+            },
+            {
+              "text": "memahaminya.",
+              "start": 8.617923790367641,
+              "end": 9.243418259023356
+            }
+          ]
+        },
+        {
+          "text": "Oklo mengubah pertanyaan kita:",
+          "from": 9.69491395686669,
+          "to": 12.137320929712821,
+          "words": [
+            {
+              "text": "Oklo",
+              "start": 10.017839982120911,
+              "end": 10.454693261816965
+            },
+            {
+              "text": "mengubah",
+              "start": 10.454693261816965,
+              "end": 11.010688345066491
+            },
+            {
+              "text": "pertanyaan",
+              "start": 11.010688345066491,
+              "end": 11.536897977427648
+            },
+            {
+              "text": "kita:",
+              "start": 11.536897977427648,
+              "end": 11.884394904458603
+            }
+          ]
+        },
+        {
+          "text": "bukan siapa yang membangunnya,",
+          "from": 12.137320929712821,
+          "to": 14.192517041010174,
+          "words": [
+            {
+              "text": "bukan",
+              "start": 12.331176667784113,
+              "end": 12.619102693038332
+            },
+            {
+              "text": "siapa",
+              "start": 12.619102693038332,
+              "end": 13.09566990725221
+            },
+            {
+              "text": "yang",
+              "start": 13.09566990725221,
+              "end": 13.294239579841326
+            },
+            {
+              "text": "membangunnya,",
+              "start": 13.294239579841326,
+              "end": 13.889948597608676
+            }
+          ]
+        },
+        {
+          "text": "melainkan kondisi apa yang membuatnya mungkin.",
+          "from": 14.192517041010174,
+          "to": 17.280275449770933,
+          "words": [
+            {
+              "text": "melainkan",
+              "start": 14.217588557380717,
+              "end": 14.793440607889153
+            },
+            {
+              "text": "kondisi",
+              "start": 14.793440607889153,
+              "end": 15.279936305732488
+            },
+            {
+              "text": "apa",
+              "start": 15.279936305732488,
+              "end": 15.617504749133985
+            },
+            {
+              "text": "yang",
+              "start": 15.617504749133985,
+              "end": 15.826002905352558
+            },
+            {
+              "text": "membuatnya",
+              "start": 15.826002905352558,
+              "end": 16.27278466867807
+            },
+            {
+              "text": "mungkin.",
+              "start": 16.27278466867807,
+              "end": 16.679852497485758
+            }
+          ]
+        },
+        {
+          "text": "Kamu baru tahu tentang Oklo?",
+          "from": 17.280275449770933,
+          "to": 18.775555555555556,
+          "words": [
+            {
+              "text": "Kamu",
+              "start": 17.280275449770933,
+              "end": 17.563487540507328
+            },
+            {
+              "text": "baru",
+              "start": 17.563487540507328,
+              "end": 17.76205721309644
+            },
+            {
+              "text": "tahu",
+              "start": 17.76205721309644,
+              "end": 18.040054754721204
+            },
+            {
+              "text": "tentang",
+              "start": 18.040054754721204,
+              "end": 18.298195329087054
+            },
+            {
+              "text": "Oklo?",
+              "start": 18.298195329087054,
+              "end": 18.64569225611801
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "rate": 1.0072031513787278,
+  "frames": 15999,
+  "duration": 177.76666666666668
+}

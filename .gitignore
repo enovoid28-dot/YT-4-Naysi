@@ -11,3 +11,6 @@ google_drive/
 public/audio/ep33.mp3
 public/fonts/
 build/
+
+.venv/
+public/audio/oklo.mp3

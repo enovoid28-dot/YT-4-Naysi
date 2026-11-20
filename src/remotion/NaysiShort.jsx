@@ -1,7 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {AbsoluteFill, Audio, continueRender, delayRender, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
-import timeline from '../heat/timeline.json';
-import {draw, initAssets} from '../heat/draw.mjs';
+import timeline from '../oklo/timeline.json';
+import geo from '../oklo/map.json';
+import {draw, initAssets} from '../oklo/draw.mjs';
 
 export const NaysiShort = () => {
   const canvas=useRef(null);
@@ -11,12 +12,12 @@ export const NaysiShort = () => {
   const [ready,setReady]=useState(false);
   useEffect(()=>{
     let cancelled=false;
-    Promise.all(['PJS700','IT800','MONO6'].map(async name=>{
+    Promise.all(['PJS700','PJS800','IT800','MONO6'].map(async name=>{
       const face=new FontFace(name,`url(${staticFile(`fonts/${name}.ttf`)})`);
       await face.load();document.fonts.add(face);
     })).then(()=>{
       if(cancelled)return;
-      initAssets((w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;});
+      initAssets((w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;},geo);
       setReady(true);continueRender(handle);
     }).catch(error=>{console.error(error);throw error;});
     return ()=>{cancelled=true;};
@@ -24,6 +25,6 @@ export const NaysiShort = () => {
   useEffect(()=>{if(ready&&canvas.current)draw(canvas.current.getContext('2d'),frame/fps,timeline);},[frame,fps,ready]);
   return <AbsoluteFill style={{backgroundColor:'#0a1015'}}>
     <canvas ref={canvas} width={timeline.width} height={timeline.height} style={{width:'100%',height:'100%'}}/>
-    <Audio src={staticFile('audio/ep33.mp3')}/>
+    <Audio src={staticFile('audio/oklo.mp3')}/>
   </AbsoluteFill>;
 };
