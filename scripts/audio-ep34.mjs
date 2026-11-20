@@ -239,92 +239,93 @@ function renderSFX() {
     for (let k = 0; k < n; k++) SFX.blip(t + k * (0.22 + (k % 3) * 0.09), g * (1 - k * 0.1), 760 + k * 130, (k % 2) * 0.4 - 0.2);
   };
 
-  // s1 — tomb air, the shaft opens, the sealed jar hums
-  SFX.whoosh(0.25, 3.2, 0.06, 420, -0.15);
-  SFX.boom(0.7, 0.075, 40);
-  SFX.tick(C(0, 'disimpan', 0, 0.0), 0.02, 980);
-  SFX.ding(C(0, 'tahun', 0, 0.02), 0.032, 1568, 2.6, 0.2);
-  SFX.ding(C(0, 'dimakan', 0, 0.0), 0.028, 2093, 2.4, -0.2);
+  // s1 — deep water whoosh, sub boom, sonar pings on the hook words
+  SFX.whoosh(0.25, 3.2, 0.06, 320, -0.15);
+  SFX.boom(0.7, 0.075, 38);
+  SFX.ding(C(0, 'titik', 0, 0.0), 0.034, 1245, 3.0, 0);
+  SFX.ding(C(0, 'astronot', 0, 0.0), 0.03, 1568, 2.6, 0.15);
+  SFX.ding(C(0, 'kepala', 0, 0.02), 0.028, 2093, 2.4, -0.15);
 
-  // s2 — stone grind, torch sweep, three jars found
-  SFX.tear(C(1, 'makam', 0, -0.35), 2.6, 0.05);
-  SFX.whoosh(1.1, 4.2, 0.05, 850, 0.25);
-  for (let k = 0; k < 3; k++) SFX.boom(C(1, 'stoples', 0, -1.1) + k * 0.55, 0.055, 64 + k * 5);
-  SFX.tick(C(1, 'menemukan', 0, 0.0), 0.018, 1200);
+  // s2 — the big odometer: ping + sub thump on the number
+  SFX.whoosh(1.0, 4.0, 0.05, 700, 0.2);
+  for (let k = 0; k < 3; k++) SFX.blip(0.8 + k * 0.42, 0.02, 1180 + k * 150, (k % 2) * 0.4 - 0.2);
+  SFX.ding(C(1, 'nemo', 0, 0.0), 0.032, 1318, 2.8, 0);
+  SFX.boom(C(1, 'kilometer', 0, -0.05), 0.06, 52);
 
-  // s3 — the year ruler counts back, two marks chime
+  // s3 — three islands: ruler ticks, two matched pings, empty chord
   for (let k = 0; k < 11; k++) SFX.tick(0.9 + k * 0.5, 0.014, 880 + k * 42, (k % 2) * 0.4 - 0.2);
-  SFX.ding(C(2, 'ditemukan', 0, 0.05), 0.03, 1318, 2.6, 0);
-  SFX.chord(C(2, 'georgia', 0, -0.1), 0.028, 349.23);
+  SFX.ding(C(2, 'ducie', 0, 0.0), 0.026, 1174, 2.4, -0.2);
+  SFX.ding(C(2, 'maher', 0, 0.0), 0.026, 1174, 2.4, 0.2);
+  SFX.chord(C(2, 'berpenghuni', 0, -0.1), 0.028, 349.23);
 
-  // s4 — panel in, bars grow, the comb floods
-  SFX.whoosh(C(4, 'rahasia', 0, -0.15), 1.4, 0.06, 900, -0.2);
-  SFX.boom(C(4, 'tujuh', 0, -0.05), 0.07, 55);
-  for (let k = 0; k < 4; k++) SFX.blip(C(4, 'tujuh', 0, 0.3) + k * 0.4, 0.018, 1100 + k * 160, (k % 2) * 0.5 - 0.25);
+  // s4 — ship horn far away, ISS ping overhead
+  SFX.whoosh(C(3, 'kapal', 0, -0.2), 2.6, 0.05, 520, -0.2);
+  SFX.boom(C(3, 'kapal', 0, 0.0), 0.09, 70);
+  SFX.ding(C(3, 'stasiun', 0, 0.0), 0.03, 1568, 2.6, 0.1);
 
-  // s5 — microbes fall, water leaves, dry crack
-  for (let k = 0; k < 3; k++) SFX.tick(C(5, 'cairan', 0, -1.6) + k * 1.1, 0.02, 620 - k * 90);
-  SFX.tear(C(5, 'cairan', 0, -0.2), 2.4, 0.04);
-  SFX.crack(C(5, 'kering', 0, 0.0), 0.075);
-  SFX.tick(C(5, 'diawetkan', 0, 0.0), 0.02, 1500);
+  // s5 — book plate: warm chord, two soft dings
+  SFX.chord(0.5, 0.03, 220.0);
+  SFX.ding(C(4, 'verne', 0, 0.0), 0.028, 1318, 2.4, -0.1);
+  SFX.ding(C(4, 'latin', 0, 0.0), 0.026, 1174, 2.2, 0.1);
+  SFX.tick(C(4, 'berarti', 0, 0.0), 0.02, 980);
 
-  // s6 — the pH ribbon sweeps, the acid bracket clangs, microbes bounce
-  SFX.whoosh(0.7, 2.2, 0.055, 1500, 0.15);
-  SFX.bell(C(6, 'asam', 0, 0.0), 0.042, 147);
-  for (let k = 0; k < 3; k++) SFX.tick(C(6, 'koma', 0, 0.2) + k * 0.9, 0.02, 420 + k * 60, (k % 2) * 0.4 - 0.2);
+  // s6 — computer calc: terminal blips, result ding + chord
+  for (let k = 0; k < 6; k++) SFX.blip(0.8 + k * 0.35, 0.016, 900 + k * 120, (k % 2) * 0.4 - 0.2);
+  SFX.ding(C(5, 'dihitung', 0, 0.0), 0.03, 1568, 2.6, 0);
+  SFX.chord(C(5, 'hipparchus', 0, -0.05), 0.028, 392.0);
 
-  // s7 — the bee patrols, enzymes release slow peroxide
-  buzz(0.6, 4.2, 0.045, -0.2);
-  buzz(C(7, 'enzim', 0, -0.2), 3.4, 0.04, 0.25);
-  bubbles(C(7, 'hidrogen', 0, -0.1), 6, 0.018);
-  SFX.ding(C(7, 'steril', 0, 0.0), 0.026, 1760, 2.2, 0);
+  // s7 — gyre swirl whoosh, sparse ticks, low bubble field
+  SFX.whoosh(0.6, 4.5, 0.05, 240, -0.1);
+  for (let k = 0; k < 4; k++) SFX.tick(1.4 + k * 1.1, 0.016, 520 - k * 60, (k % 2) * 0.4 - 0.2);
+  SFX.ding(C(6, 'gyre', 0, 0.0), 0.032, 1046, 2.8, 0);
+  bubbles(C(6, 'gurun', 0, -0.3), 5, 0.016);
 
-  // s8 — seal pop on the left, open-jar hiss and ferment on the right
-  pop(C(8, 'tertutup', 0, 0.05), 0.06);
-  SFX.whoosh(C(8, 'terbuka', 0, -0.1), 2.6, 0.05, 2100, 0.3);
-  bubbles(C(8, 'berfermentasi', 0, -0.3), 5, 0.02);
+  // s8 — empty lanes: hollow whoosh, dull boom, lonely ding
+  SFX.whoosh(C(7, 'ikan', 0, -0.2), 2.4, 0.045, 420, -0.15);
+  SFX.boom(C(7, 'menyeberang', 0, -0.05), 0.06, 58);
+  SFX.ding(C(7, 'sunyi', 0, 0.0), 0.03, 1568, 2.6, 0.1);
 
-  // s9 — crystals glitter, the warm bath melts them back
-  for (let k = 0; k < 5; k++) SFX.ding(0.8 + k * 0.42, 0.02, 2093 + (k % 3) * 260, 1.8, (k % 2) * 0.5 - 0.25);
-  SFX.whoosh(C(9, 'hangat', 0, -0.15), 2.2, 0.05, 620, -0.2);
-  SFX.tear(C(9, 'hangat', 0, 0.1), 1.6, 0.035);
-  SFX.ding(C(9, 'semula', 0, 0.0), 0.026, 1568, 2.4, 0.15);
+  // s9 — falling craft: three thuds, re-entry tear, cemetery ding
+  for (let k = 0; k < 3; k++) SFX.boom(0.9 + k * 0.8, 0.055, 60 + k * 4);
+  SFX.tear(C(8, 'wahana', 0, -0.3), 2.2, 0.05);
+  SFX.ding(C(8, 'pensiun', 0, 0.0), 0.028, 1318, 2.4, -0.1);
+  SFX.tick(C(8, 'terkontrol', 0, 0.0), 0.02, 1100);
 
-  // s10 — papyrus rustle, glyph stamps, the honey drop plinks
-  SFX.tear(0.55, 1.9, 0.05);
-  for (let k = 0; k < 6; k++) SFX.tick(1.3 + k * 0.34, 0.015, 700 + (k % 3) * 120, (k % 2) * 0.4 - 0.2);
-  SFX.ding(C(10, 'obat', 0, 0.02), 0.03, 1568, 2.4, -0.15);
-  SFX.tick(C(10, 'hippocrates', 0, 0.0), 0.02, 980);
-  SFX.ding(C(10, 'cuka', 0, 0.0), 0.022, 1318, 2.0, 0.2);
+  // s10 — tolerance rings: soft whoosh, scatter blips, resolve chord
+  SFX.whoosh(0.8, 3.6, 0.05, 300, 0.1);
+  for (let k = 0; k < 4; k++) SFX.blip(1.2 + k * 0.5, 0.016, 760 + k * 180, (k % 2) * 0.5 - 0.25);
+  SFX.ding(C(9, 'fragmen', 0, 0.0), 0.026, 1174, 2.2, -0.15);
+  SFX.chord(C(9, 'toleransi', 0, -0.1), 0.028, 293.66);
 
-  // s11 — HUD blips, the curve servo, the −94% chime
-  for (let k = 0; k < 3; k++) SFX.blip(0.7 + k * 0.5, 0.022, 1240 + k * 180, (k % 2) * 0.4 - 0.2);
-  SFX.whoosh(C(11, 'medis', 0, -0.2), 3.0, 0.045, 520, 0.1);
-  SFX.chord(C(11, 'penyembuhan', 0, -0.1), 0.026, 293.66);
+  // s11 — Mir re-entry: long tear, fire whoosh, sub impact, crackle, plasma ding
+  SFX.tear(C(10, 'mir', 0, -0.4), 3.0, 0.06);
+  SFX.whoosh(C(10, 'terbakar', 0, -0.2), 2.8, 0.06, 900, 0.2);
+  SFX.boom(C(10, 'mir', 0, 0.0), 0.08, 45);
+  for (let k = 0; k < 5; k++) SFX.tick(C(10, 'terbakar', 0, 0.2) + k * 0.4, 0.014, 1500 - k * 120, (k % 2) * 0.4 - 0.2);
+  SFX.ding(C(10, 'plasma', 0, 0.0), 0.03, 1568, 2.6, 0.15);
 
-  // s12 — the comb floods amber, three defenses pop, glow shimmer
-  SFX.whoosh(1.1, 4.0, 0.06, 320, -0.1);
-  for (let k = 0; k < 3; k++) SFX.tick(C(13, 'segelnya', 0, 0.2) + k * 0.85, 0.022, 1050 + k * 210, (k % 2) * 0.5 - 0.25);
-  SFX.ding(C(13, 'kedaluwarsa', 0, 0.0), 0.03, 2093, 2.8, 0);
+  // s12 — ISS descent: glide whoosh, heavy boom, final high ding
+  SFX.whoosh(1.0, 4.2, 0.055, 360, -0.1);
+  SFX.ding(C(11, 'internasional', 0, 0.0), 0.03, 1318, 2.6, 0);
+  SFX.boom(C(11, 'menyusul', 0, -0.05), 0.06, 50);
+  SFX.ding(C(11, 'sama', 0, 0.02), 0.028, 2093, 2.4, -0.15);
 
-  // s13 — warm close, the question, the subscribe ding
+  // s13 — depth ruler: descending ticks, deep whoosh, distance ding
+  for (let k = 0; k < 4; k++) SFX.tick(0.9 + k * 0.7, 0.018, 900 - k * 190, (k % 2) * 0.4 - 0.2);
+  SFX.whoosh(C(12, 'kedalaman', 0, -0.2), 2.6, 0.05, 260, -0.2);
+  SFX.ding(C(12, 'jarak', 0, 0.0), 0.03, 1568, 2.6, 0.1);
+
+  // s14 — ship bell for Hespérides, sea whoosh, year ding
+  SFX.ding(C(13, 'riset', 0, 0.0), 0.04, 880, 3.2, 0);
+  SFX.whoosh(0.8, 3.4, 0.05, 480, 0.15);
+  SFX.tick(C(13, 'pertama', 0, 0.0), 0.02, 1200);
+  SFX.ding(C(13, 'sembilan', 0, 0.02), 0.028, 1760, 2.4, -0.1);
+
+  // s15 — close: warm chord, question whoosh, comment dings
   SFX.chord(0.4, 0.032, 220.0);
-  SFX.whoosh(C(14, 'komentar', 0, -0.2), 2.0, 0.05, 700, 0.15);
-  SFX.ding(C(14, 'subscribe', 0, 0.02), 0.035, 1760, 2.6, -0.15);
-
-
-  // s4 — the kitchen: blossom pluck, wing buzz commute, comb floods, fan air
-  SFX.ding(C(3, 'bunga', 0, 0.0), 0.026, 1568, 2.2, -0.3);
-  buzz(0.7, 3.2, 0.04, -0.15);
-  buzz(C(3, 'mengipasi', 0, -0.3), 2.6, 0.035, 0.2);
-  SFX.whoosh(C(3, 'mengipasi', 0, -0.1), 2.4, 0.05, 1100, 0.15);
-  for (let k = 0; k < 5; k++) SFX.blip(C(3, 'airnya', 0, -0.4) + k * 0.42, 0.016, 980 + k * 140, (k % 2) * 0.4 - 0.2);
-
-  // s13 — ageing: three soft thuds, a darkening glide, the verdict ding
-  for (let k = 0; k < 3; k++) SFX.boom(0.8 + k * 0.85, 0.05, 60 + k * 4);
-  SFX.whoosh(C(12, 'menggelap', 0, -0.1), 2.6, 0.05, 480, -0.15);
-  SFX.ding(C(12, 'keamanan', 0, 0.02), 0.03, 1318, 2.6, 0.15);
-  SFX.tick(C(12, 'layak', 0, 0.0), 0.02, 1100);
+  SFX.whoosh(C(14, 'berdiri', 0, -0.2), 2.4, 0.05, 600, 0.1);
+  SFX.ding(C(14, 'mengapung', 0, 0.0), 0.03, 1568, 2.6, 0);
+  SFX.ding(C(14, 'komentar', 0, 0.02), 0.035, 2093, 2.6, -0.15);
 }
 
 function loadVO() {
@@ -338,6 +339,11 @@ function loadVO() {
       vo[1][idx] = wav.r(i);
     }
   });
+  // gentle tanh soft-clip: shave plosive peaks so the brickwall stays musical
+  const k = 1.35, nk = Math.tanh(k);
+  for (let ch = 0; ch < 2; ch++) {
+    for (let i = 0; i < N; i++) vo[ch][i] = Math.tanh(k * vo[ch][i]) / nk;
+  }
 }
 
 /* --------------------------------- mix ----------------------------------- */
@@ -507,12 +513,31 @@ function mix() {
     for (let ch = 0; ch < 2; ch++) {
       const m = music[ch][i];
       const mid = carve[ch](m);
-      out[ch][i] = vo[ch][i] * 1.0 + (m - 0.55 * d * mid) * 1.0 * duckM + sfx[ch][i] * 0.95 * duckS;
+      out[ch][i] = vo[ch][i] * 1.0 + (m - 0.55 * d * mid) * 1.0 * duckM + sfx[ch][i] * 0.55 * duckS;
     }
   }
   for (let ch = 0; ch < 2; ch++) {
     const f = hp(28);
     for (let i = 0; i < N; i++) out[ch][i] = f(out[ch][i]);
+  }
+  // glue compressor: tame the crest so the brickwall can reach the target
+  {
+    let p0 = 0;
+    for (let ch = 0; ch < 2; ch++) for (let i = 0; i < N; i++) p0 = Math.max(p0, Math.abs(out[ch][i]));
+    const n0 = 0.9 / Math.max(p0, 1e-6);
+    for (let ch = 0; ch < 2; ch++) for (let i = 0; i < N; i++) out[ch][i] *= n0;
+    const thr = 0.30, ratio = 2.0, atk = 1 - Math.exp(-1 / (0.005 * SR)), rls = 1 - Math.exp(-1 / (0.15 * SR));
+    for (let ch = 0; ch < 2; ch++) {
+      let e = 0;
+      for (let i = 0; i < N; i++) {
+        const a = Math.abs(out[ch][i]);
+        e += (a - e) * (a > e ? atk : rls);
+        if (e > thr) {
+          const g = (thr + (e - thr) / ratio) / e;
+          out[ch][i] *= g;
+        }
+      }
+    }
   }
   // master: gain into the brickwall until the integrated loudness lands
   let gain = 1;
