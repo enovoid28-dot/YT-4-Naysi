@@ -3,6 +3,7 @@ import {
   BK, desk, motion, withSheet, drawPage, greek, barsEqual, barsZones, penArrow, penCircle,
   margin, typed, P, cue, eo, clamp, F, W, H,
 } from './_buku.mjs';
+import { ambient, smudge } from './_buku.mjs';
 import { hit } from '../engine/look.mjs';
 
 const SX = 140, SY = 240, SW = 1160, SH = 1560;
@@ -11,7 +12,7 @@ export function draw(ctx, local, scene, o = {}) {
   if (o.layer === 'bg') { desk(ctx); return; }
   const t = local;
   const card = () => {
-    drawPage(ctx, 'b3', SX, SY, SW, SH, { folio: '130', chapter: 'BAB VII · INDERA PERASA' });
+    drawPage(ctx, 'b3', SX, SY, SW, SH, { folio: '130', chapter: 'BAB VII · INDERA PERASA', footnote: "¹ salinan ke-4, bab VII" });
     typed(ctx, '1942', SX + SW - 130, SY + 330, { size: 150, font: F.num6, color: BK.print, track: 0, align: 'right', p: P(t, 0.3, 0.6) });
     greek(ctx, SX + 100, SY + 220, SW - 200, 2, P(t, 0.4, 0.6));
 
@@ -22,6 +23,7 @@ export function draw(ctx, local, scene, o = {}) {
     penArrow(ctx, SX + 560, SY + 660, SX + 680, SY + 660, P(t, ar, 0.5), { bow: 0.05 });
     barsZones(ctx, SX + 700, SY + 520, 380, 300, P(t, ar + 0.3, 0.8));
     typed(ctx, 'GAMBAR ULANG 1942', SX + 700, SY + 870, { size: 26, font: F.mono6, color: BK.pen, track: 3, p: P(t, ar + 0.6, 0.4) });
+    smudge(ctx, SX + 700, SY + 520, 360, 320, P(t, ar + 0.55, 0.5));
     penCircle(ctx, SX + 890, SY + 670, 230, 190, P(t, ar + 0.8, 0.6));
     hit(t, ar + 0.9, 0.4, 0.26);
     margin(ctx, 'salah baca!', SX + 700, SY + 960, { p: P(t, ar + 1.0, 0.6) });
@@ -42,7 +44,8 @@ export function draw(ctx, local, scene, o = {}) {
     typed(ctx, 'MITOSNYA MASUK KELAS SAMPAI SEKARANG', SX + 460, SY + 1308, { size: 26, font: F.mono6, color: BK.pen, track: 2, p: P(t, cue(scene, 'mitosnya'), 0.6) });
     greek(ctx, SX + 100, SY + 1400, SW - 200, 2, P(t, 1.8, 0.8));
   };
-  if (o.layer === 'card') { withSheet(ctx, motion(t, scene, o), card); return; }
+  if (o.layer === 'card') { withSheet(ctx, motion(t, scene, o), card); ambient(ctx, t, 3); return; }
   desk(ctx);
   withSheet(ctx, motion(t, scene, o), card);
+  ambient(ctx, t, 3);
 }

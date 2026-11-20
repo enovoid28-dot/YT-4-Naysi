@@ -3,6 +3,7 @@ import {
   BK, desk, motion, withSheet, drawPage, greek, tongueMap, noteGlyph, penUnder, margin,
   typed, barsEqual, P, cue, eo, clamp, F, W, H, TAU,
 } from './_buku.mjs';
+import { ambient, smudge } from './_buku.mjs';
 
 const SX = 140, SY = 240, SW = 1160, SH = 1560;
 
@@ -12,7 +13,7 @@ export function draw(ctx, local, scene, o = {}) {
   if (o.layer === 'bg') { desk(ctx); return; }
   const t = local;
   const card = () => {
-    drawPage(ctx, 'b8', SX, SY, SW, SH, { folio: '135', chapter: 'BAB VII · INDERA PERASA' });
+    drawPage(ctx, 'b8', SX, SY, SW, SH, { folio: '135', chapter: 'BAB VII · INDERA PERASA', footnote: "¹ semua regio, semua rasa" });
     typed(ctx, 'LIDAH SEBAGAI ORKESTRA', SX + 100, SY + 220, { size: 30, font: F.mono6, color: BK.print, track: 4, p: P(t, 0.3, 0.5) });
 
     tongueMap(ctx, SX + 330, SY + 780, 1.15, P(t, 0.4, 0.8), { zones: false });
@@ -42,7 +43,8 @@ export function draw(ctx, local, scene, o = {}) {
     margin(ctx, 'bukan zona, paduan suara', SX + 540, SY + 1220, { p: P(t, vk + 0.8, 0.7), rot: -0.02, size: 38 });
     greek(ctx, SX + 100, SY + 1320, SW - 200, 3, P(t, 1.6, 0.8));
   };
-  if (o.layer === 'card') { withSheet(ctx, motion(t, scene, o), card); return; }
+  if (o.layer === 'card') { withSheet(ctx, motion(t, scene, o), card); ambient(ctx, t, 8); return; }
   desk(ctx);
   withSheet(ctx, motion(t, scene, o), card);
+  ambient(ctx, t, 8);
 }

@@ -3,6 +3,7 @@ import {
   BK, desk, motion, withSheet, drawPage, greek, catGlyph, penX, penCircle, penArrow,
   margin, typed, P, cue, eo, clamp, F, W, H, TAU,
 } from './_buku.mjs';
+import { ambient, smudge } from './_buku.mjs';
 
 const SX = 140, SY = 240, SW = 1160, SH = 1560;
 
@@ -58,7 +59,7 @@ export function draw(ctx, local, scene, o = {}) {
   if (o.layer === 'bg') { desk(ctx); return; }
   const t = local;
   const card = () => {
-    drawPage(ctx, 'b7', SX, SY, SW, SH, { folio: '134', chapter: 'BAB VII · INDERA PERASA' });
+    drawPage(ctx, 'b7', SX, SY, SW, SH, { folio: '134', chapter: 'BAB VII · INDERA PERASA', footnote: "¹ plos genet. 1:e3 · chem. senses 40:507" });
     typed(ctx, 'PENGECAP DI LUAR MANUSIA', SX + 100, SY + 220, { size: 30, font: F.mono6, color: BK.print, track: 4, p: P(t, 0.3, 0.5) });
     greek(ctx, SX + 100, SY + 260, SW - 200, 2, P(t, 0.4, 0.6));
 
@@ -66,6 +67,7 @@ export function draw(ctx, local, scene, o = {}) {
     const ct = cue(scene, 'manis');
     catGlyph(ctx, SX + 320, SY + 640, 1.15, P(t, 0.4, 0.7));
     candy(ctx, SX + 560, SY + 560, 1.0, P(t, ct - 0.3, 0.5));
+    smudge(ctx, SX + 480, SY + 480, 170, 160, P(t, ct - 0.25, 0.5));
     penX(ctx, SX + 560, SY + 560, 66, P(t, ct, 0.45));
     typed(ctx, 'RESEPTOR MANIS: PSEUDOGEN', SX + 170, SY + 1010, { size: 28, font: F.mono6, color: BK.pen, track: 2, p: P(t, ct + 0.4, 0.5) });
     typed(ctx, 'LI ET AL. 2005 · PLoS GENETICS', SX + 170, SY + 1052, { size: 24, font: F.mono6, color: BK.ink2, track: 2, p: P(t, ct + 0.7, 0.5) });
@@ -82,7 +84,8 @@ export function draw(ctx, local, scene, o = {}) {
     margin(ctx, 'rasa keenam?', SX + 560, SY + 1252, { p: P(t, ol + 1.2, 0.7) });
     greek(ctx, SX + 100, SY + 1340, SW - 200, 3, P(t, 1.8, 0.8));
   };
-  if (o.layer === 'card') { withSheet(ctx, motion(t, scene, o), card); return; }
+  if (o.layer === 'card') { withSheet(ctx, motion(t, scene, o), card); ambient(ctx, t, 7); return; }
   desk(ctx);
   withSheet(ctx, motion(t, scene, o), card);
+  ambient(ctx, t, 7);
 }

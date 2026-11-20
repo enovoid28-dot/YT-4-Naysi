@@ -3,6 +3,7 @@ import {
   BK, desk, motion, withSheet, drawPage, greek, budSection, leaderI, typed, margin, idNum,
   P, cue, eo, e3, clamp, F, W, H,
 } from './_buku.mjs';
+import { ambient, smudge } from './_buku.mjs';
 
 const leader0 = leaderI;
 
@@ -12,7 +13,7 @@ export function draw(ctx, local, scene, o = {}) {
   if (o.layer === 'bg') { desk(ctx); return; }
   const t = local;
   const card = () => {
-    drawPage(ctx, 'b5', SX, SY, SW, SH, { folio: '132', chapter: 'BAB VII · INDERA PERASA' });
+    drawPage(ctx, 'b5', SX, SY, SW, SH, { folio: '132', chapter: 'BAB VII · INDERA PERASA', footnote: "¹ histologi, hal. 412" });
     typed(ctx, 'ANATOMI YANG NYATA', SX + 100, SY + 220, { size: 30, font: F.mono6, color: BK.print, track: 4, p: P(t, 0.3, 0.5) });
     greek(ctx, SX + 100, SY + 260, SW - 200, 2, P(t, 0.4, 0.6));
 
@@ -39,7 +40,8 @@ export function draw(ctx, local, scene, o = {}) {
     margin(ctx, 'bukan peta, jaringan hidup', SX + 180, SY + 1330, { p: P(t, c3 + 0.8, 0.7) });
     greek(ctx, SX + 100, SY + 1400, SW - 200, 2, P(t, 1.8, 0.8));
   };
-  if (o.layer === 'card') { withSheet(ctx, motion(t, scene, o), card); return; }
+  if (o.layer === 'card') { withSheet(ctx, motion(t, scene, o), card); ambient(ctx, t, 5); return; }
   desk(ctx);
   withSheet(ctx, motion(t, scene, o), card);
+  ambient(ctx, t, 5);
 }

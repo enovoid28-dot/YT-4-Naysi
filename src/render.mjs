@@ -194,6 +194,13 @@ function atlasCamPost(ctx, t) {
   let dx = Math.sin(t * 0.13 + 0.4) * 7 + Math.sin(t * 0.37) * 1.4 + Math.sin(t * 1.13 + 1.2) * 0.5;
   let dy = Math.cos(t * 0.11) * 6 + Math.cos(t * 0.29) * 1.6 + Math.sin(t * 0.91) * 0.45;
   let z = 1.012 + 0.008 * Math.sin(t * 0.07 + 1.1);
+  // a slow documentary push-in over every sheet: the frame starts a touch
+  // wide and leans into the page while the voice reads it
+  const { scene: sc, local: lc } = sceneAt(timeline, t);
+  const zp = EASE.smooth(clamp(lc / Math.max(0.2, sc.dur)));
+  z += 0.016 * zp;
+  dx += (Number(sc.index) % 2 ? 5 : -5) * zp;
+  dy += 3 * zp;
   const k = clamp(LOOK.impact);
   if (k > 0.05) {
     const amp = 12 * k;
