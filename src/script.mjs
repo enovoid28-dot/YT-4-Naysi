@@ -1,126 +1,186 @@
-// Episode 31 — "Peta lidah yang kamu hafal di sekolah itu salah."
+// Episode 32 — "Kenapa kamu lupa mau ngapain setelah masuk kamar?"
 //
-// The classroom tongue map (sweet tip, salty/sour sides, bitter back) is a
-// century-old misreading: Hänig's 1901 psychophysics measured only slight
-// threshold differences around the tongue's edge; Boring's 1942 textbook
-// redraw of that data turned the dips into exclusive zones, and schoolbooks
-// copied it for generations. Collings (1974, Percept. Psychophys.) re-tested
-// and closed the case: every region detects every basic taste. Real anatomy:
-// 2,000-10,000 taste buds, 50-100 cells each, renewed every ~10-14 days, each
-// bud reading all tastes. The map even missed umami (Ikeda 1908, kombu
-// glutamate; T1R1+T1R3 receptor confirmed ~2002), while cats lack sweet
-// detection entirely (Tas1r2 pseudogene, Li et al. 2005 PLoS Genetics) and a
-// sixth taste, oleogustus (fat, NEFA), was proposed in 2015 (Running, Craig &
-// Mattes, Chem. Senses 40:507).
+// The doorway effect: passing through a doorway makes people forget what they
+// came for. Radvansky, Krawietz & Tamplin (2011) ran it in real rooms and in
+// virtual reality: after a doorway, recall of the object just carried/held
+// drops sharply versus the same walk inside one room — and walking back does
+// not simply restore it. The mechanism is event segmentation (Zacks et al.
+// 2007): the brain cuts continuous experience into discrete events and keeps
+// the current one in working memory; a boundary (doorway, staircase, task
+// switch) archives the previous event. Forgetting here is a feature: without
+// event cuts the stream of detail would drown working memory. Emotion tags
+// events as significant (McGaugh 2004), which is why emotional memories resist
+// the cut. Context cues (an object from the old room, spoken goal words)
+// keep the archived event reachable (context-dependent memory, cf. Godden &
+// Baddeley 1975).
 //
-// Sources (verified Nov 2026): Hänig, "Zur Psychophysik des Geschmackssinnes"
-// (1901); Boring, "Sensation and Perception in the History of Experimental
-// Psychology" (1942); Collings (1974); Ikeda (1908) & receptor confirmation
-// ~2002; Li et al. (2005) PLoS Genetics 1:e3; Running et al. (2015) Chemical
-// Senses 40(7):507-516; taste-bud counts/turnover standard histology.
+// Sources (to re-verify at paket time): Radvansky, Krawietz & Tamplin (2011),
+// "Walking Through Doorways Causes Forgetting: Further Explorations";
+// Zacks, Speer, Swallow, Braver & Reynolds (2007), event segmentation review;
+// McGaugh (2004), emotional memory consolidation; Godden & Baddeley (1975),
+// context-dependent memory.
 //
 // Copy rules: one caption card per sentence, long sentences split at the
 // comma, numbers spelled the way the voice says them.
 
-export const SERIES = 'NAYSI · BIOLOGI';
+export const SERIES = 'NAYSI · PSIKOLOGI';
 export const BRAND = 'NAYSI';
 
-// finishing pass for this episode: school-textbook pages corrected in red pen
-export const STYLE = { look: 'textbook', scrimY: 1786, scrimA: 0.55 };
+// finishing pass for this episode: full-frame room/door worlds, house style
+export const STYLE = { look: 'pintu', scrimY: 1786, scrimA: 0.55 };
 
 export const SCENES = [
   {
-    id: 's1', key: 'b1', label: 'PETA SALAH', index: '01', theme: 'dark',
-    vo: 'Manis di ujung, asin di samping, pahit di belakang. Peta lidah yang kamu hafal di sekolah itu salah total. Dan salahnya sudah bertahan seabad.',
+    id: 's1', key: 'c1', label: 'MASUK KAMAR', index: '01', theme: 'dark',
+    vo: 'Kamu masuk kamar buat ambil sesuatu. Sampai di dalam, kosong. Kamu berdiri bingung: mau ngapain tadi? Tenang, kamu tidak pikun. Otakmu baru saja melakukan hal yang sangat wajar.',
     cap: [
-      'Manis di ujung, asin di samping, pahit di belakang.',
-      'Peta lidah yang kamu hafal di sekolah itu salah total.',
-      'Dan salahnya sudah bertahan seabad.',
+      'Kamu masuk kamar buat ambil sesuatu.',
+      'Sampai di dalam, kosong.',
+      'Kamu berdiri bingung: mau ngapain tadi?',
+      'Tenang, kamu tidak pikun.',
+      'Otakmu baru saja melakukan hal yang sangat wajar.',
     ],
     lead: 0.4,
     pad: 0.5,
   },
   {
-    id: 's2', key: 'b2', label: '1901', index: '02', theme: 'dark',
-    vo: 'Semua berawal dari makalah Jerman tahun seribu sembilan ratus satu. Henig mengukur ambang rasa di titik-titik lidah: semua rasa terasa di mana-mana, selisihnya tipis.',
+    id: 's2', key: 'c2', label: 'EFEK PINTU', index: '02', theme: 'dark',
+    vo: 'Ada nama resmi untuk momen itu: doorway effect, efek ambang pintu. Psikolog mengujinya lewat ruangan nyata dan dunia virtual, dan hasilnya konsisten: lewat pintu membuat memori pendekmu goyah.',
     cap: [
-      'Semua berawal dari makalah Jerman',
-      'tahun seribu sembilan ratus satu.',
-      'Hänig mengukur ambang rasa di titik-titik lidah:',
-      'semua rasa terasa di mana-mana, selisihnya tipis.',
+      'Ada nama resmi untuk momen itu:',
+      'doorway effect, efek ambang pintu.',
+      'Psikolog mengujinya lewat ruangan nyata',
+      'dan dunia virtual, dan hasilnya konsisten:',
+      'lewat pintu membuat memori pendekmu goyah.',
     ],
     pad: 0.5,
   },
   {
-    id: 's3', key: 'b3', label: '1942', index: '03', theme: 'dark',
-    vo: 'Tapi tahun seribu sembilan ratus empat puluh dua, data itu digambar ulang jadi zona-zona tegas. Buku pelajaran menyalinnya, dan mitosnya masuk kelas sampai sekarang.',
+    id: 's3', key: 'c3', label: 'UJI 2011', index: '03', theme: 'dark',
+    vo: 'Dalam eksperimen dua ribu sebelas, peserta membawa benda lalu melewati pintu. Setelah itu mereka jauh lebih gagal mengingat benda tadi, dibanding berjalan jarak yang sama di satu ruangan saja.',
     cap: [
-      'Tapi tahun seribu sembilan ratus empat puluh dua,',
-      'data itu digambar ulang jadi zona-zona tegas.',
-      'Buku pelajaran menyalinnya,',
-      'dan mitosnya masuk kelas sampai sekarang.',
+      'Dalam eksperimen dua ribu sebelas,',
+      'peserta membawa benda lalu melewati pintu.',
+      'Setelah itu mereka jauh lebih gagal mengingat',
+      'benda tadi, dibanding berjalan jarak yang sama',
+      'di satu ruangan saja.',
     ],
     pad: 0.5,
   },
   {
-    id: 's4', key: 'b4', label: '1974', index: '04', theme: 'dark',
-    vo: 'Uji ulang tahun seribu sembilan ratus tujuh puluh empat menutup kasusnya. Setiap regio lidah mendeteksi semua rasa dasar. Peta zona itu tidak pernah nyata.',
+    id: 's4', key: 'c4', label: 'EDITOR OTAK', index: '04', theme: 'dark',
+    vo: 'Kenapa bisa? Karena otak tidak merekam hidupmu sebagai satu film panjang. Otak memotong pengalaman jadi peristiwa-peristiwa kecil, seperti editor video menaruh cut di setiap adegan.',
     cap: [
-      'Uji ulang tahun seribu sembilan ratus tujuh puluh empat',
-      'menutup kasusnya.',
-      'Setiap regio lidah mendeteksi semua rasa dasar.',
-      'Peta zona itu tidak pernah nyata.',
+      'Kenapa bisa?',
+      'Karena otak tidak merekam hidupmu',
+      'sebagai satu film panjang.',
+      'Otak memotong pengalaman jadi peristiwa kecil,',
+      'seperti editor video menaruh cut tiap adegan.',
     ],
     pad: 0.5,
   },
   {
-    id: 's5', key: 'b5', label: 'KUNCUP RASA', index: '05', theme: 'dark',
-    vo: 'Yang nyata: sampai sepuluh ribu kuncup rasa di lidahmu. Tiap kuncup berisi lima puluh sampai seratus sel, diganti baru tiap dua minggu, dan membaca semua rasa.',
+    id: 's5', key: 'c5', label: 'BERKAS BARU', index: '05', theme: 'dark',
+    vo: 'Begitu kamu lewat ambang pintu, otak menutup berkas lama dan membuka berkas baru. Isi ruangan sebelumnya ikut terarsip. Bukan hilang, tapi susah dipanggil ulang.',
     cap: [
-      'Yang nyata: sampai sepuluh ribu kuncup rasa di lidahmu.',
-      'Tiap kuncup berisi lima puluh sampai seratus sel,',
-      'diganti baru tiap dua minggu, dan membaca semua rasa.',
+      'Begitu kamu lewat ambang pintu,',
+      'otak menutup berkas lama dan membuka berkas baru.',
+      'Isi ruangan sebelumnya ikut terarsip.',
+      'Bukan hilang, tapi susah dipanggil ulang.',
     ],
     pad: 0.5,
   },
   {
-    id: 's6', key: 'b6', label: 'UMAMI', index: '06', theme: 'dark',
-    vo: 'Bahkan peta itu ketinggalan satu rasa: umami, gurihnya kaldu, ditemukan tahun seribu sembilan ratus delapan, reseptornya dikonfirmasi sekitar tahun dua ribu dua.',
+    id: 's6', key: 'c6', label: 'JALAN BALIK', index: '06', theme: 'dark',
+    vo: 'Dan jangan senang dulu: jalan balik ke ruangan awal ternyata tidak otomatis membuka berkasnya lagi. Bagi otak, peristiwa itu sudah selesai. Titik.',
     cap: [
-      'Bahkan peta itu ketinggalan satu rasa:',
-      'umami, gurihnya kaldu,',
-      'ditemukan tahun seribu sembilan ratus delapan,',
-      'reseptornya dikonfirmasi sekitar tahun dua ribu dua.',
+      'Dan jangan senang dulu:',
+      'jalan balik ke ruangan awal ternyata',
+      'tidak otomatis membuka berkasnya lagi.',
+      'Bagi otak, peristiwa itu sudah selesai. Titik.',
     ],
     pad: 0.5,
   },
   {
-    id: 's7', key: 'b7', label: 'RASA KEENAM', index: '07', theme: 'dark',
-    vo: 'Kucing bahkan tidak punya reseptor manis sama sekali. Dan manusia masih mengejar rasa keenam: oleogustus, rasa lemak, diusulkan tahun dua ribu lima belas.',
+    id: 's7', key: 'c7', label: 'BATAS HALUS', index: '07', theme: 'dark',
+    vo: 'Pintu bukan satu-satunya batas. Tangga, lift, gerbang sekolah, bahkan pindah aplikasi di ponselmu, semua bisa menjadi ambang peristiwa. Makin banyak batas, makin sering kamu lupa.',
     cap: [
-      'Kucing bahkan tidak punya reseptor manis sama sekali.',
-      'Dan manusia masih mengejar rasa keenam:',
-      'oleogustus, rasa lemak,',
-      'diusulkan tahun dua ribu lima belas.',
+      'Pintu bukan satu-satunya batas.',
+      'Tangga, lift, gerbang sekolah,',
+      'bahkan pindah aplikasi di ponselmu,',
+      'semua bisa menjadi ambang peristiwa.',
+      'Makin banyak batas, makin sering kamu lupa.',
     ],
     pad: 0.5,
   },
   {
-    id: 's8', key: 'b8', label: 'ORKESTRA', index: '08', theme: 'dark',
-    vo: 'Jadi lidahmu bukan peta zona, melainkan orkestra: setiap titik menyanyikan semua rasa dengan volume nyaris sama.',
+    id: 's8', key: 'c8', label: 'FITUR, BUKAN BUG', index: '08', theme: 'dark',
+    vo: 'Tapi justru di sini letak jeniusnya. Kalau otak menyimpan semua detail tanpa pernah memotong, kamu akan tenggelam dalam informasi. Lupa adalah cara otak menjaga yang penting tetap terapung.',
     cap: [
-      'Jadi lidahmu bukan peta zona, melainkan orkestra:',
-      'setiap titik menyanyikan semua rasa dengan volume nyaris sama.',
+      'Tapi justru di sini letak jeniusnya.',
+      'Kalau otak menyimpan semua detail',
+      'tanpa pernah memotong,',
+      'kamu akan tenggelam dalam informasi.',
+      'Lupa adalah cara otak menjaga yang penting.',
     ],
     pad: 0.5,
   },
   {
-    id: 's9', key: 'b9', label: 'KOMENTAR', index: '09', theme: 'dark',
-    vo: 'Kamu tim manis, tim pedas, atau tim umami? Tulis di komentar, dan ikuti Naysi untuk fakta sehari-hari berikutnya.',
+    id: 's9', key: 'c9', label: 'EMOSI', index: '09', theme: 'dark',
+    vo: 'Itu sebabnya hal yang emosional susah lupa: malu, takut, jatuh cinta. Emosi menandai sebuah peristiwa sebagai penting, sehingga otak menolak menutup berkasnya.',
     cap: [
-      'Kamu tim manis, tim pedas, atau tim umami?',
-      'Tulis di komentar, dan ikuti Naysi untuk fakta sehari-hari berikutnya.',
+      'Itu sebabnya hal yang emosional susah lupa:',
+      'malu, takut, jatuh cinta.',
+      'Emosi menandai sebuah peristiwa sebagai penting,',
+      'sehingga otak menolak menutup berkasnya.',
     ],
-    pad: 1.8,
+    pad: 0.5,
+  },
+  {
+    id: 's10', key: 'c10', label: 'TRIK SUARA', index: '10', theme: 'dark',
+    vo: 'Lalu bagaimana supaya tidak kosong lagi saat masuk kamar? Sebut tujuanmu dengan suara pelan sebelum lewat pintu. Satu kalimat saja: ambil charger. Kata yang terdengar menjaga memori tetap terbuka.',
+    cap: [
+      'Lalu bagaimana supaya tidak kosong lagi',
+      'saat masuk kamar?',
+      'Sebut tujuanmu dengan suara pelan',
+      'sebelum lewat pintu. Satu kalimat saja:',
+      'ambil charger.',
+      'Kata yang terdengar menjaga memori terbuka.',
+    ],
+    pad: 0.5,
+  },
+  {
+    id: 's11', key: 'c11', label: 'JEMBATAN', index: '11', theme: 'dark',
+    vo: 'Trik kedua: bayangkan benda tujuannya sebelum melangkah, dan bawa satu benda dari ruangan lama. Jembatan kecil itu cukup untuk menahan berkas lama agar tidak tertutup rapat.',
+    cap: [
+      'Trik kedua: bayangkan benda tujuannya',
+      'sebelum melangkah,',
+      'dan bawa satu benda dari ruangan lama.',
+      'Jembatan kecil itu cukup untuk menahan',
+      'berkas lama agar tidak tertutup rapat.',
+    ],
+    pad: 0.5,
+  },
+  {
+    id: 's12', key: 'c12', label: 'OTAK BEKERJA', index: '12', theme: 'dark',
+    vo: 'Jadi lain kali kamu berdiri kosong di tengah kamar, jangan marah pada dirimu. Kamu sedang menonton otakmu bekerja: memotong, menyimpan, dan merapikan hidupmu menjadi cerita.',
+    cap: [
+      'Jadi lain kali kamu berdiri kosong',
+      'di tengah kamar, jangan marah pada dirimu.',
+      'Kamu sedang menonton otakmu bekerja:',
+      'memotong, menyimpan, dan merapikan',
+      'hidupmu menjadi cerita.',
+    ],
+    pad: 0.5,
+  },
+  {
+    id: 's13', key: 'c13', label: 'KOMENTAR', index: '13', theme: 'dark',
+    vo: 'Ruangan mana yang paling sering membuatmu lupa? Tulis di komentar, dan ikuti Naysi untuk fakta sehari-hari berikutnya.',
+    cap: [
+      'Ruangan mana yang paling sering membuatmu lupa?',
+      'Tulis di komentar, dan ikuti Naysi',
+      'untuk fakta sehari-hari berikutnya.',
+    ],
+    pad: 0.6,
   },
 ];
