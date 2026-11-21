@@ -29,7 +29,12 @@
     "audio:ep30": "VO_EP=ep30 node scripts/audio-ep30.mjs",
     "render:ep28": "bash scripts/render-ep28.sh",
     "render:ep29": "bash scripts/render-ep29.sh",
-    "render:ep30": "bash scripts/render-ep30.sh"
+    "render:ep30": "bash scripts/render-ep30.sh",
+    "prep:ep36": "node scripts/prep-vo-ep36.mjs",
+    "align:ep36": "VO_EP=ep36 node scripts/align-cards.mjs",
+    "audio:ep36": "VO_EP=ep36 node scripts/audio-ep36.mjs",
+    "render:ep36": "bash scripts/render-ep36.sh",
+    "stills:ep36": "VO_EP=ep36 node src/render.mjs --stills 6,13,22,31,43,53,62,74,86,97"
   },
   "repository": {
     "type": "git",

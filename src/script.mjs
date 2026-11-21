@@ -1,199 +1,145 @@
-// Episode 35 — "Voyager 1: Satu Hari Cahaya dari Bumi."
+// Episode 36 — "Kamera di ponselmu lahir dari kamar gelap tahun 1011."
 //
-// Thesis: on 18 November 2026 a machine built for a five-year tour of two
-// planets becomes the first human object one light-day from home. The film is
-// a mission console: starfields in parallax layers, a golden record spinning
-// its grooves, a trajectory line with planet nodes, heliopause arcs, watt
-// gauges and odometer distances — because the argument is about distance,
-// decay and a message that outlives its transmitter.
+// Thesis: the camera in your pocket descends from a thousand-year-old
+// experiment in a dark room in Cairo, made by a man who had failed at the one
+// job he was hired for. The film is an optics bench: a real 3D dark chamber
+// with a pinhole and an inverted wall image, ray bundles that obey the physics,
+// candles that prove straight propagation, the eclipse crescent, an eye cut in
+// half to kill the emission theory, three volumes of the Kitab al-Manazir on
+// cream paper, and one unbroken light ray that runs from 1011 to the viewfinder
+// in your hand.
 //
-// Sources (Nov 2026):
-//   NASA / JPL via theglobalspy (19 Nov 2026) — one light-day reached
-//     18 Nov 2026 at 25.9 billion km; heliopause 25 Aug 2012 at ~122 AU;
-//     11 instruments at launch, 2 alive in 2026 (MAG + PWS); RTGs -4 W/yr;
-//     Golden Record: 55 languages, 35 Earth sounds, 90 min music, 115 images.
-//   supernovatribune (Oct 2026) — launch 5 Sep 1977 12:56 UT, Titan IIIE;
-//     172.36 AU / 25.78 billion km on 8 Oct 2026; 17 km/s, +1.5 million km/day,
-//     +3.6 AU/yr; ~470 W at launch; LECP off 17 Apr 2026.
-//   spaceosmosis (Oct 2026) — record 30 cm, 16 2/3 rpm; scale 1 AU = 1 m ->
-//     Voyager 170 m, Proxima 269 km, ~75,000 yr; 68x airliner; Pale Blue Dot
-//     1990 from 6 billion km.
-//   slsc.org (11 Nov 2026) — Sep 2026 "Big Bang" power swap; Oct 2026 48-hour
-//     comms silence then recovery; 24 h one-way light time.
+// Sources (verified Nov 2026):
+//   Ibn al-Haytham (Abu Ali al-Hasan ibn al-Hasan), born 965 Basra, died 1040
+//     Cairo. Invited to Egypt by the Fatimid caliph al-Hakim to regulate the
+//     Nile; after seeing the river he judged the project impossible, withdrew,
+//     was placed under house arrest (c. 1011-1021) and is said to have feigned
+//     madness to survive. Kitab al-Manazir (Book of Optics), seven volumes,
+//     written 1011-1021.
+//   The dark chamber he called al-bait al-muzlim ("the dark room"), Latin
+//     camera obscura: a pinhole in a shuttered window throws an inverted image
+//     of the outside world onto the facing wall; he used it to observe a solar
+//     eclipse and saw the sun's disc arrive as a crescent. Multiple candles
+//     each send their own beam through the hole without interfering -> light
+//     travels in straight lines. Moving the screen changes the image size.
+//   Vision: he rejected the extramission theory of Euclid and Ptolemy (rays
+//     leaving the eye) and established intromission — light from objects enters
+//     the eye — with anatomy of lens, cornea and retina. Not the first to see a
+//     camera obscura (Mozi and Aristotle noted it), but the first to test,
+//     measure and explain it.
+//   Latin West: De Aspectibus / Perspectiva, printed by Friedrich Risner in
+//     1572 as Opticae Thesaurus; read by Roger Bacon, Witelo, Leonardo,
+//     Kepler, Descartes, Newton. Kepler's 1604 Ad Vitellionem builds on it.
+//     First permanent photograph: Nicéphore Niépce, 1826 — 815 years later.
 //
-// Copy rules: one card = one clause, numbers spelled the way the voice says
-// them, and no card repeats the word of the visual it sits under.
+// Copy rules: one caption card per clause, numbers spelled the way the voice
+// says them, and no card repeats the word of the visual it sits under.
 
-export const SERIES = 'NAYSI · ANTARIKSA';
+export const SERIES = 'NAYSI · CAHAYA';
 export const BRAND = 'NAYSI';
 
-export const STYLE = { look: 'voyager', scrimY: 1786, scrimA: 0.55 };
+// finishing pass for this episode: a warm beam in a black room, cream pages
+export const STYLE = { look: 'optika', scrimY: 1804, scrimA: 0.6 };
 
 export const SCENES = [
   {
-    id: 's1', key: 'x1', label: 'SATU HARI CAHAYA', index: '01', theme: 'dark',
-    vo: 'Hari ini, delapan belas November dua ribu dua puluh enam, benda buatan manusia pertama menyentuh jarak satu hari cahaya dari Bumi: Voyager satu.',
+    id: 's1', key: 'o1', label: 'KAMAR GELAP', index: '01', theme: 'dark',
+    vo: 'Setiap kali kamu memotret, kamu memakai penemuan seorang tahanan dari Kairo. Namanya Ibn al-Haytham.',
     cap: [
-      'Hari ini, delapan belas November',
-      'dua ribu dua puluh enam, benda buatan',
-      'manusia pertama menyentuh jarak',
-      'satu hari cahaya dari Bumi: Voyager satu.',
+      'Setiap kali kamu memotret,',
+      'kamu memakai penemuan seorang tahanan dari Kairo.',
+      'Namanya Ibn al-Haytham.',
     ],
-    pad: 1.0,
+    lead: 0.34,
+    pad: 0.44,
   },
   {
-    id: 's2', key: 'x2', label: '25,9 MILIAR KM', index: '02', theme: 'dark',
-    vo: 'Dua puluh lima koma sembilan miliar kilometer dari rumah. Sinyal radio yang kita kirim butuh dua puluh empat jam penuh untuk tiba.',
+    id: 's2', key: 'o2', label: 'BASRA, 965', index: '02', theme: 'dark',
+    vo: 'Tahun sembilan ratus enam puluh lima, ia lahir di Basra. Lalu ia dipanggil ke Kairo.',
     cap: [
-      'Dua puluh lima koma sembilan miliar',
-      'kilometer dari rumah.',
-      'Sinyal radio yang kita kirim butuh',
-      'dua puluh empat jam penuh untuk tiba.',
+      'Tahun sembilan ratus enam puluh lima,',
+      'ia lahir di Basra.',
+      'Lalu ia dipanggil ke Kairo.',
     ],
-    pad: 1.0,
+    pad: 0.44,
   },
   {
-    id: 's3', key: 'x3', label: 'MISI LIMA TAHUN', index: '03', theme: 'dark',
-    vo: 'Padahal ia lahir untuk tugas lima tahun: melintasi Jupiter tahun seribu sembilan ratus tujuh puluh sembilan dan Saturnus tahun seribu sembilan ratus delapan puluh.',
+    id: 's3', key: 'o3', label: 'SUNGAI NIL', index: '03', theme: 'dark',
+    vo: 'Tugasnya mengatur Sungai Nil. Ia melihat sungainya, lalu sadar proyek itu mustahil. Gagal berarti mati.',
     cap: [
-      'Padahal ia lahir untuk tugas lima tahun:',
-      'melintasi Jupiter tahun seribu sembilan',
-      'ratus tujuh puluh sembilan dan Saturnus',
-      'tahun seribu sembilan ratus delapan puluh.',
+      'Tugasnya mengatur Sungai Nil.',
+      'Ia melihat sungainya, lalu sadar proyek itu mustahil.',
+      'Gagal berarti mati.',
     ],
-    pad: 1.0,
+    pad: 0.44,
   },
   {
-    id: 's4', key: 'x4', label: 'PELUNCURAN 1977', index: '04', theme: 'dark',
-    vo: 'Tanggal lima September seribu sembilan ratus tujuh puluh tujuh, roket Titan mengangkatnya dari Cape Canaveral; tak ada yang merencanakan perpisahan sepanjang ini.',
+    id: 's4', key: 'o4', label: 'SEPULUH TAHUN', index: '04', theme: 'dark',
+    vo: 'Jadi ia berpura-pura gila, dan dikurung di rumahnya sendiri selama sepuluh tahun. Di dalam gelap itulah semuanya dimulai.',
     cap: [
-      'Tanggal lima September seribu sembilan',
-      'ratus tujuh puluh tujuh, roket Titan',
-      'mengangkatnya dari Cape Canaveral;',
-      'tak ada yang merencanakan perpisahan sepanjang ini.',
+      'Jadi ia berpura-pura gila,',
+      'dan dikurung di rumahnya sendiri selama sepuluh tahun.',
+      'Di dalam gelap itulah semuanya dimulai.',
     ],
-    pad: 1.0,
+    pad: 0.44,
   },
   {
-    id: 's5', key: 'x5', label: 'TITIK BIRU PUCAT', index: '05', theme: 'dark',
-    vo: 'Tahun seribu sembilan ratus sembilan puluh, dari enam miliar kilometer, ia memotret Bumi: titik biru pucat, satu piksel dalam gelap.',
+    id: 's5', key: 'o5', label: 'AL-BAIT AL-MUZLIM', index: '05', theme: 'dark',
+    vo: 'Cahaya masuk lewat satu lubang kecil. Di dinding seberang, dunia muncul terbalik. Ia menyebutnya al-bait al-muzlim: rumah yang gelap.',
     cap: [
-      'Tahun seribu sembilan ratus sembilan puluh,',
-      'dari enam miliar kilometer,',
-      'ia memotret Bumi: titik biru pucat,',
-      'satu piksel dalam gelap.',
+      'Cahaya masuk lewat satu lubang kecil.',
+      'Di dinding seberang, dunia muncul terbalik.',
+      'Ia menyebutnya al-bait al-muzlim: rumah yang gelap.',
     ],
-    pad: 1.0,
+    pad: 0.44,
   },
   {
-    id: 's6', key: 'x6', label: 'HELIOPAUSE 2012', index: '06', theme: 'dark',
-    vo: 'Dua puluh lima Agustus dua ribu dua belas, Voyager satu menembus heliopause pada seratus dua puluh dua unit astronomi: makhluk buatan pertama di ruang antarbintang.',
+    id: 's6', key: 'o6', label: 'TIGA LILIN', index: '06', theme: 'dark',
+    vo: 'Ia menguji dengan tiga lilin. Setiap berkas lewat lubang tanpa saling mengganggu. Cahaya berjalan lurus.',
     cap: [
-      'Dua puluh lima Agustus dua ribu dua belas,',
-      'Voyager satu menembus heliopause',
-      'pada seratus dua puluh dua unit astronomi:',
-      'makhluk buatan pertama di ruang antarbintang.',
+      'Ia menguji dengan tiga lilin.',
+      'Setiap berkas lewat lubang tanpa saling mengganggu.',
+      'Cahaya berjalan lurus.',
     ],
-    pad: 1.0,
+    pad: 0.44,
   },
   {
-    id: 's7', key: 'x7', label: '17 KM PER DETIK', index: '07', theme: 'dark',
-    vo: 'Kecepatannya tujuh belas kilometer per detik: enam puluh satu ribu dua ratus kilometer per jam, menambah satu setengah juta kilometer setiap hari.',
+    id: 's7', key: 'o7', label: 'SABIT DI DINDING', index: '07', theme: 'dark',
+    vo: 'Gerhana matahari pun ia lihat dari kamar itu. Matahari yang bulat datang ke dinding sebagai sabit.',
     cap: [
-      'Kecepatannya tujuh belas kilometer per detik:',
-      'enam puluh satu ribu dua ratus',
-      'kilometer per jam, menambah satu setengah',
-      'juta kilometer setiap hari.',
+      'Gerhana matahari pun ia lihat dari kamar itu.',
+      'Matahari yang bulat datang ke dinding sebagai sabit.',
     ],
-    pad: 1.0,
+    pad: 0.44,
   },
   {
-    id: 's8', key: 'x8', label: 'LISTRIK MELURUH', index: '08', theme: 'dark',
-    vo: 'Listriknya dari panas plutonium yang meluruh: sekitar empat ratus tujuh puluh watt saat berangkat, kini menyusut empat watt setiap tahun.',
+    id: 's8', key: 'o8', label: 'MATA BUKAN LAMPU', index: '08', theme: 'dark',
+    vo: 'Selama seribu tahun, orang percaya mata memancarkan cahaya, seperti senter. Ia membuktikan sebaliknya: cahaya masuk ke mata. Mata bukan lampu. Mata adalah jendela.',
     cap: [
-      'Listriknya dari panas plutonium yang meluruh:',
-      'sekitar empat ratus tujuh puluh watt',
-      'saat berangkat, kini menyusut',
-      'empat watt setiap tahun.',
+      'Selama seribu tahun, orang percaya mata memancarkan cahaya.',
+      'Ia membuktikan sebaliknya: cahaya masuk ke mata.',
+      'Mata bukan lampu. Mata adalah jendela.',
     ],
-    pad: 1.0,
+    pad: 0.44,
   },
   {
-    id: 's9', key: 'x9', label: 'DUA PENDENGAR', index: '09', theme: 'dark',
-    vo: 'Sebelas instrumen ilmiah dulu; hari ini hanya dua yang masih mendengar: magnetometer dan subsistem gelombang plasma.',
+    id: 's9', key: 'o9', label: 'UJI, UKUR, ULANG', index: '09', theme: 'dark',
+    vo: 'Yang lebih penting dari temuannya adalah caranya: menguji, mengukur, mengulang. Lima abad kemudian, cara itu disebut metode ilmiah.',
     cap: [
-      'Sebelas instrumen ilmiah dulu;',
-      'hari ini hanya dua yang masih mendengar:',
-      'magnetometer dan subsistem',
-      'gelombang plasma.',
+      'Yang lebih penting dari temuannya adalah caranya:',
+      'menguji, mengukur, mengulang.',
+      'Lima abad kemudian, cara itu disebut metode ilmiah.',
     ],
-    pad: 1.0,
+    pad: 0.44,
   },
   {
-    id: 's10', key: 'x10', label: 'OPERASI HEMAT', index: '10', theme: 'dark',
-    vo: 'September dua ribu dua puluh enam, tim melakukan operasi hemat daya besar-besaran agar satu instrumen lagi tidak mati musim panas dua ribu dua puluh tujuh.',
+    id: 's10', key: 'o10', label: 'TUJUH JILID', index: '10', theme: 'dark',
+    vo: 'Semuanya ia tulis dalam tujuh jilid, Kitab al-Manazir, antara seribu sebelas dan seribu dua puluh satu.',
     cap: [
-      'September dua ribu dua puluh enam,',
-      'tim melakukan operasi hemat daya',
-      'besar-besaran agar satu instrumen lagi',
-      'tidak mati musim panas dua ribu dua puluh tujuh.',
+      'Semuanya ia tulis dalam tujuh jilid:',
+      'Kitab al-Manazir,',
+      'antara seribu sebelas dan seribu dua puluh satu.',
     ],
-    pad: 1.0,
-  },
-  {
-    id: 's11', key: 'x11', label: '48 JAM SUNYI', index: '11', theme: 'dark',
-    vo: 'Oktober dua ribu dua puluh enam, sinyalnya sempat hilang empat puluh delapan jam; seluruh ruangan menahan napas — lalu ia menjawab lagi.',
-    cap: [
-      'Oktober dua ribu dua puluh enam,',
-      'sinyalnya sempat hilang',
-      'empat puluh delapan jam; seluruh ruangan',
-      'menahan napas — lalu ia menjawab lagi.',
-    ],
-    pad: 1.0,
-  },
-  {
-    id: 's12', key: 'x12', label: 'PIRINGAN EMAS', index: '12', theme: 'dark',
-    vo: 'Di tubuhnya terpaut piringan tembaga berlapis emas: tiga puluh sentimeter, diputar enam belas dua per tiga putaran per menit.',
-    cap: [
-      'Di tubuhnya terpaut piringan',
-      'tembaga berlapis emas: tiga puluh sentimeter,',
-      'diputar enam belas dua per tiga',
-      'putaran per menit.',
-    ],
-    pad: 1.0,
-  },
-  {
-    id: 's13', key: 'x13', label: 'ISI PIRINGAN', index: '13', theme: 'dark',
-    vo: 'Isinya sapaan lima puluh lima bahasa, suara ombak, angin, paus, dan sembilan puluh menit musik dari seluruh peradaban kita.',
-    cap: [
-      'Isinya sapaan lima puluh lima bahasa,',
-      'suara ombak, angin, paus,',
-      'dan sembilan puluh menit musik',
-      'dari seluruh peradaban kita.',
-    ],
-    pad: 1.0,
-  },
-  {
-    id: 's14', key: 'x14', label: 'SKALA KOSONG', index: '14', theme: 'dark',
-    vo: 'Jika satu AU jadi satu meter, Voyager sudah seratus tujuh puluh meter jauhnya; bintang terdekat dua ratus enam puluh sembilan kilometer — tujuh puluh lima ribu tahun lagi.',
-    cap: [
-      'Jika satu AU jadi satu meter,',
-      'Voyager sudah seratus tujuh puluh meter jauhnya;',
-      'bintang terdekat dua ratus enam puluh',
-      'sembilan kilometer — tujuh puluh lima ribu tahun lagi.',
-    ],
-    pad: 1.0,
-  },
-  {
-    id: 's15', key: 'x15', label: 'PESAN ABADI', index: '15', theme: 'dark',
-    vo: 'Lampu pemancarnya akan padam, tetapi piringan emas itu akan meluncur selamanya. Komentar: pesan apa yang akan kamu titipkan untuk makhluk yang menemukannya?',
-    cap: [
-      'Lampu pemancarnya akan padam,',
-      'tetapi piringan emas itu',
-      'akan meluncur selamanya.',
-      'Komentar: pesan apa yang akan kamu titipkan',
-      'untuk makhluk yang menemukannya?',
-    ],
-    pad: 1.0,
+    pad: 5.4,
   },
 ];

@@ -13,6 +13,7 @@ import * as x12 from './x12.mjs';
 import * as x13 from './x13.mjs';
 import * as x14 from './x14.mjs';
 import * as x15 from './x15.mjs';
+import * as O from './optik-scenes.mjs';
 
 export default {
   x1: x1.default,
@@ -30,4 +31,14 @@ export default {
   x13: x13.default,
   x14: x14.default,
   x15: x15.default,
+  o1: O.o1,
+  o2: O.o2,
+  o3: O.o3,
+  o4: O.o4,
+  o5: O.o5,
+  o6: O.o6,
+  o7: O.o7,
+  o8: O.o8,
+  o9: O.o9,
+  o10: O.o10,
 };
