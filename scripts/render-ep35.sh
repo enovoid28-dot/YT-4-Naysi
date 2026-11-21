@@ -31,6 +31,6 @@ OUT="out/Voyager 1 - Satu Hari Cahaya dari Bumi - Naysi - 1440x2560 90fps.mp4"
 "$FF" -y -hide_banner -loglevel error -i out/video35_silent.mp4 -i assets/audio/mix-ep35.flac \
   -map 0:v:0 -map 1:a:0 -c:v copy \
   -c:a aac -aac_coder twoloop -b:a 256k -ar 48000 -ac 2 \
-  -af "volume=0.75dB,alimiter=limit=0.83:level=false" -shortest -movflags +faststart "$OUT"
+  -af "volume=0.05dB,alimiter=limit=0.83:level=false" -shortest -movflags +faststart "$OUT"
 ls -l "$OUT"
 echo DONE_EP33_RENDER

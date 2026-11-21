@@ -39,7 +39,7 @@ export const SCENES = [
       'manusia pertama menyentuh jarak',
       'satu hari cahaya dari Bumi: Voyager satu.',
     ],
-    pad: 1.2,
+    pad: 1.0,
   },
   {
     id: 's2', key: 'x2', label: '25,9 MILIAR KM', index: '02', theme: 'dark',
@@ -50,7 +50,7 @@ export const SCENES = [
       'Sinyal radio yang kita kirim butuh',
       'dua puluh empat jam penuh untuk tiba.',
     ],
-    pad: 1.2,
+    pad: 1.0,
   },
   {
     id: 's3', key: 'x3', label: 'MISI LIMA TAHUN', index: '03', theme: 'dark',
@@ -61,7 +61,7 @@ export const SCENES = [
       'ratus tujuh puluh sembilan dan Saturnus',
       'tahun seribu sembilan ratus delapan puluh.',
     ],
-    pad: 1.2,
+    pad: 1.0,
   },
   {
     id: 's4', key: 'x4', label: 'PELUNCURAN 1977', index: '04', theme: 'dark',
@@ -72,7 +72,7 @@ export const SCENES = [
       'mengangkatnya dari Cape Canaveral;',
       'tak ada yang merencanakan perpisahan sepanjang ini.',
     ],
-    pad: 1.2,
+    pad: 1.0,
   },
   {
     id: 's5', key: 'x5', label: 'TITIK BIRU PUCAT', index: '05', theme: 'dark',
@@ -83,7 +83,7 @@ export const SCENES = [
       'ia memotret Bumi: titik biru pucat,',
       'satu piksel dalam gelap.',
     ],
-    pad: 1.2,
+    pad: 1.0,
   },
   {
     id: 's6', key: 'x6', label: 'HELIOPAUSE 2012', index: '06', theme: 'dark',
@@ -94,7 +94,7 @@ export const SCENES = [
       'pada seratus dua puluh dua unit astronomi:',
       'makhluk buatan pertama di ruang antarbintang.',
     ],
-    pad: 1.2,
+    pad: 1.0,
   },
   {
     id: 's7', key: 'x7', label: '17 KM PER DETIK', index: '07', theme: 'dark',
@@ -105,7 +105,7 @@ export const SCENES = [
       'kilometer per jam, menambah satu setengah',
       'juta kilometer setiap hari.',
     ],
-    pad: 1.2,
+    pad: 1.0,
   },
   {
     id: 's8', key: 'x8', label: 'LISTRIK MELURUH', index: '08', theme: 'dark',
@@ -116,7 +116,7 @@ export const SCENES = [
       'saat berangkat, kini menyusut',
       'empat watt setiap tahun.',
     ],
-    pad: 1.2,
+    pad: 1.0,
   },
   {
     id: 's9', key: 'x9', label: 'DUA PENDENGAR', index: '09', theme: 'dark',
@@ -127,7 +127,7 @@ export const SCENES = [
       'magnetometer dan subsistem',
       'gelombang plasma.',
     ],
-    pad: 1.2,
+    pad: 1.0,
   },
   {
     id: 's10', key: 'x10', label: 'OPERASI HEMAT', index: '10', theme: 'dark',
@@ -138,7 +138,7 @@ export const SCENES = [
       'besar-besaran agar satu instrumen lagi',
       'tidak mati musim panas dua ribu dua puluh tujuh.',
     ],
-    pad: 1.2,
+    pad: 1.0,
   },
   {
     id: 's11', key: 'x11', label: '48 JAM SUNYI', index: '11', theme: 'dark',
@@ -149,7 +149,7 @@ export const SCENES = [
       'empat puluh delapan jam; seluruh ruangan',
       'menahan napas — lalu ia menjawab lagi.',
     ],
-    pad: 1.2,
+    pad: 1.0,
   },
   {
     id: 's12', key: 'x12', label: 'PIRINGAN EMAS', index: '12', theme: 'dark',
@@ -160,7 +160,7 @@ export const SCENES = [
       'diputar enam belas dua per tiga',
       'putaran per menit.',
     ],
-    pad: 1.2,
+    pad: 1.0,
   },
   {
     id: 's13', key: 'x13', label: 'ISI PIRINGAN', index: '13', theme: 'dark',
@@ -171,7 +171,7 @@ export const SCENES = [
       'dan sembilan puluh menit musik',
       'dari seluruh peradaban kita.',
     ],
-    pad: 1.2,
+    pad: 1.0,
   },
   {
     id: 's14', key: 'x14', label: 'SKALA KOSONG', index: '14', theme: 'dark',
@@ -182,7 +182,7 @@ export const SCENES = [
       'bintang terdekat dua ratus enam puluh',
       'sembilan kilometer — tujuh puluh lima ribu tahun lagi.',
     ],
-    pad: 1.2,
+    pad: 1.0,
   },
   {
     id: 's15', key: 'x15', label: 'PESAN ABADI', index: '15', theme: 'dark',
@@ -194,6 +194,6 @@ export const SCENES = [
       'Komentar: pesan apa yang akan kamu titipkan',
       'untuk makhluk yang menemukannya?',
     ],
-    pad: 1.2,
+    pad: 1.0,
   },
 ];
