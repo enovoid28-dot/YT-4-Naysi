@@ -1,35 +1,33 @@
-import * as h1 from './h1.mjs';
-import * as h2 from './h2.mjs';
-import * as h3 from './h3.mjs';
-import * as h4 from './h4.mjs';
-import * as h5 from './h5.mjs';
-import * as h6 from './h6.mjs';
-import * as h7 from './h7.mjs';
-import * as h8 from './h8.mjs';
-import * as h9 from './h9.mjs';
-import * as h10 from './h10.mjs';
-import * as h11 from './h11.mjs';
-import * as h12 from './h12.mjs';
-import * as h13 from './h13.mjs';
-import * as h14 from './h14.mjs';
-import * as h15 from './h15.mjs';
+import * as x1 from './x1.mjs';
+import * as x2 from './x2.mjs';
+import * as x3 from './x3.mjs';
+import * as x4 from './x4.mjs';
+import * as x5 from './x5.mjs';
+import * as x6 from './x6.mjs';
+import * as x7 from './x7.mjs';
+import * as x8 from './x8.mjs';
+import * as x9 from './x9.mjs';
+import * as x10 from './x10.mjs';
+import * as x11 from './x11.mjs';
+import * as x12 from './x12.mjs';
+import * as x13 from './x13.mjs';
+import * as x14 from './x14.mjs';
+import * as x15 from './x15.mjs';
 
-// Episode 33 ("Madu 3.000 Tahun di Makam Firaun Masih Layak Dimakan") —
-// keys h1..h15 on the tomb-light honey kit (src/scenes/_madu.mjs).
 export default {
-  h1: h1.default,
-  h2: h2.default,
-  h3: h3.default,
-  h4: h4.default,
-  h5: h5.default,
-  h6: h6.default,
-  h7: h7.default,
-  h8: h8.default,
-  h9: h9.default,
-  h10: h10.default,
-  h11: h11.default,
-  h12: h12.default,
-  h13: h13.default,
-  h14: h14.default,
-  h15: h15.default,
+  x1: x1.default,
+  x2: x2.default,
+  x3: x3.default,
+  x4: x4.default,
+  x5: x5.default,
+  x6: x6.default,
+  x7: x7.default,
+  x8: x8.default,
+  x9: x9.default,
+  x10: x10.default,
+  x11: x11.default,
+  x12: x12.default,
+  x13: x13.default,
+  x14: x14.default,
+  x15: x15.default,
 };

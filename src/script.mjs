@@ -1,193 +1,198 @@
-// Episode 34 — "Titik Nemo: Manusia Terdekatnya di Luar Angkasa."
+// Episode 35 — "Voyager 1: Satu Hari Cahaya dari Bumi."
 //
-// Thesis: the loneliest coordinate on Earth is not a desert or a pole — it is
-// open ocean, so empty that the nearest humans are usually astronauts. The
-// film is a sonar chart: rings, rulers, gyres and falling spacecraft, because
-// the argument is about distance, tolerance zones and deliberate silence.
+// Thesis: on 18 November 2026 a machine built for a five-year tour of two
+// planets becomes the first human object one light-day from home. The film is
+// a mission console: starfields in parallax layers, a golden record spinning
+// its grooves, a trajectory line with planet nodes, heliopause arcs, watt
+// gauges and odometer distances — because the argument is about distance,
+// decay and a message that outlives its transmitter.
 //
 // Sources (Nov 2026):
-//   Britannica — oceanic pole of inaccessibility: 48°52.6'S 123°23.6'W;
-//     2,688 km to Ducie / Motu Nui / Maher; 22 million km² without people;
-//     ISS at 415 km the closest humans; South Pacific Gyre 37 million km²;
-//     depth >4,000 m; ~300 spacecraft deorbited since 1971.
-//   Polyakov (2026) — Mir March 2001: 135 t station, 20-25 t fragments to sea,
-//     plasma trail ~1,500 km seen from Fiji; ISS (>400 t) to follow ~2030;
-//     cemetery chosen because re-entry scatter needs a wide empty tolerance.
-//   myearth (2026) — no regular ship/aircraft route within 400 km; Lukatela
-//     recalculated 2022; Hespérides first research vessel nearby 1999.
+//   NASA / JPL via theglobalspy (19 Nov 2026) — one light-day reached
+//     18 Nov 2026 at 25.9 billion km; heliopause 25 Aug 2012 at ~122 AU;
+//     11 instruments at launch, 2 alive in 2026 (MAG + PWS); RTGs -4 W/yr;
+//     Golden Record: 55 languages, 35 Earth sounds, 90 min music, 115 images.
+//   supernovatribune (Oct 2026) — launch 5 Sep 1977 12:56 UT, Titan IIIE;
+//     172.36 AU / 25.78 billion km on 8 Oct 2026; 17 km/s, +1.5 million km/day,
+//     +3.6 AU/yr; ~470 W at launch; LECP off 17 Apr 2026.
+//   spaceosmosis (Oct 2026) — record 30 cm, 16 2/3 rpm; scale 1 AU = 1 m ->
+//     Voyager 170 m, Proxima 269 km, ~75,000 yr; 68x airliner; Pale Blue Dot
+//     1990 from 6 billion km.
+//   slsc.org (11 Nov 2026) — Sep 2026 "Big Bang" power swap; Oct 2026 48-hour
+//     comms silence then recovery; 24 h one-way light time.
 //
 // Copy rules: one card = one clause, numbers spelled the way the voice says
 // them, and no card repeats the word of the visual it sits under.
 
-export const SERIES = 'NAYSI · SAMUDRA';
+export const SERIES = 'NAYSI · ANTARIKSA';
 export const BRAND = 'NAYSI';
 
-export const STYLE = { look: 'nemo', scrimY: 1786, scrimA: 0.55 };
+export const STYLE = { look: 'voyager', scrimY: 1786, scrimA: 0.55 };
 
 export const SCENES = [
   {
-    id: 's1', key: 'h1', label: 'SONAR HOOK', index: '01', theme: 'dark',
-    vo: 'Di Samudra Pasifik ada satu titik di mana manusia terdekatnya bukan di pulau, melainkan astronot yang melintas empat ratus lima belas kilometer di atas kepala.',
+    id: 's1', key: 'x1', label: 'SATU HARI CAHAYA', index: '01', theme: 'dark',
+    vo: 'Hari ini, delapan belas November dua ribu dua puluh enam, benda buatan manusia pertama menyentuh jarak satu hari cahaya dari Bumi: Voyager satu.',
     cap: [
-      'Di Samudra Pasifik ada satu titik',
-      'di mana manusia terdekatnya bukan di pulau,',
-      'melainkan astronot yang melintas',
-      'empat ratus lima belas kilometer di atas kepala.',
+      'Hari ini, delapan belas November',
+      'dua ribu dua puluh enam, benda buatan',
+      'manusia pertama menyentuh jarak',
+      'satu hari cahaya dari Bumi: Voyager satu.',
     ],
     pad: 1.2,
   },
   {
-    id: 's2', key: 'h2', label: 'ANGKA 2.688', index: '02', theme: 'dark',
-    vo: 'Titik Nemo: dua ribu enam ratus delapan puluh delapan kilometer dari daratan terdekat, ke arah mana pun kamu menghadap.',
+    id: 's2', key: 'x2', label: '25,9 MILIAR KM', index: '02', theme: 'dark',
+    vo: 'Dua puluh lima koma sembilan miliar kilometer dari rumah. Sinyal radio yang kita kirim butuh dua puluh empat jam penuh untuk tiba.',
     cap: [
-      'Titik Nemo: dua ribu enam ratus',
-      'delapan puluh delapan kilometer',
-      'dari daratan terdekat,',
-      'ke arah mana pun kamu menghadap.',
+      'Dua puluh lima koma sembilan miliar',
+      'kilometer dari rumah.',
+      'Sinyal radio yang kita kirim butuh',
+      'dua puluh empat jam penuh untuk tiba.',
     ],
     pad: 1.2,
   },
   {
-    id: 's3', key: 'h3', label: 'TIGA PULAU', index: '03', theme: 'dark',
-    vo: 'Tiga daratan terdekat sama jauhnya: Ducie di utara, Motu Nui di timur laut, Maher Island di selatan. Ketiganya tak berpenghuni.',
+    id: 's3', key: 'x3', label: 'MISI LIMA TAHUN', index: '03', theme: 'dark',
+    vo: 'Padahal ia lahir untuk tugas lima tahun: melintasi Jupiter tahun seribu sembilan ratus tujuh puluh sembilan dan Saturnus tahun seribu sembilan ratus delapan puluh.',
     cap: [
-      'Tiga daratan terdekat sama jauhnya:',
-      'Ducie di utara, Motu Nui di timur laut,',
-      'Maher Island di selatan.',
-      'Ketiganya tak berpenghuni.',
+      'Padahal ia lahir untuk tugas lima tahun:',
+      'melintasi Jupiter tahun seribu sembilan',
+      'ratus tujuh puluh sembilan dan Saturnus',
+      'tahun seribu sembilan ratus delapan puluh.',
     ],
     pad: 1.2,
   },
   {
-    id: 's4', key: 'h4', label: 'MANUSIA TERDEKAT', index: '04', theme: 'dark',
-    vo: 'Kapal dan pesawat pun menghindar: tidak ada rute rutin dalam empat ratus kilometer. Manusia terdekat justru kru stasiun di atas kepalamu.',
+    id: 's4', key: 'x4', label: 'PELUNCURAN 1977', index: '04', theme: 'dark',
+    vo: 'Tanggal lima September seribu sembilan ratus tujuh puluh tujuh, roket Titan mengangkatnya dari Cape Canaveral; tak ada yang merencanakan perpisahan sepanjang ini.',
     cap: [
-      'Kapal dan pesawat pun menghindar:',
-      'tidak ada rute rutin',
-      'dalam empat ratus kilometer.',
-      'Manusia terdekat justru kru stasiun di atas kepalamu.',
+      'Tanggal lima September seribu sembilan',
+      'ratus tujuh puluh tujuh, roket Titan',
+      'mengangkatnya dari Cape Canaveral;',
+      'tak ada yang merencanakan perpisahan sepanjang ini.',
     ],
     pad: 1.2,
   },
   {
-    id: 's5', key: 'h5', label: 'NAMA NEMO', index: '05', theme: 'dark',
-    vo: 'Namanya dari Kapten Nemo dalam novel Jules Verne; dalam bahasa Latin, nemo berarti tidak seorang pun.',
+    id: 's5', key: 'x5', label: 'TITIK BIRU PUCAT', index: '05', theme: 'dark',
+    vo: 'Tahun seribu sembilan ratus sembilan puluh, dari enam miliar kilometer, ia memotret Bumi: titik biru pucat, satu piksel dalam gelap.',
     cap: [
-      'Namanya dari Kapten Nemo',
-      'dalam novel Jules Verne;',
-      'dalam bahasa Latin,',
-      'nemo berarti tidak seorang pun.',
+      'Tahun seribu sembilan ratus sembilan puluh,',
+      'dari enam miliar kilometer,',
+      'ia memotret Bumi: titik biru pucat,',
+      'satu piksel dalam gelap.',
     ],
     pad: 1.2,
   },
   {
-    id: 's6', key: 'h6', label: 'HITUNGAN 1992', index: '06', theme: 'dark',
-    vo: 'Titik ini tidak ditemukan pelaut, melainkan dihitung tahun seribu sembilan ratus sembilan puluh dua oleh insinyur Hrvoje Lukatela memakai program Hipparchus.',
+    id: 's6', key: 'x6', label: 'HELIOPAUSE 2012', index: '06', theme: 'dark',
+    vo: 'Dua puluh lima Agustus dua ribu dua belas, Voyager satu menembus heliopause pada seratus dua puluh dua unit astronomi: makhluk buatan pertama di ruang antarbintang.',
     cap: [
-      'Titik ini tidak ditemukan pelaut,',
-      'melainkan dihitung tahun seribu sembilan',
-      'ratus sembilan puluh dua oleh insinyur',
-      'Hrvoje Lukatela memakai program Hipparchus.',
+      'Dua puluh lima Agustus dua ribu dua belas,',
+      'Voyager satu menembus heliopause',
+      'pada seratus dua puluh dua unit astronomi:',
+      'makhluk buatan pertama di ruang antarbintang.',
     ],
     pad: 1.2,
   },
   {
-    id: 's7', key: 'h7', label: 'GURUN SAMUDRA', index: '07', theme: 'dark',
-    vo: 'Di bawahnya South Pacific Gyre: arus melingkar seluas tiga puluh tujuh juta kilometer persegi yang mendorong nutrisi menjauh. Plankton tipis, seperti gurun laut.',
+    id: 's7', key: 'x7', label: '17 KM PER DETIK', index: '07', theme: 'dark',
+    vo: 'Kecepatannya tujuh belas kilometer per detik: enam puluh satu ribu dua ratus kilometer per jam, menambah satu setengah juta kilometer setiap hari.',
     cap: [
-      'Di bawahnya South Pacific Gyre:',
-      'arus melingkar seluas tiga puluh tujuh juta',
-      'kilometer persegi yang mendorong nutrisi menjauh.',
-      'Plankton tipis, seperti gurun laut.',
+      'Kecepatannya tujuh belas kilometer per detik:',
+      'enam puluh satu ribu dua ratus',
+      'kilometer per jam, menambah satu setengah',
+      'juta kilometer setiap hari.',
     ],
     pad: 1.2,
   },
   {
-    id: 's8', key: 'h8', label: 'TANPA RUTE', index: '08', theme: 'dark',
-    vo: 'Nyaris tanpa ikan, tanpa pelabuhan tujuan: kapal dagang tak punya alasan menyeberang. Sunyi ini yang menarik insinyur ruang angkasa.',
+    id: 's8', key: 'x8', label: 'LISTRIK MELURUH', index: '08', theme: 'dark',
+    vo: 'Listriknya dari panas plutonium yang meluruh: sekitar empat ratus tujuh puluh watt saat berangkat, kini menyusut empat watt setiap tahun.',
     cap: [
-      'Nyaris tanpa ikan,',
-      'tanpa pelabuhan tujuan: kapal dagang',
-      'tak punya alasan menyeberang.',
-      'Sunyi ini yang menarik insinyur ruang angkasa.',
+      'Listriknya dari panas plutonium yang meluruh:',
+      'sekitar empat ratus tujuh puluh watt',
+      'saat berangkat, kini menyusut',
+      'empat watt setiap tahun.',
     ],
     pad: 1.2,
   },
   {
-    id: 's9', key: 'h9', label: 'KUBURAN WAHANA', index: '09', theme: 'dark',
-    vo: 'Sejak tahun seribu sembilan ratus tujuh puluh satu, hampir tiga ratus wahana antariksa pensiun dijatuhkan terkontrol ke wilayah ini.',
+    id: 's9', key: 'x9', label: 'DUA PENDENGAR', index: '09', theme: 'dark',
+    vo: 'Sebelas instrumen ilmiah dulu; hari ini hanya dua yang masih mendengar: magnetometer dan subsistem gelombang plasma.',
     cap: [
-      'Sejak tahun seribu sembilan ratus',
-      'tujuh puluh satu, hampir tiga ratus',
-      'wahana antariksa pensiun',
-      'dijatuhkan terkontrol ke wilayah ini.',
+      'Sebelas instrumen ilmiah dulu;',
+      'hari ini hanya dua yang masih mendengar:',
+      'magnetometer dan subsistem',
+      'gelombang plasma.',
     ],
     pad: 1.2,
   },
   {
-    id: 's10', key: 'h10', label: 'ZONA TOLERANSI', index: '10', theme: 'dark',
-    vo: 'Fragmen yang jatuh tak pernah bisa diprediksi sampai meter terakhir; yang dibutuhkan adalah zona toleransi lebar, kosong, jauh dari siapa pun.',
+    id: 's10', key: 'x10', label: 'OPERASI HEMAT', index: '10', theme: 'dark',
+    vo: 'September dua ribu dua puluh enam, tim melakukan operasi hemat daya besar-besaran agar satu instrumen lagi tidak mati musim panas dua ribu dua puluh tujuh.',
     cap: [
-      'Fragmen yang jatuh tak pernah bisa',
-      'diprediksi sampai meter terakhir;',
-      'yang dibutuhkan adalah zona toleransi',
-      'lebar, kosong, jauh dari siapa pun.',
+      'September dua ribu dua puluh enam,',
+      'tim melakukan operasi hemat daya',
+      'besar-besaran agar satu instrumen lagi',
+      'tidak mati musim panas dua ribu dua puluh tujuh.',
     ],
     pad: 1.2,
   },
   {
-    id: 's11', key: 'h11', label: 'MIR 2001', index: '11', theme: 'dark',
-    vo: 'Maret dua ribu satu, stasiun Mir seratus tiga puluh lima ton terbakar di atmosfer; warga Fiji menyaksikan ekor plasma seribu lima ratus kilometer.',
+    id: 's11', key: 'x11', label: '48 JAM SUNYI', index: '11', theme: 'dark',
+    vo: 'Oktober dua ribu dua puluh enam, sinyalnya sempat hilang empat puluh delapan jam; seluruh ruangan menahan napas — lalu ia menjawab lagi.',
     cap: [
-      'Maret dua ribu satu,',
-      'stasiun Mir seratus tiga puluh lima ton',
-      'terbakar di atmosfer; warga Fiji menyaksikan',
-      'ekor plasma seribu lima ratus kilometer.',
+      'Oktober dua ribu dua puluh enam,',
+      'sinyalnya sempat hilang',
+      'empat puluh delapan jam; seluruh ruangan',
+      'menahan napas — lalu ia menjawab lagi.',
     ],
     pad: 1.2,
   },
   {
-    id: 's12', key: 'h12', label: 'ISS 2030', index: '12', theme: 'dark',
-    vo: 'Sekitar tahun dua ribu tiga puluh, stasiun luar angkasa internasional lebih dari empat ratus ton akan menyusul ke titik yang sama.',
+    id: 's12', key: 'x12', label: 'PIRINGAN EMAS', index: '12', theme: 'dark',
+    vo: 'Di tubuhnya terpaut piringan tembaga berlapis emas: tiga puluh sentimeter, diputar enam belas dua per tiga putaran per menit.',
     cap: [
-      'Sekitar tahun dua ribu tiga puluh,',
-      'stasiun luar angkasa internasional',
-      'lebih dari empat ratus ton',
-      'akan menyusul ke titik yang sama.',
+      'Di tubuhnya terpaut piringan',
+      'tembaga berlapis emas: tiga puluh sentimeter,',
+      'diputar enam belas dua per tiga',
+      'putaran per menit.',
     ],
     pad: 1.2,
   },
   {
-    id: 's13', key: 'h13', label: 'KEDALAMAN', index: '13', theme: 'dark',
-    vo: 'Air di sini lebih dari empat ribu meter dalamnya. Tapi kesepian Nemo bukan soal kedalaman, melainkan jarak dari siapa pun.',
+    id: 's13', key: 'x13', label: 'ISI PIRINGAN', index: '13', theme: 'dark',
+    vo: 'Isinya sapaan lima puluh lima bahasa, suara ombak, angin, paus, dan sembilan puluh menit musik dari seluruh peradaban kita.',
     cap: [
-      'Air di sini lebih dari',
-      'empat ribu meter dalamnya.',
-      'Tapi kesepian Nemo bukan soal kedalaman,',
-      'melainkan jarak dari siapa pun.',
+      'Isinya sapaan lima puluh lima bahasa,',
+      'suara ombak, angin, paus,',
+      'dan sembilan puluh menit musik',
+      'dari seluruh peradaban kita.',
     ],
     pad: 1.2,
   },
   {
-    id: 's14', key: 'h14', label: 'HESPERIDES', index: '14', theme: 'dark',
-    vo: 'Kapal riset Spanyol Hespérides menjadi yang pertama menyambangi kawasan ini, tahun seribu sembilan ratus sembilan puluh sembilan.',
+    id: 's14', key: 'x14', label: 'SKALA KOSONG', index: '14', theme: 'dark',
+    vo: 'Jika satu AU jadi satu meter, Voyager sudah seratus tujuh puluh meter jauhnya; bintang terdekat dua ratus enam puluh sembilan kilometer — tujuh puluh lima ribu tahun lagi.',
     cap: [
-      'Kapal riset Spanyol Hespérides',
-      'menjadi yang pertama menyambangi',
-      'kawasan ini, tahun seribu sembilan',
-      'ratus sembilan puluh sembilan.',
+      'Jika satu AU jadi satu meter,',
+      'Voyager sudah seratus tujuh puluh meter jauhnya;',
+      'bintang terdekat dua ratus enam puluh',
+      'sembilan kilometer — tujuh puluh lima ribu tahun lagi.',
     ],
     pad: 1.2,
   },
   {
-    id: 's15', key: 'h15', label: 'KOMENTAR', index: '15', theme: 'dark',
-    vo: 'Kalau kamu berdiri di Titik Nemo malam ini, manusia terdekat mungkin mengapung di atasmu. Komentar: apa yang kamu lakukan di tempat paling sunyi di Bumi?',
+    id: 's15', key: 'x15', label: 'PESAN ABADI', index: '15', theme: 'dark',
+    vo: 'Lampu pemancarnya akan padam, tetapi piringan emas itu akan meluncur selamanya. Komentar: pesan apa yang akan kamu titipkan untuk makhluk yang menemukannya?',
     cap: [
-      'Kalau kamu berdiri di Titik Nemo malam ini,',
-      'manusia terdekat mungkin',
-      'mengapung di atasmu.',
-      'Komentar: apa yang kamu lakukan',
-      'di tempat paling sunyi di Bumi?',
+      'Lampu pemancarnya akan padam,',
+      'tetapi piringan emas itu',
+      'akan meluncur selamanya.',
+      'Komentar: pesan apa yang akan kamu titipkan',
+      'untuk makhluk yang menemukannya?',
     ],
     pad: 1.2,
   },
