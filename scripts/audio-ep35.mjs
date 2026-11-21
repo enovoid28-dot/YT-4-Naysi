@@ -223,6 +223,7 @@ function renderSFX() {
     }
     throw new Error(`no word "${word}" #${nth} in scene ${i}`);
   };
+  const h1k = (n) => { const q = Math.sin(n * 127.1) * 43758.5453; return q - Math.floor(q); };
   const buzz = (t, dur, g = 0.05, pan = 0) => {
     const fl = lp(1400);
     addTone(sfx, t, dur, (x) => {
@@ -239,92 +240,90 @@ function renderSFX() {
     for (let k = 0; k < n; k++) SFX.blip(t + k * (0.22 + (k % 3) * 0.09), g * (1 - k * 0.1), 760 + k * 130, (k % 2) * 0.4 - 0.2);
   };
 
-  // s1 — deep water whoosh, sub boom, sonar pings on the hook words
-  SFX.whoosh(0.25, 3.2, 0.06, 320, -0.15);
-  SFX.boom(0.7, 0.075, 38);
-  SFX.ding(C(0, 'titik', 0, 0.0), 0.034, 1245, 3.0, 0);
-  SFX.ding(C(0, 'astronot', 0, 0.0), 0.03, 1568, 2.6, 0.15);
-  SFX.ding(C(0, 'kepala', 0, 0.02), 0.028, 2093, 2.4, -0.15);
+  // s1 — vacuum whoosh, sub boom, three telemetry pings on the hook
+  SFX.whoosh(0.25, 3.4, 0.06, 260, -0.15);
+  SFX.boom(0.7, 0.08, 36);
+  SFX.ding(C(0, 'cahaya', 0, 0.0), 0.034, 1245, 3.0, 0);
+  SFX.ding(C(0, 'voyager', 0, 0.0), 0.03, 1568, 2.6, 0.15);
+  SFX.ding(C(0, 'bumi', 0, 0.02), 0.028, 2093, 2.4, -0.15);
 
-  // s2 — the big odometer: ping + sub thump on the number
-  SFX.whoosh(1.0, 4.0, 0.05, 700, 0.2);
-  for (let k = 0; k < 3; k++) SFX.blip(0.8 + k * 0.42, 0.02, 1180 + k * 150, (k % 2) * 0.4 - 0.2);
-  SFX.ding(C(1, 'nemo', 0, 0.0), 0.032, 1318, 2.8, 0);
-  SFX.boom(C(1, 'kilometer', 0, -0.05), 0.06, 52);
+  // s2 — the distance stack: ruler blips, deep thunk, signal ping
+  for (let k = 0; k < 3; k++) SFX.blip(0.8 + k * 0.45, 0.02, 1180 + k * 150, (k % 2) * 0.4 - 0.2);
+  SFX.boom(C(1, 'miliar', 0, -0.05), 0.06, 50);
+  SFX.ding(C(1, 'sinyal', 0, 0.0), 0.03, 1318, 2.8, 0);
+  SFX.tick(C(1, 'tiba', 0, 0.0), 0.02, 980);
 
-  // s3 — three islands: ruler ticks, two matched pings, empty chord
-  for (let k = 0; k < 11; k++) SFX.tick(0.9 + k * 0.5, 0.014, 880 + k * 42, (k % 2) * 0.4 - 0.2);
-  SFX.ding(C(2, 'ducie', 0, 0.0), 0.026, 1174, 2.4, -0.2);
-  SFX.ding(C(2, 'maher', 0, 0.0), 0.026, 1174, 2.4, 0.2);
-  SFX.chord(C(2, 'berpenghuni', 0, -0.1), 0.028, 349.23);
+  // s3 — year rail: ticks then two planet chimes
+  for (let k = 0; k < 10; k++) SFX.tick(0.9 + k * 0.42, 0.014, 880 + k * 46, (k % 2) * 0.4 - 0.2);
+  SFX.chord(C(2, 'jupiter', 0, -0.1), 0.03, 349.23);
+  SFX.chord(C(2, 'saturnus', 0, -0.1), 0.03, 293.66);
 
-  // s4 — ship horn far away, ISS ping overhead
-  SFX.whoosh(C(3, 'kapal', 0, -0.2), 2.6, 0.05, 520, -0.2);
-  SFX.boom(C(3, 'kapal', 0, 0.0), 0.09, 70);
-  SFX.ding(C(3, 'stasiun', 0, 0.0), 0.03, 1568, 2.6, 0.1);
+  // s4 — launch: roar whoosh, clamp booms, ascent shimmer
+  SFX.whoosh(C(3, 'roket', 0, -0.3), 3.4, 0.075, 180, 0);
+  for (let k = 0; k < 3; k++) SFX.boom(C(3, 'roket', 0, -0.1) + k * 0.5, 0.07, 44 + k * 6);
+  SFX.ding(C(3, 'titan', 0, 0.0), 0.03, 1568, 2.6, 0.1);
+  SFX.whoosh(C(3, 'perpisahan', 0, -0.2), 2.6, 0.045, 900, 0.2);
 
-  // s5 — book plate: warm chord, two soft dings
-  SFX.chord(0.5, 0.03, 220.0);
-  SFX.ding(C(4, 'verne', 0, 0.0), 0.028, 1318, 2.4, -0.1);
-  SFX.ding(C(4, 'latin', 0, 0.0), 0.026, 1174, 2.2, 0.1);
-  SFX.tick(C(4, 'berarti', 0, 0.0), 0.02, 980);
+  // s5 — pale blue dot: camera whir, shutter tick, lonely high ding
+  SFX.whoosh(C(4, 'memotret', 0, -0.25), 1.6, 0.04, 1400, -0.1);
+  SFX.tick(C(4, 'memotret', 0, 0.0), 0.022, 2100);
+  SFX.ding(C(4, 'biru', 0, 0.0), 0.032, 1760, 3.0, 0);
+  SFX.ding(C(4, 'piksel', 0, 0.02), 0.026, 2350, 2.4, -0.2);
 
-  // s6 — computer calc: terminal blips, result ding + chord
-  for (let k = 0; k < 6; k++) SFX.blip(0.8 + k * 0.35, 0.016, 900 + k * 120, (k % 2) * 0.4 - 0.2);
-  SFX.ding(C(5, 'dihitung', 0, 0.0), 0.03, 1568, 2.6, 0);
-  SFX.chord(C(5, 'hipparchus', 0, -0.05), 0.028, 392.0);
+  // s6 — heliopause: long plasma tear, boundary boom, interstellar hiss
+  SFX.tear(C(5, 'heliopause', 0, -0.4), 3.2, 0.055);
+  SFX.boom(C(5, 'heliopause', 0, 0.0), 0.08, 40);
+  SFX.whoosh(C(5, 'antarbintang', 0, -0.2), 3.0, 0.05, 2400, 0.15);
+  SFX.ding(C(5, 'astronomi', 0, 0.0), 0.028, 1318, 2.4, -0.1);
 
-  // s7 — gyre swirl whoosh, sparse ticks, low bubble field
-  SFX.whoosh(0.6, 4.5, 0.05, 240, -0.1);
-  for (let k = 0; k < 4; k++) SFX.tick(1.4 + k * 1.1, 0.016, 520 - k * 60, (k % 2) * 0.4 - 0.2);
-  SFX.ding(C(6, 'gyre', 0, 0.0), 0.032, 1046, 2.8, 0);
-  bubbles(C(6, 'gurun', 0, -0.3), 5, 0.016);
+  // s7 — speed: doppler-ish whoosh, odometer blips, daily tick
+  SFX.whoosh(0.7, 2.8, 0.06, 620, -0.25);
+  for (let k = 0; k < 4; k++) SFX.blip(C(6, 'detik', 0, 0.1) + k * 0.36, 0.018, 900 + k * 210, (k % 2) * 0.5 - 0.25);
+  SFX.ding(C(6, 'jam', 0, 0.0), 0.03, 1568, 2.6, 0.1);
+  SFX.tick(C(6, 'hari', 0, 0.0), 0.02, 1200);
 
-  // s8 — empty lanes: hollow whoosh, dull boom, lonely ding
-  SFX.whoosh(C(7, 'ikan', 0, -0.2), 2.4, 0.045, 420, -0.15);
-  SFX.boom(C(7, 'menyeberang', 0, -0.05), 0.06, 58);
-  SFX.ding(C(7, 'sunyi', 0, 0.0), 0.03, 1568, 2.6, 0.1);
+  // s8 — power decay: gauge servo, falling triad, slow creak
+  SFX.tick(C(7, 'plutonium', 0, -0.1), 0.02, 700);
+  for (let k = 0; k < 3; k++) SFX.ding(C(7, 'watt', 0, 0.0) + k * 0.5, 0.03, 1046 - k * 150, 2.2, (k - 1) * 0.2);
+  SFX.tear(C(7, 'menyusut', 0, -0.2), 2.4, 0.04);
 
-  // s9 — falling craft: three thuds, re-entry tear, cemetery ding
-  for (let k = 0; k < 3; k++) SFX.boom(0.9 + k * 0.8, 0.055, 60 + k * 4);
-  SFX.tear(C(8, 'wahana', 0, -0.3), 2.2, 0.05);
-  SFX.ding(C(8, 'pensiun', 0, 0.0), 0.028, 1318, 2.4, -0.1);
-  SFX.tick(C(8, 'terkontrol', 0, 0.0), 0.02, 1100);
+  // s9 — instrument rack: eleven ticks down to two, plasma hiss ring
+  for (let k = 0; k < 9; k++) SFX.tick(0.8 + k * 0.34, 0.016, 1500 - k * 110, (k % 2) * 0.4 - 0.2);
+  SFX.ding(C(8, 'mendengar', 0, 0.0), 0.03, 1568, 2.8, 0);
+  SFX.whoosh(C(8, 'plasma', 0, -0.2), 2.6, 0.045, 2600, 0.15);
 
-  // s10 — tolerance rings: soft whoosh, scatter blips, resolve chord
-  SFX.whoosh(0.8, 3.6, 0.05, 300, 0.1);
-  for (let k = 0; k < 4; k++) SFX.blip(1.2 + k * 0.5, 0.016, 760 + k * 180, (k % 2) * 0.5 - 0.25);
-  SFX.ding(C(9, 'fragmen', 0, 0.0), 0.026, 1174, 2.2, -0.15);
-  SFX.chord(C(9, 'toleransi', 0, -0.1), 0.028, 293.66);
+  // s10 — power swap: binary blips, three relay clacks, relief chord
+  for (let k = 0; k < 6; k++) SFX.blip(0.7 + k * 0.3, 0.016, 980 + (k % 3) * 240, (k % 2) * 0.4 - 0.2);
+  for (let k = 0; k < 3; k++) SFX.tick(C(9, 'daya', 0, 0.0) + k * 0.7, 0.024, 620 + k * 90, (k % 2) * 0.5 - 0.25);
+  SFX.chord(C(9, 'instrumen', 0, -0.1), 0.028, 392.0);
 
-  // s11 — Mir re-entry: long tear, fire whoosh, sub impact, crackle, plasma ding
-  SFX.tear(C(10, 'mir', 0, -0.4), 3.0, 0.06);
-  SFX.whoosh(C(10, 'terbakar', 0, -0.2), 2.8, 0.06, 900, 0.2);
-  SFX.boom(C(10, 'mir', 0, 0.0), 0.08, 45);
-  for (let k = 0; k < 5; k++) SFX.tick(C(10, 'terbakar', 0, 0.2) + k * 0.4, 0.014, 1500 - k * 120, (k % 2) * 0.4 - 0.2);
-  SFX.ding(C(10, 'plasma', 0, 0.0), 0.03, 1568, 2.6, 0.15);
+  // s11 — the silence: carrier drop, rose static, then the answer ping
+  SFX.tear(C(10, 'hilang', 0, -0.3), 2.8, 0.05);
+  SFX.whoosh(C(10, 'hilang', 0, 0.0), 2.2, 0.04, 3000, 0);
+  SFX.ding(C(10, 'napas', 0, 0.0), 0.024, 880, 2.0, -0.15);
+  SFX.ding(C(10, 'menjawab', 0, 0.02), 0.034, 1760, 3.0, 0.15);
 
-  // s12 — ISS descent: glide whoosh, heavy boom, final high ding
-  SFX.whoosh(1.0, 4.2, 0.055, 360, -0.1);
-  SFX.ding(C(11, 'internasional', 0, 0.0), 0.03, 1318, 2.6, 0);
-  SFX.boom(C(11, 'menyusul', 0, -0.05), 0.06, 50);
-  SFX.ding(C(11, 'sama', 0, 0.02), 0.028, 2093, 2.4, -0.15);
+  // s12 — the record: needle drop, groove crackle, spin-up whir
+  SFX.tick(C(11, 'piringan', 0, -0.1), 0.026, 1500);
+  for (let k = 0; k < 8; k++) SFX.tick(C(11, 'emas', 0, 0.0) + k * 0.28, 0.012, 2400 + h1k(k) * 600, (k % 2) * 0.3 - 0.15);
+  SFX.whoosh(C(11, 'menit', 0, -0.3), 2.4, 0.04, 800, 0.2);
+  SFX.ding(C(11, 'emas', 0, 0.0), 0.03, 1318, 2.6, 0);
 
-  // s13 — depth ruler: descending ticks, deep whoosh, distance ding
-  for (let k = 0; k < 4; k++) SFX.tick(0.9 + k * 0.7, 0.018, 900 - k * 190, (k % 2) * 0.4 - 0.2);
-  SFX.whoosh(C(12, 'kedalaman', 0, -0.2), 2.6, 0.05, 260, -0.2);
-  SFX.ding(C(12, 'jarak', 0, 0.0), 0.03, 1568, 2.6, 0.1);
+  // s13 — greetings: five soft voice-like dings, whale glide, music chord
+  for (let k = 0; k < 5; k++) SFX.ding(C(12, 'bahasa', 0, 0.0) + k * 0.42, 0.024, 1174 + k * 130, 2.2, (k - 2) * 0.18);
+  SFX.tear(C(12, 'paus', 0, -0.2), 2.2, 0.045);
+  SFX.chord(C(12, 'musik', 0, -0.1), 0.032, 440.0);
 
-  // s14 — ship bell for Hespérides, sea whoosh, year ding
-  SFX.ding(C(13, 'riset', 0, 0.0), 0.04, 880, 3.2, 0);
-  SFX.whoosh(0.8, 3.4, 0.05, 480, 0.15);
-  SFX.tick(C(13, 'pertama', 0, 0.0), 0.02, 1200);
-  SFX.ding(C(13, 'sembilan', 0, 0.02), 0.028, 1760, 2.4, -0.1);
+  // s14 — scale: metre ticks, vast whoosh, star ping far away
+  for (let k = 0; k < 6; k++) SFX.tick(0.8 + k * 0.4, 0.016, 800 + k * 60, (k % 2) * 0.4 - 0.2);
+  SFX.whoosh(C(13, 'meter', 0, -0.2), 3.0, 0.05, 200, -0.1);
+  SFX.ding(C(13, 'bintang', 0, 0.0), 0.03, 2093, 3.2, 0.15);
+  SFX.boom(C(13, 'tahun', 0, -0.05), 0.06, 52);
 
-  // s15 — close: warm chord, question whoosh, comment dings
-  SFX.chord(0.4, 0.032, 220.0);
-  SFX.whoosh(C(14, 'berdiri', 0, -0.2), 2.4, 0.05, 600, 0.1);
-  SFX.ding(C(14, 'mengapung', 0, 0.0), 0.03, 1568, 2.6, 0);
+  // s15 — close: warm chord, transmitter fade, comment dings
+  SFX.chord(0.4, 0.034, 220.0);
+  SFX.whoosh(C(14, 'padam', 0, -0.2), 2.6, 0.05, 500, -0.1);
+  SFX.ding(C(14, 'selamanya', 0, 0.0), 0.032, 1568, 3.0, 0);
   SFX.ding(C(14, 'komentar', 0, 0.02), 0.035, 2093, 2.6, -0.15);
 }
 
