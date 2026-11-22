@@ -1,198 +1,219 @@
-// Episode 35 — "Voyager 1: Satu Hari Cahaya dari Bumi."
+// Episode 36 (remake of Ep29) — "Indonesia Lebih Lebar dari Amerika Serikat."
 //
-// Thesis: on 18 November 2026 a machine built for a five-year tour of two
-// planets becomes the first human object one light-day from home. The film is
-// a mission console: starfields in parallax layers, a golden record spinning
-// its grooves, a trajectory line with planet nodes, heliopause arcs, watt
-// gauges and odometer distances — because the argument is about distance,
-// decay and a message that outlives its transmitter.
+// Thesis: the classroom map lies. Mercator's 1569 sailing chart inflates
+// everything away from the equator, so Indonesia — straddling it — reads tiny,
+// while Greenland fakes Africa's size. At true size Indonesia's 5,100 km span
+// outruns the contiguous United States' 4,500 km, reaches from Ireland past
+// the Caspian, and on 4 Sept 2026 the UN General Assembly backed equal-area
+// maps 164-1, the lone "no" being the United States.
 //
-// Sources (Nov 2026):
-//   NASA / JPL via theglobalspy (19 Nov 2026) — one light-day reached
-//     18 Nov 2026 at 25.9 billion km; heliopause 25 Aug 2012 at ~122 AU;
-//     11 instruments at launch, 2 alive in 2026 (MAG + PWS); RTGs -4 W/yr;
-//     Golden Record: 55 languages, 35 Earth sounds, 90 min music, 115 images.
-//   supernovatribune (Oct 2026) — launch 5 Sep 1977 12:56 UT, Titan IIIE;
-//     172.36 AU / 25.78 billion km on 8 Oct 2026; 17 km/s, +1.5 million km/day,
-//     +3.6 AU/yr; ~470 W at launch; LECP off 17 Apr 2026.
-//   spaceosmosis (Oct 2026) — record 30 cm, 16 2/3 rpm; scale 1 AU = 1 m ->
-//     Voyager 170 m, Proxima 269 km, ~75,000 yr; 68x airliner; Pale Blue Dot
-//     1990 from 6 billion km.
-//   slsc.org (11 Nov 2026) — Sep 2026 "Big Bang" power swap; Oct 2026 48-hour
-//     comms silence then recovery; 24 h one-way light time.
+// Remake note: Ep29 told this in 8 beats on paper atlas sheets. This version
+// retells it in 15 beats inside a holographic projection room — a wire globe,
+// a live Mercator lattice that inflates with latitude, glowing coastlines,
+// calipers, zone dials and a UN vote tally — the house standard since Ep33.
 //
-// Copy rules: one card = one clause, numbers spelled the way the voice says
-// them, and no card repeats the word of the visual it sits under.
+// Sources (carried from Ep29 dossier, Nov 2026):
+//   Mercator 1569; scale factor sec(lat), area sec^2(lat): x2.00 @45, x2.42
+//     @50, x4.00 @60, x10.5 @72 (Greenland).
+//   Africa 30.37 M km2 vs Greenland 2.17 M km2 -> ~14x (UN 2017 figures).
+//   Indonesia 6 N-11 S, 95 E-141 E; ~5,120 km east-west; Sabang-Merauke
+//     5,248 km great-circle; Natural Earth extremes 5,175 km.
+//   Contiguous US ~4,500 km coast to coast (4,544 km along 45 N).
+//   True-size move: Sabang on west Ireland (9.7 W, 52.8 N) -> Merauke at
+//     59.3 E, 40.1 N (east of the Caspian).
+//   UNGA A/RES/80/307, adopted 4 Sept 2026: 164-1-6, non-binding, encourages
+//     Equal Earth (Šavrič, Patterson & Jenny 2018).
+//   Indonesia: >17,000 islands, 3 time zones (WIB/WITA/WIT, UTC+7/+8/+9),
+//     coastline ~99,000 km, second longest on Earth.
+//
+// Copy rules: one caption card per clause, numbers spelled the way the voice
+// says them, max three caption lines on screen at once.
 
-export const SERIES = 'NAYSI · ANTARIKSA';
+export const SERIES = 'NAYSI · KARTOGRAFI';
 export const BRAND = 'NAYSI';
 
-export const STYLE = { look: 'voyager', scrimY: 1786, scrimA: 0.55 };
+// finishing pass for this episode: holographic projection room
+export const STYLE = { look: 'proyeksi', scrimY: 1786, scrimA: 0.55 };
 
 export const SCENES = [
   {
-    id: 's1', key: 'x1', label: 'SATU HARI CAHAYA', index: '01', theme: 'dark',
-    vo: 'Hari ini, delapan belas November dua ribu dua puluh enam, benda buatan manusia pertama menyentuh jarak satu hari cahaya dari Bumi: Voyager satu.',
+    id: 's1', key: 'i1', label: 'LEBIH LEBAR', index: '01', theme: 'dark',
+    vo: 'Indonesia itu lebih lebar dari Amerika Serikat. Tapi di peta dunia yang kita hafal sejak sekolah dasar, Indonesia terlihat kecil.',
     cap: [
-      'Hari ini, delapan belas November',
-      'dua ribu dua puluh enam, benda buatan',
-      'manusia pertama menyentuh jarak',
-      'satu hari cahaya dari Bumi: Voyager satu.',
+      'Indonesia itu lebih lebar',
+      'dari Amerika Serikat.',
+      'Tapi di peta dunia yang kita hafal',
+      'sejak sekolah dasar,',
+      'Indonesia terlihat kecil.',
+    ],
+    lead: 0.36,
+    pad: 1.0,
+  },
+  {
+    id: 's2', key: 'i2', label: 'MERCATOR 1569', index: '02', theme: 'dark',
+    vo: 'Penyebabnya proyeksi Mercator: peta tahun seribu lima ratus enam puluh sembilan, dibuat untuk pelaut yang berlayar lurus. Bumi yang bulat dibentangkan jadi persegi panjang.',
+    cap: [
+      'Penyebabnya proyeksi Mercator:',
+      'peta tahun seribu lima ratus',
+      'enam puluh sembilan,',
+      'dibuat untuk pelaut yang berlayar lurus.',
+      'Bumi yang bulat dibentangkan',
+      'jadi persegi panjang.',
     ],
     pad: 1.0,
   },
   {
-    id: 's2', key: 'x2', label: '25,9 MILIAR KM', index: '02', theme: 'dark',
-    vo: 'Dua puluh lima koma sembilan miliar kilometer dari rumah. Sinyal radio yang kita kirim butuh dua puluh empat jam penuh untuk tiba.',
+    id: 's3', key: 'i3', label: 'DIGELEMBUNGKAN', index: '03', theme: 'dark',
+    vo: 'Makin jauh dari khatulistiwa, wilayah makin digelembungkan. Di lintang enam puluh derajat, luasnya sudah empat kali lipat.',
     cap: [
-      'Dua puluh lima koma sembilan miliar',
-      'kilometer dari rumah.',
-      'Sinyal radio yang kita kirim butuh',
-      'dua puluh empat jam penuh untuk tiba.',
+      'Makin jauh dari khatulistiwa,',
+      'wilayah makin digelembungkan.',
+      'Di lintang enam puluh derajat,',
+      'luasnya sudah empat kali lipat.',
     ],
     pad: 1.0,
   },
   {
-    id: 's3', key: 'x3', label: 'MISI LIMA TAHUN', index: '03', theme: 'dark',
-    vo: 'Padahal ia lahir untuk tugas lima tahun: melintasi Jupiter tahun seribu sembilan ratus tujuh puluh sembilan dan Saturnus tahun seribu sembilan ratus delapan puluh.',
+    id: 's4', key: 'i4', label: 'GREENLAND vs AFRIKA', index: '04', theme: 'dark',
+    vo: 'Greenland terlihat sebesar Afrika, padahal Afrika empat belas kali lebih luas. Eropa tampil lebih dari dua kali luas aslinya.',
     cap: [
-      'Padahal ia lahir untuk tugas lima tahun:',
-      'melintasi Jupiter tahun seribu sembilan',
-      'ratus tujuh puluh sembilan dan Saturnus',
-      'tahun seribu sembilan ratus delapan puluh.',
+      'Greenland terlihat sebesar Afrika,',
+      'padahal Afrika empat belas kali',
+      'lebih luas.',
+      'Eropa tampil lebih dari dua kali',
+      'luas aslinya.',
     ],
     pad: 1.0,
   },
   {
-    id: 's4', key: 'x4', label: 'PELUNCURAN 1977', index: '04', theme: 'dark',
-    vo: 'Tanggal lima September seribu sembilan ratus tujuh puluh tujuh, roket Titan mengangkatnya dari Cape Canaveral; tak ada yang merencanakan perpisahan sepanjang ini.',
+    id: 's5', key: 'i5', label: 'DI KHATULISTIWA', index: '05', theme: 'dark',
+    vo: 'Indonesia justru duduk tepat di khatulistiwa, jadi tubuhnya hampir tidak digelembungkan sama sekali: ia tampil apa adanya, kecil di peta yang bohong.',
     cap: [
-      'Tanggal lima September seribu sembilan',
-      'ratus tujuh puluh tujuh, roket Titan',
-      'mengangkatnya dari Cape Canaveral;',
-      'tak ada yang merencanakan perpisahan sepanjang ini.',
+      'Indonesia justru duduk tepat',
+      'di khatulistiwa,',
+      'jadi tubuhnya hampir tidak',
+      'digelembungkan sama sekali:',
+      'ia tampil apa adanya,',
+      'kecil di peta yang bohong.',
     ],
     pad: 1.0,
   },
   {
-    id: 's5', key: 'x5', label: 'TITIK BIRU PUCAT', index: '05', theme: 'dark',
-    vo: 'Tahun seribu sembilan ratus sembilan puluh, dari enam miliar kilometer, ia memotret Bumi: titik biru pucat, satu piksel dalam gelap.',
+    id: 's6', key: 'i6', label: '46 DERAJAT BUJUR', index: '06', theme: 'dark',
+    vo: 'Padahal bentangnya sembilan puluh lima sampai seratus empat puluh satu derajat bujur timur: empat puluh enam derajat, tepat di bagian terlebar Bumi.',
     cap: [
-      'Tahun seribu sembilan ratus sembilan puluh,',
-      'dari enam miliar kilometer,',
-      'ia memotret Bumi: titik biru pucat,',
-      'satu piksel dalam gelap.',
+      'Padahal bentangnya sembilan puluh',
+      'lima sampai seratus empat puluh satu',
+      'derajat bujur timur:',
+      'empat puluh enam derajat,',
+      'tepat di bagian terlebar Bumi.',
     ],
     pad: 1.0,
   },
   {
-    id: 's6', key: 'x6', label: 'HELIOPAUSE 2012', index: '06', theme: 'dark',
-    vo: 'Dua puluh lima Agustus dua ribu dua belas, Voyager satu menembus heliopause pada seratus dua puluh dua unit astronomi: makhluk buatan pertama di ruang antarbintang.',
+    id: 's7', key: 'i7', label: 'UKURAN ASLI', index: '07', theme: 'dark',
+    vo: 'Sekarang pindahkan Indonesia ke Eropa dengan ukuran aslinya. Dari Sabang sampai Merauke, ia membentang dari Irlandia sampai melewati Laut Kaspia.',
     cap: [
-      'Dua puluh lima Agustus dua ribu dua belas,',
-      'Voyager satu menembus heliopause',
-      'pada seratus dua puluh dua unit astronomi:',
-      'makhluk buatan pertama di ruang antarbintang.',
+      'Sekarang pindahkan Indonesia',
+      'ke Eropa dengan ukuran aslinya.',
+      'Dari Sabang sampai Merauke,',
+      'ia membentang dari Irlandia',
+      'sampai melewati Laut Kaspia.',
     ],
     pad: 1.0,
   },
   {
-    id: 's7', key: 'x7', label: '17 KM PER DETIK', index: '07', theme: 'dark',
-    vo: 'Kecepatannya tujuh belas kilometer per detik: enam puluh satu ribu dua ratus kilometer per jam, menambah satu setengah juta kilometer setiap hari.',
+    id: 's8', key: 'i8', label: '5.100 vs 4.500', index: '08', theme: 'dark',
+    vo: 'Lebarnya sekitar lima ribu seratus kilometer. Amerika Serikat, dari pantai ke pantai, cuma sekitar empat ribu lima ratus.',
     cap: [
-      'Kecepatannya tujuh belas kilometer per detik:',
-      'enam puluh satu ribu dua ratus',
-      'kilometer per jam, menambah satu setengah',
-      'juta kilometer setiap hari.',
+      'Lebarnya sekitar lima ribu',
+      'seratus kilometer.',
+      'Amerika Serikat, dari pantai',
+      'ke pantai,',
+      'cuma sekitar empat ribu lima ratus.',
     ],
     pad: 1.0,
   },
   {
-    id: 's8', key: 'x8', label: 'LISTRIK MELURUH', index: '08', theme: 'dark',
-    vo: 'Listriknya dari panas plutonium yang meluruh: sekitar empat ratus tujuh puluh watt saat berangkat, kini menyusut empat watt setiap tahun.',
+    id: 's9', key: 'i9', label: 'TELANGKUPKAN', index: '09', theme: 'dark',
+    vo: 'Telangkupkan Indonesia di atas Amerika Serikat: kedua ujungnya menonjol keluar, melewati Atlantik dan Pasifik sekaligus.',
     cap: [
-      'Listriknya dari panas plutonium yang meluruh:',
-      'sekitar empat ratus tujuh puluh watt',
-      'saat berangkat, kini menyusut',
-      'empat watt setiap tahun.',
+      'Telangkupkan Indonesia',
+      'di atas Amerika Serikat:',
+      'kedua ujungnya menonjol keluar,',
+      'melewati Atlantik dan Pasifik',
+      'sekaligus.',
     ],
     pad: 1.0,
   },
   {
-    id: 's9', key: 'x9', label: 'DUA PENDENGAR', index: '09', theme: 'dark',
-    vo: 'Sebelas instrumen ilmiah dulu; hari ini hanya dua yang masih mendengar: magnetometer dan subsistem gelombang plasma.',
+    id: 's10', key: 'i10', label: '17 RIBU PULAU', index: '10', theme: 'dark',
+    vo: 'Lebar itu bukan satu daratan: lebih dari tujuh belas ribu pulau, dirangkai laut, dengan garis pantai terpanjang kedua di dunia.',
     cap: [
-      'Sebelas instrumen ilmiah dulu;',
-      'hari ini hanya dua yang masih mendengar:',
-      'magnetometer dan subsistem',
-      'gelombang plasma.',
+      'Lebar itu bukan satu daratan:',
+      'lebih dari tujuh belas ribu pulau,',
+      'dirangkai laut,',
+      'dengan garis pantai terpanjang',
+      'kedua di dunia.',
     ],
     pad: 1.0,
   },
   {
-    id: 's10', key: 'x10', label: 'OPERASI HEMAT', index: '10', theme: 'dark',
-    vo: 'September dua ribu dua puluh enam, tim melakukan operasi hemat daya besar-besaran agar satu instrumen lagi tidak mati musim panas dua ribu dua puluh tujuh.',
+    id: 's11', key: 'i11', label: 'TIGA ZONA WAKTU', index: '11', theme: 'dark',
+    vo: 'Saking lebarnya, satu negara memakai tiga zona waktu: saat pukul tujuh pagi matahari sudah tinggi di Jayapura, Banda Aceh masih pukul lima.',
     cap: [
-      'September dua ribu dua puluh enam,',
-      'tim melakukan operasi hemat daya',
-      'besar-besaran agar satu instrumen lagi',
-      'tidak mati musim panas dua ribu dua puluh tujuh.',
+      'Saking lebarnya, satu negara',
+      'memakai tiga zona waktu:',
+      'saat pukul tujuh pagi matahari',
+      'sudah tinggi di Jayapura,',
+      'Banda Aceh masih pukul lima.',
     ],
     pad: 1.0,
   },
   {
-    id: 's11', key: 'x11', label: '48 JAM SUNYI', index: '11', theme: 'dark',
-    vo: 'Oktober dua ribu dua puluh enam, sinyalnya sempat hilang empat puluh delapan jam; seluruh ruangan menahan napas — lalu ia menjawab lagi.',
+    id: 's12', key: 'i12', label: 'SUARA PBB 164-1', index: '12', theme: 'dark',
+    vo: 'Empat September lalu, Majelis Umum PBB mendukung peta yang menjaga luas asli tiap benua. Seratus enam puluh empat negara setuju; yang menolak cuma satu: Amerika Serikat.',
     cap: [
-      'Oktober dua ribu dua puluh enam,',
-      'sinyalnya sempat hilang',
-      'empat puluh delapan jam; seluruh ruangan',
-      'menahan napas — lalu ia menjawab lagi.',
+      'Empat September lalu,',
+      'Majelis Umum PBB mendukung peta',
+      'yang menjaga luas asli tiap benua.',
+      'Seratus enam puluh empat negara',
+      'setuju;',
+      'yang menolak cuma satu:',
+      'Amerika Serikat.',
     ],
     pad: 1.0,
   },
   {
-    id: 's12', key: 'x12', label: 'PIRINGAN EMAS', index: '12', theme: 'dark',
-    vo: 'Di tubuhnya terpaut piringan tembaga berlapis emas: tiga puluh sentimeter, diputar enam belas dua per tiga putaran per menit.',
+    id: 's13', key: 'i13', label: 'EQUAL EARTH', index: '13', theme: 'dark',
+    vo: 'Peta itu bernama Equal Earth, lahir tahun dua ribu delapan belas: bentuk tetap dikenali, luas tetap jujur.',
     cap: [
-      'Di tubuhnya terpaut piringan',
-      'tembaga berlapis emas: tiga puluh sentimeter,',
-      'diputar enam belas dua per tiga',
-      'putaran per menit.',
+      'Peta itu bernama Equal Earth,',
+      'lahir tahun dua ribu delapan belas:',
+      'bentuk tetap dikenali,',
+      'luas tetap jujur.',
     ],
     pad: 1.0,
   },
   {
-    id: 's13', key: 'x13', label: 'ISI PIRINGAN', index: '13', theme: 'dark',
-    vo: 'Isinya sapaan lima puluh lima bahasa, suara ombak, angin, paus, dan sembilan puluh menit musik dari seluruh peradaban kita.',
+    id: 's14', key: 'i14', label: 'PETA MENGATUR', index: '14', theme: 'dark',
+    vo: 'Karena peta yang kita hafal diam-diam memutuskan siapa yang terlihat raksasa dan siapa yang terlihat kecil.',
     cap: [
-      'Isinya sapaan lima puluh lima bahasa,',
-      'suara ombak, angin, paus,',
-      'dan sembilan puluh menit musik',
-      'dari seluruh peradaban kita.',
+      'Karena peta yang kita hafal',
+      'diam-diam memutuskan',
+      'siapa yang terlihat raksasa',
+      'dan siapa yang terlihat kecil.',
     ],
     pad: 1.0,
   },
   {
-    id: 's14', key: 'x14', label: 'SKALA KOSONG', index: '14', theme: 'dark',
-    vo: 'Jika satu AU jadi satu meter, Voyager sudah seratus tujuh puluh meter jauhnya; bintang terdekat dua ratus enam puluh sembilan kilometer — tujuh puluh lima ribu tahun lagi.',
+    id: 's15', key: 'i15', label: 'PULAUMU', index: '15', theme: 'dark',
+    vo: 'Jadi Indonesia tidak sekecil yang kamu kira. Kamu tinggal di pulau mana? Tulis di komentar.',
     cap: [
-      'Jika satu AU jadi satu meter,',
-      'Voyager sudah seratus tujuh puluh meter jauhnya;',
-      'bintang terdekat dua ratus enam puluh',
-      'sembilan kilometer — tujuh puluh lima ribu tahun lagi.',
-    ],
-    pad: 1.0,
-  },
-  {
-    id: 's15', key: 'x15', label: 'PESAN ABADI', index: '15', theme: 'dark',
-    vo: 'Lampu pemancarnya akan padam, tetapi piringan emas itu akan meluncur selamanya. Komentar: pesan apa yang akan kamu titipkan untuk makhluk yang menemukannya?',
-    cap: [
-      'Lampu pemancarnya akan padam,',
-      'tetapi piringan emas itu',
-      'akan meluncur selamanya.',
-      'Komentar: pesan apa yang akan kamu titipkan',
-      'untuk makhluk yang menemukannya?',
+      'Jadi Indonesia tidak sekecil',
+      'yang kamu kira.',
+      'Kamu tinggal di pulau mana?',
+      'Tulis di komentar.',
     ],
     pad: 1.0,
   },
