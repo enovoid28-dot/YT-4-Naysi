@@ -29,7 +29,9 @@
     "audio:ep30": "VO_EP=ep30 node scripts/audio-ep30.mjs",
     "render:ep28": "bash scripts/render-ep28.sh",
     "render:ep29": "bash scripts/render-ep29.sh",
-    "render:ep30": "bash scripts/render-ep30.sh"
+    "render:ep30": "bash scripts/render-ep30.sh",
+    "audio:ep36": "VO_EP=ep36 node scripts/audio-ep36.mjs",
+    "render:ep36": "bash scripts/render-ep36.sh"
   },
   "repository": {
     "type": "git",
@@ -50,13 +52,13 @@
     "@fontsource/ibm-plex-mono": "5.3.0",
     "@fontsource/inter-tight": "5.3.0",
     "@fontsource/plus-jakarta-sans": "5.3.0",
-    "@napi-rs/canvas": "1.1.1",
-    "@remotion/cli": "4.0.544",
-    "@remotion/player": "4.0.544",
-    "@remotion/renderer": "4.0.544",
+    "@napi-rs/canvas": "^1.2.0",
+    "@remotion/cli": "^4.0.545",
+    "@remotion/player": "^4.0.545",
+    "@remotion/renderer": "^4.0.545",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "remotion": "4.0.544",
+    "remotion": "^4.0.545",
     "topojson-client": "3.1.0",
     "wawoff2": "2.0.1",
     "world-atlas": "2.0.2"
@@ -64,6 +66,6 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@remotion/eslint-config-flat": "4.0.544"
+    "@remotion/eslint-config-flat": "^4.0.545"
   }
 }

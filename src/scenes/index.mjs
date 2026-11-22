@@ -13,8 +13,10 @@ import * as x12 from './x12.mjs';
 import * as x13 from './x13.mjs';
 import * as x14 from './x14.mjs';
 import * as x15 from './x15.mjs';
+import * as psych from './psych.mjs';
 
 export default {
+  psych: psych.default,
   x1: x1.default,
   x2: x2.default,
   x3: x3.default,
