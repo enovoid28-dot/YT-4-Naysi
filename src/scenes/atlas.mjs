@@ -469,9 +469,12 @@ export const AFRICA = [
   [9.0, -1.0], [9.0, 4.0], [6.0, 4.3], [-8.0, 4.5], [-13.0, 8.5],
 ];
 
-/** equirectangular projector factory: degrees -> canvas px */
-export function proj(x0, y0, s, clon = 0, clat = 0) {
-  return (lon, lat) => [x0 + (lon - clon) * s, y0 - (lat - clat) * s];
+/** equirectangular projector factory: degrees -> canvas px.
+ *  `sy` defaults to `s`; pass a larger sy when the sheet sits away from the
+ *  equator, because a degree of longitude shrinks by cos(lat) while a degree
+ *  of latitude never does — without it every mid-latitude coast squashes. */
+export function proj(x0, y0, s, clon = 0, clat = 0, sy = s) {
+  return (lon, lat) => [x0 + (lon - clon) * s, y0 - (lat - clat) * sy];
 }
 
 /**
@@ -603,8 +606,10 @@ export function mapFrame(ctx, x, y, w, h, t, o = {}) {
  */
 export function trueSizeMove(ctx, x, y, w, h, t, o = {}) {
   const { p = 1, move = 1 } = o;
-  const s = w / 78;                       // degrees -> px, Europe window 78 deg
-  const pr = proj(x + w * 0.16, y + h * 0.52, s, -9.7, 52.8);
+  const s = w / 92;                       // px per longitude deg at 48 N
+  const pr = proj(x + w * 0.16, y + h * 0.52, s, -9.7, 52.8, s * 1.5);
+  const [ix0, iy0] = pr(-9.7, 52.8);      // Sabang pins on west Ireland
+  const prI = proj(ix0, iy0, s * 1.5, 95.3, 5.6);
   ctx.save();
   ctx.globalAlpha = p;
 
@@ -612,7 +617,7 @@ export function trueSizeMove(ctx, x, y, w, h, t, o = {}) {
   drawCoast(ctx, EUROPE_OUTLINE, pr, { stroke: 'rgba(154,216,232,0.5)', fill: 'rgba(154,216,232,0.05)', lw: 2, glow: 6 });
   drawCoast(ctx, CASPIAN, pr, { stroke: 'rgba(154,216,232,0.65)', fill: 'rgba(154,216,232,0.10)', lw: 2, glow: 6 });
   label(ctx, 'LAUT KASPIA', ...pr(50.5, 41.5).map((v, i) => i ? v + 66 : v), { size: 20, color: KT.iceDim, align: 'center', track: 3 });
-  label(ctx, 'IRLANDIA', ...pr(-9.7, 52.8).map((v, i) => i ? v - 26 : v), { size: 20, color: KT.iceDim, align: 'center', track: 3 });
+  label(ctx, 'IRLANDIA', ...pr(-9.7, 52.8).map((v, i) => i ? v - 56 : v), { size: 20, color: KT.iceDim, align: 'center', track: 3 });
 
   // transport offset: from off-frame west to the pinned position
   const dx = lerp(-w * 0.95, 0, eo(move));
@@ -625,18 +630,18 @@ export function trueSizeMove(ctx, x, y, w, h, t, o = {}) {
     ctx.save();
     ctx.translate(-dx * 0.85, -dy * 0.85);
     ctx.globalAlpha = p * 0.16;
-    for (const isl of ID_ISLANDS) drawCoast(ctx, isl, pr, { stroke: KT.amber, fill: null, lw: 1.6, glow: 0 });
+    for (const isl of ID_ISLANDS) drawCoast(ctx, isl, prI, { stroke: KT.amber, fill: null, lw: 1.6, glow: 0 });
     ctx.restore();
   }
 
   for (const isl of ID_ISLANDS) {
-    drawCoast(ctx, isl, pr, { stroke: amberStroke(ctx), fill: 'rgba(242,180,65,0.13)', lw: 3, glow: 16 });
+    drawCoast(ctx, isl, prI, { stroke: amberStroke(ctx), fill: 'rgba(242,180,65,0.13)', lw: 3, glow: 16 });
   }
-  drawDots(ctx, ID_DOTS, pr, { p: 1, r0: 0.8 });
+  drawDots(ctx, ID_DOTS, prI, { p: 1, r0: 0.8 });
 
   // endpoint pins Sabang / Merauke
-  const [sx, sy] = pr(95.3, 5.6);
-  const [mx, my] = pr(141.0, -8.5);
+  const [sx, sy] = prI(95.3, 5.6);
+  const [mx, my] = prI(141.0, -8.5);
   for (const [px, py, tag] of [[sx, sy, 'SABANG'], [mx, my, 'MERAUKE']]) {
     ctx.strokeStyle = KT.amberHi;
     ctx.lineWidth = 2;
@@ -780,9 +785,10 @@ export function caliper(ctx, x, y, w, km, t, o = {}) {
  */
 export function overlayCompare(ctx, cx, cy, w, t, o = {}) {
   const { p = 1, slide = 1 } = o;
-  const sUs = w / 58;                          // 58 degrees of US longitude
-  const prUs = proj(cx, cy, sUs, -96, 37.5);
-  const sId = sUs * 1.0;                       // same km/deg at the equator
+  const sUs = w / 58;                          // px per US longitude degree
+  const kUs = sUs / 85;                        // px per km at 40 N (85 km/deg)
+  const prUs = proj(cx, cy, sUs, -96, 37.5, 111 * kUs);
+  const sId = 111 * kUs;                       // equator: 111 km per degree
   const dx = lerp(-w * 0.8, 0, eo(slide));
   ctx.save();
   ctx.globalAlpha = p;
@@ -791,7 +797,7 @@ export function overlayCompare(ctx, cx, cy, w, t, o = {}) {
 
   ctx.save();
   ctx.translate(cx + dx, cy);
-  const prId = proj(0, 22 * sId / sUs, sId, -118, 0);
+  const prId = proj(0, 0, sId, 118, -2.5);
   for (const isl of ID_ISLANDS) {
     drawCoast(ctx, isl, (lon, lat) => prId(lon - 0, lat), { stroke: amberStroke(ctx), fill: 'rgba(242,180,65,0.12)', lw: 3, glow: 16 });
   }
