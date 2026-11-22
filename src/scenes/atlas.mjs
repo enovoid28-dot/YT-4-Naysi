@@ -1645,37 +1645,39 @@ export function coordCursor(ctx, x, y, t, o = {}) {
 }
 
 /**
- * Bottom status ribbon: series tag left, episode index centre, a live
- * scale bar right (1 px = N km at the current sheet scale) — the strip that
- * keeps every frame branded and oriented.
+ * Distance arc: a dashed great-circle-style arc between two projected points
+ * with endpoint pins and a kilometre tag — the room's way of tying two places
+ * together with a measured span (used on the true-size sheet and the
+ * equator sheet).
  */
-export function mapRibbon(ctx, t, o = {}) {
-  const { idx = '01', labelTxt = '', p = 1 } = o;
+export function distanceArc(ctx, pr, a, b, t, o = {}) {
+  const { p = 1, tag = '', color = KT.amberHi } = o;
+  const [x0, y0] = pr(a[0], a[1]);
+  const [x1, y1] = pr(b[0], b[1]);
+  const mx = (x0 + x1) / 2;
+  const my = Math.min(y0, y1) - 90;
   ctx.save();
   ctx.globalAlpha = p;
-  const y = H - 92;
-  ctx.fillStyle = 'rgba(3,20,26,0.72)';
-  ctx.fillRect(0, y, W, 92);
-  ctx.strokeStyle = rgba(KT.teal, 0.35);
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = rgba(color, 0.8);
+  ctx.lineWidth = 2.4;
+  ctx.setLineDash([12, 8]);
+  ctx.lineDashOffset = -t * 60;
   ctx.beginPath();
-  ctx.moveTo(0, y); ctx.lineTo(W, y);
+  ctx.moveTo(x0, y0);
+  ctx.quadraticCurveTo(mx, my, x1, y1);
   ctx.stroke();
-  ctx.font = '700 24px "JetBrains Mono", monospace';
-  ctx.fillStyle = KT.amber;
-  ctx.textAlign = 'left';
-  ctx.fillText(`${idx} — ${labelTxt}`, 64, y + 56);
-  ctx.fillStyle = KT.iceDim;
-  ctx.textAlign = 'right';
-  const km = 500 + Math.round((t * 37) % 4500);
-  ctx.fillText(`SKALA 1 px ≈ ${idn(km)} m`, W - 64, y + 56);
-  // progress dashes
-  const n = 15;
-  const cur = parseInt(idx, 10);
-  for (let k = 0; k < n; k++) {
-    const dx = W / 2 - (n * 26) / 2 + k * 26;
-    ctx.fillStyle = k + 1 === cur ? KT.amber : rgba(KT.teal, 0.3);
-    ctx.fillRect(dx, y + 44, 16, 4);
+  ctx.setLineDash([]);
+  for (const [px, py] of [[x0, y0], [x1, y1]]) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(px, py, 5, 0, TAU);
+    ctx.fill();
+  }
+  if (tag) {
+    ctx.font = '700 24px "JetBrains Mono", monospace';
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center';
+    ctx.fillText(tag, mx, my - 18);
   }
   ctx.restore();
 }

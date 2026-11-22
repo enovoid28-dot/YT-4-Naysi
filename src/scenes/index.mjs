@@ -1,33 +1,33 @@
-import * as x1 from './x1.mjs';
-import * as x2 from './x2.mjs';
-import * as x3 from './x3.mjs';
-import * as x4 from './x4.mjs';
-import * as x5 from './x5.mjs';
-import * as x6 from './x6.mjs';
-import * as x7 from './x7.mjs';
-import * as x8 from './x8.mjs';
-import * as x9 from './x9.mjs';
-import * as x10 from './x10.mjs';
-import * as x11 from './x11.mjs';
-import * as x12 from './x12.mjs';
-import * as x13 from './x13.mjs';
-import * as x14 from './x14.mjs';
-import * as x15 from './x15.mjs';
+import * as i1 from './i1.mjs';
+import * as i2 from './i2.mjs';
+import * as i3 from './i3.mjs';
+import * as i4 from './i4.mjs';
+import * as i5 from './i5.mjs';
+import * as i6 from './i6.mjs';
+import * as i7 from './i7.mjs';
+import * as i8 from './i8.mjs';
+import * as i9 from './i9.mjs';
+import * as i10 from './i10.mjs';
+import * as i11 from './i11.mjs';
+import * as i12 from './i12.mjs';
+import * as i13 from './i13.mjs';
+import * as i14 from './i14.mjs';
+import * as i15 from './i15.mjs';
 
 export default {
-  x1: x1.default,
-  x2: x2.default,
-  x3: x3.default,
-  x4: x4.default,
-  x5: x5.default,
-  x6: x6.default,
-  x7: x7.default,
-  x8: x8.default,
-  x9: x9.default,
-  x10: x10.default,
-  x11: x11.default,
-  x12: x12.default,
-  x13: x13.default,
-  x14: x14.default,
-  x15: x15.default,
+  i1: i1.default,
+  i2: i2.default,
+  i3: i3.default,
+  i4: i4.default,
+  i5: i5.default,
+  i6: i6.default,
+  i7: i7.default,
+  i8: i8.default,
+  i9: i9.default,
+  i10: i10.default,
+  i11: i11.default,
+  i12: i12.default,
+  i13: i13.default,
+  i14: i14.default,
+  i15: i15.default,
 };
